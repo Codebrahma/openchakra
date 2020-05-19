@@ -95,6 +95,18 @@ const menuItems: MenuItems = {
       ListItem: {},
     },
   },
+  Menu: {
+    children: {
+      Menu: {},
+      MenuList: {},
+      MenuButton: {},
+      MenuItem: {},
+      // MenuGroup: {},
+      MenuDivider: {},
+      // MenuOptionGroup: {},
+      // MenuItemOption: {},
+    },
+  },
   NumberInput: {},
   Progress: {},
   Radio: {},
@@ -118,7 +130,11 @@ const menuItems: MenuItems = {
   Tag: {},
   Text: {},
   Textarea: {},
-  Menu: { soon: true },
+  Editable: { soon: true },
+  /*"Tabs",
+  "TabList",
+  "TabPanel",
+  "TabPanels"*/
 }
 
 const Menu = () => {

@@ -13,6 +13,17 @@ const TABS_COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'TabPanel',
 ]
 
+const MENU_COMPONENTS: (ComponentType | MetaComponentType)[] = [
+  'Menu',
+  'MenuList',
+  'MenuButton',
+  'MenuItem',
+  'MenuGroup',
+  'MenuDivider',
+  'MenuOptionGroup',
+  'MenuItemOption',
+]
+
 export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   ...ALERT_COMPONENTS,
   'Avatar',
@@ -61,7 +72,7 @@ export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'Breadcrumb',
   'BreadcrumbItem',
   'BreadcrumbLink',
-  'Menu',
+  ...MENU_COMPONENTS,
   'NumberInput',
   'AccordionItem',
   'AccordionHeader',
@@ -77,6 +88,7 @@ export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'InputGroupMeta',
   'BreadcrumbMeta',
   'TabsMeta',
+  'MenuMeta',
 ]
 
 export const AccordionWhitelist: (
@@ -85,6 +97,11 @@ export const AccordionWhitelist: (
 )[] = COMPONENTS.filter(name => !ALERT_COMPONENTS.includes(name))
 
 export const TabsWhiteList: (
+  | ComponentType
+  | MetaComponentType
+)[] = COMPONENTS.filter(name => !ALERT_COMPONENTS.includes(name))
+
+export const MenuWhitelist: (
   | ComponentType
   | MetaComponentType
 )[] = COMPONENTS.filter(name => !ALERT_COMPONENTS.includes(name))
@@ -105,5 +122,12 @@ export const rootComponents = COMPONENTS
         'TabPanels',
         'Tab',
         'TabPanel',
+        'MenuButton',
+        'MenuItem',
+        'MenuGroup',
+        'MenuDivider',
+        'MenuOptionGroup',
+        'MenuItemOption',
+        'MenuList',
       ].includes(name),
   )

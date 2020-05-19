@@ -24,6 +24,12 @@ import TabsPreview, {
   TabPanelsPreview,
   TabPreview,
 } from './previews/TabsPreview'
+import MenuPreview, {
+  MenuListPreview,
+  MenuButtonPreview,
+  MenuGroupPreview,
+  MenuItemPreview,
+} from './previews/MenuPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
@@ -34,7 +40,7 @@ const ComponentPreview: React.FC<{
   }
 
   const type = (component && component.type) || null
-
+  console.log(type)
   switch (type) {
     // Simple components
     case 'Badge':
@@ -79,6 +85,8 @@ const ComponentPreview: React.FC<{
     case 'InputRightAddon':
     case 'InputLeftAddon':
     case 'Tag':
+    case 'MenuDivider':
+    case 'MenuItemOption':
       return (
         <PreviewContainer
           component={component}
@@ -107,6 +115,7 @@ const ComponentPreview: React.FC<{
     case 'Breadcrumb':
     case 'InputGroup':
     case 'BreadcrumbItem':
+    case 'MenuOptionGroup':
       return (
         <WithChildrenPreviewContainer
           enableVisualHelper
@@ -149,6 +158,16 @@ const ComponentPreview: React.FC<{
       return <TabPanelsPreview component={component} />
     case 'Tab':
       return <TabPreview component={component} />
+    case 'Menu':
+      return <MenuPreview component={component} />
+    case 'MenuList':
+      return <MenuListPreview component={component} />
+    case 'MenuButton':
+      return <MenuButtonPreview component={component} />
+    case 'MenuItem':
+      return <MenuItemPreview component={component} />
+    case 'MenuGroup':
+      return <MenuGroupPreview component={component} />
     default:
       return null
   }

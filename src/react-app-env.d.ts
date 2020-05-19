@@ -1,6 +1,7 @@
 /// <reference types="react-scripts" />;
 declare module 'prettier/standalone'
 declare module 'coloreact'
+declare module 'browser-nativefs'
 
 type ComponentType =
   | 'AspectRatioBox'
@@ -49,7 +50,6 @@ type ComponentType =
   | 'Tabs'
   | 'Code'
   | 'Editable'
-  | 'Menu'
   | 'NumberInput'
   | 'Radio'
   | 'RadioGroup'
@@ -66,6 +66,14 @@ type ComponentType =
   | 'Grid'
   | 'BreadcrumbItem'
   | 'BreadcrumbLink'
+  | 'Menu'
+  | 'MenuList'
+  | 'MenuButton'
+  | 'MenuItem'
+  | 'MenuGroup'
+  | 'MenuDivider'
+  | 'MenuOptionGroup'
+  | 'MenuItemOption'
 
 type MetaComponentType =
   | 'FormControlMeta'
@@ -75,6 +83,7 @@ type MetaComponentType =
   | 'InputGroupMeta'
   | 'BreadcrumbMeta'
   | 'TabsMeta'
+  | 'MenuMeta'
 
 interface IComponent {
   children: string[]
