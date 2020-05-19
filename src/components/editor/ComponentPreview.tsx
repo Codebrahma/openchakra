@@ -40,7 +40,6 @@ const ComponentPreview: React.FC<{
   }
 
   const type = (component && component.type) || null
-  console.log(type)
   switch (type) {
     // Simple components
     case 'Badge':

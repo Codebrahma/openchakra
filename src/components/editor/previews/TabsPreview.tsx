@@ -1,9 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/core'
+import { Tabs, Tab, TabList, TabPanel, TabPanels, Box } from '@chakra-ui/core'
 import ComponentPreview from '../ComponentPreview'
 import { TabsWhiteList } from '../../../utils/editor'
+import { getShowLayout } from '../../../core/selectors/app'
 
 const TabsPreview: React.FC<IPreviewProps> = ({ component }) => {
   const { props, ref } = useInteractive(component, true)
@@ -13,12 +15,16 @@ const TabsPreview: React.FC<IPreviewProps> = ({ component }) => {
     props.bg = 'teal.50'
   }
 
+  let boxProps: any = {}
+
   return (
-    <Tabs ref={drop(ref)} {...props}>
-      {component.children.map((key: string) => (
-        <ComponentPreview key={key} componentName={key} />
-      ))}
-    </Tabs>
+    <Box ref={drop(ref)} {...boxProps}>
+      <Tabs {...props}>
+        {component.children.map((key: string) => (
+          <ComponentPreview key={key} componentName={key} />
+        ))}
+      </Tabs>
+    </Box>
   )
 }
 
@@ -59,9 +65,14 @@ export const TabListPreview = ({ component }: IPreviewProps) => {
 export const TabPanelPreview = ({ component }: IPreviewProps) => {
   const { props, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, TabsWhiteList)
+  const showLayout = useSelector(getShowLayout)
 
   if (isOver) {
     props.bg = 'teal.50'
+  }
+
+  if (showLayout) {
+    props.display = 'block !important'
   }
 
   return (

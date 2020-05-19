@@ -43,28 +43,17 @@ export const buildBreadcrumb = (parent: string): ComposedComponent => {
 
 export const buildTabs = (parent: string): ComposedComponent => {
   const composer = new Composer('Tabs')
-  const nodeId = composer.addNode({
-    type: 'Tabs',
-    parent,
-  })
-
+  const nodeId = composer.addNode({ type: 'Tabs', parent })
   const listId = composer.addNode({ type: 'TabList', parent: nodeId })
-
   const tab1Id = composer.addNode({ type: 'Tab', parent: listId })
-  composer.addNode({ type: 'Text', parent: tab1Id, rootParentType: 'Text' })
-
   const tab2Id = composer.addNode({ type: 'Tab', parent: listId })
-  composer.addNode({ type: 'Text', parent: tab2Id, rootParentType: 'Text' })
-
   const panelId = composer.addNode({ type: 'TabPanels', parent: nodeId })
-
-  const tabPanel1 = composer.addNode({
-    type: 'TabPanel',
-    parent: panelId,
-  })
-  composer.addNode({ type: 'Text', parent: tabPanel1, rootParentType: 'Text' })
-
+  const tabPanel1 = composer.addNode({ type: 'TabPanel', parent: panelId })
   const tabPanel2 = composer.addNode({ type: 'TabPanel', parent: panelId })
+
+  composer.addNode({ type: 'Text', parent: tab1Id, rootParentType: 'Text' })
+  composer.addNode({ type: 'Text', parent: tab2Id, rootParentType: 'Text' })
+  composer.addNode({ type: 'Text', parent: tabPanel1, rootParentType: 'Text' })
   composer.addNode({ type: 'Text', parent: tabPanel2, rootParentType: 'Text' })
 
   const components = composer.getComponents()

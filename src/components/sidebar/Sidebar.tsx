@@ -120,21 +120,16 @@ const menuItems: MenuItems = {
   Switch: {},
   Tabs: {
     children: {
-      Tab: {},
       Tabs: {},
       TabList: {},
-      TabPanel: {},
+      Tab: {},
       TabPanels: {},
+      TabPanel: {},
     },
   },
   Tag: {},
   Text: {},
   Textarea: {},
-  Editable: { soon: true },
-  /*"Tabs",
-  "TabList",
-  "TabPanel",
-  "TabPanels"*/
 }
 
 const Menu = () => {
@@ -170,7 +165,7 @@ const Menu = () => {
               <Icon name="search" color="gray.300" />
             )}
           </InputRightElement>
-          )}
+
           <Input
             value={searchTerm}
             color="gray.300"
