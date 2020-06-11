@@ -13,8 +13,10 @@ const usePropsSelector = (propsName: string) => {
   }, [addActiveProps, propsName])
 
   const value = useSelector((state: RootState) => {
+    const selectedId = state.components.present.selectedId
     const component =
-      state.components.present.components[state.components.present.selectedId]
+      state.components.present.components[selectedId] ||
+      state.components.present.customComponents[selectedId]
     const propsValue = component.props[propsName]
 
     if (propsValue !== undefined) {

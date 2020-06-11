@@ -56,3 +56,18 @@ export const deleteComponent = (
   updatedComponents = omit(updatedComponents, component.id)
   return updatedComponents
 }
+
+export const searchParent = (
+  component: IComponent,
+  components: IComponents,
+  customComponentsList: string[],
+) => {
+  let foundParent = { ...component }
+  const searchParentRecursive = (comp: IComponent) => {
+    if (customComponentsList.indexOf(comp.type) === -1)
+      searchParentRecursive(components[comp.parent])
+    else foundParent = { ...comp }
+  }
+  searchParentRecursive(components[component.parent])
+  return foundParent
+}

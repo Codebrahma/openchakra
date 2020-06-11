@@ -10,24 +10,26 @@ import StylesPanel from './panels/StylesPanel'
 import {
   getSelectedComponent,
   getComponents,
-  getSelectedComponentId,
+  getCustomComponentsList,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
 import useClipboard from '../../hooks/useClipboard'
 import { useInspectorUpdate } from '../../contexts/inspector-context'
+import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
   const { onCopy, hasCopied } = useClipboard()
 
-  const selectedId = useSelector(getSelectedComponentId)
+  const selectedComponent = useSelector(getSelectedComponent)
   const components = useSelector(getComponents)
 
-  const parentId = components[selectedId].parent
+  const parentId = selectedComponent.parent
+
   const parent = { ...components[parentId] }
   // Do not copy sibling components from parent
-  parent.children = [selectedId]
+  parent.children = [selectedComponent.id]
 
   return (
     <ActionButton
@@ -47,11 +49,15 @@ const CodeActionButton = memo(() => {
 
 const Inspector = () => {
   const dispatch = useDispatch()
-  const component = useSelector(getSelectedComponent)
+  let component = useSelector(getSelectedComponent)
 
   const { clearActiveProps } = useInspectorUpdate()
 
   const { type, rootParentType, id, children } = component
+  const customComponentsList = useSelector(getCustomComponentsList)
+
+  const isCustomComponent =
+    customComponentsList && customComponentsList.indexOf(type) !== -1
 
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
@@ -93,6 +99,15 @@ const Inspector = () => {
           >
             <CodeActionButton />
             <ActionButton
+              label="Save component"
+              onClick={() => {
+                const name = prompt('Enter the name for the Component')
+                if (name && name.length > 1)
+                  dispatch.components.saveComponent(name)
+              }}
+              icon="add"
+            />
+            <ActionButton
               label="Duplicate"
               onClick={() => dispatch.components.duplicate()}
               icon="copy"
@@ -122,16 +137,20 @@ const Inspector = () => {
           </Stack>
         )}
       </Box>
-
-      <Box pb={1} bg="white" px={3}>
-        <Panels component={component} isRoot={isRoot} />
-      </Box>
-
-      <StylesPanel
-        isRoot={isRoot}
-        showChildren={componentHasChildren}
-        parentIsRoot={parentIsRoot}
-      />
+      {!isCustomComponent ? (
+        <Box>
+          <Box pb={1} bg="white" px={3}>
+            <Panels component={component} isRoot={isRoot} />
+          </Box>
+          <StylesPanel
+            isRoot={isRoot}
+            showChildren={componentHasChildren}
+            parentIsRoot={parentIsRoot}
+          />{' '}
+        </Box>
+      ) : (
+        <CustomComponentsPropsPanel />
+      )}
     </>
   )
 }

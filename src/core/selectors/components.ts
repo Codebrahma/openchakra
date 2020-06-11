@@ -3,12 +3,21 @@ import { RootState } from '../store'
 export const getComponents = (state: RootState) =>
   state.components.present.components
 
+export const getCustomComponents = (state: RootState) =>
+  state.components.present.customComponents
+
+export const getCustomComponentsList = (state: RootState) =>
+  state.components.present.customComponentList
+
 export const getComponentBy = (nameOrId: string | IComponent['id']) => (
   state: RootState,
-) => state.components.present.components[nameOrId]
+) =>
+  state.components.present.components[nameOrId] ||
+  state.components.present.customComponents[nameOrId]
 
 export const getSelectedComponent = (state: RootState) =>
-  state.components.present.components[state.components.present.selectedId]
+  state.components.present.components[state.components.present.selectedId] ||
+  state.components.present.customComponents[state.components.present.selectedId]
 
 export const getPropsForSelectedComponent = (
   state: RootState,
@@ -31,7 +40,8 @@ export const getSelectedComponentChildren = (state: RootState) => {
 }
 
 export const getSelectedComponentParent = (state: RootState) =>
-  state.components.present.components[getSelectedComponent(state).parent]
+  state.components.present.components[getSelectedComponent(state).parent] ||
+  state.components.present.customComponents[getSelectedComponent(state).parent]
 
 export const getHoveredId = (state: RootState) =>
   state.components.present.hoveredId

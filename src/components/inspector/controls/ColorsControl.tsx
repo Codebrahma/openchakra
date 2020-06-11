@@ -101,7 +101,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
   )
 
   return (
-    <FormControl label={props.label}>
+    <FormControl label={props.label} htmlFor={props.name}>
       <Popover placement="bottom">
         <PopoverTrigger>
           <IconButton

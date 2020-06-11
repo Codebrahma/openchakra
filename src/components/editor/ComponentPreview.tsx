@@ -24,17 +24,18 @@ import MenuPreview, {
   MenuGroupPreview,
   MenuItemPreview,
 } from './previews/MenuPreview'
+import CustomComponentPreview from './previews/CustomComponentPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
-}> = ({ componentName, ...forwardedProps }) => {
+  customProps?: any
+}> = ({ componentName, customProps, ...forwardedProps }) => {
   const component = useSelector(getComponentBy(componentName))
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
   }
 
   const type = (component && component.type) || null
-  console.log(type)
   switch (type) {
     // Simple components
     case 'Badge':
@@ -64,6 +65,7 @@ const ComponentPreview: React.FC<{
         <PreviewContainer
           component={component}
           type={Chakra[type]}
+          customProps={customProps}
           {...forwardedProps}
         />
       )
@@ -88,6 +90,7 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           {...forwardedProps}
+          customProps={customProps}
           isBoxWrapped
         />
       )
@@ -106,6 +109,7 @@ const ComponentPreview: React.FC<{
           enableVisualHelper
           component={component}
           type={Chakra[type]}
+          customProps={customProps}
           {...forwardedProps}
         />
       )
@@ -120,6 +124,7 @@ const ComponentPreview: React.FC<{
           enableVisualHelper
           component={component}
           type={Chakra[type]}
+          customProps={customProps}
           {...forwardedProps}
           isBoxWrapped
         />
@@ -158,7 +163,7 @@ const ComponentPreview: React.FC<{
     case 'MenuGroup':
       return <MenuGroupPreview component={component} />
     default:
-      return null
+      return <CustomComponentPreview component={component} />
   }
 }
 

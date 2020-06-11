@@ -7,18 +7,31 @@ const PreviewContainer: React.FC<{
   type: string | FunctionComponent<any> | ComponentClass<any, any>
   enableVisualHelper?: boolean
   isBoxWrapped?: boolean
+  customProps?: any
 }> = ({
   component,
   type,
   enableVisualHelper,
   isBoxWrapped,
+  customProps,
   ...forwardedProps
 }) => {
   const { props, ref } = useInteractive(component, enableVisualHelper)
+  let propsToReplace = {}
+  if (customProps && component.customPropRef) {
+    component.customPropRef.forEach(prop => {
+      if (customProps[prop.customPropName])
+        propsToReplace = {
+          ...propsToReplace,
+          [prop.targetedProp]: customProps[prop.customPropName],
+        }
+    })
+  }
 
   const children = React.createElement(type, {
     ...props,
     ...forwardedProps,
+    ...propsToReplace,
     ref,
   })
 

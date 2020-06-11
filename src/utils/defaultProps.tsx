@@ -300,8 +300,10 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   },
 }
 
-export const getDefaultFormProps = (type: ComponentType) => {
-  const chakraDefaultProps = Chakra[type].defaultProps
+export const getDefaultFormProps = (type: string) => {
+  const chakraDefaultProps = Chakra[type as ComponentType]
+    ? Chakra[type as ComponentType].defaultProps
+    : null
 
-  return { ...chakraDefaultProps, ...DEFAULT_FORM_PROPS[type] }
+  return { ...chakraDefaultProps, ...DEFAULT_FORM_PROPS[type as ComponentType] }
 }

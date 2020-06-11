@@ -8,7 +8,13 @@ import {
   DarkMode,
   IconButton,
 } from '@chakra-ui/core'
+import { useSelector } from 'react-redux'
+
 import DragItem from './DragItem'
+import {
+  getCustomComponentsList,
+  getCustomComponents,
+} from '../../core/selectors/components'
 
 type MenuItem = {
   children?: MenuItems
@@ -131,6 +137,8 @@ const menuItems: MenuItems = {
 
 const Menu = () => {
   const [searchTerm, setSearchTerm] = useState('')
+  const customComponentsList = useSelector(getCustomComponentsList)
+  const customComponents = useSelector(getCustomComponents)
 
   return (
     <DarkMode>
@@ -162,7 +170,6 @@ const Menu = () => {
               <Icon name="search" color="gray.300" />
             )}
           </InputRightElement>
-          )}
           <Input
             value={searchTerm}
             color="gray.300"
@@ -218,6 +225,22 @@ const Menu = () => {
                 rootParentType={menuItems[name]?.rootParentType || name}
               >
                 {name}
+              </DragItem>
+            )
+          })}
+        {customComponentsList &&
+          Object.values(customComponentsList).map(component => {
+            const { type, id } = customComponents[component]
+            return (
+              <DragItem
+                soon={false}
+                key={type}
+                label={component}
+                type={type as any}
+                id={id as any}
+                custom={true}
+              >
+                {component}
               </DragItem>
             )
           })}

@@ -3,11 +3,17 @@ import produce from 'immer'
 import { DEFAULT_PROPS } from '../../utils/defaultProps'
 import templates, { TemplateType } from '../../templates'
 import { generateId } from '../../utils/generateId'
-import { duplicateComponent, deleteComponent } from '../../utils/recursive'
+import {
+  duplicateComponent,
+  deleteComponent,
+  searchParent,
+} from '../../utils/recursive'
 import omit from 'lodash/omit'
 
 export type ComponentsState = {
   components: IComponents
+  customComponents: IComponents
+  customComponentList: string[]
   selectedId: IComponent['id']
   hoveredId?: IComponent['id']
 }
@@ -29,9 +35,78 @@ export const INITIAL_COMPONENTS: IComponents = {
   },
 }
 
+const isChildrenOfCustomComponent = (
+  id: string,
+  customComponents: IComponents,
+) => {
+  if (customComponents[id] !== undefined) return true
+  return false
+}
+
+const filterChildren = (
+  components: IComponents,
+  id: string,
+  childToRemove: string,
+) => {
+  const children = components[id].children.filter(id => id !== childToRemove)
+  components[id].children = children
+  return components
+}
+
+const deleteComp = (component: IComponent, components: IComponents) => {
+  components = filterChildren(components, component.parent, component.id)
+  components = deleteComponent(component, components)
+  return components
+}
+const addComp = (
+  components: IComponents,
+  parentId: string,
+  component: IComponent,
+) => {
+  components = {
+    ...components,
+    [component.id]: {
+      ...component,
+    },
+  }
+  components[parentId].children.push(component.id)
+  return components
+}
+
+const moveToSameComponentsTree = (
+  components: IComponents,
+  id: string,
+  newParentId: string,
+) => {
+  components[id].parent = newParentId
+  components[newParentId].children.push(id)
+  return components
+}
+
+const moveToDifferentComponentsTree = (
+  sourceComponents: IComponents,
+  destinationComponents: IComponents,
+  id: string,
+  newParentId: string,
+) => {
+  const { newId, clonedComponents } = duplicateComponent(
+    sourceComponents[id],
+    sourceComponents,
+  )
+  destinationComponents = {
+    ...destinationComponents,
+    ...clonedComponents,
+  }
+  destinationComponents[newId].parent = newParentId
+  destinationComponents[newParentId].children.push(newId)
+  return destinationComponents
+}
+
 const components = createModel({
   state: {
     components: INITIAL_COMPONENTS,
+    customComponents: {},
+    customComponentList: [],
     selectedId: DEFAULT_ID,
   } as ComponentsState,
   reducers: {
@@ -54,7 +129,7 @@ const components = createModel({
         const component = draftState.components[componentId]
 
         draftState.components[componentId].props =
-          DEFAULT_PROPS[component.type] || {}
+          DEFAULT_PROPS[component.type as ComponentType] || {}
       })
     },
     updateProps(
@@ -62,7 +137,50 @@ const components = createModel({
       payload: { id: string; name: string; value: string },
     ) {
       return produce(state, (draftState: ComponentsState) => {
-        draftState.components[payload.id].props[payload.name] = payload.value
+        if (
+          isChildrenOfCustomComponent(payload.id, draftState.customComponents)
+        )
+          draftState.customComponents[payload.id].props[payload.name] =
+            payload.value
+        else
+          draftState.components[payload.id].props[payload.name] = payload.value
+      })
+    },
+    addCustomProps(
+      state: ComponentsState,
+      payload: { name: string; targetedProp: string },
+    ) {
+      return produce(state, (draftState: ComponentsState) => {
+        const selectedId = draftState.selectedId
+        let customPropRef =
+          draftState.customComponents[selectedId].customPropRef
+        customPropRef !== undefined
+          ? customPropRef.push({
+              targetedProp: payload.targetedProp,
+              customPropName: payload.name,
+            })
+          : (customPropRef = [
+              {
+                targetedProp: payload.targetedProp,
+                customPropName: payload.name,
+              },
+            ])
+
+        draftState.customComponents[selectedId].customPropRef = customPropRef
+
+        const rootParent = searchParent(
+          draftState.customComponents[selectedId],
+          draftState.customComponents,
+          draftState.customComponentList,
+        )
+        rootParent.props = {
+          ...rootParent.props,
+          [payload.name]: '',
+        }
+        Object.values(draftState.components).forEach(component => {
+          if (component.type === rootParent.type)
+            component.props = { ...component.props, [payload.name]: '' }
+        })
       })
     },
     deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
@@ -83,53 +201,102 @@ const components = createModel({
       }
 
       return produce(state, (draftState: ComponentsState) => {
-        let component = draftState.components[componentId]
-
-        // Remove self
-        if (component && component.parent) {
-          const children = draftState.components[
-            component.parent
-          ].children.filter((id: string) => id !== componentId)
-
-          draftState.components[component.parent].children = children
+        if (
+          isChildrenOfCustomComponent(componentId, draftState.customComponents)
+        ) {
+          const component = draftState.customComponents[componentId]
+          draftState.customComponents = deleteComp(
+            component,
+            draftState.customComponents,
+          )
+        } else {
+          const component = draftState.components[componentId]
+          draftState.components = deleteComp(component, draftState.components)
         }
-
         draftState.selectedId = DEFAULT_ID
-        draftState.components = deleteComponent(
-          component,
-          draftState.components,
-        )
       })
     },
     moveComponent(
       state: ComponentsState,
       payload: { parentId: string; componentId: string },
     ): ComponentsState {
-      if (
-        state.components[payload.componentId].parent === payload.parentId ||
-        payload.parentId === payload.componentId
-      ) {
+      if (payload.parentId === payload.componentId) {
         return state
       }
 
       return produce(state, (draftState: ComponentsState) => {
-        const previousParentId =
-          draftState.components[payload.componentId].parent
+        const selectedComponent =
+          draftState.components[payload.componentId] ||
+          draftState.customComponents[payload.componentId]
 
-        const children = draftState.components[
-          previousParentId
-        ].children.filter(id => id !== payload.componentId)
+        const previousParentId = selectedComponent.parent
+        if (previousParentId === payload.parentId) return state
 
-        // Remove id from previous parent
-        draftState.components[previousParentId].children = children
-
-        // Update parent id
-        draftState.components[payload.componentId].parent = payload.parentId
-
-        // Add new child
-        draftState.components[payload.parentId].children.push(
-          payload.componentId,
-        )
+        if (
+          isChildrenOfCustomComponent(
+            previousParentId,
+            draftState.customComponents,
+          )
+        ) {
+          draftState.customComponents = filterChildren(
+            draftState.customComponents,
+            previousParentId,
+            payload.componentId,
+          )
+          if (
+            isChildrenOfCustomComponent(
+              payload.parentId,
+              draftState.customComponents,
+            )
+          ) {
+            draftState.customComponents = moveToSameComponentsTree(
+              draftState.customComponents,
+              payload.componentId,
+              payload.parentId,
+            )
+          } else {
+            draftState.components = moveToDifferentComponentsTree(
+              draftState.customComponents,
+              draftState.components,
+              payload.componentId,
+              payload.parentId,
+            )
+            draftState.customComponents = deleteComponent(
+              draftState.customComponents[payload.componentId],
+              draftState.customComponents,
+            )
+          }
+        } else {
+          draftState.components = filterChildren(
+            draftState.components,
+            previousParentId,
+            payload.componentId,
+          )
+          if (
+            isChildrenOfCustomComponent(
+              payload.parentId,
+              draftState.customComponents,
+            )
+          ) {
+            draftState.customComponents = moveToDifferentComponentsTree(
+              draftState.components,
+              draftState.customComponents,
+              payload.componentId,
+              payload.parentId,
+            )
+            draftState.components = deleteComponent(
+              draftState.components[payload.componentId],
+              draftState.components,
+            )
+          } else {
+            draftState.components = moveToSameComponentsTree(
+              draftState.components,
+              payload.componentId,
+              payload.parentId,
+            )
+          }
+        }
+        draftState.selectedId = DEFAULT_ID
       })
     },
     moveSelectedComponentChildren(
@@ -137,7 +304,14 @@ const components = createModel({
       payload: { fromIndex: number; toIndex: number },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const selectedComponent = draftState.components[draftState.selectedId]
+        let selectedComponent = draftState.components[draftState.selectedId]
+        if (
+          isChildrenOfCustomComponent(
+            draftState.selectedId,
+            draftState.customComponents,
+          )
+        )
+          selectedComponent = draftState.customComponents[draftState.selectedId]
 
         selectedComponent.children.splice(
           payload.toIndex,
@@ -157,15 +331,67 @@ const components = createModel({
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const id = payload.testId || generateId()
-        draftState.selectedId = id
-        draftState.components[payload.parentName].children.push(id)
-        draftState.components[id] = {
+        const component = {
           id,
           props: DEFAULT_PROPS[payload.type] || {},
           children: [],
           type: payload.type,
           parent: payload.parentName,
           rootParentType: payload.rootParentType || payload.type,
+        }
+        draftState.selectedId = id
+
+        if (
+          isChildrenOfCustomComponent(
+            payload.parentName,
+            draftState.customComponents,
+          )
+        ) {
+          draftState.customComponents = addComp(
+            draftState.customComponents,
+            payload.parentName,
+            component,
+          )
+        } else {
+          draftState.components = addComp(
+            draftState.components,
+            payload.parentName,
+            component,
+          )
+        }
+      })
+    },
+    addCustomComponent(
+      state: ComponentsState,
+      payload: { parentId: string; type: string },
+    ): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const customComponent = draftState.customComponents[payload.type]
+        const id = generateId()
+        const component = {
+          id,
+          props: { ...customComponent.props },
+          children: [],
+          type: payload.type,
+          parent: payload.parentId,
+        }
+        if (
+          isChildrenOfCustomComponent(
+            payload.parentId,
+            draftState.customComponents,
+          )
+        ) {
+          draftState.customComponents = addComp(
+            draftState.customComponents,
+            payload.parentId,
+            component,
+          )
+        } else {
+          draftState.components = addComp(
+            draftState.components,
+            payload.parentId,
+            component,
+          )
         }
       })
     },
@@ -224,6 +450,32 @@ const components = createModel({
           }
           draftState.components[parentElement.id].children.push(newId)
         }
+      })
+    },
+    saveComponent(state: ComponentsState, name: string): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const selectedId = draftState.selectedId
+        const component = draftState.components[selectedId]
+        const { newId, clonedComponents } = duplicateComponent(
+          draftState.components[selectedId],
+          draftState.components,
+        )
+        const CustomName = name.charAt(0).toUpperCase() + name.slice(1)
+        draftState.customComponents = {
+          ...draftState.customComponents,
+          ...clonedComponents,
+          [CustomName]: {
+            id: CustomName,
+            type: CustomName,
+            children: [newId],
+            parent: '',
+            props: {},
+          },
+        }
+        draftState.customComponentList.push(CustomName)
+        draftState.customComponents[newId].parent = CustomName
+        draftState.components = deleteComp(component, draftState.components)
+        draftState.selectedId = DEFAULT_ID
       })
     },
     hover(
