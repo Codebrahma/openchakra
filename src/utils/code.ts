@@ -1,4 +1,5 @@
 import isBoolean from 'lodash/isBoolean'
+import uniq from 'lodash/uniq'
 
 const capitalize = (value: string) => {
   return value.charAt(0).toUpperCase() + value.slice(1)
@@ -124,7 +125,7 @@ export const generateCode = async (
      `
     })
 
-  const imports = [
+  let imports = [
     ...new Set(
       Object.keys(components)
         .filter(name => name !== 'root')
@@ -143,6 +144,8 @@ export const generateCode = async (
         .map(name => customComponents[name].type),
     ),
   ]
+  //remove duplicates from the imports arrray.
+  imports = uniq(imports)
 
   code = `import React from 'react';
 import {
