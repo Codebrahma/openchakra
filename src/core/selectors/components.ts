@@ -48,3 +48,10 @@ export const getHoveredId = (state: RootState) =>
 
 export const getIsHovered = (id: IComponent['id']) => (state: RootState) =>
   getHoveredId(state) === id
+
+export const isSelectedIdCustomComponent = (state: RootState) =>
+  state.components.present.customComponents[
+    state.components.present.selectedId
+  ] === undefined
+    ? false
+    : true

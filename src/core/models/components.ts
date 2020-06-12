@@ -152,7 +152,6 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const selectedId = draftState.selectedId
-
         draftState.customComponents[selectedId].propRefs = {
           ...draftState.customComponents[selectedId].propRefs,
           [payload.targetedProp]: {
