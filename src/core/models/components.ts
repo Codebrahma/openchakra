@@ -152,34 +152,33 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const selectedId = draftState.selectedId
-        let customPropRef =
-          draftState.customComponents[selectedId].customPropRef
-        customPropRef !== undefined
-          ? customPropRef.push({
-              targetedProp: payload.targetedProp,
-              customPropName: payload.name,
-            })
-          : (customPropRef = [
-              {
-                targetedProp: payload.targetedProp,
-                customPropName: payload.name,
-              },
-            ])
 
-        draftState.customComponents[selectedId].customPropRef = customPropRef
+        draftState.customComponents[selectedId].propRefs = {
+          ...draftState.customComponents[selectedId].propRefs,
+          [payload.targetedProp]: {
+            targetedProp: payload.targetedProp,
+            customPropName: payload.name,
+          },
+        }
 
         const rootParent = searchParent(
           draftState.customComponents[selectedId],
           draftState.customComponents,
           draftState.customComponentList,
         )
-        rootParent.props = {
-          ...rootParent.props,
+        draftState.customComponents[rootParent.id].props = {
+          ...draftState.customComponents[rootParent.id].props,
           [payload.name]: '',
         }
         Object.values(draftState.components).forEach(component => {
           if (component.type === rootParent.type)
-            component.props = { ...component.props, [payload.name]: '' }
+            component.props = {
+              ...component.props,
+              [payload.name]:
+                draftState.customComponents[selectedId].props[
+                  payload.targetedProp
+                ] || '',
+            }
         })
       })
     },

@@ -34,32 +34,43 @@ const buildBlock = (component: IComponent, components: IComponents) => {
       let propsContent = ''
 
       const propsNames = Object.keys(childComponent.props)
+      const propsRef = childComponent.propRefs
+
+      propsRef &&
+        Object.values(propsRef).forEach(prop => {
+          if (prop.targetedProp !== 'children')
+            propsContent += `${prop.targetedProp}={${prop.customPropName}}`
+        })
 
       propsNames.forEach((propName: string) => {
         const propsValue = childComponent.props[propName]
 
-        if (propName !== 'children' && propsValue) {
-          let operand = `='${propsValue}'`
+        if (propName !== 'children') {
+          if (propsRef === undefined || propsRef[propName] === undefined) {
+            let operand = `='${propsValue}'`
+            if (propsValue === true || propsValue === 'true') {
+              operand = ``
+            } else if (
+              propsValue === 'false' ||
+              isBoolean(propsValue) ||
+              !isNaN(propsValue)
+            ) {
+              operand = `={${propsValue}}`
+            }
 
-          if (propsValue === true || propsValue === 'true') {
-            operand = ``
-          } else if (
-            propsValue === 'false' ||
-            isBoolean(propsValue) ||
-            !isNaN(propsValue)
-          ) {
-            operand = `={${propsValue}}`
+            propsContent += `${propName}${operand} `
           }
-
-          propsContent += `${propName}${operand} `
         }
       })
-
       if (
         typeof childComponent.props.children === 'string' &&
         childComponent.children.length === 0
       ) {
-        content += `<${componentName} ${propsContent}>${childComponent.props.children}</${componentName}>`
+        if (propsRef && propsRef['children']) {
+          content += `<${componentName} ${propsContent}>{${propsRef['children'].customPropName}}</${componentName}>`
+        } else {
+          content += `<${componentName} ${propsContent}>${childComponent.props.children}</${componentName}>`
+        }
       } else if (childComponent.children.length) {
         content += `<${componentName} ${propsContent}>
       ${buildBlock(childComponent, components)}
@@ -87,14 +98,49 @@ const My${component.type} = () => (
   return await formatCode(code)
 }
 
-export const generateCode = async (components: IComponents) => {
+export const generateCode = async (
+  components: IComponents,
+  customComponents: IComponents,
+  customComponentsList: string[],
+) => {
   let code = buildBlock(components.root, components)
+
+  const customComponentCode =
+    customComponentsList &&
+    Object.values(customComponentsList).map(componentName => {
+      const showProps = Object.keys(customComponents[componentName].props).map(
+        prop => `${prop}`,
+      )
+
+      const componentCode = buildBlock(
+        customComponents[componentName],
+        customComponents,
+      )
+      return `const ${capitalize(componentName)} = (${
+        showProps.length > 0 ? '{' + showProps.join(',') + '}' : ' '
+      }) =>(
+        ${componentCode}
+     );
+     `
+    })
 
   const imports = [
     ...new Set(
       Object.keys(components)
         .filter(name => name !== 'root')
+        .filter(
+          name => customComponentsList.indexOf(components[name].type) === -1,
+        )
         .map(name => components[name].type),
+    ),
+    ...new Set(
+      Object.keys(customComponents)
+        .filter(name => name !== 'root')
+        .filter(
+          name =>
+            customComponentsList.indexOf(customComponents[name].type) === -1,
+        )
+        .map(name => customComponents[name].type),
     ),
   ]
 
@@ -106,6 +152,7 @@ import {
   ${imports.join(',')}
 } from "@chakra-ui/core";
 
+${customComponentCode && customComponentCode.join('')}
 const App = () => (
   <ThemeProvider theme={theme}>
     <CSSReset />

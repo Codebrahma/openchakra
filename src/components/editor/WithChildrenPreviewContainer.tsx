@@ -22,8 +22,8 @@ const WithChildrenPreviewContainer: React.FC<{
   const { props, ref } = useInteractive(component, enableVisualHelper)
   let propsToReplace = {}
 
-  if (customProps && component.customPropRef) {
-    component.customPropRef.forEach(prop => {
+  if (customProps && component.propRefs) {
+    Object.values(component.propRefs).forEach(prop => {
       if (customProps[prop.customPropName])
         propsToReplace = {
           ...propsToReplace,

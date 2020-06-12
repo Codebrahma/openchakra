@@ -84,9 +84,13 @@ type MetaComponentType =
   | 'BreadcrumbMeta'
   | 'MenuMeta'
 
-interface customRef {
+interface PropRef {
   customPropName: string
   targetedProp: string
+}
+
+interface PropRefs {
+  [name: string]: PropRef
 }
 
 interface IComponent {
@@ -96,7 +100,7 @@ interface IComponent {
   id: string
   props: any
   rootParentType?: ComponentType | string
-  customPropRef?: Array<customRef>
+  propRefs?: PropRefs
 }
 
 interface IComponents {
