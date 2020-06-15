@@ -30,6 +30,7 @@ import {
   getComponents,
   getCustomComponents,
   getCustomComponentsList,
+  getShowCustomComponentPage,
 } from '../core/selectors/components'
 import { getShowLayout, getShowCode } from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
@@ -78,6 +79,7 @@ const CodeSandboxButton = () => {
 const Header = () => {
   const showLayout = useSelector(getShowLayout)
   const showCode = useSelector(getShowCode)
+  const showCustomPage = useSelector(getShowCustomComponentPage)
   const dispatch = useDispatch()
 
   return (
@@ -145,6 +147,28 @@ const Header = () => {
                 id="code"
                 color="teal"
                 onChange={() => dispatch.app.toggleCodePanel()}
+                size="sm"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel
+                color="gray.200"
+                fontSize="xs"
+                htmlFor="customComponents"
+                pb={0}
+              >
+                Custom Components
+              </FormLabel>
+              <Switch
+                isChecked={showCustomPage}
+                id="customComponents"
+                color="teal"
+                onChange={() => {
+                  dispatch.components.unselect()
+                  if (showCustomPage) dispatch.components.switchPage('app')
+                  else dispatch.components.switchPage('custom')
+                }}
                 size="sm"
               />
             </FormControl>

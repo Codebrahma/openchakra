@@ -14,8 +14,9 @@ const usePropsSelector = (propsName: string) => {
 
   const value = useSelector((state: RootState) => {
     const selectedId = state.components.present.selectedId
+    const selectedPage = state.components.present.selectedPage
     const component =
-      state.components.present.components[selectedId] ||
+      state.components.present.pages[selectedPage][selectedId] ||
       state.components.present.customComponents[selectedId]
     const propsValue = component.props[propsName]
 

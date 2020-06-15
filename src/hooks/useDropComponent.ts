@@ -1,7 +1,12 @@
 import { useDrop, DropTargetMonitor } from 'react-dnd'
+import { useSelector } from 'react-redux'
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
 import builder from '../core/models/composer/builder'
+import {
+  getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
+} from '../core/selectors/components'
 
 export const useDropComponent = (
   componentId: string,
@@ -9,6 +14,10 @@ export const useDropComponent = (
   canDrop: boolean = true,
 ) => {
   const dispatch = useDispatch()
+  const isCustomPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponent = useSelector(
+    isChildrenOfCustomComponent(componentId),
+  )
 
   const [{ isOver }, drop] = useDrop({
     accept: [...accept, 'custom'],
@@ -19,6 +28,7 @@ export const useDropComponent = (
       if (!monitor.isOver()) {
         return
       }
+      if (isCustomComponent && !isCustomPage) return
 
       if (item.isMoved) {
         dispatch.components.moveComponent({

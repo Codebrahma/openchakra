@@ -11,7 +11,8 @@ import {
 import omit from 'lodash/omit'
 
 export type ComponentsState = {
-  components: IComponents
+  pages: IPages
+  selectedPage: string
   customComponents: IComponents
   customComponentList: string[]
   selectedId: IComponent['id']
@@ -25,6 +26,8 @@ export type ComponentsStateWithUndo = {
 
 const DEFAULT_ID = 'root'
 
+const DEFAULT_PAGE = 'app'
+
 export const INITIAL_COMPONENTS: IComponents = {
   root: {
     id: DEFAULT_ID,
@@ -33,6 +36,11 @@ export const INITIAL_COMPONENTS: IComponents = {
     children: [],
     props: {},
   },
+}
+
+export const INITIAL_PAGES: IPages = {
+  app: INITIAL_COMPONENTS,
+  custom: INITIAL_COMPONENTS,
 }
 
 const isChildrenOfCustomComponent = (
@@ -104,31 +112,30 @@ const moveToDifferentComponentsTree = (
 
 const components = createModel({
   state: {
-    components: INITIAL_COMPONENTS,
+    pages: INITIAL_PAGES,
+    selectedPage: DEFAULT_PAGE,
     customComponents: {},
     customComponentList: [],
     selectedId: DEFAULT_ID,
   } as ComponentsState,
   reducers: {
     reset(state: ComponentsState, components?: IComponents): ComponentsState {
-      return {
-        ...state,
-        components: components || INITIAL_COMPONENTS,
-        selectedId: DEFAULT_ID,
-      }
+      return produce(state, (draftState: ComponentsState) => {
+        draftState.pages[draftState.selectedPage] =
+          components || INITIAL_COMPONENTS
+      })
     },
     loadDemo(state: ComponentsState, type: TemplateType): ComponentsState {
-      return {
-        ...state,
-        selectedId: 'comp-root',
-        components: templates[type],
-      }
+      return produce(state, (draftState: ComponentsState) => {
+        draftState.pages[draftState.selectedPage] = templates[type]
+      })
     },
     resetProps(state: ComponentsState, componentId: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const component = draftState.components[componentId]
+        const components = draftState.pages[draftState.selectedPage]
+        const component = components[componentId]
 
-        draftState.components[componentId].props =
+        components[componentId].props =
           DEFAULT_PROPS[component.type as ComponentType] || {}
       })
     },
@@ -137,13 +144,14 @@ const components = createModel({
       payload: { id: string; name: string; value: string },
     ) {
       return produce(state, (draftState: ComponentsState) => {
+        const components = draftState.pages[draftState.selectedPage]
         if (
           isChildrenOfCustomComponent(payload.id, draftState.customComponents)
-        )
-          draftState.customComponents[payload.id].props[payload.name] =
-            payload.value
-        else
-          draftState.components[payload.id].props[payload.name] = payload.value
+        ) {
+          if (draftState.selectedPage === 'custom')
+            draftState.customComponents[payload.id].props[payload.name] =
+              payload.value
+        } else components[payload.id].props[payload.name] = payload.value
       })
     },
     addCustomProps(
@@ -152,6 +160,7 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const selectedId = draftState.selectedId
+        const components = draftState.pages[draftState.selectedPage]
         const propValue =
           draftState.customComponents[selectedId].props[payload.targetedProp] ||
           ''
@@ -173,7 +182,7 @@ const components = createModel({
           ...draftState.customComponents[rootParent.id].props,
           [payload.name]: propValue,
         }
-        Object.values(draftState.components).forEach(component => {
+        Object.values(components).forEach(component => {
           if (component.type === rootParent.type)
             component.props = {
               ...component.props,
@@ -183,13 +192,15 @@ const components = createModel({
       })
     },
     deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
+      const components = state.pages[state.selectedPage]
+
       return {
         ...state,
         components: {
-          ...state.components,
+          ...components,
           [payload.id]: {
-            ...state.components[payload.id],
-            props: omit(state.components[payload.id].props, payload.name),
+            ...components[payload.id],
+            props: omit(components[payload.id].props, payload.name),
           },
         },
       }
@@ -200,6 +211,8 @@ const components = createModel({
       }
 
       return produce(state, (draftState: ComponentsState) => {
+        const components = draftState.pages[draftState.selectedPage]
+
         //check whether the component deleted is the children of custom components.
         if (
           isChildrenOfCustomComponent(componentId, draftState.customComponents)
@@ -210,8 +223,11 @@ const components = createModel({
             draftState.customComponents,
           )
         } else {
-          const component = draftState.components[componentId]
-          draftState.components = deleteComp(component, draftState.components)
+          const component = components[componentId]
+          draftState.pages[draftState.selectedPage] = deleteComp(
+            component,
+            components,
+          )
         }
         draftState.selectedId = DEFAULT_ID
       })
@@ -225,8 +241,10 @@ const components = createModel({
       }
 
       return produce(state, (draftState: ComponentsState) => {
+        let components = draftState.pages[draftState.selectedPage]
+
         const selectedComponent =
-          draftState.components[payload.componentId] ||
+          components[payload.componentId] ||
           draftState.customComponents[payload.componentId]
 
         const previousParentId = selectedComponent.parent
@@ -256,9 +274,9 @@ const components = createModel({
               payload.parentId,
             )
           } else {
-            draftState.components = moveToDifferentComponentsTree(
+            components = moveToDifferentComponentsTree(
               draftState.customComponents,
-              draftState.components,
+              components,
               payload.componentId,
               payload.parentId,
             )
@@ -268,8 +286,8 @@ const components = createModel({
             )
           }
         } else {
-          draftState.components = filterChildren(
-            draftState.components,
+          components = filterChildren(
+            components,
             previousParentId,
             payload.componentId,
           )
@@ -280,18 +298,18 @@ const components = createModel({
             )
           ) {
             draftState.customComponents = moveToDifferentComponentsTree(
-              draftState.components,
+              components,
               draftState.customComponents,
               payload.componentId,
               payload.parentId,
             )
-            draftState.components = deleteComponent(
-              draftState.components[payload.componentId],
-              draftState.components,
+            components = deleteComponent(
+              components[payload.componentId],
+              components,
             )
           } else {
-            draftState.components = moveToSameComponentsTree(
-              draftState.components,
+            components = moveToSameComponentsTree(
+              components,
               payload.componentId,
               payload.parentId,
             )
@@ -305,7 +323,8 @@ const components = createModel({
       payload: { fromIndex: number; toIndex: number },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        let selectedComponent = draftState.components[draftState.selectedId]
+        const components = draftState.pages[draftState.selectedPage]
+        let selectedComponent = components[draftState.selectedId]
         if (
           isChildrenOfCustomComponent(
             draftState.selectedId,
@@ -332,6 +351,7 @@ const components = createModel({
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const id = payload.testId || generateId()
+
         const component = {
           id,
           props: DEFAULT_PROPS[payload.type] || {},
@@ -355,8 +375,8 @@ const components = createModel({
             component,
           )
         } else {
-          draftState.components = addComp(
-            draftState.components,
+          draftState.pages[draftState.selectedPage] = addComp(
+            draftState.pages[draftState.selectedPage],
             payload.parentName,
             component,
           )
@@ -392,8 +412,8 @@ const components = createModel({
             component,
           )
         } else {
-          draftState.components = addComp(
-            draftState.components,
+          draftState.pages[draftState.selectedPage] = addComp(
+            draftState.pages[draftState.selectedPage],
             payload.parentId,
             component,
           )
@@ -405,11 +425,12 @@ const components = createModel({
       payload: { components: IComponents; root: string; parent: string },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
+        let components = draftState.pages[draftState.selectedPage]
         draftState.selectedId = payload.root
-        draftState.components[payload.parent].children.push(payload.root)
+        components[payload.parent].children.push(payload.root)
 
-        draftState.components = {
-          ...draftState.components,
+        components = {
+          ...components,
           ...payload.components,
         }
       })
@@ -430,40 +451,44 @@ const components = createModel({
       }
     },
     selectParent(state: ComponentsState): ComponentsState {
-      const selectedComponent = state.components[state.selectedId]
+      const components = state.pages[state.selectedPage]
+      const selectedComponent = components[state.selectedId]
 
       return {
         ...state,
-        selectedId: state.components[selectedComponent.parent].id,
+        selectedId: components[selectedComponent.parent].id,
       }
     },
     duplicate(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const selectedComponent = draftState.components[draftState.selectedId]
+        let components = draftState.pages[draftState.selectedPage]
+
+        const selectedComponent = components[draftState.selectedId]
 
         if (selectedComponent.id !== DEFAULT_ID) {
-          const parentElement = draftState.components[selectedComponent.parent]
+          const parentElement = components[selectedComponent.parent]
 
           const { newId, clonedComponents } = duplicateComponent(
             selectedComponent,
-            draftState.components,
+            components,
           )
 
-          draftState.components = {
-            ...draftState.components,
+          components = {
+            ...components,
             ...clonedComponents,
           }
-          draftState.components[parentElement.id].children.push(newId)
+          components[parentElement.id].children.push(newId)
         }
       })
     },
     saveComponent(state: ComponentsState, name: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
+        let components = draftState.pages[draftState.selectedPage]
         const selectedId = draftState.selectedId
-        const component = draftState.components[selectedId]
+        const component = components[selectedId]
         const { newId, clonedComponents } = duplicateComponent(
-          draftState.components[selectedId],
-          draftState.components,
+          components[selectedId],
+          components,
         )
         const CustomName = name.charAt(0).toUpperCase() + name.slice(1)
         draftState.customComponents = {
@@ -481,7 +506,7 @@ const components = createModel({
         draftState.customComponents[newId].parent = CustomName
 
         //delete the original copy.
-        draftState.components = deleteComp(component, draftState.components)
+        components = deleteComp(component, components)
         draftState.selectedId = DEFAULT_ID
       })
     },
@@ -498,6 +523,12 @@ const components = createModel({
       return {
         ...state,
         hoveredId: undefined,
+      }
+    },
+    switchPage(state: ComponentsState, page: string): ComponentsState {
+      return {
+        ...state,
+        selectedPage: page,
       }
     },
   },

@@ -12,7 +12,10 @@ import {
   Button,
   Input,
 } from '@chakra-ui/core'
-import { isSelectedIdCustomComponent } from '../../../core/selectors/components'
+import {
+  isChildrenOfCustomComponent,
+  getSelectedComponentId,
+} from '../../../core/selectors/components'
 
 type FormControlPropType = {
   label: ReactNode
@@ -28,7 +31,8 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
-  const isCustomComponent = useSelector(isSelectedIdCustomComponent)
+  const selectedId = useSelector(getSelectedComponentId)
+  const isCustomComponent = useSelector(isChildrenOfCustomComponent(selectedId))
   const rightClickHandler = (e: any) => {
     e.preventDefault()
     //Check whether the children is present inside custom component

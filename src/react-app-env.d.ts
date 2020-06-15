@@ -122,3 +122,7 @@ interface ComponentItemProps {
   rootParentType?: ComponentType
   custom?: boolean
 }
+
+interface IPages {
+  [name: string]: IComponents
+}

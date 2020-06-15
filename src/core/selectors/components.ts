@@ -1,7 +1,8 @@
 import { RootState } from '../store'
 
-export const getComponents = (state: RootState) =>
-  state.components.present.components
+export const getComponents = (state: RootState) => {
+  return state.components.present.pages[state.components.present.selectedPage]
+}
 
 export const getCustomComponents = (state: RootState) =>
   state.components.present.customComponents
@@ -12,19 +13,22 @@ export const getCustomComponentsList = (state: RootState) =>
 export const getComponentBy = (nameOrId: string | IComponent['id']) => (
   state: RootState,
 ) =>
-  state.components.present.components[nameOrId] ||
+  getComponents(state)[nameOrId] ||
   state.components.present.customComponents[nameOrId]
 
-export const getSelectedComponent = (state: RootState) =>
-  state.components.present.components[state.components.present.selectedId] ||
-  state.components.present.customComponents[state.components.present.selectedId]
+export const getSelectedComponent = (state: RootState) => {
+  return (
+    getComponents(state)[state.components.present.selectedId] ||
+    state.components.present.customComponents[
+      state.components.present.selectedId
+    ]
+  )
+}
 
 export const getPropsForSelectedComponent = (
   state: RootState,
   propsName: string,
-) =>
-  state.components.present.components[state.components.present.selectedId]
-    .props[propsName]
+) => getComponents(state)[state.components.present.selectedId].props[propsName]
 
 export const getSelectedComponentId = (state: RootState) =>
   state.components.present.selectedId
@@ -40,7 +44,7 @@ export const getSelectedComponentChildren = (state: RootState) => {
 }
 
 export const getSelectedComponentParent = (state: RootState) =>
-  state.components.present.components[getSelectedComponent(state).parent] ||
+  getComponents(state)[getSelectedComponent(state).parent] ||
   state.components.present.customComponents[getSelectedComponent(state).parent]
 
 export const getHoveredId = (state: RootState) =>
@@ -49,9 +53,14 @@ export const getHoveredId = (state: RootState) =>
 export const getIsHovered = (id: IComponent['id']) => (state: RootState) =>
   getHoveredId(state) === id
 
-export const isSelectedIdCustomComponent = (state: RootState) =>
-  state.components.present.customComponents[
-    state.components.present.selectedId
-  ] === undefined
-    ? false
-    : true
+export const isChildrenOfCustomComponent = (id: string | IComponent['id']) => (
+  state: RootState,
+) => {
+  const selectedId = id || state.components.present.selectedId
+  if (state.components.present.customComponents[selectedId] === undefined)
+    return false
+  else return true
+}
+
+export const getShowCustomComponentPage = (state: RootState) =>
+  state.components.present.selectedPage === 'custom' ? true : false
