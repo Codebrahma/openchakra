@@ -506,7 +506,10 @@ const components = createModel({
         draftState.customComponents[newId].parent = CustomName
 
         //delete the original copy.
-        components = deleteComp(component, components)
+        draftState.pages[draftState.selectedPage] = deleteComp(
+          component,
+          components,
+        )
         draftState.selectedId = DEFAULT_ID
       })
     },
