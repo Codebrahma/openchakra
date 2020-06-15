@@ -152,6 +152,10 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const selectedId = draftState.selectedId
+        const propValue =
+          draftState.customComponents[selectedId].props[payload.targetedProp] ||
+          ''
+
         draftState.customComponents[selectedId].propRefs = {
           ...draftState.customComponents[selectedId].propRefs,
           [payload.targetedProp]: {
@@ -167,16 +171,13 @@ const components = createModel({
         )
         draftState.customComponents[rootParent.id].props = {
           ...draftState.customComponents[rootParent.id].props,
-          [payload.name]: '',
+          [payload.name]: propValue,
         }
         Object.values(draftState.components).forEach(component => {
           if (component.type === rootParent.type)
             component.props = {
               ...component.props,
-              [payload.name]:
-                draftState.customComponents[selectedId].props[
-                  payload.targetedProp
-                ] || '',
+              [payload.name]: propValue,
             }
         })
       })

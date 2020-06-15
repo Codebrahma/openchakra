@@ -80,6 +80,12 @@ const PopOverControl: React.FC<FormControlPropType> = ({
                 fontSize="14px"
                 onChange={propInputChangeHandler}
                 value={propName}
+                onKeyDown={(e: any) => {
+                  if (e.keyCode === 13) {
+                    savePropClickHandler()
+                    if (onClose) onClose()
+                  }
+                }}
               />
             </PopoverBody>
             <PopoverFooter display="flex" justifyContent="flex-end">
