@@ -31,7 +31,7 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const isCustomComponent = useSelector(isSelectedIdCustomComponent)
   const rightClickHandler = (e: any) => {
     e.preventDefault()
-    //Check whether the children is present inside custom components
+    //Check whether the children is present inside custom component
     if (isCustomComponent) setIsOpen(!isOpen)
   }
   const propInputChangeHandler = (e: any) => setPropName(e.target.value)

@@ -200,6 +200,7 @@ const components = createModel({
       }
 
       return produce(state, (draftState: ComponentsState) => {
+        //check whether the component deleted is the children of custom components.
         if (
           isChildrenOfCustomComponent(componentId, draftState.customComponents)
         ) {
@@ -231,6 +232,7 @@ const components = createModel({
         const previousParentId = selectedComponent.parent
         if (previousParentId === payload.parentId) return state
 
+        //check whether the component is moved from the custom component or not.
         if (
           isChildrenOfCustomComponent(
             previousParentId,
@@ -340,6 +342,7 @@ const components = createModel({
         }
         draftState.selectedId = id
 
+        //check whether the component is added into any children of custom component
         if (
           isChildrenOfCustomComponent(
             payload.parentName,
@@ -374,6 +377,9 @@ const components = createModel({
           type: payload.type,
           parent: payload.parentId,
         }
+
+        //check whether the component is added into any children of custom component
+
         if (
           isChildrenOfCustomComponent(
             payload.parentId,
@@ -473,6 +479,8 @@ const components = createModel({
         }
         draftState.customComponentList.push(CustomName)
         draftState.customComponents[newId].parent = CustomName
+
+        //delete the original copy.
         draftState.components = deleteComp(component, draftState.components)
         draftState.selectedId = DEFAULT_ID
       })
