@@ -463,7 +463,7 @@ const components = createModel({
         draftState.selectedId = payload.root
         components[payload.parent].children.push(payload.root)
 
-        components = {
+        draftState.pages[draftState.selectedPage] = {
           ...components,
           ...payload.components,
         }
