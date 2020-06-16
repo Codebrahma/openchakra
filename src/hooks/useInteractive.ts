@@ -5,6 +5,8 @@ import { useDrag } from 'react-dnd'
 import {
   getIsSelectedComponent,
   getIsHovered,
+  getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
 } from '../core/selectors/components'
 import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 
@@ -17,34 +19,41 @@ export const useInteractive = (
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
   const isHovered = useSelector(getIsHovered(component.id))
   const focusInput = useSelector(getFocusedComponent(component.id))
+  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponentChild = useSelector(
+    isChildrenOfCustomComponent(component.id),
+  )
+  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
 
   const [, drag] = useDrag({
     item: { id: component.id, type: component.type, isMoved: true },
   })
 
   const ref = useRef<HTMLDivElement>(null)
-  let props = {
-    ...component.props,
-    onMouseOver: (event: MouseEvent) => {
-      event.stopPropagation()
-      dispatch.components.hover(component.id)
-    },
-    onMouseOut: () => {
-      dispatch.components.unhover()
-    },
-    onClick: (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      dispatch.components.select(component.id)
-    },
-    onDoubleClick: (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      if (focusInput === false) {
-        dispatch.app.toggleInputText()
+  let props = enableInteractive
+    ? {
+        ...component.props,
+        onMouseOver: (event: MouseEvent) => {
+          event.stopPropagation()
+          dispatch.components.hover(component.id)
+        },
+        onMouseOut: () => {
+          dispatch.components.unhover()
+        },
+        onClick: (event: MouseEvent) => {
+          event.preventDefault()
+          event.stopPropagation()
+          dispatch.components.select(component.id)
+        },
+        onDoubleClick: (event: MouseEvent) => {
+          event.preventDefault()
+          event.stopPropagation()
+          if (focusInput === false) {
+            dispatch.app.toggleInputText()
+          }
+        },
       }
-    },
-  }
+    : { ...component.props }
 
   if (showLayout && enableVisualHelper) {
     props = {
@@ -61,5 +70,5 @@ export const useInteractive = (
     }
   }
 
-  return { props, ref: drag(ref), drag }
+  return { props, ref: enableInteractive ? drag(ref) : ref, drag }
 }

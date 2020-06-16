@@ -1,5 +1,10 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
+import { useSelector } from 'react-redux'
 import { useInteractive } from '../../hooks/useInteractive'
+import {
+  getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
+} from '../../core/selectors/components'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
@@ -20,6 +25,12 @@ const WithChildrenPreviewContainer: React.FC<{
 }) => {
   const { drop, isOver } = useDropComponent(component.id)
   const { props, ref } = useInteractive(component, enableVisualHelper)
+  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponentChild = useSelector(
+    isChildrenOfCustomComponent(component.id),
+  )
+  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
+
   let propsToReplace = {}
 
   if (customProps && component.propRefs) {
@@ -37,7 +48,7 @@ const WithChildrenPreviewContainer: React.FC<{
     propsElement.ref = drop(ref)
   }
 
-  if (isOver) {
+  if (isOver && enableInteractive) {
     propsElement.bg = 'teal.50'
   }
 
@@ -59,7 +70,7 @@ const WithChildrenPreviewContainer: React.FC<{
     }
 
     return (
-      <Box {...boxProps} ref={drop(ref)}>
+      <Box {...boxProps} ref={enableInteractive ? drop(ref) : ref}>
         {children}
       </Box>
     )
