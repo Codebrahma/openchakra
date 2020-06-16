@@ -11,6 +11,7 @@ import {
   getSelectedComponent,
   getComponents,
   getCustomComponentsList,
+  getShowCustomComponentPage,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -24,7 +25,6 @@ const CodeActionButton = memo(() => {
 
   const selectedComponent = useSelector(getSelectedComponent)
   const components = useSelector(getComponents)
-
   const parentId = selectedComponent.parent
 
   const parent = { ...components[parentId] }
@@ -58,6 +58,8 @@ const Inspector = () => {
 
   const isCustomComponent =
     customComponentsList && customComponentsList.indexOf(type) !== -1
+
+  const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
 
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
@@ -98,15 +100,17 @@ const Inspector = () => {
             justify="flex-end"
           >
             <CodeActionButton />
-            <ActionButton
-              label="Save component"
-              onClick={() => {
-                const name = prompt('Enter the name for the Component')
-                if (name && name.length > 1)
-                  dispatch.components.saveComponent(name)
-              }}
-              icon="add"
-            />
+            {isCustomComponentsPage ? (
+              <ActionButton
+                label="Save component"
+                onClick={() => {
+                  const name = prompt('Enter the name for the Component')
+                  if (name && name.length > 1)
+                    dispatch.components.saveComponent(name)
+                }}
+                icon="add"
+              />
+            ) : null}
             <ActionButton
               label="Duplicate"
               onClick={() => dispatch.components.duplicate()}
