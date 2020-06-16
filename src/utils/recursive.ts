@@ -4,14 +4,25 @@ import { generateId } from './generateId'
 export const duplicateComponent = (
   componentToClone: IComponent,
   components: IComponents,
+  searchPropsRef?: boolean,
 ) => {
   const clonedComponents: IComponents = {}
+  let props = {}
 
   const cloneComponent = (component: IComponent) => {
     const newid = generateId()
     const children = component.children.map(child => {
       return cloneComponent(components[child])
     })
+    const propsRef = component.propRefs
+    if (searchPropsRef && propsRef)
+      Object.values(propsRef).forEach((prop: PropRef) => {
+        console.log(prop.customPropName)
+        props = {
+          ...props,
+          [prop.customPropName]: prop.value,
+        }
+      })
 
     clonedComponents[newid] = {
       ...component,
@@ -32,6 +43,7 @@ export const duplicateComponent = (
   return {
     newId,
     clonedComponents,
+    props,
   }
 }
 

@@ -87,6 +87,7 @@ type MetaComponentType =
 interface PropRef {
   customPropName: string
   targetedProp: string
+  value?: string
 }
 
 interface PropRefs {
