@@ -125,6 +125,7 @@ type PreviewDefaultProps = {
   ListMeta?: any
   BreadcrumbMeta?: any
   MenuMeta?: any
+  Custom?: any
 }
 
 export const DEFAULT_PROPS: PreviewDefaultProps = {

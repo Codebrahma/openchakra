@@ -20,7 +20,7 @@ export const useDropComponent = (
   )
 
   const [{ isOver }, drop] = useDrop({
-    accept: [...accept, 'custom'],
+    accept: accept,
     collect: monitor => ({
       isOver: monitor.isOver({ shallow: true }) && monitor.canDrop(),
     }),

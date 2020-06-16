@@ -10,7 +10,7 @@ const CustomComponentPreview: React.FC<{ component: IComponent }> = ({
   component,
 }) => {
   const { isOver } = useDropComponent(component.id)
-  const { props } = useInteractive(component, true)
+  const { props, ref } = useInteractive(component, true, true)
   const customComponents = useSelector(getCustomComponents)
 
   if (isOver) {
@@ -18,7 +18,7 @@ const CustomComponentPreview: React.FC<{ component: IComponent }> = ({
   }
 
   return (
-    <Box {...props}>
+    <Box {...props} ref={ref}>
       {customComponents[component.type].children.map((key: string) => (
         <ComponentPreview
           key={key}

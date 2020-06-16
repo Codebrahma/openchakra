@@ -13,6 +13,7 @@ import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
+  isCustomComponent?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
@@ -25,8 +26,13 @@ export const useInteractive = (
   )
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
 
+  //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
-    item: { id: component.id, type: component.type, isMoved: true },
+    item: {
+      id: component.id,
+      type: isCustomComponent ? 'Custom' : component.type,
+      isMoved: true,
+    },
   })
 
   const ref = useRef<HTMLDivElement>(null)

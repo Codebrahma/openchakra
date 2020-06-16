@@ -83,6 +83,7 @@ type MetaComponentType =
   | 'InputGroupMeta'
   | 'BreadcrumbMeta'
   | 'MenuMeta'
+  | 'Custom'
 
 interface PropRef {
   customPropName: string
