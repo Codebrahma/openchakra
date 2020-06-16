@@ -50,7 +50,6 @@ const CodeActionButton = memo(() => {
 const Inspector = () => {
   const dispatch = useDispatch()
   let component = useSelector(getSelectedComponent)
-  console.log(component)
 
   const { clearActiveProps } = useInspectorUpdate()
 

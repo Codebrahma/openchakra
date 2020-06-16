@@ -308,7 +308,9 @@ const components = createModel({
               payload.parentId,
             )
           } else {
-            components = moveToDifferentComponentsTree(
+            draftState.pages[
+              draftState.selectedPage
+            ] = moveToDifferentComponentsTree(
               draftState.customComponents,
               components,
               payload.componentId,
@@ -320,7 +322,7 @@ const components = createModel({
             )
           }
         } else {
-          components = filterChildren(
+          draftState.pages[draftState.selectedPage] = filterChildren(
             components,
             previousParentId,
             payload.componentId,
@@ -337,12 +339,14 @@ const components = createModel({
               payload.componentId,
               payload.parentId,
             )
-            components = deleteComponent(
+            draftState.pages[draftState.selectedPage] = deleteComponent(
               components[payload.componentId],
               components,
             )
           } else {
-            components = moveToSameComponentsTree(
+            draftState.pages[
+              draftState.selectedPage
+            ] = moveToSameComponentsTree(
               components,
               payload.componentId,
               payload.parentId,
