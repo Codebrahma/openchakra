@@ -71,10 +71,7 @@ export const isSelectedIdCustomComponent = (state: RootState) =>
   ) !== -1
 
 export const getExposedPropsForSelectedComponent = (state: RootState) => {
-  const selectedComponent =
-    state.components.present.customComponents[
-      state.components.present.selectedId
-    ]
+  const selectedComponent = getSelectedComponent(state)
   if (selectedComponent) return selectedComponent.exposedProps
   else return undefined
 }
