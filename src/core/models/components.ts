@@ -545,11 +545,19 @@ const components = createModel({
         draftState.customComponentList.push(CustomName)
         draftState.customComponents[newId].parent = CustomName
 
-        //delete the original copy.
-        draftState.pages[draftState.selectedPage] = deleteComp(
-          component,
-          components,
-        )
+        //delete the children and replace the type , children and props.
+        component.children.forEach(child => {
+          draftState.pages[draftState.selectedPage] = deleteComp(
+            draftState.pages[draftState.selectedPage][child],
+            components,
+          )
+        })
+        draftState.pages[draftState.selectedPage][
+          component.id
+        ].type = CustomName
+        draftState.pages[draftState.selectedPage][component.id].children = []
+        draftState.pages[draftState.selectedPage][component.id].props = props
+
         draftState.selectedId = DEFAULT_ID
       })
     },
