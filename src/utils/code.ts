@@ -106,23 +106,35 @@ export const generateCode = async (
 ) => {
   let code = buildBlock(components.root, components)
 
+  const checkInstanceInComponents = (componentName: string) => {
+    let isPresent = false
+    Object.values(components).forEach(component => {
+      if (component.type === componentName) isPresent = true
+    })
+    return isPresent
+  }
+
   const customComponentCode =
     customComponentsList &&
     Object.values(customComponentsList).map(componentName => {
-      const showProps = Object.keys(customComponents[componentName].props).map(
-        prop => `${prop}`,
-      )
+      //Display custom component only if the custom component instance is present
+      const customComponentInstance = checkInstanceInComponents(componentName)
+      if (customComponentInstance) {
+        const showProps = Object.keys(
+          customComponents[componentName].props,
+        ).map(prop => `${prop}`)
 
-      const componentCode = buildBlock(
-        customComponents[componentName],
-        customComponents,
-      )
-      return `const ${capitalize(componentName)} = (${
-        showProps.length > 0 ? '{' + showProps.join(',') + '}' : ' '
-      }) =>(
+        const componentCode = buildBlock(
+          customComponents[componentName],
+          customComponents,
+        )
+        return `const ${capitalize(componentName)} = (${
+          showProps.length > 0 ? '{' + showProps.join(',') + '}' : ' '
+        }) =>(
         ${componentCode}
      );
      `
+      } else return null
     })
 
   let imports = [
