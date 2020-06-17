@@ -83,3 +83,18 @@ export const searchParent = (
   searchParentRecursive(components[component.parent])
   return foundParent
 }
+
+export const findChildrenImports = (
+  parentComponent: IComponent,
+  customComponents: IComponents,
+) => {
+  const childrenImports: Array<string> = []
+  const findChildrenImportRecursive = (component: IComponent) => {
+    childrenImports.push(component.type)
+    component.children.forEach(child =>
+      findChildrenImportRecursive(customComponents[child]),
+    )
+  }
+  findChildrenImportRecursive(customComponents[parentComponent.children[0]])
+  return childrenImports
+}

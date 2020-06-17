@@ -1,5 +1,6 @@
 import isBoolean from 'lodash/isBoolean'
 import uniq from 'lodash/uniq'
+import { findChildrenImports } from './recursive'
 
 const capitalize = (value: string) => {
   return value.charAt(0).toUpperCase() + value.slice(1)
@@ -109,10 +110,10 @@ export const generateCode = async (
 ) => {
   let code = buildBlock(components.root, components)
 
-  const checkInstanceInComponents = (componentName: string) => {
+  const checkInstanceInComponents = (componentType: string) => {
     let isPresent = false
     Object.values(components).forEach(component => {
-      if (component.type === componentName) isPresent = true
+      if (component.type === componentType) isPresent = true
     })
     return isPresent
   }
@@ -140,6 +141,17 @@ export const generateCode = async (
       } else return null
     })
 
+  //only import the chakra-ui components from the custom components if the instance is present in the page.
+  let customComponentImports: Array<string> = []
+  customComponentsList.forEach(type => {
+    if (checkInstanceInComponents(type)) {
+      customComponentImports = [
+        ...customComponentImports,
+        ...findChildrenImports(customComponents[type], customComponents),
+      ]
+    }
+  })
+
   let imports = [
     ...new Set(
       Object.keys(components)
@@ -149,17 +161,9 @@ export const generateCode = async (
         )
         .map(name => components[name].type),
     ),
-    ...new Set(
-      Object.keys(customComponents)
-        .filter(name => name !== 'root')
-        .filter(
-          name =>
-            customComponentsList.indexOf(customComponents[name].type) === -1,
-        )
-        .map(name => customComponents[name].type),
-    ),
+    ...new Set(customComponentImports),
   ]
-  //remove duplicates from the imports arrray.
+  //remove duplicates from the imports array.
   imports = uniq(imports)
 
   code = `import React from 'react';
