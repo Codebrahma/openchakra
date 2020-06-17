@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react'
-import { Link, Box, Stack } from '@chakra-ui/core'
+import { Link, Box, Stack, useToast } from '@chakra-ui/core'
 import Panels from './panels/Panels'
 import { GoRepo, GoCode } from 'react-icons/go'
 import { FiTrash2 } from 'react-icons/fi'
@@ -50,6 +50,7 @@ const CodeActionButton = memo(() => {
 const Inspector = () => {
   const dispatch = useDispatch()
   let component = useSelector(getSelectedComponent)
+  const toast = useToast()
 
   const { clearActiveProps } = useInspectorUpdate()
 
@@ -105,8 +106,15 @@ const Inspector = () => {
                 label="Save component"
                 onClick={() => {
                   const name = prompt('Enter the name for the Component')
-                  if (name && name.length > 1)
+                  if (name && name.length > 1) {
                     dispatch.components.saveComponent(name)
+                    toast({
+                      title: 'Component is saved successfully.',
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    })
+                  }
                 }}
                 icon="add"
               />
