@@ -11,7 +11,7 @@ import PopOverControl from './PopOverControl'
 import {
   getShowCustomComponentPage,
   isSelectedIdCustomComponent,
-  getPropRefsForSelectedComponent,
+  getExposedPropsForSelectedComponent,
 } from '../../../core/selectors/components'
 
 type FormControlPropType = {
@@ -29,8 +29,8 @@ const FormControl: React.FC<FormControlPropType> = ({
 }) => {
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponent = useSelector(isSelectedIdCustomComponent)
-  const propRef = useSelector(getPropRefsForSelectedComponent)
-  const isPropExposed = propRef && htmlFor && propRef[htmlFor]
+  const exposedProps = useSelector(getExposedPropsForSelectedComponent)
+  const isPropExposed = exposedProps && htmlFor && exposedProps[htmlFor]
 
   return (
     <ChakraFormControl

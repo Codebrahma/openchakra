@@ -34,6 +34,7 @@ const ComponentPreview: React.FC<{
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
   }
+  console.log(component)
 
   const type = (component && component.type) || null
   switch (type) {

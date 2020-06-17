@@ -35,10 +35,10 @@ const buildBlock = (component: IComponent, components: IComponents) => {
       let propsContent = ''
 
       const propsNames = Object.keys(childComponent.props)
-      const propsRef = childComponent.propRefs
+      const exposedProps = childComponent.exposedProps
 
-      propsRef &&
-        Object.values(propsRef).forEach(prop => {
+      exposedProps &&
+        Object.values(exposedProps).forEach(prop => {
           if (prop.targetedProp !== 'children')
             propsContent += `${prop.targetedProp}={${prop.customPropName}}`
         })
@@ -47,7 +47,10 @@ const buildBlock = (component: IComponent, components: IComponents) => {
         const propsValue = childComponent.props[propName]
 
         if (propName !== 'children') {
-          if (propsRef === undefined || propsRef[propName] === undefined) {
+          if (
+            exposedProps === undefined ||
+            exposedProps[propName] === undefined
+          ) {
             let operand = `='${propsValue}'`
             if (propsValue === true || propsValue === 'true') {
               operand = ``
@@ -67,8 +70,8 @@ const buildBlock = (component: IComponent, components: IComponents) => {
         typeof childComponent.props.children === 'string' &&
         childComponent.children.length === 0
       ) {
-        if (propsRef && propsRef['children']) {
-          content += `<${componentName} ${propsContent}>{${propsRef['children'].customPropName}}</${componentName}>`
+        if (exposedProps && exposedProps['children']) {
+          content += `<${componentName} ${propsContent}>{${exposedProps['children'].customPropName}}</${componentName}>`
         } else {
           content += `<${componentName} ${propsContent}>${childComponent.props.children}</${componentName}>`
         }

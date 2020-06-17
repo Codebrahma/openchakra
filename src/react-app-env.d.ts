@@ -102,7 +102,7 @@ interface IComponent {
   id: string
   props: any
   rootParentType?: ComponentType | string
-  propRefs?: PropRefs
+  exposedProps?: PropRefs
 }
 
 interface IComponents {

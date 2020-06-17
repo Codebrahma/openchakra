@@ -70,11 +70,11 @@ export const isSelectedIdCustomComponent = (state: RootState) =>
     getSelectedComponent(state).type,
   ) !== -1
 
-export const getPropRefsForSelectedComponent = (state: RootState) => {
+export const getExposedPropsForSelectedComponent = (state: RootState) => {
   const selectedComponent =
     state.components.present.customComponents[
       state.components.present.selectedId
     ]
-  if (selectedComponent) return selectedComponent.propRefs
+  if (selectedComponent) return selectedComponent.exposedProps
   else return undefined
 }

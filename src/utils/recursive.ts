@@ -14,7 +14,7 @@ export const duplicateComponent = (
     const children = component.children.map(child => {
       return cloneComponent(components[child])
     })
-    const propsRef = component.propRefs
+    const propsRef = component.exposedProps
     if (searchPropsRef && propsRef)
       Object.values(propsRef).forEach((prop: PropRef) => {
         console.log(prop.customPropName)

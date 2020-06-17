@@ -188,8 +188,8 @@ const components = createModel({
             draftState.customComponents[selectedId].props[
               payload.targetedProp
             ] || ''
-          draftState.customComponents[selectedId].propRefs = {
-            ...draftState.customComponents[selectedId].propRefs,
+          draftState.customComponents[selectedId].exposedProps = {
+            ...draftState.customComponents[selectedId].exposedProps,
             [payload.targetedProp]: {
               targetedProp: payload.targetedProp,
               customPropName: payload.name,
@@ -215,8 +215,8 @@ const components = createModel({
           const propValue =
             components[selectedId].props[payload.targetedProp] || ''
 
-          components[selectedId].propRefs = {
-            ...components[selectedId].propRefs,
+          components[selectedId].exposedProps = {
+            ...components[selectedId].exposedProps,
             [payload.targetedProp]: {
               targetedProp: payload.targetedProp,
               customPropName: payload.name,

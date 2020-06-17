@@ -33,8 +33,8 @@ const WithChildrenPreviewContainer: React.FC<{
 
   let propsToReplace = {}
 
-  if (customProps && component.propRefs) {
-    Object.values(component.propRefs).forEach(prop => {
+  if (customProps && component.exposedProps) {
+    Object.values(component.exposedProps).forEach(prop => {
       if (customProps[prop.customPropName])
         propsToReplace = {
           ...propsToReplace,
