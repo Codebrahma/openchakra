@@ -141,6 +141,7 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         draftState.pages[draftState.selectedPage] =
           components || INITIAL_COMPONENTS
+        draftState.selectedId = DEFAULT_ID
       })
     },
     loadDemo(state: ComponentsState, type: TemplateType): ComponentsState {
@@ -572,6 +573,22 @@ const components = createModel({
         ...state,
         selectedPage: page,
       }
+    },
+    exportSelectedComponentToCustomPage(
+      state: ComponentsState,
+    ): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const components = draftState.pages[draftState.selectedPage]
+        const { newId, clonedComponents } = duplicateComponent(
+          components[draftState.selectedId],
+          components,
+        )
+        draftState.pages['custom'] = {
+          ...draftState.pages['custom'],
+          ...clonedComponents,
+        }
+        draftState.pages['custom']['root'].children.push(newId)
+      })
     },
   },
 })

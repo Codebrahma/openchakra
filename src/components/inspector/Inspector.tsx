@@ -111,14 +111,32 @@ const Inspector = () => {
                     toast({
                       title: 'Component is saved successfully.',
                       status: 'success',
-                      duration: 3000,
+                      duration: 1000,
                       isClosable: true,
+                      position: 'top',
                     })
                   }
                 }}
                 icon="add"
               />
             ) : null}
+            {!isCustomComponentsPage ? (
+              <ActionButton
+                label="Export to custom components page"
+                onClick={() => {
+                  dispatch.components.exportSelectedComponentToCustomPage()
+                  toast({
+                    title: 'Component is exported successfully.',
+                    status: 'success',
+                    duration: 1000,
+                    isClosable: true,
+                    position: 'top',
+                  })
+                }}
+                icon="external-link"
+              />
+            ) : null}
+
             <ActionButton
               label="Duplicate"
               onClick={() => dispatch.components.duplicate()}
