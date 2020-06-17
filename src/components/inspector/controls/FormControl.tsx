@@ -1,6 +1,18 @@
 import React, { ReactNode, memo } from 'react'
-import { FormControl as ChakraFormControl, Grid, Box } from '@chakra-ui/core'
+import { useSelector } from 'react-redux'
+import {
+  FormControl as ChakraFormControl,
+  Grid,
+  Box,
+  FormLabel,
+  Text,
+} from '@chakra-ui/core'
 import PopOverControl from './PopOverControl'
+import {
+  getShowCustomComponentPage,
+  isSelectedIdCustomComponent,
+  getPropRefsForSelectedComponent,
+} from '../../../core/selectors/components'
 
 type FormControlPropType = {
   label: ReactNode
@@ -15,6 +27,11 @@ const FormControl: React.FC<FormControlPropType> = ({
   children,
   hasColumn,
 }) => {
+  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponent = useSelector(isSelectedIdCustomComponent)
+  const propRef = useSelector(getPropRefsForSelectedComponent)
+  const isPropExposed = propRef && htmlFor && propRef[htmlFor]
+
   return (
     <ChakraFormControl
       mb={3}
@@ -23,15 +40,35 @@ const FormControl: React.FC<FormControlPropType> = ({
       alignItems="center"
       justifyItems="center"
     >
-      <PopOverControl label={label} htmlFor={htmlFor} hasColumn={hasColumn} />
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyItems="center"
-        width={hasColumn ? '30px' : '130px'}
-      >
-        {children}
-      </Box>
+      {isCustomComponentPage && !isCustomComponent && !isPropExposed ? (
+        <PopOverControl label={label} htmlFor={htmlFor} hasColumn={hasColumn} />
+      ) : (
+        <FormLabel
+          p={0}
+          mr={2}
+          color="gray.500"
+          lineHeight="1rem"
+          width={hasColumn ? '2.5rem' : '90px'}
+          fontSize="xs"
+          htmlFor={htmlFor}
+        >
+          {label}
+        </FormLabel>
+      )}
+      {isPropExposed ? (
+        <Text fontSize="12px" cursor="not-allowed" fontWeight="bold">
+          Prop is exposed
+        </Text>
+      ) : (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyItems="center"
+          width={hasColumn ? '30px' : '130px'}
+        >
+          {children}
+        </Box>
+      )}
     </ChakraFormControl>
   )
 }

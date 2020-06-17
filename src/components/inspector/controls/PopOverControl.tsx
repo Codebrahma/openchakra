@@ -1,5 +1,4 @@
 import React, { ReactNode, useState } from 'react'
-import { useSelector } from 'react-redux'
 import useDispatch from '../../.././hooks/useDispatch'
 import {
   FormLabel,
@@ -11,8 +10,8 @@ import {
   PopoverFooter,
   Button,
   Input,
+  Tooltip,
 } from '@chakra-ui/core'
-import { getShowCustomComponentPage } from '../../../core/selectors/components'
 
 type FormControlPropType = {
   label: ReactNode
@@ -28,11 +27,10 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const rightClickHandler = (e: any) => {
     e.preventDefault()
     //Check whether the children is present inside custom component
-    if (isCustomComponentPage) setIsOpen(!isOpen)
+    setIsOpen(true)
   }
   const propInputChangeHandler = (e: any) => setPropName(e.target.value)
   const savePropClickHandler = () => {
@@ -62,7 +60,15 @@ const PopOverControl: React.FC<FormControlPropType> = ({
               htmlFor={htmlFor}
               onContextMenu={rightClickHandler}
             >
-              {label}
+              <Tooltip
+                zIndex={100}
+                hasArrow
+                bg="black"
+                aria-label="Right click to expose"
+                label="Right click to expose"
+              >
+                {label}
+              </Tooltip>
             </FormLabel>
           </PopoverTrigger>
           <PopoverContent

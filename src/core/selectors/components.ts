@@ -64,3 +64,17 @@ export const isChildrenOfCustomComponent = (id: string | IComponent['id']) => (
 
 export const getShowCustomComponentPage = (state: RootState) =>
   state.components.present.selectedPage === 'custom' ? true : false
+
+export const isSelectedIdCustomComponent = (state: RootState) =>
+  state.components.present.customComponentList.indexOf(
+    getSelectedComponent(state).type,
+  ) !== -1
+
+export const getPropRefsForSelectedComponent = (state: RootState) => {
+  const selectedComponent =
+    state.components.present.customComponents[
+      state.components.present.selectedId
+    ]
+  if (selectedComponent) return selectedComponent.propRefs
+  else return undefined
+}
