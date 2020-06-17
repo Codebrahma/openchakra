@@ -111,6 +111,7 @@ interface IComponents {
 
 interface IPreviewProps {
   component: IComponent
+  customProps?: any
 }
 
 interface ComponentItemProps {
