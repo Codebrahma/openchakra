@@ -7,6 +7,7 @@ import {
   duplicateComponent,
   deleteComponent,
   searchParent,
+  searchExposedProp,
 } from '../../utils/recursive'
 import omit from 'lodash/omit'
 
@@ -123,6 +124,19 @@ const updateInstancesInAllPages = (
           ...component.props,
           [propName]: propValue,
         }
+    })
+  })
+  return pages
+}
+const deletePropsInAllInstances = (
+  pages: IPages,
+  componentType: string,
+  propNameToBeDeleted: string,
+) => {
+  Object.values(pages).forEach(components => {
+    Object.values(components).forEach(component => {
+      if (component.type === componentType)
+        delete component.props[propNameToBeDeleted]
     })
   })
   return pages
@@ -596,6 +610,60 @@ const components = createModel({
           ...clonedComponents,
         }
         draftState.pages['custom']['root'].children.push(newId)
+      })
+    },
+    unexpose(state: ComponentsState, targetedProp: string): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const selectedComponent =
+          draftState.pages[draftState.selectedPage][draftState.selectedId] ||
+          draftState.customComponents[draftState.selectedId]
+        const exposedProps = selectedComponent.exposedProps
+        if (exposedProps) {
+          const customPropName = exposedProps[targetedProp].customPropName
+          delete exposedProps[targetedProp]
+          if (
+            isChildrenOfCustomComponent(
+              selectedComponent.id,
+              draftState.customComponents,
+            )
+          ) {
+            const rootParent = searchParent(
+              draftState.customComponents[draftState.selectedId],
+              draftState.customComponents,
+              draftState.customComponentList,
+            )
+            delete rootParent.props[customPropName]
+            draftState.pages = deletePropsInAllInstances(
+              draftState.pages,
+              rootParent.type,
+              customPropName,
+            )
+          }
+        }
+      })
+    },
+    deleteExposedProp(
+      state: ComponentsState,
+      propName: string,
+    ): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const selectedComponent =
+          draftState.pages[draftState.selectedPage][draftState.selectedId]
+        const selectedCustomComponent =
+          draftState.customComponents[selectedComponent.type]
+        delete selectedCustomComponent.props[propName]
+        draftState.pages = deletePropsInAllInstances(
+          draftState.pages,
+          selectedCustomComponent.type,
+          propName,
+        )
+        const { exposedPropComponent, exposedPropName } = searchExposedProp(
+          selectedCustomComponent,
+          draftState.customComponents,
+          propName,
+        )
+        exposedPropComponent.exposedProps &&
+          delete exposedPropComponent.exposedProps[exposedPropName]
       })
     },
   },

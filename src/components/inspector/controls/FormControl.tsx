@@ -7,12 +7,15 @@ import {
   FormLabel,
   Text,
 } from '@chakra-ui/core'
+import { FiRepeat } from 'react-icons/fi'
 import PopOverControl from './PopOverControl'
 import {
   getShowCustomComponentPage,
   isSelectedIdCustomComponent,
   getExposedPropsForSelectedComponent,
 } from '../../../core/selectors/components'
+import ActionButton from '../ActionButton'
+import useDispatch from '../../../hooks/useDispatch'
 
 type FormControlPropType = {
   label: ReactNode
@@ -27,6 +30,7 @@ const FormControl: React.FC<FormControlPropType> = ({
   children,
   hasColumn,
 }) => {
+  const dispatch = useDispatch()
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponent = useSelector(isSelectedIdCustomComponent)
   const exposedProps = useSelector(getExposedPropsForSelectedComponent)
@@ -56,9 +60,21 @@ const FormControl: React.FC<FormControlPropType> = ({
         </FormLabel>
       )}
       {isPropExposed ? (
-        <Text fontSize="12px" cursor="not-allowed" fontWeight="bold">
-          Prop is exposed
-        </Text>
+        <Box display="flex" alignItems="center">
+          <Text
+            fontSize="10px"
+            cursor="not-allowed"
+            fontWeight="bold"
+            mr="11px"
+          >
+            Prop is exposed
+          </Text>
+          <ActionButton
+            label="Unexpose"
+            icon={FiRepeat}
+            onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
+          />
+        </Box>
       ) : (
         <Box
           display="flex"

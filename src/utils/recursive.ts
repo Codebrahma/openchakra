@@ -98,3 +98,31 @@ export const findChildrenImports = (
   findChildrenImportRecursive(customComponents[parentComponent.children[0]])
   return childrenImports
 }
+
+export const searchExposedProp = (
+  component: IComponent,
+  customComponents: IComponents,
+  customPropName: string,
+) => {
+  let exposedPropComponent: IComponent = component
+  let exposedPropName: string = ''
+  const searchExposedPropRecursive = (component: IComponent) => {
+    if (component.exposedProps) {
+      Object.values(component.exposedProps).forEach(prop => {
+        if (prop.customPropName === customPropName) {
+          exposedPropComponent = component
+          exposedPropName = prop.targetedProp
+        }
+      })
+    } else {
+      Object.values(component.children).forEach(childId =>
+        searchExposedPropRecursive(customComponents[childId]),
+      )
+    }
+  }
+  searchExposedPropRecursive(customComponents[component.children[0]])
+  return {
+    exposedPropComponent: exposedPropComponent,
+    exposedPropName: exposedPropName,
+  }
+}
