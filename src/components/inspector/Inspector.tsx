@@ -12,6 +12,7 @@ import {
   getComponents,
   getCustomComponentsList,
   getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -61,6 +62,9 @@ const Inspector = () => {
     customComponentsList && customComponentsList.indexOf(type) !== -1
 
   const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponentChild = useSelector(isChildrenOfCustomComponent(id))
+  const enableSaveIcon =
+    isCustomComponentsPage && !isCustomComponentChild && !isCustomComponent
 
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
@@ -101,7 +105,7 @@ const Inspector = () => {
             justify="flex-end"
           >
             <CodeActionButton />
-            {isCustomComponentsPage ? (
+            {enableSaveIcon ? (
               <ActionButton
                 label="Save component"
                 onClick={() => {
