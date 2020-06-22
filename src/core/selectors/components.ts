@@ -75,3 +75,5 @@ export const getExposedPropsForSelectedComponent = (state: RootState) => {
   if (selectedComponent) return selectedComponent.exposedProps
   else return undefined
 }
+
+export const getPages = (state: RootState) => state.components.present.pages

@@ -1,6 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { Text, PseudoBox, Icon, Box } from '@chakra-ui/core'
+import { Text, PseudoBox, Icon, Box, Flex, useToast } from '@chakra-ui/core'
+import ActionButton from '../inspector/ActionButton'
+import useDispatch from '../../hooks/useDispatch'
+import checkComponentInstance from '../../utils/checkComponentInstance'
+import { getPages } from '../../core/selectors/components'
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
@@ -21,6 +26,9 @@ const DragItem: React.FC<ComponentItemProps> = ({
       custom,
     },
   })
+  const dispatch = useDispatch()
+  const toast = useToast()
+  const pages = useSelector(getPages)
 
   let boxProps: any = {
     cursor: 'no-drop',
@@ -45,52 +53,85 @@ const DragItem: React.FC<ComponentItemProps> = ({
   if (isChild) {
     boxProps = { ...boxProps, ml: 4 }
   }
+  const deleteComponentHandler = (componentType: string) => {
+    const componentFound = checkComponentInstance(pages, componentType)
+    if (componentFound)
+      toast({
+        title: 'Error in deletion.',
+        description: 'Instance of the custom component exists.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      })
+    else {
+      dispatch.components.deleteCustomComponent(componentType)
+      toast({
+        title: 'Success.',
+        description: 'Component had been deleted Successfully.',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }
 
   return (
-    <PseudoBox
-      boxSizing="border-box"
-      transition="margin 200ms"
-      my={1}
-      rounded="md"
-      p={1}
-      display="flex"
-      alignItems="center"
-      {...boxProps}
-    >
-      <Icon fontSize="xs" mr={2} name="drag-handle" />
+    <Flex my={1}>
+      <PseudoBox
+        boxSizing="border-box"
+        transition="margin 200ms"
+        rounded="md"
+        display="flex"
+        alignItems="center"
+        {...boxProps}
+        width="95%"
+        p={1}
+      >
+        <Icon fontSize="xs" mr={2} name="drag-handle" />
 
-      <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
-        {label}
-      </Text>
+        <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
+          {label}
+        </Text>
 
-      {isMeta && (
-        <Box
-          ml={2}
-          borderWidth="1px"
-          color="teal.300"
-          borderColor="teal.600"
-          fontSize="xs"
-          rounded={4}
-          px={1}
-        >
-          preset
-        </Box>
+        {isMeta && (
+          <Box
+            ml={2}
+            borderWidth="1px"
+            color="teal.300"
+            borderColor="teal.600"
+            fontSize="xs"
+            rounded={4}
+            px={1}
+          >
+            preset
+          </Box>
+        )}
+
+        {soon && (
+          <Box
+            ml={2}
+            borderWidth="1px"
+            color="whiteAlpha.500"
+            borderColor="whiteAlpha.300"
+            fontSize="xs"
+            rounded={4}
+            px={1}
+          >
+            soon
+          </Box>
+        )}
+      </PseudoBox>
+
+      {custom && (
+        <ActionButton
+          label="Delete component"
+          icon="delete"
+          onClick={() => deleteComponentHandler(type)}
+        />
       )}
-
-      {soon && (
-        <Box
-          ml={2}
-          borderWidth="1px"
-          color="whiteAlpha.500"
-          borderColor="whiteAlpha.300"
-          fontSize="xs"
-          rounded={4}
-          px={1}
-        >
-          soon
-        </Box>
-      )}
-    </PseudoBox>
+    </Flex>
   )
 }
 

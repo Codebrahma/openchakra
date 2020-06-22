@@ -642,6 +642,21 @@ const components = createModel({
         }
       })
     },
+    deleteCustomComponent(
+      state: ComponentsState,
+      type: string,
+    ): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const selectedCustomComponent = draftState.customComponents[type]
+        deleteComp(
+          draftState.customComponents[selectedCustomComponent.children[0]],
+          draftState.customComponents,
+        )
+        delete draftState.customComponents[type]
+        const index = draftState.customComponentList.indexOf(type)
+        draftState.customComponentList.splice(index, 1)
+      })
+    },
     deleteExposedProp(
       state: ComponentsState,
       propName: string,
