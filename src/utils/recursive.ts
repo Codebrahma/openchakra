@@ -17,7 +17,6 @@ export const duplicateComponent = (
     const propsRef = component.exposedProps
     if (searchPropsRef && propsRef)
       Object.values(propsRef).forEach((prop: PropRef) => {
-        console.log(prop.customPropName)
         props = {
           ...props,
           [prop.customPropName]: prop.value,

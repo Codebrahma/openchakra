@@ -130,9 +130,19 @@ const ComponentPreview: React.FC<{
       )
     // More complex components
     case 'InputRightElement':
-      return <InputRightElementPreview component={component} />
+      return (
+        <InputRightElementPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'InputLeftElement':
-      return <InputLeftElementPreview component={component} />
+      return (
+        <InputLeftElementPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'Avatar':
       return <AvatarPreview component={component} customProps={customProps} />
     case 'AvatarBadge':

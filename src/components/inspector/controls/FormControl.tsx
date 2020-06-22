@@ -7,7 +7,6 @@ import {
   FormLabel,
   Text,
 } from '@chakra-ui/core'
-import { FiRepeat } from 'react-icons/fi'
 import PopOverControl from './PopOverControl'
 import {
   getShowCustomComponentPage,
@@ -71,7 +70,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           </Text>
           <ActionButton
             label="Unexpose"
-            icon={FiRepeat}
+            icon="small-close"
             onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
           />
         </Box>
@@ -85,6 +84,15 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
+      {isCustomComponentPage && isCustomComponent ? (
+        <ActionButton
+          label="delete Exposed prop"
+          icon="small-close"
+          onClick={() =>
+            htmlFor && dispatch.components.deleteExposedProp(htmlFor)
+          }
+        />
+      ) : null}
     </ChakraFormControl>
   )
 }

@@ -4,9 +4,10 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
 import { InputLeftElement } from '@chakra-ui/core'
 
-export const InputLeftElementPreview: React.FC<{ component: IComponent }> = ({
-  component,
-}) => {
+export const InputLeftElementPreview: React.FC<{
+  component: IComponent
+  customProps: any
+}> = ({ component, customProps }) => {
   const { drop, isOver } = useDropComponent(component.id)
   const { props, ref } = useInteractive(component, true)
 
@@ -17,7 +18,7 @@ export const InputLeftElementPreview: React.FC<{ component: IComponent }> = ({
   return (
     <InputLeftElement top="10px" right="10px" {...props} ref={drop(ref)}>
       {component.children.map((key: string) => (
-        <ComponentPreview componentName={key} />
+        <ComponentPreview componentName={key} customProps={customProps} />
       ))}
     </InputLeftElement>
   )
