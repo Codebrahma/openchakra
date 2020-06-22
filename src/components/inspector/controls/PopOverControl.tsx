@@ -74,9 +74,14 @@ const PopOverControl: React.FC<FormControlPropType> = ({
           <PopoverContent
             zIndex={100}
             width="150px"
-            backgroundColor="rgba(111, 125, 137,0.9)"
+            backgroundColor="rgba(26, 32, 44,0.85)"
           >
-            <PopoverHeader color="#ffcf00" textDecoration="underline">
+            <PopoverHeader
+              color="yellow.100"
+              textDecoration="underline"
+              fontWeight="bold"
+              fontSize="14px"
+            >
               Expose as
             </PopoverHeader>
             <PopoverBody fontSize="sm">
