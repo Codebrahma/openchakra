@@ -111,7 +111,7 @@ const moveToDifferentComponentsTree = (
   return destinationComponents
 }
 
-const updateInstancesInAllPages = (
+const updatePropsInAllInstances = (
   pages: IPages,
   ComponentType: string,
   propName: string,
@@ -198,6 +198,7 @@ const components = createModel({
         if (
           isChildrenOfCustomComponent(selectedId, draftState.customComponents)
         ) {
+          //Here the exposed props are stored in children of custom components
           const propValue =
             draftState.customComponents[selectedId].props[
               payload.targetedProp
@@ -219,13 +220,14 @@ const components = createModel({
             ...draftState.customComponents[rootParent.id].props,
             [payload.name]: propValue,
           }
-          draftState.pages = updateInstancesInAllPages(
+          draftState.pages = updatePropsInAllInstances(
             draftState.pages,
             rootParent.type,
             payload.name,
             propValue,
           )
         } else {
+          //Here the exposed props are stored in children of root components
           const propValue =
             components[selectedId].props[payload.targetedProp] || ''
 
@@ -306,6 +308,7 @@ const components = createModel({
             draftState.customComponents,
           )
         ) {
+          //Here the component to be moved is removed from its parent
           draftState.customComponents = filterChildren(
             draftState.customComponents,
             previousParentId,
@@ -452,7 +455,6 @@ const components = createModel({
         }
 
         //check whether the component is added into any children of custom component
-
         if (
           isChildrenOfCustomComponent(
             payload.parentId,
@@ -540,11 +542,11 @@ const components = createModel({
         const selectedId = draftState.selectedId
         const component = components[selectedId]
         const CustomName = name.charAt(0).toUpperCase() + name.slice(1)
-        const { newId, clonedComponents, props } = duplicateComponent(
-          components[selectedId],
-          components,
-          true,
-        )
+        const {
+          newId,
+          clonedComponents,
+          customComponentProps,
+        } = duplicateComponent(components[selectedId], components, true)
         draftState.customComponents = {
           ...draftState.customComponents,
           ...clonedComponents,
@@ -553,13 +555,14 @@ const components = createModel({
             type: CustomName,
             children: [newId],
             parent: '',
-            props: props,
+            props: customComponentProps,
           },
         }
         draftState.customComponentList.push(CustomName)
         draftState.customComponents[newId].parent = CustomName
 
-        //delete the children and replace the type , children and props.
+        //delete the children and replace the type , children and props
+        // of the original component instance.
         component.children.forEach(child => {
           draftState.pages[draftState.selectedPage] = deleteComp(
             draftState.pages[draftState.selectedPage][child],
@@ -570,9 +573,9 @@ const components = createModel({
           component.id
         ].type = CustomName
         draftState.pages[draftState.selectedPage][component.id].children = []
-        draftState.pages[draftState.selectedPage][component.id].props = props
-
-        draftState.selectedId = DEFAULT_ID
+        draftState.pages[draftState.selectedPage][
+          component.id
+        ].props = customComponentProps
       })
     },
     hover(
@@ -621,24 +624,17 @@ const components = createModel({
         if (exposedProps) {
           const customPropName = exposedProps[targetedProp].customPropName
           delete exposedProps[targetedProp]
-          if (
-            isChildrenOfCustomComponent(
-              selectedComponent.id,
-              draftState.customComponents,
-            )
-          ) {
-            const rootParent = searchParent(
-              draftState.customComponents[draftState.selectedId],
-              draftState.customComponents,
-              draftState.customComponentList,
-            )
-            delete rootParent.props[customPropName]
-            draftState.pages = deletePropsInAllInstances(
-              draftState.pages,
-              rootParent.type,
-              customPropName,
-            )
-          }
+          const rootParent = searchParent(
+            draftState.customComponents[draftState.selectedId],
+            draftState.customComponents,
+            draftState.customComponentList,
+          )
+          delete rootParent.props[customPropName]
+          draftState.pages = deletePropsInAllInstances(
+            draftState.pages,
+            rootParent.type,
+            customPropName,
+          )
         }
       })
     },

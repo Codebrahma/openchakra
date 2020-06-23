@@ -11,23 +11,6 @@ const CustomComponentsPropsPanel = () => {
     <>
       {Object.keys(selectedComponent.props).map(prop => (
         <Box key={prop} m="10px">
-          {/* <FormControl label={prop} htmlFor={prop}>
-            <Flex alignItems="center">
-              <Input
-                value={selectedComponent.props[prop]}
-                size="sm"
-                name={prop}
-                onChange={setValueFromEvent}
-              />
-              {isCustomComponentPage ? (
-                <ActionButton
-                  label="delete Exposed prop"
-                  icon="small-close"
-                  onClick={() => dispatch.components.deleteExposedProp(prop)}
-                />
-              ) : null}
-            </Flex>
-          </FormControl> */}
           <ExposedPropsPanel propName={prop} />
         </Box>
       ))}

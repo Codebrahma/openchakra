@@ -124,7 +124,7 @@ export const generateCode = async (
       //Display custom component only if the custom component instance is present
       const customComponentInstance = checkInstanceInComponents(componentName)
       if (customComponentInstance) {
-        const showProps = Object.keys(
+        const customComponentProps = Object.keys(
           customComponents[componentName].props,
         ).map(prop => `${prop}`)
 
@@ -133,7 +133,9 @@ export const generateCode = async (
           customComponents,
         )
         return `const ${capitalize(componentName)} = (${
-          showProps.length > 0 ? '{' + showProps.join(',') + '}' : ' '
+          customComponentProps.length > 0
+            ? '{' + customComponentProps.join(',') + '}'
+            : ' '
         }) =>(
         ${componentCode}
      );
@@ -152,6 +154,7 @@ export const generateCode = async (
     }
   })
 
+  //filter the custom components types
   let imports = [
     ...new Set(
       Object.keys(components)

@@ -15,7 +15,7 @@ export const useDropComponent = (
 ) => {
   const dispatch = useDispatch()
   const isCustomPage = useSelector(getShowCustomComponentPage)
-  const isCustomComponent = useSelector(
+  const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(componentId),
   )
 
@@ -28,7 +28,7 @@ export const useDropComponent = (
       if (!monitor.isOver()) {
         return
       }
-      if (isCustomComponent && !isCustomPage) return
+      if (isCustomComponentChild && !isCustomPage) return
 
       if (item.isMoved) {
         dispatch.components.moveComponent({
