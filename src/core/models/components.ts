@@ -52,6 +52,14 @@ const isChildrenOfCustomComponent = (
   return false
 }
 
+const isCustomComponent = (
+  type: string,
+  customComponentsList: Array<string>,
+) => {
+  if (customComponentsList.indexOf(type) !== -1) return true
+  return false
+}
+
 const filterChildren = (
   components: IComponents,
   id: string,
@@ -269,6 +277,15 @@ const components = createModel({
           isChildrenOfCustomComponent(componentId, draftState.customComponents)
         ) {
           const component = draftState.customComponents[componentId]
+          //The outer most children of the custom component can not be deleted.
+          //only the nested children can be deleted.
+          if (
+            isCustomComponent(
+              draftState.customComponents[component.parent].type,
+              draftState.customComponentList,
+            )
+          )
+            return state
           draftState.customComponents = deleteComp(
             component,
             draftState.customComponents,

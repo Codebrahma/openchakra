@@ -18,7 +18,7 @@ const CustomComponentPreview: React.FC<{ component: IComponent }> = ({
   }
 
   return (
-    <Box {...props} ref={ref}>
+    <Box {...props} ref={ref} width="fit-content">
       {customComponents[component.type].children.map((key: string) => (
         <ComponentPreview
           key={key}

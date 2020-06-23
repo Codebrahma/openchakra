@@ -49,8 +49,9 @@ const buildBlock = (component: IComponent, components: IComponents) => {
 
         if (propName !== 'children') {
           if (
-            exposedProps === undefined ||
-            exposedProps[propName] === undefined
+            (exposedProps === undefined ||
+              exposedProps[propName] === undefined) &&
+            propsValue.length > 0
           ) {
             let operand = `='${propsValue}'`
             if (propsValue === true || propsValue === 'true') {
