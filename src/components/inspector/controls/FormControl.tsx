@@ -1,5 +1,6 @@
 import React, { ReactNode, memo } from 'react'
 import { useSelector } from 'react-redux'
+import { FiRepeat } from 'react-icons/fi'
 import {
   FormControl as ChakraFormControl,
   Grid,
@@ -43,7 +44,7 @@ const FormControl: React.FC<FormControlPropType> = ({
       alignItems="center"
       justifyItems="center"
     >
-      {isCustomComponentPage && !isCustomComponent && !isPropExposed ? (
+      {isCustomComponentPage && !isPropExposed ? (
         <PopOverControl label={label} htmlFor={htmlFor} hasColumn={hasColumn} />
       ) : (
         <FormLabel
@@ -66,11 +67,12 @@ const FormControl: React.FC<FormControlPropType> = ({
             fontWeight="bold"
             mr="11px"
           >
-            Prop is exposed
+            exposed as{' '}
+            {exposedProps && htmlFor && exposedProps[htmlFor].customPropName}
           </Text>
           <ActionButton
             label="Unexpose"
-            icon="small-close"
+            icon={FiRepeat}
             onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
           />
         </Box>
@@ -84,7 +86,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
-      {isCustomComponentPage && isCustomComponent ? (
+      {isCustomComponentPage && isCustomComponent && !isPropExposed ? (
         <ActionButton
           label="delete Exposed prop"
           icon="small-close"

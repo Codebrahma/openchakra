@@ -95,6 +95,10 @@ interface PropRefs {
   [name: string]: PropRef
 }
 
+interface ExposedPropsChildren {
+  [name: string]: string[]
+}
+
 interface IComponent {
   children: string[]
   type: ComponentType | string
@@ -103,6 +107,7 @@ interface IComponent {
   props: any
   rootParentType?: ComponentType | string
   exposedProps?: PropRefs
+  exposedPropsChildren?: ExposedChildren
 }
 
 interface IComponents {

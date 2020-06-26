@@ -75,7 +75,10 @@ export const searchParent = (
 ) => {
   let foundParent = { ...component }
   const searchParentRecursive = (comp: IComponent) => {
-    if (customComponentsList.indexOf(comp.type) === -1)
+    if (
+      customComponentsList.length > 0 &&
+      customComponentsList.indexOf(comp.type) === -1
+    )
       searchParentRecursive(components[comp.parent])
     else foundParent = { ...comp }
   }
@@ -98,30 +101,70 @@ export const findChildrenImports = (
   return childrenImports
 }
 
-export const searchExposedProp = (
+export const updateCustomComponentProps = (
+  components: IComponents,
   component: IComponent,
-  customComponents: IComponents,
-  customPropName: string,
+  parentComponent: IComponent,
 ) => {
-  let exposedPropComponent: IComponent = component
-  let exposedPropName: string = ''
-  const searchExposedPropRecursive = (component: IComponent) => {
-    if (component.exposedProps) {
-      Object.values(component.exposedProps).forEach(prop => {
-        if (prop.customPropName === customPropName) {
-          exposedPropComponent = component
-          exposedPropName = prop.targetedProp
-        }
+  const props = parentComponent.props
+  const exposedPropsChildren = parentComponent.exposedPropsChildren
+  const updateCustomComponentPropsRecursive = (comp: IComponent) => {
+    if (comp.exposedProps) {
+      Object.values(comp.exposedProps).forEach((exposedProp: PropRef) => {
+        props[exposedProp.customPropName] = exposedProp.value || ''
+        exposedPropsChildren[exposedProp.customPropName] = exposedPropsChildren[
+          exposedProp.customPropName
+        ]
+          ? exposedPropsChildren[exposedProp.customPropName].push(component.id)
+          : [component.id]
       })
     } else {
-      Object.values(component.children).forEach(childId =>
-        searchExposedPropRecursive(customComponents[childId]),
+      comp.children.forEach(child =>
+        updateCustomComponentPropsRecursive(components[child]),
       )
     }
   }
-  searchExposedPropRecursive(customComponents[component.children[0]])
+  updateCustomComponentPropsRecursive(component)
   return {
-    exposedPropComponent: exposedPropComponent,
-    exposedPropName: exposedPropName,
+    updatedProps: props,
+    updatedExposedPropsChildren: exposedPropsChildren,
+  }
+}
+
+export const deleteCustomComponentProps = (
+  components: IComponents,
+  component: IComponent,
+  parentComponent: IComponent,
+) => {
+  const props = parentComponent.props
+  const exposedPropsChildren = parentComponent.exposedPropsChildren
+  const deleteCustomComponentPropsRecursive = (comp: IComponent) => {
+    if (comp.exposedProps) {
+      Object.values(comp.exposedProps).forEach((exposedProp: PropRef) => {
+        if (
+          exposedPropsChildren &&
+          exposedPropsChildren[exposedProp.customPropName]
+        ) {
+          exposedPropsChildren[exposedProp.customPropName].splice(
+            exposedPropsChildren[exposedProp.customPropName].indexOf(comp.id),
+          )
+          console.log(exposedPropsChildren)
+
+          if (exposedPropsChildren[exposedProp.customPropName].length === 0) {
+            delete exposedPropsChildren[exposedProp.customPropName]
+            delete props[exposedProp.customPropName]
+          }
+        }
+      })
+    } else {
+      comp.children.forEach(child =>
+        deleteCustomComponentPropsRecursive(components[child]),
+      )
+    }
+  }
+  deleteCustomComponentPropsRecursive(component)
+  return {
+    updatedProps: props,
+    updatedExposedPropsChildren: exposedPropsChildren,
   }
 }

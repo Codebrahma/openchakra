@@ -6,7 +6,6 @@ import {
   getSelectedComponent,
   getCustomComponents,
 } from '../../../core/selectors/components'
-import { searchExposedProp } from '../../../utils/recursive'
 import ColorsControl from '../controls/ColorsControl'
 import { Input, Select } from '@chakra-ui/core'
 import IconControl from '../controls/IconControl'
@@ -24,11 +23,15 @@ const propOptions: optionsType = {
 const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
   const selectedComponent = useSelector(getSelectedComponent)
   const customComponents = useSelector(getCustomComponents)
-  const { exposedPropName, exposedPropComponent } = searchExposedProp(
-    customComponents[selectedComponent.type],
-    customComponents,
-    propName,
-  )
+  const exposedChild =
+    customComponents[selectedComponent.exposedPropsChildren[propName][0]]
+  let exposedPropName = propName
+  exposedChild.exposedProps &&
+    Object.values(exposedChild.exposedProps).forEach(exposedProp => {
+      if (exposedProp.customPropName === propName)
+        exposedPropName = exposedProp.targetedProp
+    })
+
   const { setValueFromEvent } = useForm()
 
   const defaultControl = (
@@ -54,7 +57,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
         <ColorsControl name={propName} label={propName} enableHues={true} />
       )
     case 'name': {
-      if (exposedPropComponent.type === 'Icon')
+      if (exposedChild.type === 'Icon')
         return <IconControl label={propName} name={propName} />
       else return defaultControl
     }
@@ -65,10 +68,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
     case 'rightIcon':
       return <IconControl label={propName} name={propName} />
     case 'size': {
-      if (
-        exposedPropComponent.type === 'Heading' ||
-        exposedPropComponent.type === 'Avatar'
-      )
+      if (exposedChild.type === 'Heading' || exposedChild.type === 'Avatar')
         return (
           <SizeControl
             name={propName}
@@ -122,7 +122,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
           label={propName}
           name={propName}
           value={selectedComponent.props[propName]}
-          type={exposedPropComponent.type}
+          type={exposedChild.type}
         />
       )
 

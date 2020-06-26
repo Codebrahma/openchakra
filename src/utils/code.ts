@@ -116,6 +116,9 @@ export const generateCode = async (
     Object.values(components).forEach(component => {
       if (component.type === componentType) isPresent = true
     })
+    Object.values(customComponents).forEach(component => {
+      if (component.type === componentType) isPresent = true
+    })
     return isPresent
   }
 
@@ -165,7 +168,11 @@ export const generateCode = async (
         )
         .map(name => components[name].type),
     ),
-    ...new Set(customComponentImports),
+    ...new Set(
+      customComponentImports.filter(
+        name => customComponentsList.indexOf(name) === -1,
+      ),
+    ),
   ]
   //remove duplicates from the imports array.
   imports = uniq(imports)

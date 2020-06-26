@@ -176,7 +176,12 @@ const ComponentPreview: React.FC<{
     case 'MenuGroup':
       return <MenuGroupPreview component={component} />
     default:
-      return <CustomComponentPreview component={component} />
+      return (
+        <CustomComponentPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
   }
 }
 
