@@ -117,7 +117,8 @@ export const generateCode = async (
       if (component.type === componentType) isPresent = true
     })
     Object.values(customComponents).forEach(component => {
-      if (component.type === componentType) isPresent = true
+      if (component.type === componentType && component.id !== componentType)
+        isPresent = true
     })
     return isPresent
   }

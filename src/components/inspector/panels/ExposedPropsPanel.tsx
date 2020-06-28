@@ -23,6 +23,7 @@ const propOptions: optionsType = {
 const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
   const selectedComponent = useSelector(getSelectedComponent)
   const customComponents = useSelector(getCustomComponents)
+
   const exposedChild =
     customComponents[selectedComponent.exposedPropsChildren[propName][0]]
   let exposedPropName = propName

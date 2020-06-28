@@ -200,9 +200,8 @@ const components = createModel({
         if (
           isChildrenOfCustomComponent(payload.id, draftState.customComponents)
         ) {
-          if (draftState.selectedPage === 'custom')
-            draftState.customComponents[payload.id].props[payload.name] =
-              payload.value
+          draftState.customComponents[payload.id].props[payload.name] =
+            payload.value
         } else components[payload.id].props[payload.name] = payload.value
       })
     },
@@ -217,6 +216,26 @@ const components = createModel({
         if (
           isChildrenOfCustomComponent(selectedId, draftState.customComponents)
         ) {
+          let addCustomProp: string = 'yes'
+          let customPropName = payload.name
+          const rootParent = searchParent(
+            draftState.customComponents[selectedId],
+            draftState.customComponents,
+            draftState.customComponentList,
+          )
+          if (rootParent.props[customPropName])
+            addCustomProp =
+              window
+                .prompt(
+                  'The root parent already has the similar prop name. To continue with the same propName , type yes else type no',
+                )
+                ?.toLowerCase() || 'yes'
+          if (addCustomProp === 'no') {
+            customPropName =
+              window.prompt('Enter the new prop name for the exposed prop') ||
+              payload.name
+          }
+
           //Here the exposed props are stored in children of custom components
           const propValue =
             draftState.customComponents[selectedId].props[
@@ -226,15 +245,9 @@ const components = createModel({
             ...draftState.customComponents[selectedId].exposedProps,
             [payload.targetedProp]: {
               targetedProp: payload.targetedProp,
-              customPropName: payload.name,
+              customPropName: customPropName,
             },
           }
-
-          const rootParent = searchParent(
-            draftState.customComponents[selectedId],
-            draftState.customComponents,
-            draftState.customComponentList,
-          )
 
           const {
             updatedPages,
@@ -246,15 +259,15 @@ const components = createModel({
             (component: IComponent) => {
               component.props = {
                 ...component.props,
-                [payload.name]: propValue,
+                [customPropName]: propValue,
               }
               const exposedPropsChildren = component.exposedPropsChildren
 
               if (exposedPropsChildren)
-                exposedPropsChildren[payload.name] = exposedPropsChildren[
-                  payload.name
+                exposedPropsChildren[customPropName] = exposedPropsChildren[
+                  customPropName
                 ]
-                  ? [...exposedPropsChildren[payload.name], selectedId]
+                  ? [...exposedPropsChildren[customPropName], selectedId]
                   : [selectedId]
             },
           )
@@ -264,39 +277,14 @@ const components = createModel({
           //Here the exposed props are stored in children of root components
           const propValue =
             components[selectedId].props[payload.targetedProp] || ''
-          console.log('here2')
 
-          if (
-            isCustomComponent(
-              draftState.pages[draftState.selectedPage][selectedId].type,
-              draftState.customComponentList,
-            )
-          ) {
-            console.log('here')
-            updateInAllInstances(
-              draftState.pages,
-              draftState.customComponents,
-              draftState.pages[draftState.selectedPage][selectedId].type,
-              (component: IComponent) => {
-                component.exposedProps = {
-                  ...component.exposedProps,
-                  [payload.targetedProp]: {
-                    targetedProp: payload.targetedProp,
-                    customPropName: payload.name,
-                    value: propValue,
-                  },
-                }
-              },
-            )
-          } else {
-            components[selectedId].exposedProps = {
-              ...components[selectedId].exposedProps,
-              [payload.targetedProp]: {
-                targetedProp: payload.targetedProp,
-                customPropName: payload.name,
-                value: propValue,
-              },
-            }
+          components[selectedId].exposedProps = {
+            ...components[selectedId].exposedProps,
+            [payload.targetedProp]: {
+              targetedProp: payload.targetedProp,
+              customPropName: payload.name,
+              value: propValue,
+            },
           }
         }
       })
@@ -346,7 +334,7 @@ const components = createModel({
           )
           const {
             updatedExposedPropsChildren,
-            updatedProps,
+            deletedProp,
           } = deleteCustomComponentProps(
             draftState.customComponents,
             draftState.customComponents[selectedCustomComponent.id],
@@ -360,8 +348,8 @@ const components = createModel({
             draftState.customComponents,
             customComponentParent.type,
             (component: IComponent) => {
-              component.props = updatedProps
               component.exposedPropsChildren = updatedExposedPropsChildren
+              delete component.props[deletedProp]
             },
           )
           draftState.pages = updatedPages
@@ -400,7 +388,6 @@ const components = createModel({
         if (previousParentId === payload.parentId) return state
         //The outer most children of the custom component can not be moved.
         //only the nested children can be moved.
-
         if (
           draftState.customComponents[selectedComponent.parent] &&
           isCustomComponent(
@@ -424,18 +411,57 @@ const components = createModel({
             )
           ) {
             //Check whether the component is to be moved is not the same type
-            const rootParent = searchParent(
+            const newRootParent = searchParent(
               draftState.customComponents[payload.parentId],
               draftState.customComponents,
               draftState.customComponentList,
             )
-
-            if (
-              rootParent.type ===
-              draftState.customComponents[payload.componentId].type
+            const oldRootParent = searchParent(
+              draftState.customComponents[payload.componentId],
+              draftState.customComponents,
+              draftState.customComponentList,
             )
-              return state
+            //A custom component can not be nested inside its own.
+            if (newRootParent.type === oldRootParent.type) return state
+            let newProps: any = {}
+            let newExposedPropsChildren: ExposedPropsChildren = {}
+            Object.keys(oldRootParent.exposedPropsChildren).forEach(
+              propName => {
+                newProps[propName] = oldRootParent.props[propName]
+                newExposedPropsChildren[propName] = [payload.componentId]
+              },
+            )
+            updateInAllInstances(
+              draftState.pages,
+              draftState.customComponents,
+              newRootParent.type,
+              (component: IComponent) => {
+                component.props = { ...component.props, ...newProps }
+                component.exposedPropsChildren = {
+                  ...component.exposedPropsChildren,
+                  ...newExposedPropsChildren,
+                }
+              },
+            )
+            const {
+              updatedExposedPropsChildren,
+              deletedProp,
+            } = deleteCustomComponentProps(
+              draftState.customComponents,
+              draftState.customComponents[payload.componentId],
+              oldRootParent,
+            )
+            updateInAllInstances(
+              draftState.pages,
+              draftState.customComponents,
+              oldRootParent.type,
+              (component: IComponent) => {
+                component.exposedPropsChildren = updatedExposedPropsChildren
+                delete component.props[deletedProp]
+              },
+            )
             //Here the component to be moved is removed from its parent
+
             draftState.customComponents = filterChildren(
               draftState.customComponents,
               previousParentId,
@@ -466,9 +492,10 @@ const components = createModel({
               draftState.customComponents,
               draftState.customComponentList,
             )
+
             const {
               updatedExposedPropsChildren,
-              updatedProps,
+              deletedProp,
             } = deleteCustomComponentProps(
               draftState.customComponents,
               draftState.customComponents[payload.componentId],
@@ -482,8 +509,8 @@ const components = createModel({
               draftState.customComponents,
               customComponentParent.type,
               (component: IComponent) => {
-                component.props = updatedProps
                 component.exposedPropsChildren = updatedExposedPropsChildren
+                delete component.props[deletedProp]
               },
             )
             draftState.pages = updatedPages
@@ -531,18 +558,14 @@ const components = createModel({
               components[payload.componentId],
               components,
             )
-            const customComponentParent = searchParent(
-              draftState.customComponents[newId],
-              draftState.customComponents,
-              draftState.customComponentList,
-            )
+
             const {
               updatedExposedPropsChildren,
-              updatedProps,
+              newProps,
             } = updateCustomComponentProps(
               draftState.customComponents,
               draftState.customComponents[newId],
-              customComponentParent,
+              rootParent,
             )
             const {
               updatedCustomComponents,
@@ -550,9 +573,9 @@ const components = createModel({
             } = updateInAllInstances(
               draftState.pages,
               draftState.customComponents,
-              customComponentParent.type,
+              rootParent.type,
               (component: IComponent) => {
-                component.props = updatedProps
+                component.props = { ...component.props, ...newProps }
                 component.exposedPropsChildren = updatedExposedPropsChildren
               },
             )
@@ -729,22 +752,43 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         let components = draftState.pages[draftState.selectedPage]
 
-        const selectedComponent = components[draftState.selectedId]
+        const selectedComponent =
+          components[draftState.selectedId] ||
+          draftState.customComponents[draftState.selectedId]
 
-        if (selectedComponent.id !== DEFAULT_ID) {
-          const parentElement = components[selectedComponent.parent]
-
-          const { newId, clonedComponents } = duplicateComponent(
-            selectedComponent,
-            components,
+        if (components[draftState.selectedId] === undefined) {
+          components = draftState.customComponents
+          //The outer most children of the custom component can not be duplicated.
+          //only the nested children can be duplicated.
+          if (
+            isCustomComponent(
+              components[selectedComponent.parent].type,
+              draftState.customComponentList,
+            )
           )
+            return state
+        }
 
-          components = {
+        const parentElement = components[selectedComponent.parent]
+
+        const { newId, clonedComponents } = duplicateComponent(
+          selectedComponent,
+          components,
+        )
+        if (
+          draftState.pages[draftState.selectedPage][draftState.selectedId] ===
+          undefined
+        )
+          draftState.customComponents = {
             ...components,
             ...clonedComponents,
           }
-          components[parentElement.id].children.push(newId)
-        }
+        else
+          draftState.pages[draftState.selectedPage] = {
+            ...components,
+            ...clonedComponents,
+          }
+        components[parentElement.id].children.push(newId)
       })
     },
     saveComponent(state: ComponentsState, name: string): ComponentsState {
@@ -757,7 +801,8 @@ const components = createModel({
           newId,
           clonedComponents,
           customComponentProps,
-        } = duplicateComponent(components[selectedId], components, true)
+          exposedPropsChildren,
+        } = duplicateComponent(components[selectedId], components)
         draftState.customComponents = {
           ...draftState.customComponents,
           ...clonedComponents,
@@ -767,7 +812,7 @@ const components = createModel({
             children: [newId],
             parent: '',
             props: customComponentProps,
-            exposedPropsChildren: {},
+            exposedPropsChildren: exposedPropsChildren,
           },
         }
         draftState.customComponentList.push(CustomName)
@@ -790,7 +835,7 @@ const components = createModel({
         ].props = customComponentProps
         draftState.pages[draftState.selectedPage][
           component.id
-        ].exposedPropsChildren = {}
+        ].exposedPropsChildren = exposedPropsChildren
       })
     },
     hover(

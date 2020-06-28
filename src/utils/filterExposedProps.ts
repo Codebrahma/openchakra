@@ -1,3 +1,4 @@
+//This function is used to take props and its values that are exposed from the exposedProps property.
 const filterExposedProps = (
   exposedProps: PropRefs | undefined,
   customParentProps: any,
@@ -5,11 +6,10 @@ const filterExposedProps = (
   let filteredProp = {}
   if (customParentProps && exposedProps) {
     Object.values(exposedProps).forEach(prop => {
-      if (customParentProps[prop.customPropName])
-        filteredProp = {
-          ...filteredProp,
-          [prop.targetedProp]: customParentProps[prop.customPropName],
-        }
+      filteredProp = {
+        ...filteredProp,
+        [prop.targetedProp]: customParentProps[prop.customPropName],
+      }
     })
   }
   return filteredProp
