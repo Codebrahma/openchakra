@@ -8,7 +8,7 @@ import {
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
-import filterExposedProps from '../../utils/filterExposedProps'
+import findExposedPropsValue from '../../utils/findExposedPropsValue'
 
 const WithChildrenPreviewContainer: React.FC<{
   component: IComponent
@@ -32,7 +32,10 @@ const WithChildrenPreviewContainer: React.FC<{
   )
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
 
-  const propsToReplace = filterExposedProps(component.exposedProps, customProps)
+  const propsToReplace = findExposedPropsValue(
+    component.exposedProps,
+    customProps,
+  )
 
   const propsElement = { ...props, ...forwardedProps, ...propsToReplace }
   if (!isBoxWrapped) {

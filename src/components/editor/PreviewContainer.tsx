@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
-import filterExposedProps from '../../utils/filterExposedProps'
+import findExposedPropsValue from '../../utils/findExposedPropsValue'
 
 const PreviewContainer: React.FC<{
   component: IComponent
@@ -18,7 +18,10 @@ const PreviewContainer: React.FC<{
   ...forwardedProps
 }) => {
   const { props, ref } = useInteractive(component, enableVisualHelper)
-  const propsToReplace = filterExposedProps(component.exposedProps, customProps)
+  const propsToReplace = findExposedPropsValue(
+    component.exposedProps,
+    customProps,
+  )
 
   const children = React.createElement(type, {
     ...props,

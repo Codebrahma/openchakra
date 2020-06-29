@@ -95,7 +95,7 @@ interface PropRefs {
   [name: string]: PropRef
 }
 
-interface ExposedPropsChildren {
+interface ExposedChildren {
   [name: string]: string[]
 }
 
@@ -107,7 +107,7 @@ interface IComponent {
   props: any
   rootParentType?: ComponentType | string
   exposedProps?: PropRefs
-  exposedPropsChildren?: ExposedChildren
+  exposedChildren?: ExposedChildren
 }
 
 interface IComponents {

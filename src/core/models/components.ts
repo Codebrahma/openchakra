@@ -147,7 +147,7 @@ const removeExposedChildrenFromParent = (
   component: IComponent,
   propName: string,
 ) => {
-  const exposedPropsChildren = component.exposedPropsChildren
+  const exposedPropsChildren = component.exposedChildren
   if (exposedPropsChildren) {
     exposedPropsChildren[propName].splice(
       exposedPropsChildren[propName].indexOf(component.id),
@@ -261,13 +261,13 @@ const components = createModel({
                 ...component.props,
                 [customPropName]: propValue,
               }
-              const exposedPropsChildren = component.exposedPropsChildren
+              const exposedChildren = component.exposedChildren
 
-              if (exposedPropsChildren)
-                exposedPropsChildren[customPropName] = exposedPropsChildren[
+              if (exposedChildren)
+                exposedChildren[customPropName] = exposedChildren[
                   customPropName
                 ]
-                  ? [...exposedPropsChildren[customPropName], selectedId]
+                  ? [...exposedChildren[customPropName], selectedId]
                   : [selectedId]
             },
           )
@@ -333,7 +333,7 @@ const components = createModel({
             draftState.customComponentList,
           )
           const {
-            updatedExposedPropsChildren,
+            updatedExposedChildren,
             deletedProp,
           } = deleteCustomComponentProps(
             draftState.customComponents,
@@ -348,7 +348,7 @@ const components = createModel({
             draftState.customComponents,
             customComponentParent.type,
             (component: IComponent) => {
-              component.exposedPropsChildren = updatedExposedPropsChildren
+              component.exposedChildren = updatedExposedChildren
               delete component.props[deletedProp]
             },
           )
@@ -424,27 +424,26 @@ const components = createModel({
             //A custom component can not be nested inside its own.
             if (newRootParent.type === oldRootParent.type) return state
             let newProps: any = {}
-            let newExposedPropsChildren: ExposedPropsChildren = {}
-            Object.keys(oldRootParent.exposedPropsChildren).forEach(
-              propName => {
+            let newexposedChildren: ExposedChildren = {}
+            oldRootParent.exposedChildren &&
+              Object.keys(oldRootParent.exposedChildren).forEach(propName => {
                 newProps[propName] = oldRootParent.props[propName]
-                newExposedPropsChildren[propName] = [payload.componentId]
-              },
-            )
+                newexposedChildren[propName] = [payload.componentId]
+              })
             updateInAllInstances(
               draftState.pages,
               draftState.customComponents,
               newRootParent.type,
               (component: IComponent) => {
                 component.props = { ...component.props, ...newProps }
-                component.exposedPropsChildren = {
-                  ...component.exposedPropsChildren,
-                  ...newExposedPropsChildren,
+                component.exposedChildren = {
+                  ...component.exposedChildren,
+                  ...newexposedChildren,
                 }
               },
             )
             const {
-              updatedExposedPropsChildren,
+              updatedExposedChildren,
               deletedProp,
             } = deleteCustomComponentProps(
               draftState.customComponents,
@@ -456,7 +455,7 @@ const components = createModel({
               draftState.customComponents,
               oldRootParent.type,
               (component: IComponent) => {
-                component.exposedPropsChildren = updatedExposedPropsChildren
+                component.exposedChildren = updatedExposedChildren
                 delete component.props[deletedProp]
               },
             )
@@ -494,7 +493,7 @@ const components = createModel({
             )
 
             const {
-              updatedExposedPropsChildren,
+              updatedExposedChildren,
               deletedProp,
             } = deleteCustomComponentProps(
               draftState.customComponents,
@@ -509,7 +508,7 @@ const components = createModel({
               draftState.customComponents,
               customComponentParent.type,
               (component: IComponent) => {
-                component.exposedPropsChildren = updatedExposedPropsChildren
+                component.exposedChildren = updatedExposedChildren
                 delete component.props[deletedProp]
               },
             )
@@ -560,7 +559,7 @@ const components = createModel({
             )
 
             const {
-              updatedExposedPropsChildren,
+              updatedExposedChildren,
               newProps,
             } = updateCustomComponentProps(
               draftState.customComponents,
@@ -576,7 +575,7 @@ const components = createModel({
               rootParent.type,
               (component: IComponent) => {
                 component.props = { ...component.props, ...newProps }
-                component.exposedPropsChildren = updatedExposedPropsChildren
+                component.exposedChildren = updatedExposedChildren
               },
             )
             draftState.pages = updatedPages
@@ -677,7 +676,7 @@ const components = createModel({
           children: [],
           type: payload.type,
           parent: payload.parentId,
-          exposedPropsChildren: customComponent.exposedPropsChildren,
+          exposedChildren: customComponent.exposedChildren,
           exposedProps: customComponent.exposedProps,
         }
 
@@ -801,7 +800,7 @@ const components = createModel({
           newId,
           clonedComponents,
           customComponentProps,
-          exposedPropsChildren,
+          exposedChildren,
         } = duplicateComponent(components[selectedId], components)
         draftState.customComponents = {
           ...draftState.customComponents,
@@ -812,7 +811,7 @@ const components = createModel({
             children: [newId],
             parent: '',
             props: customComponentProps,
-            exposedPropsChildren: exposedPropsChildren,
+            exposedChildren: exposedChildren,
           },
         }
         draftState.customComponentList.push(CustomName)
@@ -835,7 +834,7 @@ const components = createModel({
         ].props = customComponentProps
         draftState.pages[draftState.selectedPage][
           component.id
-        ].exposedPropsChildren = exposedPropsChildren
+        ].exposedChildren = exposedChildren
       })
     },
     hover(
@@ -918,7 +917,7 @@ const components = createModel({
               draftState.customComponents,
               rootParent.type,
               (component: IComponent) => {
-                component.exposedPropsChildren = removeExposedChildrenFromParent(
+                component.exposedChildren = removeExposedChildrenFromParent(
                   component,
                   customPropName,
                 )
@@ -955,10 +954,9 @@ const components = createModel({
           draftState.customComponents[draftState.selectedId]
         const selectedCustomComponent =
           draftState.customComponents[selectedComponent.type]
-        const exposedPropsChildren =
-          selectedCustomComponent.exposedPropsChildren
-        if (exposedPropsChildren && exposedPropsChildren[propName]) {
-          exposedPropsChildren[propName].forEach((exposedChild: string) => {
+        const exposedChildren = selectedCustomComponent.exposedChildren
+        if (exposedChildren && exposedChildren[propName]) {
+          exposedChildren[propName].forEach((exposedChild: string) => {
             const exposedProps =
               draftState.customComponents[exposedChild].exposedProps
             exposedProps &&
@@ -973,9 +971,9 @@ const components = createModel({
           draftState.customComponents,
           selectedCustomComponent.type,
           (component: IComponent) => {
-            const exposedPropsChildren = component.exposedPropsChildren
-            if (exposedPropsChildren) {
-              delete exposedPropsChildren[propName]
+            const exposedChildren = component.exposedChildren
+            if (exposedChildren) {
+              delete exposedChildren[propName]
               delete component.props[propName]
             }
           },

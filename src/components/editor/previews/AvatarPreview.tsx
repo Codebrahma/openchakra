@@ -15,7 +15,7 @@ import {
   getCustomComponents,
   isChildrenOfCustomComponent,
 } from '../../../core/selectors/components'
-import filterExposedProps from '../../../utils/filterExposedProps'
+import findExposedPropsValue from '../../../utils/findExposedPropsValue'
 
 const AvatarPreview: React.FC<IPreviewProps & {
   spacing?: BoxProps['marginLeft']
@@ -23,7 +23,10 @@ const AvatarPreview: React.FC<IPreviewProps & {
 }> = ({ component, spacing, index, customProps }) => {
   const { drop, isOver } = useDropComponent(component.id, ['AvatarBadge'])
   const { props, ref } = useInteractive(component)
-  const propsToReplace = filterExposedProps(component.exposedProps, customProps)
+  const propsToReplace = findExposedPropsValue(
+    component.exposedProps,
+    customProps,
+  )
 
   let boxProps: any = {
     display: 'inline-block',
@@ -63,7 +66,10 @@ export const AvatarGroupPreview = ({
   const components = useSelector(
     isCustomComponentsChild ? getCustomComponents : getComponents,
   )
-  const propsToReplace = filterExposedProps(component.exposedProps, customProps)
+  const propsToReplace = findExposedPropsValue(
+    component.exposedProps,
+    customProps,
+  )
 
   let boxProps: any = { display: 'inline' }
 
@@ -94,7 +100,10 @@ export const AvatarBadgePreview = ({
 }: IPreviewProps) => {
   const { props, ref } = useInteractive(component)
   let boxProps: any = {}
-  const propsToReplace = filterExposedProps(component.exposedProps, customProps)
+  const propsToReplace = findExposedPropsValue(
+    component.exposedProps,
+    customProps,
+  )
   return (
     <Box {...boxProps} ref={ref}>
       <AvatarBadge {...props} {...propsToReplace} />

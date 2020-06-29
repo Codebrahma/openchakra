@@ -111,14 +111,31 @@ const Inspector = () => {
                 onClick={() => {
                   const name = prompt('Enter the name for the Component')
                   if (name && name.length > 1) {
-                    dispatch.components.saveComponent(name)
-                    toast({
-                      title: 'Component is saved successfully.',
-                      status: 'success',
-                      duration: 1000,
-                      isClosable: true,
-                      position: 'top',
-                    })
+                    //check if the name already exist
+                    if (
+                      customComponentsList.indexOf(
+                        name.charAt(0).toUpperCase() + name.slice(1),
+                      ) !== -1
+                    )
+                      toast({
+                        title: 'Duplicate type',
+                        description:
+                          'An custom component already exists with the same name.',
+                        status: 'error',
+                        duration: 1000,
+                        isClosable: true,
+                        position: 'top',
+                      })
+                    else {
+                      dispatch.components.saveComponent(name)
+                      toast({
+                        title: 'Component is saved successfully.',
+                        status: 'success',
+                        duration: 1000,
+                        isClosable: true,
+                        position: 'top',
+                      })
+                    }
                   }
                 }}
                 icon="add"

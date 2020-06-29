@@ -22,7 +22,7 @@ const options: optionsType = {
 
 const VariantPanel = (props: variantControlPropsType) => {
   const { setValueFromEvent } = useForm()
-  const choices = options[props.type]
+  const choices = options[props.type] || options['IconButton']
 
   return (
     <FormControl label={props.label} htmlFor={props.name || 'size'}>

@@ -1,5 +1,6 @@
-//This function is used to take props and its values that are exposed from the exposedProps property.
-const filterExposedProps = (
+//This function is used to find the value of the props that are exposed .
+// the value is found from the props from the  root parent custom component.
+const findExposedPropsValue = (
   exposedProps: PropRefs | undefined,
   customParentProps: any,
 ) => {
@@ -15,4 +16,4 @@ const filterExposedProps = (
   return filteredProp
 }
 
-export default filterExposedProps
+export default findExposedPropsValue

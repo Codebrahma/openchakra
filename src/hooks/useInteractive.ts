@@ -14,6 +14,7 @@ export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
   isCustomComponent?: boolean,
+  onlyVisualHelper?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
@@ -25,6 +26,7 @@ export const useInteractive = (
     isChildrenOfCustomComponent(component.id),
   )
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
+  const componentProps = onlyVisualHelper ? {} : { ...component.props }
 
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
@@ -38,7 +40,7 @@ export const useInteractive = (
   const ref = useRef<HTMLDivElement>(null)
   let props = enableInteractive
     ? {
-        ...component.props,
+        ...componentProps,
         onMouseOver: (event: MouseEvent) => {
           event.stopPropagation()
           dispatch.components.hover(component.id)
@@ -59,7 +61,7 @@ export const useInteractive = (
           }
         },
       }
-    : { ...component.props }
+    : { ...componentProps }
 
   if (showLayout && enableVisualHelper) {
     props = {

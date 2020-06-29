@@ -20,20 +20,42 @@ const propOptions: optionsType = {
   as: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 }
 
+//find control by searching along the exposed children of custom component.
+const findControl = (
+  component: IComponent,
+  customComponents: IComponents,
+  propName: string,
+) => {
+  let controlProp: string = propName
+  let controlComponent: IComponent = component
+  const findControlRecursive = (comp: IComponent, propName: string) => {
+    if (comp.exposedChildren && comp.exposedChildren[propName]) {
+      const exposedChild = comp.exposedChildren[propName][0]
+      const exposedProps = customComponents[exposedChild].exposedProps
+      exposedProps &&
+        Object.values(exposedProps).forEach(exposedProp => {
+          if (exposedProp.customPropName === propName)
+            controlProp = exposedProp.targetedProp
+        })
+      findControlRecursive(customComponents[exposedChild], controlProp)
+    } else {
+      controlProp = propName
+      controlComponent = comp
+    }
+  }
+  findControlRecursive(component, propName)
+  return { controlProp: controlProp, controlComponent: controlComponent }
+}
+
 const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
   const selectedComponent = useSelector(getSelectedComponent)
   const customComponents = useSelector(getCustomComponents)
-
-  const exposedChild =
-    customComponents[selectedComponent.exposedPropsChildren[propName][0]]
-  let exposedPropName = propName
-  exposedChild.exposedProps &&
-    Object.values(exposedChild.exposedProps).forEach(exposedProp => {
-      if (exposedProp.customPropName === propName)
-        exposedPropName = exposedProp.targetedProp
-    })
-
   const { setValueFromEvent } = useForm()
+  const { controlComponent, controlProp } = findControl(
+    selectedComponent,
+    customComponents,
+    propName,
+  )
 
   const defaultControl = (
     <FormControl label={propName} htmlFor={propName}>
@@ -46,7 +68,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
     </FormControl>
   )
 
-  switch (exposedPropName) {
+  switch (controlProp) {
     case 'color':
       return (
         <ColorsControl name={propName} label={propName} enableHues={true} />
@@ -58,7 +80,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
         <ColorsControl name={propName} label={propName} enableHues={true} />
       )
     case 'name': {
-      if (exposedChild.type === 'Icon')
+      if (controlComponent.type === 'Icon')
         return <IconControl label={propName} name={propName} />
       else return defaultControl
     }
@@ -69,7 +91,10 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
     case 'rightIcon':
       return <IconControl label={propName} name={propName} />
     case 'size': {
-      if (exposedChild.type === 'Heading' || exposedChild.type === 'Avatar')
+      if (
+        controlComponent.type === 'Heading' ||
+        controlComponent.type === 'Avatar'
+      )
         return (
           <SizeControl
             name={propName}
@@ -123,7 +148,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
           label={propName}
           name={propName}
           value={selectedComponent.props[propName]}
-          type={exposedChild.type}
+          type={controlComponent.type}
         />
       )
 
