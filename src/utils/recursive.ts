@@ -175,3 +175,23 @@ export const deleteCustomComponentProps = (
     deletedProp: propDeleted,
   }
 }
+
+export const getAllTheCustomPropNames = (
+  component: IComponent,
+  components: IComponents,
+) => {
+  const propNames: any = []
+  const getAllTheCustomPropNamesRecursive = (comp: IComponent) => {
+    comp.exposedProps &&
+      Object.values(comp.exposedProps).forEach(exposedProp => {
+        propNames.push(exposedProp.customPropName)
+      })
+    if (comp.children) {
+      comp.children.forEach(child =>
+        getAllTheCustomPropNamesRecursive(components[child]),
+      )
+    }
+  }
+  getAllTheCustomPropNamesRecursive(component)
+  return propNames
+}

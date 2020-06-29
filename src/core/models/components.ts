@@ -9,6 +9,7 @@ import {
   searchParent,
   updateCustomComponentProps,
   deleteCustomComponentProps,
+  getAllTheCustomPropNames,
 } from '../../utils/recursive'
 import omit from 'lodash/omit'
 
@@ -533,6 +534,25 @@ const components = createModel({
               draftState.customComponents,
               draftState.customComponentList,
             )
+            let moveComponent = 'yes'
+
+            //check whether the customProps from the moved component is already present in moved custom component
+            const customProps = getAllTheCustomPropNames(
+              draftState.pages[draftState.selectedPage][payload.componentId],
+              draftState.pages[draftState.selectedPage],
+            )
+            customProps.forEach((customProp: string) => {
+              if (rootParent.props[customProp]) {
+                moveComponent =
+                  window
+                    .prompt(
+                      'The root parent already has the similar prop name. If you wish to move with the existing exposed props, enter yes else no.',
+                    )
+                    ?.toLowerCase() || 'no'
+                return
+              }
+            })
+            if (moveComponent === 'no') return
 
             if (
               rootParent.type ===
