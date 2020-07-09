@@ -12,6 +12,7 @@ import IconControl from '../controls/IconControl'
 import SizeControl from '../controls/SizeControl'
 import SwitchControl from '../controls/SwitchControl'
 import VariantPanel from './styles/VariantPanel'
+import SliderControl from '../controls/SliderControl'
 
 export type optionsType = {
   [name: string]: Array<string>
@@ -67,9 +68,15 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
       />
     </FormControl>
   )
-
   switch (controlProp) {
     case 'color':
+      if (
+        ['Switch', 'Progress', 'CircularProgress'].indexOf(
+          controlComponent.type,
+        ) !== -1
+      ) {
+        return <ColorsControl name={propName} label={propName} />
+      }
       return (
         <ColorsControl name={propName} label={propName} enableHues={true} />
       )
@@ -125,7 +132,7 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
       return <SwitchControl label={propName} name={propName} />
     case 'isRound':
       return <SwitchControl label={propName} name={propName} />
-    case 'isLoading':
+    case 'isIndeterminate':
       return <SwitchControl label={propName} name={propName} />
     case 'as':
       return (
@@ -149,6 +156,28 @@ const ExposedPropsPanel: React.FC<{ propName: string }> = ({ propName }) => {
           name={propName}
           value={selectedComponent.props[propName]}
           type={controlComponent.type}
+        />
+      )
+    case 'value':
+      return <SliderControl label={propName} htmlFor={propName} />
+    case 'thickness':
+      return (
+        <SliderControl
+          label={propName}
+          htmlFor={propName}
+          min={0.1}
+          max={1}
+          step={0.1}
+        />
+      )
+    case 'spacing':
+      return (
+        <SliderControl
+          label={propName}
+          htmlFor={propName}
+          min={-3}
+          max={6}
+          step={1}
         />
       )
 
