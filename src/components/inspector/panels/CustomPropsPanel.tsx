@@ -1,6 +1,9 @@
 import React, { memo, useState, FormEvent, ChangeEvent, useRef } from 'react'
 import { useInspectorState } from '../../../contexts/inspector-context'
-import { getSelectedComponent } from '../../../core/selectors/components'
+import {
+  getSelectedComponent,
+  getPropsForSelectedComponent,
+} from '../../../core/selectors/components'
 import { useSelector } from 'react-redux'
 import { IoIosFlash } from 'react-icons/io'
 import {
@@ -23,7 +26,8 @@ const CustomPropsPanel = () => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const activePropsRef = useInspectorState()
-  const { props, id } = useSelector(getSelectedComponent)
+  const { id } = useSelector(getSelectedComponent)
+  const props = useSelector(getPropsForSelectedComponent)
   const { setValue } = useForm()
 
   const [quickProps, setQuickProps] = useState('')
@@ -76,43 +80,46 @@ const CustomPropsPanel = () => {
         </InputGroup>
       </form>
 
-      {customProps.map((propsName, i) => (
-        <Flex
-          key={propsName}
-          alignItems="center"
-          px={2}
-          bg={i % 2 === 0 ? 'white' : 'gray.50'}
-          fontSize="xs"
-          justifyContent="space-between"
-        >
-          <SimpleGrid width="100%" columns={2} spacing={1}>
-            <Box fontWeight="bold">{propsName}</Box>
-            <Box>{props[propsName]}</Box>
-          </SimpleGrid>
+      {customProps.map((propsName, i) => {
+        const prop = props.find(prop => prop.name === propsName) || ''
+        return (
+          <Flex
+            key={propsName}
+            alignItems="center"
+            px={2}
+            bg={i % 2 === 0 ? 'white' : 'gray.50'}
+            fontSize="xs"
+            justifyContent="space-between"
+          >
+            <SimpleGrid width="100%" columns={2} spacing={1}>
+              <Box fontWeight="bold">{propsName}</Box>
+              <Box>{prop}</Box>
+            </SimpleGrid>
 
-          <ButtonGroup display="flex" size="xs" isAttached>
-            <IconButton
-              onClick={() => {
-                setQuickProps(`${propsName}=`)
-                if (inputRef.current) {
-                  inputRef.current.focus()
-                }
-              }}
-              variant="ghost"
-              size="xs"
-              aria-label="edit"
-              icon="edit"
-            />
-            <IconButton
-              onClick={() => onDelete(propsName)}
-              variant="ghost"
-              size="xs"
-              aria-label="delete"
-              icon="small-close"
-            />
-          </ButtonGroup>
-        </Flex>
-      ))}
+            <ButtonGroup display="flex" size="xs" isAttached>
+              <IconButton
+                onClick={() => {
+                  setQuickProps(`${propsName}=`)
+                  if (inputRef.current) {
+                    inputRef.current.focus()
+                  }
+                }}
+                variant="ghost"
+                size="xs"
+                aria-label="edit"
+                icon="edit"
+              />
+              <IconButton
+                onClick={() => onDelete(propsName)}
+                variant="ghost"
+                size="xs"
+                aria-label="delete"
+                icon="small-close"
+              />
+            </ButtonGroup>
+          </Flex>
+        )
+      })}
     </>
   )
 }

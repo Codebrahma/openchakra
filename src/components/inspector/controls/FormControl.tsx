@@ -11,8 +11,9 @@ import {
 import PopOverControl from './PopOverControl'
 import {
   getShowCustomComponentPage,
-  isSelectedIdCustomComponent,
-  getExposedPropsForSelectedComponent,
+  isInstanceOfCustomComponent,
+  getSelectedComponentId,
+  getPropsBy,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
@@ -32,9 +33,13 @@ const FormControl: React.FC<FormControlPropType> = ({
 }) => {
   const dispatch = useDispatch()
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
-  const isCustomComponent = useSelector(isSelectedIdCustomComponent)
-  const exposedProps = useSelector(getExposedPropsForSelectedComponent)
-  const isPropExposed = exposedProps && htmlFor && exposedProps[htmlFor]
+  const selectedId = useSelector(getSelectedComponentId)
+  const isCustomComponent = useSelector(isInstanceOfCustomComponent(selectedId))
+  const selectedProp = useSelector(getPropsBy(selectedId)).find(
+    prop => prop.name === htmlFor,
+  )
+  const isPropExposed =
+    selectedProp && selectedProp.derivedFromPropName ? true : false
 
   return (
     <ChakraFormControl
@@ -68,7 +73,7 @@ const FormControl: React.FC<FormControlPropType> = ({
             mr="11px"
           >
             exposed as{' '}
-            {exposedProps && htmlFor && exposedProps[htmlFor].customPropName}
+            {isPropExposed && htmlFor && selectedProp?.derivedFromPropName}
           </Text>
           <ActionButton
             label="Unexpose"
@@ -91,7 +96,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           label="delete Exposed prop"
           icon="small-close"
           onClick={() =>
-            htmlFor && dispatch.components.deleteExposedProp(htmlFor)
+            htmlFor && dispatch.components.deleteCustomProp(htmlFor)
           }
         />
       ) : null}

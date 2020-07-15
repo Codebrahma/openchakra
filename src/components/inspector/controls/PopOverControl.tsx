@@ -35,7 +35,7 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const propInputChangeHandler = (e: any) => setPropName(e.target.value)
   const savePropClickHandler = () => {
     if (propName && propName.length > 1)
-      dispatch.components.addCustomProps({
+      dispatch.components.exposeProp({
         name: propName,
         targetedProp: htmlFor || '',
       })

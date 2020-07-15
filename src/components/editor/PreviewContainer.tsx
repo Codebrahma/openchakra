@@ -1,32 +1,31 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
-import findExposedPropsValue from '../../utils/findExposedPropsValue'
+import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 
 const PreviewContainer: React.FC<{
   component: IComponent
   type: string | FunctionComponent<any> | ComponentClass<any, any>
+  customProps: IProp[]
   enableVisualHelper?: boolean
   isBoxWrapped?: boolean
-  customProps?: any
 }> = ({
   component,
   type,
+  customProps,
   enableVisualHelper,
   isBoxWrapped,
-  customProps,
   ...forwardedProps
 }) => {
-  const { props, ref } = useInteractive(component, enableVisualHelper)
-  const propsToReplace = findExposedPropsValue(
-    component.exposedProps,
-    customProps,
+  const { props: componentProps, ref } = useInteractive(
+    component,
+    enableVisualHelper,
   )
 
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const children = React.createElement(type, {
-    ...props,
+    ...propsKeyValue,
     ...forwardedProps,
-    ...propsToReplace,
     ref,
   })
 

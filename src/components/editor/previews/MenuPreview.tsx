@@ -11,21 +11,36 @@ import {
 } from '@chakra-ui/core'
 import ComponentPreview from '../ComponentPreview'
 import { MenuWhitelist } from '../../../utils/editor'
+import { useSelector } from 'react-redux'
+import { getAllProps, getChildrenBy } from '../../../core/selectors/components'
+import { generateId } from '../../../utils/generateId'
+import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const acceptedTypes = ['MenuButton', 'MenuList'] as ComponentType[]
 
 const MenuPreview: React.FC<IPreviewProps> = ({ component }) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   return (
-    <Box ref={drop(ref)} {...props}>
+    <Box ref={drop(ref)} {...propsKeyValue}>
       <Menu {...props}>
-        {component.children.map((key: string) => (
+        {componentChildren.map((key: string) => (
           <ComponentPreview key={key} componentName={key} />
         ))}
       </Menu>
@@ -34,19 +49,30 @@ const MenuPreview: React.FC<IPreviewProps> = ({ component }) => {
 }
 
 export const MenuListPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   let boxProps: any = {}
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <MenuList {...props}>
-        {component.children.map((key: string) => (
+      <MenuList {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
           <ComponentPreview key={key} componentName={key} />
         ))}
       </MenuList>
@@ -55,16 +81,27 @@ export const MenuListPreview = ({ component }: IPreviewProps) => {
 }
 
 export const MenuButtonPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   return (
-    <MenuButton ref={drop(ref)} {...props}>
-      {component.children.map((key: string) => (
+    <MenuButton ref={drop(ref)} {...propsKeyValue}>
+      {componentChildren.map((key: string) => (
         <ComponentPreview key={key} componentName={key} />
       ))}
     </MenuButton>
@@ -72,19 +109,30 @@ export const MenuButtonPreview = ({ component }: IPreviewProps) => {
 }
 
 export const MenuItemPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
   let boxProps: any = {}
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <MenuItem {...props}>
-        {component.children.map((key: string) => (
+      <MenuItem {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
           <ComponentPreview key={key} componentName={key} />
         ))}
       </MenuItem>
@@ -93,19 +141,30 @@ export const MenuItemPreview = ({ component }: IPreviewProps) => {
 }
 
 export const MenuGroupPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
   let boxProps: any = {}
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <MenuGroup {...props}>
-        {component.children.map((key: string) => (
+      <MenuGroup {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
           <ComponentPreview key={key} componentName={key} />
         ))}
       </MenuGroup>

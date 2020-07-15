@@ -13,6 +13,7 @@ import {
   getCustomComponentsList,
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
+  getChildrenBy,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -29,8 +30,6 @@ const CodeActionButton = memo(() => {
   const parentId = selectedComponent.parent
 
   const parent = { ...components[parentId] }
-  // Do not copy sibling components from parent
-  parent.children = [selectedComponent.id]
 
   return (
     <ActionButton
@@ -50,12 +49,13 @@ const CodeActionButton = memo(() => {
 
 const Inspector = () => {
   const dispatch = useDispatch()
-  let component = useSelector(getSelectedComponent)
+  const component = useSelector(getSelectedComponent)
   const toast = useToast()
 
   const { clearActiveProps } = useInspectorUpdate()
 
-  const { type, rootParentType, id, children } = component
+  const { type, id } = component
+  const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
 
   const isCustomComponent =
@@ -69,7 +69,7 @@ const Inspector = () => {
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
 
-  const docType = rootParentType || type
+  const docType = type
   const componentHasChildren = children.length > 0
 
   useEffect(() => {

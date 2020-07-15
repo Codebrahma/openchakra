@@ -64,8 +64,8 @@ const ComponentPreview: React.FC<{
         <PreviewContainer
           component={component}
           type={Chakra[type]}
-          customProps={customProps}
           {...forwardedProps}
+          customProps={customProps}
         />
       )
     // Wrapped functional components (forward ref issue)
@@ -89,8 +89,8 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           {...forwardedProps}
-          customProps={customProps}
           isBoxWrapped
+          customProps={customProps}
         />
       )
     // Components with childrens

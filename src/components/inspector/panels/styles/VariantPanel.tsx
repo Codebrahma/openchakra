@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { Select } from '@chakra-ui/core'
 import FormControl from '../../controls/FormControl'
 import { useForm } from '../../../../hooks/useForm'
-import { optionsType } from '../ExposedPropsPanel'
+import { optionsType } from '../../controls/customComponentsPropsControl'
 
 type variantControlPropsType = {
   name: string

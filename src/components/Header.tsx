@@ -167,7 +167,7 @@ const Header = () => {
                 onChange={() => {
                   dispatch.components.unselect()
                   if (showCustomPage) dispatch.components.switchPage('app')
-                  else dispatch.components.switchPage('custom')
+                  else dispatch.components.switchPage('customPage')
                 }}
                 size="sm"
               />

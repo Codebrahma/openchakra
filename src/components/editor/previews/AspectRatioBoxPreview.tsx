@@ -3,28 +3,42 @@ import { Box, AspectRatioBox } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
+import { useSelector } from 'react-redux'
+import { getChildrenBy, getAllProps } from '../../../core/selectors/components'
+import { generateId } from '../../../utils/generateId'
+import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const AspectRatioBoxPreview: React.FC<{ component: IComponent }> = ({
   component,
 }) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
+
+  const props = useSelector(getAllProps)
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
   const { drop, isOver } = useDropComponent(
     component.id,
     undefined,
-    component.children.length === 0,
+    componentChildren.length === 0,
   )
-  const children = component.children
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, props)
 
   const boxProps: any = {}
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
-
   return (
     <Box {...boxProps} ref={drop(ref)}>
-      <AspectRatioBox {...props}>
-        {!children.length ? (
+      <AspectRatioBox {...propsKeyValue}>
+        {!componentChildren.length ? (
           /*
            * We need at least one children because of the implementation
            * of AspectRatioBox
@@ -32,7 +46,7 @@ const AspectRatioBoxPreview: React.FC<{ component: IComponent }> = ({
           <Box />
         ) : (
           <Box>
-            <ComponentPreview componentName={children[0]} />
+            <ComponentPreview componentName={componentChildren[0]} />
           </Box>
         )}
       </AspectRatioBox>

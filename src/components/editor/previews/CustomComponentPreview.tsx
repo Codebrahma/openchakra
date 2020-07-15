@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux'
 import ComponentPreview from '../ComponentPreview'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
-import { getCustomComponents } from '../../../core/selectors/components'
-import findExposedPropsValue from '../../../utils/findExposedPropsValue'
+import { getChildrenBy } from '../../../core/selectors/components'
+import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import { generateId } from '../../../utils/generateId'
 
 const CustomComponentPreview: React.FC<{
   component: IComponent
@@ -18,25 +19,33 @@ const CustomComponentPreview: React.FC<{
     true,
     true,
   )
-  const { props } = useInteractive(component, true, true)
-  const customComponents = useSelector(getCustomComponents)
-  const propsToReplace = findExposedPropsValue(
-    component.exposedProps,
+  const { props: componentProps } = useInteractive(component, true, true)
+
+  const componentChildren = useSelector(getChildrenBy(component.type))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const interactionProps = generatePropsKeyValue(
+    visualInteractionProps,
     customProps,
   )
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
-  const propsElement = { ...props, ...propsToReplace }
-
   return (
-    <Box {...visualInteractionProps} ref={ref} width="fit-content">
-      {customComponents[component.type].children.map((key: string) => (
+    <Box {...interactionProps} ref={ref} width="fit-content">
+      {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}
           componentName={key}
-          customProps={propsElement}
+          customProps={propsKeyValue}
         />
       ))}
     </Box>
