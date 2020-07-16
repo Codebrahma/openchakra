@@ -157,17 +157,6 @@ export const generateCode = async (
       } else return null
     })
 
-  //only import the chakra-ui components from the custom components if the instance is present in the page.
-  let customComponentImports: Array<string> = []
-  customComponentsList.forEach(type => {
-    if (checkInstanceInComponents(type)) {
-      customComponentImports = [
-        ...customComponentImports,
-        // ...findChildrenImports(customComponents[type], customComponents),
-      ]
-    }
-  })
-
   //filter the custom components types
   let imports = [
     ...new Set(
@@ -179,9 +168,12 @@ export const generateCode = async (
         .map(name => components[name].type),
     ),
     ...new Set(
-      customComponentImports.filter(
-        name => customComponentsList.indexOf(name) === -1,
-      ),
+      Object.keys(customComponents)
+        .filter(
+          name =>
+            customComponentsList.indexOf(customComponents[name].type) === -1,
+        )
+        .map(name => customComponents[name].type),
     ),
   ]
   //remove duplicates from the imports array.
