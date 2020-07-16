@@ -21,7 +21,6 @@ export const duplicateComponent = (
       .forEach(comp => {
         duplicateRecursive(comp.id)
       })
-    console.log(compId)
     updatedDestinationProps = [
       ...updatedDestinationProps,
       ...sourceProps.filter(prop => prop.componentId === compId),

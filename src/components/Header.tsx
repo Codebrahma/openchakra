@@ -31,6 +31,8 @@ import {
   getCustomComponents,
   getCustomComponentsList,
   getShowCustomComponentPage,
+  getProps,
+  getCustomComponentsProps,
 } from '../core/selectors/components'
 import { getShowLayout, getShowCode } from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
@@ -39,6 +41,8 @@ const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsList = useSelector(getCustomComponentsList)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
 
   return (
@@ -56,6 +60,8 @@ const CodeSandboxButton = () => {
             components,
             customComponents,
             customComponentsList,
+            props,
+            customComponentsProps,
           )
           setIsLoading(false)
           const parameters = buildParameters(code)

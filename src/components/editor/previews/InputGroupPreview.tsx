@@ -4,19 +4,19 @@ import ComponentPreview from '../ComponentPreview'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useSelector } from 'react-redux'
-import { getChildrenBy, getAllProps } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import { generateId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
-const InputGroupPreview: React.FC<{ component: IComponent }> = ({
-  component,
-}) => {
+const InputGroupPreview: React.FC<{
+  component: IComponent
+  customProps: any
+}> = ({ component, customProps }) => {
   const { drop, isOver } = useDropComponent(component.id)
   const { props: componentProps, ref } = useInteractive(component, true)
 
   const boxProps: any = {}
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -29,7 +29,7 @@ const InputGroupPreview: React.FC<{ component: IComponent }> = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box {...boxProps} ref={drop(ref)}>

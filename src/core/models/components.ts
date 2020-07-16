@@ -805,18 +805,17 @@ const components = createModel({
           })
 
         //un-expose the props whose value is derived from the prop that is deleted.
-        draftState.customComponentsProps
-          .filter(
-            prop =>
-              prop.derivedFromComponentType === componentType &&
-              prop.derivedFromPropName === propName,
-          )
-          .forEach((_, index) => {
+        draftState.customComponentsProps.forEach((prop, index) => {
+          if (
+            prop.derivedFromComponentType === componentType &&
+            prop.derivedFromPropName === propName
+          ) {
             draftState.customComponentsProps[index].derivedFromPropName = null
             draftState.customComponentsProps[
               index
             ].derivedFromComponentType = null
-          })
+          }
+        })
       })
     },
     deleteCustomComponent(
@@ -824,7 +823,13 @@ const components = createModel({
       type: string,
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        console.log('deleted')
+        const { updatedComponents, updatedProps } = deleteComp(
+          draftState.customComponents[type],
+          draftState.customComponents,
+          draftState.customComponentsProps,
+        )
+        draftState.customComponents = { ...updatedComponents }
+        draftState.customComponentsProps = [...updatedProps]
       })
     },
   },

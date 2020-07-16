@@ -14,6 +14,7 @@ import {
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
   getChildrenBy,
+  getProps,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -27,6 +28,7 @@ const CodeActionButton = memo(() => {
 
   const selectedComponent = useSelector(getSelectedComponent)
   const components = useSelector(getComponents)
+  const props = useSelector(getProps)
   const parentId = selectedComponent.parent
 
   const parent = { ...components[parentId] }
@@ -38,7 +40,7 @@ const CodeActionButton = memo(() => {
       variantColor={hasCopied ? 'green' : 'gray'}
       onClick={async () => {
         setIsLoading(true)
-        const code = await generateComponentCode(parent, components)
+        const code = await generateComponentCode(parent, components, props)
         onCopy(code)
         setIsLoading(false)
       }}

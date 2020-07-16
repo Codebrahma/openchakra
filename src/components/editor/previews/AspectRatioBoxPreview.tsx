@@ -4,16 +4,16 @@ import { useInteractive } from '../../../hooks/useInteractive'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
 import { useSelector } from 'react-redux'
-import { getChildrenBy, getAllProps } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import { generateId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
-const AspectRatioBoxPreview: React.FC<{ component: IComponent }> = ({
+const AspectRatioBoxPreview: React.FC<IPreviewProps> = ({
   component,
+  customProps,
 }) => {
   const { props: componentProps, ref } = useInteractive(component, true)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   const { drop, isOver } = useDropComponent(
@@ -31,7 +31,7 @@ const AspectRatioBoxPreview: React.FC<{ component: IComponent }> = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   const boxProps: any = {}
 

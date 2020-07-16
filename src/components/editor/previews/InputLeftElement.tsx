@@ -4,7 +4,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
 import { InputLeftElement } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
-import { getChildrenBy, getAllProps } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { generateId } from '../../../utils/generateId'
 
@@ -15,7 +15,6 @@ export const InputLeftElementPreview: React.FC<{
   const { drop, isOver } = useDropComponent(component.id)
   const { props: componentProps, ref } = useInteractive(component, true)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -28,7 +27,7 @@ export const InputLeftElementPreview: React.FC<{
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <InputLeftElement

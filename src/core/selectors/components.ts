@@ -137,7 +137,7 @@ export const getExposedPropsForSelectedComponent = (state: RootState) => {
 
 export const getPages = (state: RootState) => state.components.present.pages
 
-export const getAllProps = (state: RootState) => {
+export const getProps = (state: RootState) => {
   const propsId =
     state.components.present.pages[state.components.present.selectedPage]
       .propsId
@@ -146,3 +146,6 @@ export const getAllProps = (state: RootState) => {
 
 export const getCustomComponentsProps = (state: RootState) =>
   state.components.present.customComponentsProps
+
+export const getAllTheComponents = (state: RootState) =>
+  state.components.present.componentsById

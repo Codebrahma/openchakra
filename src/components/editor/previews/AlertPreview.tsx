@@ -4,11 +4,11 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
 import { Alert, Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
-import { getChildrenBy, getAllProps } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import { generateId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
-const AlertPreview: React.FC<IPreviewProps> = ({ component }) => {
+const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
   const acceptedTypes = [
     'AlertIcon',
     'AlertTitle',
@@ -17,7 +17,6 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component }) => {
   const { props: componentProps, ref } = useInteractive(component, false)
   const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -30,7 +29,7 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component }) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   let boxProps: any = {}
 
@@ -38,7 +37,11 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component }) => {
     <Box ref={drop(ref)} {...boxProps}>
       <Alert {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </Alert>
     </Box>

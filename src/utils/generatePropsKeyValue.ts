@@ -1,9 +1,8 @@
-const generatePropsKeyValue = (componentProps: IProp[], props: any) => {
+const generatePropsKeyValue = (componentProps: IProp[], customProps: any) => {
   const propsObject: any = {}
-
   componentProps.forEach(compProp => {
     if (compProp.derivedFromComponentType && compProp.derivedFromPropName)
-      propsObject[compProp.name] = props[compProp.derivedFromPropName]
+      propsObject[compProp.name] = customProps[compProp.derivedFromPropName]
     else propsObject[compProp.name] = compProp.value
   })
   return propsObject

@@ -154,27 +154,50 @@ const ComponentPreview: React.FC<{
         <AvatarGroupPreview component={component} customProps={customProps} />
       )
     case 'Alert':
-      return <AlertPreview component={component} />
+      return <AlertPreview component={component} customProps={customProps} />
     case 'Accordion':
-      return <AccordionPreview component={component} />
+      return (
+        <AccordionPreview component={component} customProps={customProps} />
+      )
     case 'AccordionHeader':
-      return <AccordionHeaderPreview component={component} />
+      return (
+        <AccordionHeaderPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'AccordionItem':
-      return <AccordionItemPreview component={component} />
+      return (
+        <AccordionItemPreview component={component} customProps={customProps} />
+      )
     case 'AccordionPanel':
-      return <AccordionPanelPreview component={component} />
+      return (
+        <AccordionPanelPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'AspectRatioBox':
-      return <AspectRatioBoxPreview component={component} />
+      return (
+        <AspectRatioBoxPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'Menu':
-      return <MenuPreview component={component} />
+      return <MenuPreview component={component} customProps={customProps} />
     case 'MenuList':
-      return <MenuListPreview component={component} />
+      return <MenuListPreview component={component} customProps={customProps} />
     case 'MenuButton':
-      return <MenuButtonPreview component={component} />
+      return (
+        <MenuButtonPreview component={component} customProps={customProps} />
+      )
     case 'MenuItem':
-      return <MenuItemPreview component={component} />
+      return <MenuItemPreview component={component} customProps={customProps} />
     case 'MenuGroup':
-      return <MenuGroupPreview component={component} />
+      return (
+        <MenuGroupPreview component={component} customProps={customProps} />
+      )
     default:
       return (
         <CustomComponentPreview

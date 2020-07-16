@@ -4,7 +4,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import ComponentPreview from '../ComponentPreview'
 import { InputRightElement } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
-import { getAllProps, getChildrenBy } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import { generateId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
@@ -14,7 +14,6 @@ export const InputRightElementPreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { drop, isOver } = useDropComponent(component.id)
   const { props: componentProps, ref } = useInteractive(component, true)
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -27,7 +26,7 @@ export const InputRightElementPreview: React.FC<{
       derivedFromPropName: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <InputRightElement

@@ -12,17 +12,16 @@ import {
 import ComponentPreview from '../ComponentPreview'
 import { MenuWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
-import { getAllProps, getChildrenBy } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import { generateId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const acceptedTypes = ['MenuButton', 'MenuList'] as ComponentType[]
 
-const MenuPreview: React.FC<IPreviewProps> = ({ component }) => {
+const MenuPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -34,25 +33,29 @@ const MenuPreview: React.FC<IPreviewProps> = ({ component }) => {
       derivedFromPropName: null,
       derivedFromComponentType: null,
     })
+  let boxProps: any = {}
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
-    <Box ref={drop(ref)} {...propsKeyValue}>
-      <Menu {...props}>
+    <Box ref={drop(ref)} {...boxProps}>
+      <Menu {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </Menu>
     </Box>
   )
 }
 
-export const MenuListPreview = ({ component }: IPreviewProps) => {
+export const MenuListPreview = ({ component, customProps }: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -65,7 +68,7 @@ export const MenuListPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   let boxProps: any = {}
 
@@ -73,18 +76,24 @@ export const MenuListPreview = ({ component }: IPreviewProps) => {
     <Box ref={drop(ref)} {...boxProps}>
       <MenuList {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </MenuList>
     </Box>
   )
 }
 
-export const MenuButtonPreview = ({ component }: IPreviewProps) => {
+export const MenuButtonPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -97,24 +106,27 @@ export const MenuButtonPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <MenuButton ref={drop(ref)} {...propsKeyValue}>
       {componentChildren.map((key: string) => (
-        <ComponentPreview key={key} componentName={key} />
+        <ComponentPreview
+          key={key}
+          componentName={key}
+          customProps={customProps}
+        />
       ))}
     </MenuButton>
   )
 }
 
-export const MenuItemPreview = ({ component }: IPreviewProps) => {
+export const MenuItemPreview = ({ component, customProps }: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
   let boxProps: any = {}
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -127,26 +139,29 @@ export const MenuItemPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
       <MenuItem {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </MenuItem>
     </Box>
   )
 }
 
-export const MenuGroupPreview = ({ component }: IPreviewProps) => {
+export const MenuGroupPreview = ({ component, customProps }: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
 
   let boxProps: any = {}
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -159,13 +174,17 @@ export const MenuGroupPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
       <MenuGroup {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </MenuGroup>
     </Box>

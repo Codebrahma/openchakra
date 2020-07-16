@@ -11,16 +11,18 @@ import {
 import ComponentPreview from '../ComponentPreview'
 import { AccordionWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
-import { getAllProps, getChildrenBy } from '../../../core/selectors/components'
+import { getChildrenBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { generateId } from '../../../utils/generateId'
 
 const acceptedTypes: ComponentType[] = ['AccordionItem']
 
-const AccordionPreview: React.FC<IPreviewProps> = ({ component }) => {
+const AccordionPreview: React.FC<IPreviewProps> = ({
+  component,
+  customProps,
+}) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -33,25 +35,31 @@ const AccordionPreview: React.FC<IPreviewProps> = ({ component }) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   let boxProps: any = {}
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
       <Accordion {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </Accordion>
     </Box>
   )
 }
 
-export const AccordionHeaderPreview = ({ component }: IPreviewProps) => {
+export const AccordionHeaderPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -64,24 +72,30 @@ export const AccordionHeaderPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <AccordionHeader ref={drop(ref)} {...propsKeyValue}>
       {componentChildren.map((key: string) => (
-        <ComponentPreview key={key} componentName={key} />
+        <ComponentPreview
+          key={key}
+          componentName={key}
+          customProps={customProps}
+        />
       ))}
     </AccordionHeader>
   )
 }
 
-export const AccordionItemPreview = ({ component }: IPreviewProps) => {
+export const AccordionItemPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
   let boxProps: any = {}
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -94,26 +108,32 @@ export const AccordionItemPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
       <AccordionItem {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </AccordionItem>
     </Box>
   )
 }
 
-export const AccordionPanelPreview = ({ component }: IPreviewProps) => {
+export const AccordionPanelPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
   let boxProps: any = {}
 
-  const props = useSelector(getAllProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -126,13 +146,17 @@ export const AccordionPanelPreview = ({ component }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, props)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
       <AccordionPanel {...propsKeyValue}>
         {componentChildren.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </AccordionPanel>
     </Box>
