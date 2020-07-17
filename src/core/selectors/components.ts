@@ -69,13 +69,11 @@ export const getSelectedComponentChildren = (state: RootState) => {
   const componentsId =
     state.components.present.pages[state.components.present.selectedPage]
       .componentsId
-  const children: IComponent[] = []
-  Object.values(state.components.present.componentsById[componentsId])
-    .filter(
-      component => component.parent === state.components.present.selectedId,
-    )
-    .forEach(component => children.push(getComponentBy(component.id)(state)))
-  return children
+  const selectedId = state.components.present.selectedId
+  const components = isChildrenOfCustomComponent(selectedId)(state)
+    ? { ...state.components.present.customComponents }
+    : { ...state.components.present.componentsById[componentsId] }
+  return components[selectedId].children.map(child => components[child])
 }
 
 export const getChildrenBy = (id: IComponent['id']) => (state: RootState) => {
@@ -85,11 +83,7 @@ export const getChildrenBy = (id: IComponent['id']) => (state: RootState) => {
   const components = isChildrenOfCustomComponent(id)(state)
     ? { ...state.components.present.customComponents }
     : { ...state.components.present.componentsById[componentsId] }
-  const children: string[] = []
-  Object.values(components)
-    .filter(component => component.parent === id)
-    .forEach(component => children.push(component.id))
-  return children
+  return components[id].children
 }
 
 export const getSelectedComponentParent = (state: RootState) =>

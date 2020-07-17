@@ -30,12 +30,8 @@ const buildBlock = (
   props: IProp[],
 ) => {
   let content = ''
-  const componentChildren: string[] = []
-  Object.values(components)
-    .filter(comp => comp.parent === component.id)
-    .forEach(comp => componentChildren.push(comp.id))
 
-  componentChildren.forEach((key: string) => {
+  component.children.forEach((key: string) => {
     let childComponent = components[key]
     if (!childComponent) {
       console.error(`invalid component ${key}`)

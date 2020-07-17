@@ -100,9 +100,10 @@ interface ExposedChildren {
 }
 
 interface IComponent {
+  id: string
   type: ComponentType | string
   parent: string
-  id: string
+  children: string[]
 }
 
 interface IComponents {

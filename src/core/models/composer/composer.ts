@@ -31,7 +31,11 @@ class Composer {
         type,
         parent,
         id,
+        children: [],
       },
+    }
+    if (parent !== 'root' && this.components[parent]) {
+      this.components[parent].children.push(id)
     }
 
     return id
