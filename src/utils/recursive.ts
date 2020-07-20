@@ -2,42 +2,48 @@
 import { generateId } from './generateId'
 
 export const duplicateComponent = (
-  componentId: string,
+  componentToClone: IComponent,
   sourceComponents: IComponents,
-  destinationComponents: IComponents,
-  sourceProps: IProp[],
-  destinationProps: IProp[],
+  props: IProp[],
 ) => {
-  let updatedSourceComponents = { ...sourceComponents }
-  let updatedDestinationComponents = { ...destinationComponents }
-  let updatedDestinationProps = [...destinationProps]
+  const clonedComponents: IComponents = {}
+  const clonedProps: IProp[] = []
 
-  function duplicateRecursive(compId: string) {
-    //find the children of the component
-    //the components whose parent is the component(to move) are the children components
+  const cloneComponent = (component: IComponent) => {
+    const newId = generateId()
+    const newPropId = generateId()
+    const children = component.children.map(child => {
+      return cloneComponent(sourceComponents[child])
+    })
 
-    Object.values(updatedSourceComponents)
-      .filter(comp => comp.parent === compId)
-      .forEach(comp => {
-        duplicateRecursive(comp.id)
-      })
-    updatedDestinationProps = [
-      ...updatedDestinationProps,
-      ...sourceProps.filter(prop => prop.componentId === compId),
-    ]
-
-    updatedDestinationComponents = {
-      ...updatedDestinationComponents,
-      [compId]: {
-        ...updatedSourceComponents[compId],
-      },
+    clonedComponents[newId] = {
+      ...component,
+      id: newId,
+      children,
     }
+    props
+      .filter(prop => prop.componentId === component.id)
+      .forEach(prop => {
+        clonedProps.push({
+          ...prop,
+          id: newPropId,
+          componentId: newId,
+        })
+      })
+
+    children.forEach(child => {
+      clonedComponents[child].parent = newId
+    })
+
+    return newId
   }
 
-  duplicateRecursive(componentId)
+  const newId = cloneComponent(componentToClone)
+
   return {
-    updatedDestinationComponents,
-    updatedDestinationProps,
+    newId,
+    clonedComponents,
+    clonedProps,
   }
 }
 
@@ -52,11 +58,8 @@ export const deleteComp = (
   function deleteRecursive(component: IComponent) {
     //find the children of the component
     //the components whose parent is the component(to delete) are the children components
-    Object.values(components)
-      .filter(comp => comp.parent === component.id)
-      .forEach(comp => {
-        deleteRecursive(comp)
-      })
+
+    component.children.forEach(child => deleteRecursive(components[child]))
     delete updatedComponents[component.id]
     if (updatedProps.length > 0)
       updatedProps = updatedProps.filter(
@@ -93,11 +96,9 @@ export const fetchAndUpdateExposedProps = (
   let rootParentProps: IProp[] = []
   let updatedProps = [...props]
   const fetchAndUpdateExposedPropsRecursive = (comp: IComponent) => {
-    Object.values(components)
-      .filter(filteredComp => filteredComp.parent === comp.id)
-      .forEach(comp => {
-        fetchAndUpdateExposedPropsRecursive(comp)
-      })
+    comp.children.forEach(child =>
+      fetchAndUpdateExposedPropsRecursive(components[child]),
+    )
 
     props
       .filter(prop => prop.componentId === comp.id)
@@ -144,12 +145,9 @@ export const moveComponent = (
     //find the children of the component
     //the components whose parent is the component(to move) are the children components
 
-    Object.values(updatedSourceComponents)
-      .filter(comp => comp.parent === compId)
-      .forEach(comp => {
-        moveRecursive(comp.id)
-      })
-    console.log(compId)
+    updatedSourceComponents[compId].children.forEach(child =>
+      moveRecursive(child),
+    )
     updatedDestinationProps = [
       ...updatedDestinationProps,
       ...sourceProps.filter(prop => prop.componentId === compId),

@@ -7,6 +7,7 @@ import {
   fetchAndUpdateExposedProps,
   moveComponent,
   searchRootCustomComponent,
+  duplicateComponent,
 } from '../../utils/recursive'
 
 export type ComponentsState = {
@@ -264,7 +265,7 @@ const components = createModel({
       })
     },
     deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
-      console.log('delete-props')
+      return state
     },
     deleteComponent(state: ComponentsState, componentId: string) {
       if (componentId === 'root') {
@@ -283,6 +284,10 @@ const components = createModel({
           ? { ...draftState.customComponents }
           : { ...draftState.componentsById[componentsId] }
         const parentId = components[componentId].parent
+
+        //Can not delete the immediate(outermost) children of custom component
+        if (isCustomComponentChild && components[parentId].parent.length === 0)
+          return state
 
         const propsId = draftState.pages[draftState.selectedPage].propsId
         let props = isCustomComponentChild
@@ -325,10 +330,19 @@ const components = createModel({
         if (
           checkIsChildOfCustomComponent(componentId, state.customComponents)
         ) {
-          const oldParenId = draftState.customComponents[componentId].parent
+          const oldParentId = draftState.customComponents[componentId].parent
+
+          //can not be moved into the same parent
+          if (newParentId === oldParentId) return state
+
+          //Can not move the immediate(outermost) children of custom component
+          if (draftState.customComponents[oldParentId].parent.length === 0)
+            return state
+          draftState.customComponents[componentId].parent = newParentId
+
           //remove the componentId from children of old parent
-          draftState.customComponents[oldParenId].children.splice(
-            draftState.customComponents[oldParenId].children.indexOf(
+          draftState.customComponents[oldParentId].children.splice(
+            draftState.customComponents[oldParentId].children.indexOf(
               componentId,
             ),
             1,
@@ -338,8 +352,6 @@ const components = createModel({
           if (
             checkIsChildOfCustomComponent(newParentId, state.customComponents)
           ) {
-            draftState.customComponents[componentId].parent = newParentId
-
             //Add the componentId in the children of new parent
             draftState.customComponents[newParentId].children.push(componentId)
           }
@@ -370,19 +382,44 @@ const components = createModel({
             draftState.customComponentsProps = [...updatedCustomComponentProps]
           }
         } else {
-          const oldParenId =
+          const oldParentId =
             draftState.componentsById[componentsId][componentId].parent
+
+          //can not be moved into the same parent
+          if (newParentId === oldParentId) return state
+          const isCustomComponentChild = checkIsChildOfCustomComponent(
+            newParentId,
+            state.customComponents,
+          )
+
           //remove the componentId from children of old parent
-          draftState.componentsById[componentsId][oldParenId].children.splice(
+          draftState.componentsById[componentsId][oldParentId].children.splice(
             draftState.componentsById[componentsId][
-              oldParenId
+              oldParentId
             ].children.indexOf(componentId),
             1,
           )
           //moved from components data to the custom component
-          if (
-            checkIsChildOfCustomComponent(newParentId, state.customComponents)
-          ) {
+          if (isCustomComponentChild) {
+            const rootCustomParent = searchRootCustomComponent(
+              draftState.customComponents[newParentId],
+              draftState.customComponents,
+            )
+
+            //one instance of custom component can not be moved into another instance of same custom component
+            if (
+              isCustomComponentChild &&
+              draftState.customComponents[rootCustomParent].type ===
+                draftState.componentsById[componentsId][componentId].type
+            )
+              return state
+
+            if (
+              draftState.customComponents[rootCustomParent].type ===
+              draftState.componentsById[componentsId][componentId].type
+            )
+              return state
+
             const {
               updatedSourceComponents: updatedComponents,
               updatedDestinationComponents: updatedCustomComponents,
@@ -409,6 +446,7 @@ const components = createModel({
             draftState.componentsById[componentsId][
               componentId
             ].parent = newParentId
+
             //Add the componentId in the children of new parent
             draftState.componentsById[componentsId][newParentId].children.push(
               componentId,
@@ -520,6 +558,16 @@ const components = createModel({
           parentId,
           draftState.customComponents,
         )
+
+        //The custom component can not be added to its own instance
+        if (isCustomComponentChild) {
+          const rootCustomParent = searchRootCustomComponent(
+            draftState.customComponents[parentId],
+            draftState.customComponents,
+          )
+          if (draftState.customComponents[rootCustomParent].type === type)
+            return state
+        }
 
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
@@ -647,7 +695,60 @@ const components = createModel({
     },
     duplicate(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        console.log('duplicate')
+        const componentsId =
+          draftState.pages[draftState.selectedPage].componentsId
+        const propsId = draftState.pages[draftState.selectedPage].propsId
+        const isChildOfCustomComponent = checkIsChildOfCustomComponent(
+          draftState.selectedId,
+          draftState.customComponents,
+        )
+        let components = isChildOfCustomComponent
+          ? { ...draftState.customComponents }
+          : { ...draftState.componentsById[componentsId] }
+
+        const selectedComponent = components[draftState.selectedId]
+
+        //Can not delete the immediate(outermost) children of custom component
+        if (
+          isChildOfCustomComponent &&
+          components[selectedComponent.parent].parent.length === 0
+        )
+          return state
+
+        let props = isChildOfCustomComponent
+          ? [...draftState.customComponentsProps]
+          : [...draftState.propsById[propsId]]
+
+        const { newId, clonedComponents, clonedProps } = duplicateComponent(
+          selectedComponent,
+          components,
+          props,
+        )
+        if (isChildOfCustomComponent) {
+          draftState.customComponents = {
+            ...draftState.customComponents,
+            ...clonedComponents,
+          }
+          draftState.customComponentsProps = [
+            ...draftState.customComponentsProps,
+            ...clonedProps,
+          ]
+          draftState.customComponents[selectedComponent.parent].children.push(
+            newId,
+          )
+        } else {
+          draftState.componentsById[componentsId] = {
+            ...draftState.componentsById[componentsId],
+            ...clonedComponents,
+          }
+          draftState.propsById[propsId] = [
+            ...draftState.propsById[propsId],
+            ...clonedProps,
+          ]
+          draftState.componentsById[componentsId][
+            selectedComponent.parent
+          ].children.push(newId)
+        }
       })
     },
     saveComponent(state: ComponentsState, name: string): ComponentsState {
@@ -753,18 +854,26 @@ const components = createModel({
       state: ComponentsState,
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        // const componentsId =
-        //   draftState.pages[draftState.selectedPage].componentsId
-        // const components = draftState.componentsById[componentsId]
-        // const { newId, clonedComponents } = duplicateComponent(
-        //   components[draftState.selectedId],
-        //   components,
-        // )
-        // draftState.pages['custom'] = {
-        //   ...draftState.pages['custom'],
-        //   ...clonedComponents,
-        // }
-        // draftState.componentsById['2'][newId].parent = 'root'
+        const componentsId =
+          draftState.pages[draftState.selectedPage].componentsId
+        const propsId = draftState.pages[draftState.selectedPage].propsId
+        const components = draftState.componentsById[componentsId]
+        const props = draftState.propsById[propsId]
+        const { newId, clonedComponents, clonedProps } = duplicateComponent(
+          components[draftState.selectedId],
+          components,
+          props,
+        )
+        draftState.componentsById['2'] = {
+          ...draftState.componentsById['2'],
+          ...clonedComponents,
+        }
+        draftState.propsById['2'] = [
+          ...draftState.propsById['2'],
+          ...clonedProps,
+        ]
+        draftState.componentsById['2'][newId].parent = 'root'
+        draftState.componentsById['2']['root'].children.push(newId)
       })
     },
     unexpose(state: ComponentsState, targetedProp: string): ComponentsState {
