@@ -114,9 +114,11 @@ export const isInstanceOfCustomComponent = (id: string) => (
   const componentsId =
     state.components.present.pages[state.components.present.selectedPage]
       .componentsId
-  if (state.components.present.componentsById[componentsId][id]) {
-    const componentType =
-      state.components.present.componentsById[componentsId][id].type
+  const components = isChildrenOfCustomComponent(id)(state)
+    ? state.components.present.customComponents
+    : state.components.present.componentsById[componentsId]
+  if (components[id]) {
+    const componentType = components[id].type
     if (state.components.present.customComponents[componentType]) return true
     return false
   }

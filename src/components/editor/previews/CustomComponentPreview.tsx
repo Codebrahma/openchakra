@@ -32,7 +32,6 @@ const CustomComponentPreview: React.FC<{
       derivedFromPropName: null,
       derivedFromComponentType: null,
     })
-
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const interactionProps = generatePropsKeyValue(
     visualInteractionProps,
