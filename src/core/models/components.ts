@@ -985,12 +985,15 @@ const components = createModel({
             children: [],
           },
         }
-        draftState.componentsById[componentsId][
+        const index = draftState.componentsById[componentsId][
           parentId
-        ].children = draftState.componentsById[componentsId][
-          parentId
-        ].children.filter(child => child !== componentId)
-        draftState.componentsById[componentsId][parentId].children.push(newId)
+        ].children.findIndex(child => child === componentId)
+
+        draftState.componentsById[componentsId][parentId].children.splice(
+          index,
+          1,
+          newId,
+        )
 
         draftState.customComponents = {
           ...draftState.customComponents,
