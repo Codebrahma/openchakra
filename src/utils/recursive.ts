@@ -58,9 +58,6 @@ export const deleteComp = (
   let deletedProps: IProp[] = []
 
   function deleteRecursive(component: IComponent) {
-    //find the children of the component
-    //the components whose parent is the component(to delete) are the children components
-
     component.children.forEach(child => deleteRecursive(components[child]))
     delete updatedComponents[component.id]
     if (updatedProps.length > 0) {
@@ -79,6 +76,8 @@ export const deleteComp = (
   return { updatedComponents, updatedProps, deletedProps }
 }
 
+//This function will update the derivedFromComponentType of the props that are exposed.
+//And also returns its custom propName along with its value.
 export const fetchAndUpdateExposedProps = (
   rootParentId: string,
   component: IComponent,
@@ -163,6 +162,7 @@ export const moveComponent = (
   }
 }
 
+//Searches the root parent of the custom component
 export const searchRootCustomComponent = (
   component: IComponent,
   customComponents: IComponents,
@@ -178,6 +178,7 @@ export const searchRootCustomComponent = (
   return rootId
 }
 
+//Finds the control for the custom props.
 export const findControl = (
   selectedProp: IProp,
   props: IProp[],
@@ -200,22 +201,23 @@ export const findControl = (
   return finalControlProp
 }
 
-export const unExposeProp = (
+export const deleteCustomProp = (
   exposedProp: IProp,
   components: IComponents,
   customComponents: IComponents,
   props: IProp[],
   customComponentsProps: IProp[],
 ) => {
-  // delete the prop in all the instances of custom components
-  // only when there is no other children inside the root custom component uses the custom prop
-
   const updatedProps = [...props]
   const updatedCustomComponentProps = [...customComponentsProps]
 
-  const unExposePropRecursive = (exposedProp: IProp) => {
+  const deleteCustomPropRecursive = (exposedProp: IProp) => {
     const customComponentType = exposedProp.derivedFromComponentType
     const derivedFromPropName = exposedProp.derivedFromPropName
+
+    // delete the prop in all the instances of custom components
+    // only when there is no other children inside the root custom component uses the custom prop
+
     const checkExposedPropInstance = updatedCustomComponentProps.findIndex(
       prop =>
         prop.derivedFromComponentType === customComponentType &&
@@ -236,7 +238,7 @@ export const unExposeProp = (
             const exposedProp = updatedCustomComponentProps[index]
             updatedCustomComponentProps.splice(index, 1)
             if (exposedProp.derivedFromComponentType)
-              unExposePropRecursive(exposedProp)
+              deleteCustomPropRecursive(exposedProp)
           } else {
             const index = props.findIndex(
               prop =>
@@ -249,7 +251,7 @@ export const unExposeProp = (
       )
     }
   }
-  unExposePropRecursive(exposedProp)
+  deleteCustomPropRecursive(exposedProp)
   return {
     updatedProps,
     updatedCustomComponentProps,

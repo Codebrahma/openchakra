@@ -8,7 +8,7 @@ import {
   moveComponent,
   searchRootCustomComponent,
   duplicateComponent,
-  unExposeProp,
+  deleteCustomProp,
 } from '../../utils/recursive'
 
 export type ComponentsState = {
@@ -118,6 +118,7 @@ const components = createModel({
     reset(state: ComponentsState, components?: IComponents): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         draftState.componentsById = INITIAL_COMPONENTS
+        draftState.propsById = INITIAL_PROPS
         draftState.selectedId = DEFAULT_ID
       })
     },
@@ -163,6 +164,7 @@ const components = createModel({
             derivedFromPropName: null,
             derivedFromComponentType: null,
           })
+
         if (isCustomComponentChild)
           draftState.customComponentsProps = [...props]
         else draftState.propsById[propsId] = [...props]
@@ -177,7 +179,8 @@ const components = createModel({
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
         const propsId = draftState.pages[draftState.selectedPage].propsId
-        let customPropName = payload.name
+        let { name } = payload
+        const { targetedProp } = payload
 
         const isCustomComponentChild = checkIsChildOfCustomComponent(
           componentId,
@@ -195,32 +198,32 @@ const components = createModel({
           const isCustomPropPresent =
             draftState.customComponentsProps.findIndex(
               prop =>
-                prop.componentId === rootCustomParent &&
-                prop.name === customPropName,
+                prop.componentId === rootCustomParent && prop.name === name,
             ) !== -1
+          let samePropName = ''
 
           if (isCustomPropPresent) {
-            const changePropName =
+            samePropName =
               window
                 .prompt(
                   'The root parent already has the similar prop name. To continue with the same propName , type yes else type no',
                 )
                 ?.toLowerCase() || 'yes'
-            if (changePropName === 'no') {
-              customPropName =
+            if (samePropName === 'no') {
+              name =
                 window.prompt('Enter the new prop name for the exposed prop') ||
-                payload.name
+                name
             }
           }
 
           let propValue = ''
-          const propIndex = draftState.customComponentsProps.findIndex(
-            prop =>
-              prop.componentId === componentId &&
-              prop.name === payload.targetedProp,
-          )
 
           //expose it when the prop is already added or else add the prop and then expose
+          const propIndex = draftState.customComponentsProps.findIndex(
+            prop =>
+              prop.componentId === componentId && prop.name === targetedProp,
+          )
+
           if (propIndex !== -1) {
             propValue = draftState.customComponentsProps[propIndex].value
 
@@ -231,28 +234,22 @@ const components = createModel({
 
             draftState.customComponentsProps[
               propIndex
-            ].derivedFromPropName = customPropName
+            ].derivedFromPropName = name
           } else {
             //Add the exposed prop in the custom props
             draftState.customComponentsProps.push({
               id: generateId(),
-              name: payload.targetedProp,
+              name: targetedProp,
               value: '',
               componentId,
-              derivedFromPropName: customPropName,
+              derivedFromPropName: name,
               derivedFromComponentType:
                 state.customComponents[rootCustomParent].type,
             })
           }
 
-          //find whether there is a existing prop similar to the custom prop in the root custom parent
-          const isPropPresent = draftState.customComponentsProps.findIndex(
-            prop =>
-              prop.componentId === rootCustomParent &&
-              prop.name === customPropName,
-          )
-          //Add props for all the instances of the custom components only when there is no similar prop present
-          if (isPropPresent === -1) {
+          //Add props for all the instances of the custom components only when there is no similar prop present or there is change in prop-name
+          if (!isCustomPropPresent || samePropName === 'no')
             updateInAllInstances(
               draftState.componentsById[componentsId],
               draftState.customComponents,
@@ -260,7 +257,7 @@ const components = createModel({
               (component: IComponent, updateInCustomComponent: Boolean) => {
                 const prop = {
                   id: generateId(),
-                  name: customPropName,
+                  name: name,
                   value: propValue,
                   componentId: component.id,
                   derivedFromPropName: null,
@@ -271,25 +268,22 @@ const components = createModel({
                 else draftState.propsById[propsId].push(prop)
               },
             )
-          }
         } else {
           const propIndex = draftState.propsById[propsId].findIndex(
             prop =>
-              prop.componentId === componentId &&
-              prop.name === payload.targetedProp,
+              prop.componentId === componentId && prop.name === targetedProp,
           )
+
+          //expose it when the prop is already added or else add the prop and then expose
           if (propIndex !== -1)
-            draftState.propsById[propsId][
-              propIndex
-            ].derivedFromPropName = customPropName
+            draftState.propsById[propsId][propIndex].derivedFromPropName = name
           else {
-            //Add the exposed prop in the props
             draftState.propsById[propsId].push({
               id: generateId(),
-              name: payload.targetedProp,
+              name: targetedProp,
               value: '',
               componentId,
-              derivedFromPropName: customPropName,
+              derivedFromPropName: name,
               derivedFromComponentType: null,
             })
           }
@@ -340,15 +334,14 @@ const components = createModel({
           draftState.customComponents = updatedComponents
           draftState.customComponentsProps = updatedProps
 
-          // delete the custom prop in all the instances of custom components
-          // only when there is no other children inside the custom component uses the root custom parent prop.
+          //deletion of custom props for the exposed props that are deleted
           deletedProps
             .filter(prop => prop.derivedFromPropName)
             .forEach(customProp => {
               const {
                 updatedCustomComponentProps,
                 updatedProps,
-              } = unExposeProp(
+              } = deleteCustomProp(
                 customProp,
                 draftState.componentsById[componentsId],
                 draftState.customComponents,
@@ -391,6 +384,7 @@ const components = createModel({
           //Can not move the immediate(outermost) children of custom component
           if (draftState.customComponents[oldParentId].parent.length === 0)
             return state
+
           draftState.customComponents[componentId].parent = newParentId
 
           //remove the componentId from children of old parent
@@ -418,13 +412,13 @@ const components = createModel({
             //Add the componentId in the children of new parent
             draftState.customComponents[newParentId].children.push(componentId)
 
+            //When moved from one custom component to another custom component
+            //The custom prop should be deleted from the old root parent and must be updated in the new root parent.
             const rootCustomParent = searchRootCustomComponent(
               draftState.customComponents[newParentId],
               draftState.customComponents,
             )
 
-            // delete the prop in all the instances of custom components
-            // only when there is no other children inside the custom component uses the root custom parent prop.
             movedProps
               .filter(
                 prop =>
@@ -444,7 +438,7 @@ const components = createModel({
                 const {
                   updatedCustomComponentProps,
                   updatedProps,
-                } = unExposeProp(
+                } = deleteCustomProp(
                   exposedPropCopy,
                   draftState.componentsById[componentsId],
                   draftState.customComponents,
@@ -500,6 +494,8 @@ const components = createModel({
             draftState.componentsById[componentsId][newParentId].children.push(
               componentId,
             )
+
+            //update the derivedFromComponentType to null for the moved props.
             draftState.propsById[propsId] = [
               ...draftState.propsById[propsId],
               ...movedProps.map(prop => {
@@ -511,15 +507,14 @@ const components = createModel({
 
             draftState.customComponentsProps = [...updatedCustomComponentProps]
 
-            // delete the prop in all the instances of custom components
-            // only when there is no other children inside the custom component uses the root custom parent prop.
+            //deletion of custom props for all the exposed props.
             movedProps
               .filter(prop => prop.derivedFromPropName)
               .forEach(customProp => {
                 const {
                   updatedCustomComponentProps,
                   updatedProps,
-                } = unExposeProp(
+                } = deleteCustomProp(
                   customProp,
                   draftState.componentsById[componentsId],
                   draftState.customComponents,
@@ -585,6 +580,7 @@ const components = createModel({
             draftState.customComponents[componentId].parent = newParentId
             //Add the componentId in the children of new parent
             draftState.customComponents[newParentId].children.push(componentId)
+
             draftState.propsById[propsId] = [...updatedProps]
             draftState.customComponentsProps = [
               ...draftState.customComponentsProps,
@@ -595,7 +591,7 @@ const components = createModel({
               }),
             ]
 
-            //Add props for all the instances of the custom components only when there is no similar prop present
+            //Add custom props for all the instances of the custom components only when there is no similar prop present
             movedProps
               .filter(prop => prop.derivedFromPropName)
               .forEach(customPropName => {
@@ -651,7 +647,6 @@ const components = createModel({
             )
           }
         }
-
         draftState.selectedId = componentId
       })
     },
@@ -700,6 +695,7 @@ const components = createModel({
 
         const props: IProp[] = []
 
+        //Add the default props for the component.
         DEFAULT_PROPS[payload.type] &&
           Object.keys(DEFAULT_PROPS[payload.type]).forEach(
             (propName: string) => {
@@ -770,7 +766,6 @@ const components = createModel({
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
 
-        //find whether the props should be added in normal props array or in custom props array
         const propsId = draftState.pages[draftState.selectedPage].propsId
 
         const customComponentsProps = [...state.customComponentsProps]
@@ -825,6 +820,7 @@ const components = createModel({
 
         const newProps: IProp[] = []
 
+        //Add the default props for the components
         Object.values(components).forEach(component => {
           DEFAULT_PROPS[component.type as ComponentType] &&
             Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
@@ -908,7 +904,7 @@ const components = createModel({
 
         const selectedComponent = components[draftState.selectedId]
 
-        //Can not delete the immediate(outermost) children of custom component
+        //Can not duplicate the immediate(outermost) children of custom component
         if (
           isChildOfCustomComponent &&
           components[selectedComponent.parent].parent.length === 0
@@ -1062,6 +1058,7 @@ const components = createModel({
           components,
           props,
         )
+        //id of 2 refers to the custom component page.
         draftState.componentsById['2'] = {
           ...draftState.componentsById['2'],
           ...clonedComponents,
@@ -1095,6 +1092,7 @@ const components = createModel({
           }
 
           //If the value is empty, delete the prop.
+          //else old value before exposing will be retained.
           if (
             draftState.customComponentsProps[exposedPropIndex].value.length ===
             0
@@ -1109,7 +1107,10 @@ const components = createModel({
             ].derivedFromComponentType = null
           }
 
-          const { updatedCustomComponentProps, updatedProps } = unExposeProp(
+          const {
+            updatedCustomComponentProps,
+            updatedProps,
+          } = deleteCustomProp(
             customProp,
             draftState.componentsById[componentsId],
             draftState.customComponents,
