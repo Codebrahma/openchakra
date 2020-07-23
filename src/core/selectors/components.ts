@@ -145,3 +145,5 @@ export const getCustomComponentsProps = (state: RootState) =>
 
 export const getAllTheComponents = (state: RootState) =>
   state.components.present.componentsById
+
+export const getState = (state: RootState) => state.components.present

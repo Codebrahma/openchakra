@@ -16,7 +16,7 @@ import {
 import useDispatch from '../hooks/useDispatch'
 import { loadFromJSON, saveAsJSON } from '../utils/import'
 import { useSelector } from 'react-redux'
-import { getComponents } from '../core/selectors/components'
+import { getState } from '../core/selectors/components'
 import { FaBomb, FaSave } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
@@ -41,12 +41,12 @@ const CustomMenuButton: React.FC<
 })
 
 const ExportMenuItem = () => {
-  const components = useSelector(getComponents)
+  const state = useSelector(getState)
 
   return (
-    <MenuItem onClick={() => saveAsJSON(components)}>
+    <MenuItem onClick={() => saveAsJSON(state)}>
       <Box mr={2} as={FaSave} />
-      Save components
+      Save workspace
     </MenuItem>
   )
 }
@@ -69,12 +69,12 @@ const HeaderMenu = () => {
           <ExportMenuItem />
           <MenuItem
             onClick={async () => {
-              const components = await loadFromJSON()
-              dispatch.components.reset(components)
+              const state = await loadFromJSON()
+              dispatch.components.resetAll(state)
             }}
           >
             <Box mr={2} as={FiUpload} />
-            Import components
+            Import workspace
           </MenuItem>
 
           <MenuDivider />

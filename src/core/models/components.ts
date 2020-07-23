@@ -115,12 +115,41 @@ const components = createModel({
     selectedId: DEFAULT_ID,
   } as ComponentsState,
   reducers: {
-    reset(state: ComponentsState, components?: IComponents): ComponentsState {
+    resetComponents(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        draftState.componentsById = INITIAL_COMPONENTS
-        draftState.propsById = INITIAL_PROPS
+        const componentsId =
+          draftState.pages[draftState.selectedPage].componentsId
+        const propsId = draftState.pages[draftState.selectedPage].propsId
+
+        draftState.componentsById[componentsId] = {
+          root: {
+            id: 'root',
+            type: 'Box',
+            parent: '',
+            children: [],
+          },
+        }
+        draftState.propsById[propsId] = []
         draftState.selectedId = DEFAULT_ID
       })
+    },
+    resetAll(
+      state: ComponentsState,
+      importedState?: ComponentsState,
+    ): ComponentsState {
+      if (importedState) {
+        return importedState
+      } else {
+        return {
+          pages: INITIAL_PAGES,
+          componentsById: INITIAL_COMPONENTS,
+          propsById: INITIAL_PROPS,
+          selectedPage: DEFAULT_PAGE,
+          customComponents: {},
+          customComponentsProps: [],
+          selectedId: DEFAULT_ID,
+        }
+      }
     },
     loadDemo(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {})

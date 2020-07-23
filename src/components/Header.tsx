@@ -192,7 +192,7 @@ const Header = () => {
                       size="xs"
                       variant="ghost"
                     >
-                      Clear
+                      Clear Page
                     </Button>
                   </PopoverTrigger>
                   <LightMode>
@@ -201,8 +201,7 @@ const Header = () => {
                       <PopoverCloseButton />
                       <PopoverHeader>Are you sure?</PopoverHeader>
                       <PopoverBody fontSize="sm">
-                        Do you really want to remove all components on the
-                        editor?
+                        Do you really want to remove all components on the page?
                       </PopoverBody>
                       <PopoverFooter display="flex" justifyContent="flex-end">
                         <Button
@@ -211,7 +210,49 @@ const Header = () => {
                           variantColor="red"
                           rightIcon="check"
                           onClick={() => {
-                            dispatch.components.reset()
+                            dispatch.components.resetComponents()
+                            if (onClose) {
+                              onClose()
+                            }
+                          }}
+                        >
+                          Yes, clear
+                        </Button>
+                      </PopoverFooter>
+                    </PopoverContent>
+                  </LightMode>
+                </>
+              )}
+            </Popover>
+            <Popover>
+              {({ onClose }) => (
+                <>
+                  <PopoverTrigger>
+                    <Button
+                      ml={4}
+                      rightIcon="small-close"
+                      size="xs"
+                      variant="ghost"
+                    >
+                      Clear All
+                    </Button>
+                  </PopoverTrigger>
+                  <LightMode>
+                    <PopoverContent zIndex={100}>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>Are you sure?</PopoverHeader>
+                      <PopoverBody fontSize="sm">
+                        Do you really want to remove everything?
+                      </PopoverBody>
+                      <PopoverFooter display="flex" justifyContent="flex-end">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          variantColor="red"
+                          rightIcon="check"
+                          onClick={() => {
+                            dispatch.components.resetAll()
                             if (onClose) {
                               onClose()
                             }
