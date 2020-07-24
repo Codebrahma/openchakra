@@ -44,24 +44,24 @@ const buildBlock = (
         .forEach((prop: IProp) => {
           const propsValue = prop.value
           const propName = prop.name
-          let operand = `='${propsValue}'`
+          if (propsValue || prop.derivedFromPropName) {
+            let operand = `='${propsValue}'`
 
-          if (propName !== 'children') {
-            if (prop.derivedFromPropName) {
-              operand = `={${prop.derivedFromPropName}}`
-            } else {
-              if (
-                propsValue.length > 0 &&
-                (propsValue === true ||
+            if (propName !== 'children') {
+              if (prop.derivedFromPropName) {
+                operand = `={${prop.derivedFromPropName}}`
+              } else {
+                if (
+                  propsValue === true ||
                   propsValue === 'true' ||
                   propsValue === 'false' ||
-                  isBoolean(propsValue) ||
-                  !isNaN(propsValue))
-              ) {
-                operand = ``
+                  isBoolean(propsValue)
+                ) {
+                  operand = ``
+                }
               }
+              propsContent += `${propName}${operand} `
             }
-            propsContent += `${propName}${operand} `
           }
         })
       const childrenProp = props.find(
