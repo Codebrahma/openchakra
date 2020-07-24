@@ -203,12 +203,13 @@ export const findControl = (
 
 export const deleteCustomProp = (
   exposedProp: IProp,
-  components: IComponents,
+  pages: IPages,
+  componentsById: IComponentsById,
   customComponents: IComponents,
-  props: IProp[],
+  propsById: IPropsById,
   customComponentsProps: IProp[],
 ) => {
-  const updatedProps = [...props]
+  const updatedPropsById = { ...propsById }
   const updatedCustomComponentProps = [...customComponentsProps]
 
   const deleteCustomPropRecursive = (exposedProp: IProp) => {
@@ -225,10 +226,15 @@ export const deleteCustomProp = (
     )
     if (checkExposedPropInstance === -1 && customComponentType) {
       updateInAllInstances(
-        components,
+        pages,
+        componentsById,
         customComponents,
         customComponentType,
-        (component: IComponent, updateInCustomComponent: Boolean) => {
+        (
+          component: IComponent,
+          updateInCustomComponent: Boolean,
+          propsId: string,
+        ) => {
           if (updateInCustomComponent) {
             const index = updatedCustomComponentProps.findIndex(
               prop =>
@@ -240,12 +246,12 @@ export const deleteCustomProp = (
             if (exposedProp.derivedFromComponentType)
               deleteCustomPropRecursive(exposedProp)
           } else {
-            const index = props.findIndex(
+            const index = updatedPropsById[propsId].findIndex(
               prop =>
                 prop.name === derivedFromPropName &&
                 prop.componentId === component.id,
             )
-            updatedProps.splice(index, 1)
+            updatedPropsById[propsId].splice(index, 1)
           }
         },
       )
@@ -253,7 +259,7 @@ export const deleteCustomProp = (
   }
   deleteCustomPropRecursive(exposedProp)
   return {
-    updatedProps,
+    updatedPropsById,
     updatedCustomComponentProps,
   }
 }

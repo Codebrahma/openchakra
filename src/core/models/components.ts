@@ -13,7 +13,7 @@ import {
 
 export type ComponentsState = {
   pages: IPages
-  componentsById: IComponentById
+  componentsById: IComponentsById
   propsById: IPropsById
   customComponents: IComponents
   customComponentsProps: IProp[]
@@ -31,7 +31,7 @@ const DEFAULT_ID = 'root'
 
 const DEFAULT_PAGE = 'app'
 
-export const INITIAL_COMPONENTS: IComponentById = {
+export const INITIAL_COMPONENTS: IComponentsById = {
   '1': {
     root: {
       id: 'root',
@@ -91,14 +91,18 @@ const duplicateProps = (props: IProp[], componentId: string) => {
 }
 
 export const updateInAllInstances = (
-  components: IComponents,
+  pages: IPages,
+  componentsById: IComponentsById,
   customComponents: IComponents,
   typeToFilter: string,
   updateCallBack: any,
 ) => {
-  Object.values(components)
-    .filter(component => component.type === typeToFilter)
-    .forEach(component => updateCallBack(component, false))
+  Object.values(pages).forEach(page =>
+    Object.values(componentsById[page.componentsId])
+      .filter(component => component.type === typeToFilter)
+      .forEach(component => updateCallBack(component, false, page.propsId)),
+  )
+
   Object.values(customComponents)
     .filter(component => component.type === typeToFilter)
     .forEach(component => updateCallBack(component, true))
@@ -205,8 +209,6 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const componentId = draftState.selectedId
-        const componentsId =
-          draftState.pages[draftState.selectedPage].componentsId
         const propsId = draftState.pages[draftState.selectedPage].propsId
         let { name } = payload
         const { targetedProp } = payload
@@ -280,10 +282,15 @@ const components = createModel({
           //Add props for all the instances of the custom components only when there is no similar prop present or there is change in prop-name
           if (!isCustomPropPresent || samePropName === 'no')
             updateInAllInstances(
-              draftState.componentsById[componentsId],
+              draftState.pages,
+              draftState.componentsById,
               draftState.customComponents,
               draftState.customComponents[rootCustomParent].type,
-              (component: IComponent, updateInCustomComponent: Boolean) => {
+              (
+                component: IComponent,
+                updateInCustomComponent: Boolean,
+                propsId: string,
+              ) => {
                 const prop = {
                   id: generateId(),
                   name: name,
@@ -369,15 +376,16 @@ const components = createModel({
             .forEach(customProp => {
               const {
                 updatedCustomComponentProps,
-                updatedProps,
+                updatedPropsById,
               } = deleteCustomProp(
                 customProp,
-                draftState.componentsById[componentsId],
+                draftState.pages,
+                draftState.componentsById,
                 draftState.customComponents,
-                draftState.propsById[propsId],
+                draftState.propsById,
                 draftState.customComponentsProps,
               )
-              draftState.propsById[propsId] = [...updatedProps]
+              draftState.propsById = { ...updatedPropsById }
               draftState.customComponentsProps = [
                 ...updatedCustomComponentProps,
               ]
@@ -466,15 +474,16 @@ const components = createModel({
 
                 const {
                   updatedCustomComponentProps,
-                  updatedProps,
+                  updatedPropsById,
                 } = deleteCustomProp(
                   exposedPropCopy,
-                  draftState.componentsById[componentsId],
+                  draftState.pages,
+                  draftState.componentsById,
                   draftState.customComponents,
-                  draftState.propsById[propsId],
+                  draftState.propsById,
                   draftState.customComponentsProps,
                 )
-                draftState.propsById[propsId] = [...updatedProps]
+                draftState.propsById = { ...updatedPropsById }
                 draftState.customComponentsProps = [
                   ...updatedCustomComponentProps,
                 ]
@@ -486,12 +495,14 @@ const components = createModel({
 
                 if (isCustomPropPresent === -1) {
                   updateInAllInstances(
-                    draftState.componentsById[componentsId],
+                    draftState.pages,
+                    draftState.componentsById,
                     draftState.customComponents,
                     draftState.customComponents[rootCustomParent].type,
                     (
                       component: IComponent,
                       updateInCustomComponent: Boolean,
+                      propsId: string,
                     ) => {
                       const prop = {
                         id: generateId(),
@@ -542,15 +553,16 @@ const components = createModel({
               .forEach(customProp => {
                 const {
                   updatedCustomComponentProps,
-                  updatedProps,
+                  updatedPropsById,
                 } = deleteCustomProp(
                   customProp,
-                  draftState.componentsById[componentsId],
+                  draftState.pages,
+                  draftState.componentsById,
                   draftState.customComponents,
-                  draftState.propsById[propsId],
+                  draftState.propsById,
                   draftState.customComponentsProps,
                 )
-                draftState.propsById[propsId] = [...updatedProps]
+                draftState.propsById = { ...updatedPropsById }
                 draftState.customComponentsProps = [
                   ...updatedCustomComponentProps,
                 ]
@@ -631,12 +643,14 @@ const components = createModel({
                 )
                 if (isPropPresent === -1) {
                   updateInAllInstances(
-                    draftState.componentsById[componentsId],
+                    draftState.pages,
+                    draftState.componentsById,
                     draftState.customComponents,
                     draftState.customComponents[rootCustomParent].type,
                     (
                       component: IComponent,
                       updateInCustomComponent: Boolean,
+                      propsId: string,
                     ) => {
                       const prop = {
                         id: generateId(),
@@ -1104,7 +1118,6 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         const componentId = draftState.selectedId
         const propName = targetedProp
-        const componentsId = state.pages[state.selectedPage].componentsId
         const propsId = state.pages[state.selectedPage].propsId
         const isCustomComponentChild = checkIsChildOfCustomComponent(
           componentId,
@@ -1138,17 +1151,18 @@ const components = createModel({
 
           const {
             updatedCustomComponentProps,
-            updatedProps,
+            updatedPropsById,
           } = deleteCustomProp(
             customProp,
-            draftState.componentsById[componentsId],
+            draftState.pages,
+            draftState.componentsById,
             draftState.customComponents,
-            draftState.propsById[propsId],
+            draftState.propsById,
             draftState.customComponentsProps,
           )
 
           draftState.customComponentsProps = [...updatedCustomComponentProps]
-          draftState.propsById[propsId] = [...updatedProps]
+          draftState.propsById = { ...updatedPropsById }
         } else {
           //update only the derivedFromPropName of the exposed prop if it is not a child of custom component
           const exposedPropIndex = draftState.propsById[propsId].findIndex(
@@ -1167,7 +1181,6 @@ const components = createModel({
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const componentId = draftState.selectedId
-        const propsId = state.pages[state.selectedPage].propsId
         const componentsId = state.pages[state.selectedPage].componentsId
         const componentType = checkIsChildOfCustomComponent(
           componentId,
@@ -1179,10 +1192,15 @@ const components = createModel({
         // delete the prop in all the instances of custom components
 
         updateInAllInstances(
-          draftState.componentsById[componentsId],
+          draftState.pages,
+          draftState.componentsById,
           draftState.customComponents,
           componentType,
-          (component: IComponent, updateInCustomComponent: Boolean) => {
+          (
+            component: IComponent,
+            updateInCustomComponent: Boolean,
+            propsId: string,
+          ) => {
             if (updateInCustomComponent) {
               const index = draftState.customComponentsProps.findIndex(
                 prop =>

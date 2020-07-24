@@ -110,7 +110,7 @@ interface IComponents {
   [name: string]: IComponent
 }
 
-interface IComponentById {
+interface IComponentsById {
   [name: string]: IComponents
 }
 
