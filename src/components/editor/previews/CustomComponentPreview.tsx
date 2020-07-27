@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import ComponentPreview from '../ComponentPreview'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
-import { getChildrenBy } from '../../../core/selectors/components'
+import { getChildrenBy, getPropsBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { generateId } from '../../../utils/generateId'
 
@@ -23,6 +23,12 @@ const CustomComponentPreview: React.FC<{
 
   const componentChildren = useSelector(getChildrenBy(component.type))
 
+  //width of outer container will be the with of the child component
+  const width =
+    useSelector(getPropsBy(componentChildren[0])).find(
+      prop => prop.name === 'width',
+    )?.value || 'fit-content'
+
   if (isOver)
     componentProps.push({
       id: generateId(),
@@ -39,7 +45,7 @@ const CustomComponentPreview: React.FC<{
   )
 
   return (
-    <Box {...interactionProps} ref={ref} width="fit-content">
+    <Box {...interactionProps} ref={ref} width={width}>
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}

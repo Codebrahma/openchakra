@@ -125,12 +125,6 @@ export const isInstanceOfCustomComponent = (id: string) => (
   return false
 }
 
-export const getExposedPropsForSelectedComponent = (state: RootState) => {
-  // const selectedComponent = getSelectedComponent(state)
-  // if (selectedComponent) return selectedComponent.exposedProps
-  // else return undefined
-}
-
 export const getPages = (state: RootState) => state.components.present.pages
 
 export const getProps = (state: RootState) => {
@@ -147,3 +141,13 @@ export const getAllTheComponents = (state: RootState) =>
   state.components.present.componentsById
 
 export const getState = (state: RootState) => state.components.present
+
+export const isImmediateChildOfCustomComponent = (component: IComponent) => (
+  state: RootState,
+) => {
+  if (state.components.present.customComponents[component.id] === undefined)
+    return false
+  const parentComponent =
+    state.components.present.customComponents[component.parent]
+  return parentComponent.parent.length === 0 ? true : false
+}

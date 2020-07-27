@@ -8,6 +8,7 @@ import {
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
   getPropsBy,
+  isImmediateChildOfCustomComponent,
 } from '../core/selectors/components'
 import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
@@ -26,6 +27,9 @@ export const useInteractive = (
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
+  )
+  const isImmediateChild = useSelector(
+    isImmediateChildOfCustomComponent(component),
   )
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
@@ -113,6 +117,21 @@ export const useInteractive = (
         derivedFromPropName: null,
       },
       ...props,
+    ]
+  }
+
+  //If it is a immediate child of custom component, its width should be 100%.
+  if (isImmediateChild) {
+    props = [
+      ...props,
+      {
+        id: generateId(),
+        name: 'width',
+        value: '100%',
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
     ]
   }
 
