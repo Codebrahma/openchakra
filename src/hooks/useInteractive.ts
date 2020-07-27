@@ -141,7 +141,7 @@ export const useInteractive = (
       {
         id: generateId(),
         name: 'boxShadow',
-        value: `${focusInput ? '#ffc4c7' : '#4FD1C5'} 0px 0px 0px 2px inset`,
+        value: `${focusInput ? '#ffc4c7' : '#4FD1C5'} 0px 0px 0px 2px`,
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,

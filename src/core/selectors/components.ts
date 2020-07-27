@@ -38,8 +38,15 @@ export const getPropsForSelectedComponent = (state: RootState) => {
   const propsId =
     state.components.present.pages[state.components.present.selectedPage]
       .propsId
+  const selectedId = state.components.present.selectedId
+
+  if (isChildrenOfCustomComponent(selectedId)(state))
+    return state.components.present.customComponentsProps.filter(
+      prop => prop.componentId === selectedId,
+    )
+
   return state.components.present.propsById[propsId].filter(
-    prop => prop.componentId === state.components.present.selectedId,
+    prop => prop.componentId === selectedId,
   )
 }
 
