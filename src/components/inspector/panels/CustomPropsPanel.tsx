@@ -41,10 +41,7 @@ const CustomPropsPanel = () => {
   }
 
   const activeProps = activePropsRef || []
-  const customProps = Object.keys(props).filter(
-    propsName => !activeProps.includes(propsName),
-  )
-
+  const customProps = props.filter(prop => !activeProps.includes(prop.name))
   return (
     <>
       <form
@@ -80,11 +77,10 @@ const CustomPropsPanel = () => {
         </InputGroup>
       </form>
 
-      {customProps.map((propsName, i) => {
-        const prop = props.find(prop => prop.name === propsName) || ''
+      {customProps.map((prop, i) => {
         return (
           <Flex
-            key={propsName}
+            key={prop.name}
             alignItems="center"
             px={2}
             bg={i % 2 === 0 ? 'white' : 'gray.50'}
@@ -92,14 +88,14 @@ const CustomPropsPanel = () => {
             justifyContent="space-between"
           >
             <SimpleGrid width="100%" columns={2} spacing={1}>
-              <Box fontWeight="bold">{propsName}</Box>
-              <Box>{prop}</Box>
+              <Box fontWeight="bold">{prop.name}</Box>
+              <Box>{prop.value}</Box>
             </SimpleGrid>
 
             <ButtonGroup display="flex" size="xs" isAttached>
               <IconButton
                 onClick={() => {
-                  setQuickProps(`${propsName}=`)
+                  setQuickProps(`${prop.name}=`)
                   if (inputRef.current) {
                     inputRef.current.focus()
                   }
@@ -110,7 +106,7 @@ const CustomPropsPanel = () => {
                 icon="edit"
               />
               <IconButton
-                onClick={() => onDelete(propsName)}
+                onClick={() => onDelete(prop.name)}
                 variant="ghost"
                 size="xs"
                 aria-label="delete"

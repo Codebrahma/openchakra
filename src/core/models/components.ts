@@ -327,7 +327,21 @@ const components = createModel({
       })
     },
     deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
-      return state
+      return produce(state, (draftState: ComponentsState) => {
+        const { id, name } = payload
+        const propsId = draftState.pages[draftState.selectedPage].propsId
+        if (checkIsChildOfCustomComponent(id, draftState.customComponents)) {
+          const index = draftState.customComponentsProps.findIndex(
+            prop => prop.componentId === id && prop.name === name,
+          )
+          draftState.customComponentsProps.splice(index, 1)
+        } else {
+          const index = draftState.propsById[propsId].findIndex(
+            prop => prop.componentId === id && prop.name === name,
+          )
+          draftState.propsById[propsId].splice(index, 1)
+        }
+      })
     },
     deleteComponent(state: ComponentsState, componentId: string) {
       if (componentId === 'root') {
