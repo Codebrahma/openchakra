@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
 import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout, getShowCode } from '../../core/selectors/app'
+import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 
 export const gridStyles = {
   backgroundImage:
@@ -39,7 +40,7 @@ const Editor: React.FC = () => {
 
   editorBackgroundProps = {
     ...editorBackgroundProps,
-    ...rootProps,
+    ...generatePropsKeyValue(rootProps),
   }
 
   const Playground = (
