@@ -4,7 +4,10 @@ import { useDrag } from 'react-dnd'
 import { Text, PseudoBox, Icon, Box, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../inspector/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
-import { getAllTheComponents } from '../../core/selectors/components'
+import {
+  getAllTheComponents,
+  getCustomComponents,
+} from '../../core/selectors/components'
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
@@ -28,6 +31,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
   const dispatch = useDispatch()
   const toast = useToast()
   const allComponents = useSelector(getAllTheComponents)
+  const customComponents = useSelector(getCustomComponents)
 
   let boxProps: any = {
     cursor: 'no-drop',
@@ -63,9 +67,15 @@ const DragItem: React.FC<ComponentItemProps> = ({
         ) !== -1
       ) {
         instanceFound = true
-        return
       }
     })
+    if (
+      Object.values(customComponents).findIndex(
+        component => component.type === type && component.id !== type,
+      ) !== -1
+    ) {
+      instanceFound = true
+    }
     return instanceFound
   }
 
