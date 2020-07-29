@@ -709,23 +709,25 @@ const components = createModel({
     },
     moveSelectedComponentChildren(
       state: ComponentsState,
-      payload: { fromIndex: number; toIndex: number },
+      payload: { componentId: string; fromIndex: number; toIndex: number },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
 
+        const { componentId, fromIndex, toIndex } = payload
+
         const selectedComponent = checkIsChildOfCustomComponent(
-          state.selectedId,
+          componentId,
           state.customComponents,
         )
-          ? draftState.customComponents[state.selectedId]
-          : draftState.componentsById[componentsId][state.selectedId]
+          ? draftState.customComponents[componentId]
+          : draftState.componentsById[componentsId][componentId]
 
         selectedComponent.children.splice(
-          payload.toIndex,
+          toIndex,
           0,
-          selectedComponent.children.splice(payload.fromIndex, 1)[0],
+          selectedComponent.children.splice(fromIndex, 1)[0],
         )
       })
     },

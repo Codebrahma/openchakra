@@ -12,6 +12,7 @@ import {
 } from '../core/selectors/components'
 import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
+import { useHoverComponent } from './useHoverComponent'
 
 export const useInteractive = (
   component: IComponent,
@@ -45,6 +46,17 @@ export const useInteractive = (
   })
 
   const ref = useRef<HTMLDivElement>(null)
+
+  const boundingPosition =
+    ref.current !== null ? ref.current.getBoundingClientRect() : undefined
+  const { hover } = useHoverComponent(
+    component.id,
+    boundingPosition && {
+      top: boundingPosition.top,
+      bottom: boundingPosition.bottom,
+    },
+  )
+
   let props = enableInteractive
     ? [
         ...componentProps,
@@ -148,5 +160,9 @@ export const useInteractive = (
       },
     ]
   }
-  return { props, ref: enableInteractive ? drag(ref) : ref, drag }
+  return {
+    props,
+    ref: enableInteractive ? drag(hover(ref)) : ref,
+    drag,
+  }
 }
