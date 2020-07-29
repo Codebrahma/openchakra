@@ -21,7 +21,7 @@ import {
   Tooltip,
 } from '@chakra-ui/core'
 import { DiGithubBadge } from 'react-icons/di'
-import { AiFillThunderbolt } from 'react-icons/ai'
+import { AiFillThunderbolt, AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/code'
 import useDispatch from '../hooks/useDispatch'
@@ -181,6 +181,14 @@ const Header = () => {
           </Stack>
 
           <Stack isInline>
+            <Button
+              rightIcon={AiOutlineFullscreen}
+              variant="ghost"
+              size="xs"
+              onClick={() => dispatch.app.toggleFullScreen()}
+            >
+              Full Screen
+            </Button>
             <CodeSandboxButton />
             <Popover>
               {({ onClose }) => (

@@ -7,6 +7,7 @@ export type AppState = {
   showCode: boolean
   inputTextFocused: boolean
   overlay: undefined | Overlay
+  showFullScreen: boolean
 }
 
 const app = createModel({
@@ -15,6 +16,7 @@ const app = createModel({
     showCode: false,
     inputTextFocused: false,
     overlay: undefined,
+    showFullScreen: false,
   } as AppState,
   reducers: {
     toggleBuilderMode(state: AppState): AppState {
@@ -33,6 +35,12 @@ const app = createModel({
       return {
         ...state,
         inputTextFocused: !state.inputTextFocused,
+      }
+    },
+    toggleFullScreen(state: AppState): AppState {
+      return {
+        ...state,
+        showFullScreen: !state.showFullScreen,
       }
     },
     setOverlay(state: AppState, overlay: Overlay | undefined): AppState {

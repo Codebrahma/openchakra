@@ -10,3 +10,5 @@ export const getFocusedComponent = (id: IComponent['id']) => (
 
 export const getInputTextFocused = (state: RootState) =>
   state.app.inputTextFocused
+
+export const getShowFullScreen = (state: RootState) => state.app.showFullScreen
