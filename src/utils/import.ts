@@ -1,5 +1,5 @@
 import { fileOpen, fileSave } from 'browser-nativefs'
-import { INITIAL_COMPONENTS } from '../core/models/components'
+import { INITIAL_COMPONENTS, ComponentsState } from '../core/models/components'
 
 export async function loadFromJSON() {
   const blob = await fileOpen({
@@ -24,9 +24,9 @@ export async function loadFromJSON() {
   return INITIAL_COMPONENTS
 }
 
-export async function saveAsJSON(components: IComponents) {
-  const serialized = JSON.stringify(components)
-  const name = `components.json`
+export async function saveAsJSON(state: ComponentsState) {
+  const serialized = JSON.stringify(state)
+  const name = `workspace.json`
 
   await fileSave(
     new Blob([serialized], { type: 'application/json' }),

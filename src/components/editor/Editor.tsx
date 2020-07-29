@@ -6,8 +6,9 @@ import SplitPane from 'react-split-pane'
 import CodePanel from '../CodePanel'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
-import { getComponents } from '../../core/selectors/components'
+import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout, getShowCode } from '../../core/selectors/app'
+import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 
 export const gridStyles = {
   backgroundImage:
@@ -20,12 +21,12 @@ export const gridStyles = {
 const Editor: React.FC = () => {
   const showCode = useSelector(getShowCode)
   const showLayout = useSelector(getShowLayout)
-  const components = useSelector(getComponents)
   const dispatch = useDispatch()
 
   const { drop } = useDropComponent('root')
-  const isEmpty = !components.root.children.length
-  const rootProps = components.root.props
+  const children = useSelector(getChildrenBy('root'))
+  const isEmpty = !children.length
+  const rootProps = useSelector(getPropsBy('root'))
 
   let editorBackgroundProps = {}
 
@@ -39,7 +40,7 @@ const Editor: React.FC = () => {
 
   editorBackgroundProps = {
     ...editorBackgroundProps,
-    ...rootProps,
+    ...generatePropsKeyValue(rootProps),
   }
 
   const Playground = (
@@ -75,7 +76,7 @@ const Editor: React.FC = () => {
         </Text>
       )}
 
-      {components.root.children.map((name: string) => (
+      {children.map((name: string) => (
         <ComponentPreview key={name} componentName={name} />
       ))}
     </Box>

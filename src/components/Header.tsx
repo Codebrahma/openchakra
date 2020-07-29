@@ -31,6 +31,8 @@ import {
   getCustomComponents,
   getCustomComponentsList,
   getShowCustomComponentPage,
+  getProps,
+  getCustomComponentsProps,
 } from '../core/selectors/components'
 import { getShowLayout, getShowCode } from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
@@ -39,6 +41,8 @@ const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsList = useSelector(getCustomComponentsList)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
 
   return (
@@ -56,6 +60,8 @@ const CodeSandboxButton = () => {
             components,
             customComponents,
             customComponentsList,
+            props,
+            customComponentsProps,
           )
           setIsLoading(false)
           const parameters = buildParameters(code)
@@ -167,7 +173,7 @@ const Header = () => {
                 onChange={() => {
                   dispatch.components.unselect()
                   if (showCustomPage) dispatch.components.switchPage('app')
-                  else dispatch.components.switchPage('custom')
+                  else dispatch.components.switchPage('customPage')
                 }}
                 size="sm"
               />
@@ -186,7 +192,7 @@ const Header = () => {
                       size="xs"
                       variant="ghost"
                     >
-                      Clear
+                      Clear Page
                     </Button>
                   </PopoverTrigger>
                   <LightMode>
@@ -195,8 +201,7 @@ const Header = () => {
                       <PopoverCloseButton />
                       <PopoverHeader>Are you sure?</PopoverHeader>
                       <PopoverBody fontSize="sm">
-                        Do you really want to remove all components on the
-                        editor?
+                        Do you really want to remove all components on the page?
                       </PopoverBody>
                       <PopoverFooter display="flex" justifyContent="flex-end">
                         <Button
@@ -205,7 +210,49 @@ const Header = () => {
                           variantColor="red"
                           rightIcon="check"
                           onClick={() => {
-                            dispatch.components.reset()
+                            dispatch.components.resetComponents()
+                            if (onClose) {
+                              onClose()
+                            }
+                          }}
+                        >
+                          Yes, clear
+                        </Button>
+                      </PopoverFooter>
+                    </PopoverContent>
+                  </LightMode>
+                </>
+              )}
+            </Popover>
+            <Popover>
+              {({ onClose }) => (
+                <>
+                  <PopoverTrigger>
+                    <Button
+                      ml={4}
+                      rightIcon="small-close"
+                      size="xs"
+                      variant="ghost"
+                    >
+                      Clear All
+                    </Button>
+                  </PopoverTrigger>
+                  <LightMode>
+                    <PopoverContent zIndex={100}>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>Are you sure?</PopoverHeader>
+                      <PopoverBody fontSize="sm">
+                        Do you really want to remove everything?
+                      </PopoverBody>
+                      <PopoverFooter display="flex" justifyContent="flex-end">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          variantColor="red"
+                          rightIcon="check"
+                          onClick={() => {
+                            dispatch.components.resetAll()
                             if (onClose) {
                               onClose()
                             }

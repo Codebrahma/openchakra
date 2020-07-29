@@ -13,6 +13,10 @@ import {
   getCustomComponentsList,
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
+  getChildrenBy,
+  getProps,
+  getCustomComponents,
+  getCustomComponentsProps,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -26,11 +30,13 @@ const CodeActionButton = memo(() => {
 
   const selectedComponent = useSelector(getSelectedComponent)
   const components = useSelector(getComponents)
+  const customComponents = useSelector(getCustomComponents)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const parentId = selectedComponent.parent
-
-  const parent = { ...components[parentId] }
-  // Do not copy sibling components from parent
-  parent.children = [selectedComponent.id]
+  const isCustomComponentChild = useSelector(
+    isChildrenOfCustomComponent(parentId),
+  )
 
   return (
     <ActionButton
@@ -39,7 +45,20 @@ const CodeActionButton = memo(() => {
       variantColor={hasCopied ? 'green' : 'gray'}
       onClick={async () => {
         setIsLoading(true)
-        const code = await generateComponentCode(parent, components)
+        const code = isCustomComponentChild
+          ? await generateComponentCode(
+              {
+                ...customComponents[parentId],
+                children: [selectedComponent.id],
+              },
+              customComponents,
+              customComponentsProps,
+            )
+          : await generateComponentCode(
+              { ...components[parentId], children: [selectedComponent.id] },
+              components,
+              props,
+            )
         onCopy(code)
         setIsLoading(false)
       }}
@@ -50,12 +69,13 @@ const CodeActionButton = memo(() => {
 
 const Inspector = () => {
   const dispatch = useDispatch()
-  let component = useSelector(getSelectedComponent)
+  const component = useSelector(getSelectedComponent)
   const toast = useToast()
 
   const { clearActiveProps } = useInspectorUpdate()
 
-  const { type, rootParentType, id, children } = component
+  const { type, id } = component
+  const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
 
   const isCustomComponent =
@@ -69,7 +89,7 @@ const Inspector = () => {
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
 
-  const docType = rootParentType || type
+  const docType = type
   const componentHasChildren = children.length > 0
 
   useEffect(() => {

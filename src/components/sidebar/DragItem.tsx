@@ -4,8 +4,10 @@ import { useDrag } from 'react-dnd'
 import { Text, PseudoBox, Icon, Box, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../inspector/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
-import checkComponentInstance from '../../utils/checkComponentInstance'
-import { getPages } from '../../core/selectors/components'
+import {
+  getAllTheComponents,
+  getCustomComponents,
+} from '../../core/selectors/components'
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
@@ -28,7 +30,8 @@ const DragItem: React.FC<ComponentItemProps> = ({
   })
   const dispatch = useDispatch()
   const toast = useToast()
-  const pages = useSelector(getPages)
+  const allComponents = useSelector(getAllTheComponents)
+  const customComponents = useSelector(getCustomComponents)
 
   let boxProps: any = {
     cursor: 'no-drop',
@@ -53,9 +56,31 @@ const DragItem: React.FC<ComponentItemProps> = ({
   if (isChild) {
     boxProps = { ...boxProps, ml: 4 }
   }
+
+  //Check if there is a instance of the custom component in all the pages.
+  const isInstancePresent = () => {
+    let instanceFound = false
+    Object.values(allComponents).forEach(components => {
+      if (
+        Object.values(components).findIndex(
+          component => component.type === type,
+        ) !== -1
+      ) {
+        instanceFound = true
+      }
+    })
+    if (
+      Object.values(customComponents).findIndex(
+        component => component.type === type && component.id !== type,
+      ) !== -1
+    ) {
+      instanceFound = true
+    }
+    return instanceFound
+  }
+
   const deleteComponentHandler = (componentType: string) => {
-    const componentFound = checkComponentInstance(pages, componentType)
-    if (componentFound)
+    if (isInstancePresent())
       toast({
         title: 'Error in deletion.',
         description: 'Instance of the custom component exists.',

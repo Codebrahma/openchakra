@@ -100,18 +100,18 @@ interface ExposedChildren {
 }
 
 interface IComponent {
-  children: string[]
+  id: string
   type: ComponentType | string
   parent: string
-  id: string
-  props: any
-  rootParentType?: ComponentType | string
-  exposedProps?: PropRefs
-  exposedChildren?: ExposedChildren
+  children: string[]
 }
 
 interface IComponents {
   [name: string]: IComponent
+}
+
+interface IComponentsById {
+  [name: string]: IComponents
 }
 
 interface IPreviewProps {
@@ -131,6 +131,26 @@ interface ComponentItemProps {
   custom?: boolean
 }
 
+interface IPage {
+  id: string
+  name: string
+  componentsId: string
+  propsId: string
+}
+
 interface IPages {
-  [name: string]: IComponents
+  [name: string]: IPage
+}
+
+interface IProp {
+  id: string
+  name: string
+  value: string | any
+  componentId: string
+  derivedFromPropName: string | null
+  derivedFromComponentType: string | null
+}
+
+interface IPropsById {
+  [name: string]: IProp[]
 }

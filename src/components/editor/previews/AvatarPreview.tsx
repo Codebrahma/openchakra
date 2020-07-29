@@ -14,35 +14,41 @@ import {
   getComponents,
   getCustomComponents,
   isChildrenOfCustomComponent,
+  getChildrenBy,
 } from '../../../core/selectors/components'
-import findExposedPropsValue from '../../../utils/findExposedPropsValue'
+import { generateId } from '../../../utils/generateId'
+import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const AvatarPreview: React.FC<IPreviewProps & {
   spacing?: BoxProps['marginLeft']
   index?: number
 }> = ({ component, spacing, index, customProps }) => {
   const { drop, isOver } = useDropComponent(component.id, ['AvatarBadge'])
-  const { props, ref } = useInteractive(component)
-  const propsToReplace = findExposedPropsValue(
-    component.exposedProps,
-    customProps,
-  )
+  const { props: componentProps, ref } = useInteractive(component)
 
   let boxProps: any = {
     display: 'inline-block',
     zIndex: index ? 20 - index : null,
   }
 
-  props.p = 0
+  const componentChildren = useSelector(getChildrenBy(component.id))
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <Avatar ml={index === 0 ? 0 : spacing} {...props} {...propsToReplace}>
-        {component.children.map((key: string) => (
+      <Avatar ml={index === 0 ? 0 : spacing} {...propsKeyValue} p="0">
+        {componentChildren.map((key: string) => (
           <ComponentPreview
             key={key}
             componentName={key}
@@ -58,7 +64,7 @@ export const AvatarGroupPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, ['Avatar'])
   const isCustomComponentsChild = useSelector(
     isChildrenOfCustomComponent(component.id),
@@ -66,25 +72,29 @@ export const AvatarGroupPreview = ({
   const components = useSelector(
     isCustomComponentsChild ? getCustomComponents : getComponents,
   )
-  const propsToReplace = findExposedPropsValue(
-    component.exposedProps,
-    customProps,
-  )
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   let boxProps: any = { display: 'inline' }
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
-
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <AvatarGroup {...props} {...propsToReplace}>
-        {component.children.map((key: string, i: number) => (
+      <AvatarGroup {...propsKeyValue}>
+        {componentChildren.map((key: string, i: number) => (
           <AvatarPreview
             key={key}
             index={i + 1}
-            spacing={props.spacing}
+            spacing={propsKeyValue.spacing}
             component={components[key]}
             customProps={customProps}
           />
@@ -98,15 +108,14 @@ export const AvatarBadgePreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component)
+  const { props: componentProps, ref } = useInteractive(component)
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+
   let boxProps: any = {}
-  const propsToReplace = findExposedPropsValue(
-    component.exposedProps,
-    customProps,
-  )
+
   return (
     <Box {...boxProps} ref={ref}>
-      <AvatarBadge {...props} {...propsToReplace} />
+      <AvatarBadge {...propsKeyValue} />
     </Box>
   )
 }

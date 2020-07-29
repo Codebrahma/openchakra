@@ -8,12 +8,16 @@ import {
   getComponents,
   getCustomComponents,
   getCustomComponentsList,
+  getProps,
+  getCustomComponentsProps,
 } from '../core/selectors/components'
 
 const CodePanel = () => {
   const components = useSelector(getComponents)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsList = useSelector(getCustomComponentsList)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [code, setCode] = useState<string | undefined>(undefined)
 
   useEffect(() => {
@@ -22,12 +26,20 @@ const CodePanel = () => {
         components,
         customComponents,
         customComponentsList,
+        props,
+        customComponentsProps,
       )
       setCode(code)
     }
 
     getCode()
-  }, [components, customComponents, customComponentsList])
+  }, [
+    components,
+    customComponents,
+    customComponentsList,
+    props,
+    customComponentsProps,
+  ])
 
   const { onCopy, hasCopied } = useClipboard(code)
 

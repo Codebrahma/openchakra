@@ -1,6 +1,6 @@
 import isBoolean from 'lodash/isBoolean'
 import uniq from 'lodash/uniq'
-import { findChildrenImports } from './recursive'
+// import { findChildrenImports } from './recursive'
 
 const capitalize = (value: string) => {
   return value.charAt(0).toUpperCase() + value.slice(1)
@@ -24,7 +24,11 @@ const formatCode = async (code: string) => {
   return formattedCode
 }
 
-const buildBlock = (component: IComponent, components: IComponents) => {
+const buildBlock = (
+  component: IComponent,
+  components: IComponents,
+  props: IProp[],
+) => {
   let content = ''
 
   component.children.forEach((key: string) => {
@@ -35,51 +39,49 @@ const buildBlock = (component: IComponent, components: IComponents) => {
       const componentName = capitalize(childComponent.type)
       let propsContent = ''
 
-      const propsNames = Object.keys(childComponent.props)
-      const exposedProps = childComponent.exposedProps
-
-      exposedProps &&
-        Object.values(exposedProps).forEach(prop => {
-          if (prop.targetedProp !== 'children')
-            propsContent += `${prop.targetedProp}={${prop.customPropName}}`
-        })
-
-      propsNames.forEach((propName: string) => {
-        const propsValue = childComponent.props[propName]
-
-        if (propName !== 'children') {
-          if (
-            (exposedProps === undefined ||
-              exposedProps[propName] === undefined) &&
-            propsValue.length > 0
-          ) {
+      props
+        .filter(prop => prop.componentId === childComponent.id)
+        .forEach((prop: IProp) => {
+          const propsValue = prop.value
+          const propName = prop.name
+          if (propsValue || prop.derivedFromPropName) {
             let operand = `='${propsValue}'`
-            if (propsValue === true || propsValue === 'true') {
-              operand = ``
-            } else if (
-              propsValue === 'false' ||
-              isBoolean(propsValue) ||
-              !isNaN(propsValue)
-            ) {
-              operand = `={${propsValue}}`
-            }
 
-            propsContent += `${propName}${operand} `
+            if (propName !== 'children') {
+              if (prop.derivedFromPropName) {
+                operand = `={${prop.derivedFromPropName}}`
+              } else {
+                if (
+                  propsValue === true ||
+                  propsValue === 'true' ||
+                  propsValue === 'false' ||
+                  isBoolean(propsValue)
+                ) {
+                  operand = ``
+                }
+              }
+              propsContent += `${propName}${operand} `
+            }
           }
-        }
-      })
-      if (
-        typeof childComponent.props.children === 'string' &&
-        childComponent.children.length === 0
-      ) {
-        if (exposedProps && exposedProps['children']) {
-          content += `<${componentName} ${propsContent}>{${exposedProps['children'].customPropName}}</${componentName}>`
+        })
+      const childrenProp = props.find(
+        prop =>
+          prop.componentId === childComponent.id && prop.name === 'children',
+      )
+      const children: string[] = []
+      Object.values(components)
+        .filter(comp => comp.parent === childComponent.id)
+        .forEach(comp => children.push(comp.id))
+
+      if (typeof childrenProp?.value === 'string' && children.length === 0) {
+        if (childrenProp.derivedFromPropName) {
+          content += `<${componentName} ${propsContent}>{${childrenProp.derivedFromPropName}}</${componentName}>`
         } else {
-          content += `<${componentName} ${propsContent}>${childComponent.props.children}</${componentName}>`
+          content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
         }
-      } else if (childComponent.children.length) {
+      } else if (children.length) {
         content += `<${componentName} ${propsContent}>
-      ${buildBlock(childComponent, components)}
+      ${buildBlock(childComponent, components, props)}
       </${componentName}>`
       } else {
         content += `<${componentName} ${propsContent} />`
@@ -93,14 +95,14 @@ const buildBlock = (component: IComponent, components: IComponents) => {
 export const generateComponentCode = async (
   component: IComponent,
   components: IComponents,
+  props: IProp[],
 ) => {
-  let code = buildBlock(component, components)
+  let code = buildBlock(component, components, props)
 
   code = `
-const My${component.type} = () => (
-  ${code}
-)`
-
+  const My${component.type} = () => (
+    ${code}
+  )`
   return await formatCode(code)
 }
 
@@ -108,8 +110,10 @@ export const generateCode = async (
   components: IComponents,
   customComponents: IComponents,
   customComponentsList: string[],
+  props: IProp[],
+  customComponentsProps: IProp[],
 ) => {
-  let code = buildBlock(components.root, components)
+  let code = buildBlock(components.root, components, props)
 
   const checkInstanceInComponents = (componentType: string) => {
     let isPresent = false
@@ -129,35 +133,25 @@ export const generateCode = async (
       //Display custom component only if the custom component instance is present
       const customComponentInstance = checkInstanceInComponents(componentName)
       if (customComponentInstance) {
-        const customComponentProps = Object.keys(
-          customComponents[componentName].props,
-        ).map(prop => `${prop}`)
+        const customComponentProps = customComponentsProps
+          .filter(prop => prop.componentId === componentName)
+          .map(prop => `${prop.name}`)
 
         const componentCode = buildBlock(
           customComponents[componentName],
           customComponents,
+          customComponentsProps,
         )
         return `const ${capitalize(componentName)} = (${
           customComponentProps.length > 0
             ? '{' + customComponentProps.join(',') + '}'
             : ' '
         }) =>(
-        ${componentCode}
-     );
-     `
+          ${componentCode}
+       );
+       `
       } else return null
     })
-
-  //only import the chakra-ui components from the custom components if the instance is present in the page.
-  let customComponentImports: Array<string> = []
-  customComponentsList.forEach(type => {
-    if (checkInstanceInComponents(type)) {
-      customComponentImports = [
-        ...customComponentImports,
-        ...findChildrenImports(customComponents[type], customComponents),
-      ]
-    }
-  })
 
   //filter the custom components types
   let imports = [
@@ -170,31 +164,34 @@ export const generateCode = async (
         .map(name => components[name].type),
     ),
     ...new Set(
-      customComponentImports.filter(
-        name => customComponentsList.indexOf(name) === -1,
-      ),
+      Object.keys(customComponents)
+        .filter(
+          name =>
+            customComponentsList.indexOf(customComponents[name].type) === -1,
+        )
+        .map(name => customComponents[name].type),
     ),
   ]
   //remove duplicates from the imports array.
   imports = uniq(imports)
 
   code = `import React from 'react';
-import {
-  ThemeProvider,
-  CSSReset,
-  theme,
-  ${imports.join(',')}
-} from "@chakra-ui/core";
+  import {
+    ThemeProvider,
+    CSSReset,
+    theme,
+    ${imports.join(',')}
+  } from "@chakra-ui/core";
 
-${customComponentCode && customComponentCode.join('')}
-const App = () => (
-  <ThemeProvider theme={theme}>
-    <CSSReset />
-    ${code}
-  </ThemeProvider>
-);
+  ${customComponentCode && customComponentCode.join('')}
+  const App = () => (
+    <ThemeProvider theme={theme}>
+      <CSSReset />
+      ${code}
+    </ThemeProvider>
+  );
 
-export default App;`
+  export default App;`
 
   return await formatCode(code)
 }
