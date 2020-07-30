@@ -11,6 +11,7 @@ import {
   getProps,
   getCustomComponentsProps,
 } from '../core/selectors/components'
+import { getCustomTheme } from '../core/selectors/app'
 
 const CodePanel = () => {
   const components = useSelector(getComponents)
@@ -19,6 +20,7 @@ const CodePanel = () => {
   const props = useSelector(getProps)
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const [code, setCode] = useState<string | undefined>(undefined)
+  const customTheme = useSelector(getCustomTheme)
 
   useEffect(() => {
     const getCode = async () => {
@@ -28,6 +30,7 @@ const CodePanel = () => {
         customComponentsList,
         props,
         customComponentsProps,
+        customTheme,
       )
       setCode(code)
     }
@@ -39,6 +42,7 @@ const CodePanel = () => {
     customComponentsList,
     props,
     customComponentsProps,
+    customTheme,
   ])
 
   const { onCopy, hasCopied } = useClipboard(code)

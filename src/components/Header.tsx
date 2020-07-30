@@ -4,23 +4,13 @@ import {
   Switch,
   Button,
   Flex,
-  Link,
   Stack,
   FormLabel,
   DarkMode,
   FormControl,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
-  LightMode,
-  PopoverFooter,
   Tooltip,
+  useDisclosure,
 } from '@chakra-ui/core'
-import { DiGithubBadge } from 'react-icons/di'
 import { AiFillThunderbolt, AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/code'
@@ -34,8 +24,15 @@ import {
   getProps,
   getCustomComponentsProps,
 } from '../core/selectors/components'
-import { getShowLayout, getShowCode } from '../core/selectors/app'
+import {
+  getShowLayout,
+  getShowCode,
+  getCustomTheme,
+  getLoadedFonts,
+} from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
+import ClearOptionPopover from './ClearOptionPopover'
+import EditThemeModal from './EditThemeModal'
 
 const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
@@ -44,6 +41,8 @@ const CodeSandboxButton = () => {
   const props = useSelector(getProps)
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
+  const customTheme = useSelector(getCustomTheme)
+  const fonts = useSelector(getLoadedFonts)
 
   return (
     <Tooltip
@@ -62,9 +61,10 @@ const CodeSandboxButton = () => {
             customComponentsList,
             props,
             customComponentsProps,
+            customTheme,
           )
           setIsLoading(false)
-          const parameters = buildParameters(code)
+          const parameters = buildParameters(code, fonts)
 
           window.open(
             `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
@@ -87,6 +87,7 @@ const Header = () => {
   const showCode = useSelector(getShowCode)
   const showCustomPage = useSelector(getShowCustomComponentPage)
   const dispatch = useDispatch()
+  const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <DarkMode>
@@ -115,7 +116,8 @@ const Header = () => {
         <Flex flexGrow={1} justifyContent="space-between" alignItems="center">
           <Stack isInline spacing={4} justify="center" align="center">
             <Box>
-              <HeaderMenu />
+              <HeaderMenu onOpen={onOpen} />
+              <EditThemeModal isOpen={isOpen} onClose={onClose} />
             </Box>
             <FormControl>
               <Tooltip
@@ -190,110 +192,25 @@ const Header = () => {
               Full Screen
             </Button>
             <CodeSandboxButton />
-            <Popover>
-              {({ onClose }) => (
-                <>
-                  <PopoverTrigger>
-                    <Button
-                      ml={4}
-                      rightIcon="small-close"
-                      size="xs"
-                      variant="ghost"
-                    >
-                      Clear Page
-                    </Button>
-                  </PopoverTrigger>
-                  <LightMode>
-                    <PopoverContent zIndex={100}>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverHeader>Are you sure?</PopoverHeader>
-                      <PopoverBody fontSize="sm">
-                        Do you really want to remove all components on the page?
-                      </PopoverBody>
-                      <PopoverFooter display="flex" justifyContent="flex-end">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          variantColor="red"
-                          rightIcon="check"
-                          onClick={() => {
-                            dispatch.components.resetComponents()
-                            if (onClose) {
-                              onClose()
-                            }
-                          }}
-                        >
-                          Yes, clear
-                        </Button>
-                      </PopoverFooter>
-                    </PopoverContent>
-                  </LightMode>
-                </>
-              )}
-            </Popover>
-            <Popover>
-              {({ onClose }) => (
-                <>
-                  <PopoverTrigger>
-                    <Button
-                      ml={4}
-                      rightIcon="small-close"
-                      size="xs"
-                      variant="ghost"
-                    >
-                      Clear All
-                    </Button>
-                  </PopoverTrigger>
-                  <LightMode>
-                    <PopoverContent zIndex={100}>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverHeader>Are you sure?</PopoverHeader>
-                      <PopoverBody fontSize="sm">
-                        Do you really want to remove everything?
-                      </PopoverBody>
-                      <PopoverFooter display="flex" justifyContent="flex-end">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          variantColor="red"
-                          rightIcon="check"
-                          onClick={() => {
-                            dispatch.components.resetAll()
-                            if (onClose) {
-                              onClose()
-                            }
-                          }}
-                        >
-                          Yes, clear
-                        </Button>
-                      </PopoverFooter>
-                    </PopoverContent>
-                  </LightMode>
-                </>
-              )}
-            </Popover>
+
+            <ClearOptionPopover
+              name="Clear Theme"
+              message="Do you really want to remove the custom theme on the
+                  editor?"
+              dispatchAction={() => dispatch.app.resetCustomTheme()}
+            />
+            <ClearOptionPopover
+              name="Clear Page"
+              message="Do you really want to remove all components on the page?"
+              dispatchAction={() => dispatch.components.resetComponents()}
+            />
+            <ClearOptionPopover
+              name="Clear All"
+              message="Do you really want to remove everything?"
+              dispatchAction={() => dispatch.components.resetAll()}
+            />
           </Stack>
         </Flex>
-
-        <Stack
-          justifyContent="flex-end"
-          width="13rem"
-          align="center"
-          isInline
-          spacing="2"
-        >
-          <Link isExternal href="https://github.com/premieroctet/openchakra">
-            <Box as={DiGithubBadge} size="8" color="gray.200" />
-          </Link>
-          <Box lineHeight="shorter" color="white" fontSize="xs">
-            by{' '}
-            <Link isExternal href="https://premieroctet.com" color="teal.100">
-              Premier Octet
-            </Link>
-          </Box>
-        </Stack>
       </Flex>
     </DarkMode>
   )

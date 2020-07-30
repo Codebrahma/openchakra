@@ -8,6 +8,8 @@ export type AppState = {
   inputTextFocused: boolean
   overlay: undefined | Overlay
   showFullScreen: boolean
+  customTheme: null | object
+  loadedFonts: null | Array<string>
 }
 
 const app = createModel({
@@ -17,6 +19,8 @@ const app = createModel({
     inputTextFocused: false,
     overlay: undefined,
     showFullScreen: false,
+    customTheme: null,
+    loadedFonts: null,
   } as AppState,
   reducers: {
     toggleBuilderMode(state: AppState): AppState {
@@ -48,6 +52,37 @@ const app = createModel({
         ...state,
         overlay,
       }
+    },
+    setCustomTheme(state: AppState, text: any): AppState {
+      return {
+        ...state,
+        customTheme: text,
+      }
+    },
+    resetCustomTheme(state: AppState): AppState {
+      return {
+        ...state,
+        customTheme: null,
+      }
+    },
+    addFonts: (state: AppState, font: string): AppState => {
+      return {
+        ...state,
+        loadedFonts: state.loadedFonts ? [...state.loadedFonts, font] : [font],
+      }
+    },
+    removeFont: (state: AppState, fontToBeRemoved: string): AppState => {
+      if (state.loadedFonts) {
+        const newLoadedFonts = state.loadedFonts.filter(font => {
+          if (fontToBeRemoved === font) return null
+          return font
+        })
+        return {
+          ...state,
+          loadedFonts: newLoadedFonts.length === 0 ? null : newLoadedFonts,
+        }
+      }
+      return state
     },
     'components/deleteComponent': (state: AppState): AppState => {
       return {

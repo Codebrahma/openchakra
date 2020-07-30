@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, FunctionComponent } from 'react'
 import {
   Box,
   Button,
@@ -17,7 +17,7 @@ import useDispatch from '../hooks/useDispatch'
 import { loadFromJSON, saveAsJSON } from '../utils/import'
 import { useSelector } from 'react-redux'
 import { getState } from '../core/selectors/components'
-import { FaBomb, FaSave } from 'react-icons/fa'
+import { FaBomb, FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
 
@@ -50,7 +50,7 @@ const ExportMenuItem = () => {
     </MenuItem>
   )
 }
-const HeaderMenu = () => {
+const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
 
   return (
@@ -75,6 +75,10 @@ const HeaderMenu = () => {
           >
             <Box mr={2} as={FiUpload} />
             Import workspace
+          </MenuItem>
+          <MenuItem onClick={onOpen}>
+            <Box mr={2} as={FaEdit} />
+            Edit theme
           </MenuItem>
 
           <MenuDivider />

@@ -12,3 +12,7 @@ export const getInputTextFocused = (state: RootState) =>
   state.app.inputTextFocused
 
 export const getShowFullScreen = (state: RootState) => state.app.showFullScreen
+
+export const getCustomTheme = (state: RootState) => state.app.customTheme
+
+export const getLoadedFonts = (state: RootState) => state.app.loadedFonts

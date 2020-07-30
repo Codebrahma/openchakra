@@ -23,6 +23,13 @@ const persistConfig = {
   version,
   throttle: 500,
 }
+const persistThemeConfig = {
+  key: `openchakra_customTheme_v${version}`,
+  storage,
+  whitelist: ['customTheme', 'loadedFonts'],
+  version,
+  throttle: 500,
+}
 
 const persistPlugin = {
   onStoreCreated(store: any) {
@@ -36,7 +43,7 @@ export const storeConfig = {
     // @ts-ignore
     combineReducers: reducers => {
       return combineReducers({
-        ...reducers,
+        app: persistReducer(persistThemeConfig, reducers.app),
         components: persistReducer(
           persistConfig,
           undoable(reducers.components, {

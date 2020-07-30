@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Box } from '@chakra-ui/core'
+import { Flex, Box, ThemeProvider, theme } from '@chakra-ui/core'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
@@ -12,14 +12,29 @@ import { HotKeys } from 'react-hotkeys'
 import useShortcuts, { keyMap } from './hooks/useShortcuts'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
 import { InspectorProvider } from './contexts/inspector-context'
-import { getShowFullScreen } from './core/selectors/app'
+import {
+  getShowFullScreen,
+  getCustomTheme,
+  getLoadedFonts,
+} from './core/selectors/app'
 import ActionButton from './components/inspector/ActionButton'
 import useDispatch from './hooks/useDispatch'
+import merge from './utils/mergeObject'
+import loadFonts from './utils/loadFonts'
 
 const App = () => {
   const { handlers } = useShortcuts()
   const showFullScreen = useSelector(getShowFullScreen)
   const dispatch = useDispatch()
+  const customTheme = useSelector(getCustomTheme)
+
+  const customThemeContainer = customTheme
+    ? merge(theme, customTheme)
+    : { ...theme }
+
+  const loadedFonts = useSelector(getLoadedFonts)
+  console.log(loadedFonts)
+  loadedFonts && loadFonts(loadedFonts)
 
   return (
     <HotKeys allowChanges handlers={handlers} keyMap={keyMap}>
@@ -43,11 +58,14 @@ const App = () => {
       <DndProvider backend={Backend}>
         <Flex h={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}>
           {!showFullScreen ? <Sidebar /> : null}
-          {/* <EditorErrorBoundary> */}
-          <Box bg="white" flex={1} zIndex={10} position="relative">
-            <Editor />
-          </Box>
-          {/* </EditorErrorBoundary> */}
+          <ThemeProvider theme={customThemeContainer}>
+            {/* <EditorErrorBoundary> */}
+
+            <Box bg="white" flex={1} zIndex={10} position="relative">
+              <Editor />
+            </Box>
+            {/* </EditorErrorBoundary> */}
+          </ThemeProvider>
           {!showFullScreen ? (
             <Box
               maxH="calc(100vh - 3rem)"

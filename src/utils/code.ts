@@ -106,14 +106,31 @@ export const generateComponentCode = async (
   return await formatCode(code)
 }
 
+//object to string
+function objToString(obj: any) {
+  let str = ''
+  for (const p in obj) {
+    if (typeof obj[p] === 'object')
+      str += p + ':{\n...theme.' + p + ',\n' + objToString(obj[p]) + '},\n'
+    else str += p + ': "' + obj[p] + '",\n'
+  }
+  return str
+}
+
 export const generateCode = async (
   components: IComponents,
   customComponents: IComponents,
   customComponentsList: string[],
   props: IProp[],
   customComponentsProps: IProp[],
+  customTheme: any,
 ) => {
   let code = buildBlock(components.root, components, props)
+  const customThemeCode = `const customTheme={
+    ...theme,
+    ${objToString(customTheme)}
+  }`
+  const theme = customTheme ? `customTheme` : `theme`
 
   const checkInstanceInComponents = (componentType: string) => {
     let isPresent = false
@@ -184,14 +201,16 @@ export const generateCode = async (
   } from "@chakra-ui/core";
 
   ${customComponentCode && customComponentCode.join('')}
-  const App = () => (
-    <ThemeProvider theme={theme}>
+  const App = () => {
+    ${customTheme ? customThemeCode : ''}
+    return(
+    <ThemeProvider theme={${theme}}>
       <CSSReset />
       ${code}
     </ThemeProvider>
-  );
+    )
+  };
 
   export default App;`
-
   return await formatCode(code)
 }

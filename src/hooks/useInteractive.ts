@@ -123,7 +123,7 @@ export const useInteractive = (
       {
         id: generateId(),
         name: 'padding',
-        value: 4,
+        value: '1rem',
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
