@@ -15,7 +15,6 @@ export const gridStyles = {
     'linear-gradient(to right, #d9e2e9 1px, transparent 1px),linear-gradient(to bottom, #d9e2e9 1px, transparent 1px);',
   backgroundSize: '20px 20px',
   bg: '#edf2f6',
-  p: 10,
 }
 
 const Editor: React.FC = () => {
@@ -45,7 +44,6 @@ const Editor: React.FC = () => {
 
   const Playground = (
     <Box
-      p={2}
       {...editorBackgroundProps}
       height="100%"
       minWidth="10rem"
