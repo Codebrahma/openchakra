@@ -23,6 +23,7 @@ const LoadedFontsPanel = () => {
             _hover={{
               backgroundColor: 'rgba(0,0,0,0.04)',
             }}
+            key={font}
           >
             <Flex alignItems="center">
               <Icon fontSize="sm" name="arrow-right" color="gray.300" />

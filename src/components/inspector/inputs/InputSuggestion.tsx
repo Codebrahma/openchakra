@@ -14,6 +14,7 @@ type FormControlPropType = {
   value: any
   name: string
   children: ReactNode
+  placeholder?: string
 }
 
 const ltrim = (value: string) => {
@@ -26,6 +27,7 @@ const InputSuggestion: React.FC<FormControlPropType> = ({
   name,
   value,
   children,
+  placeholder,
 }) => {
   const { setValue } = useForm()
   const [isFocus, setIsFocus] = useState(false)
@@ -47,6 +49,7 @@ const InputSuggestion: React.FC<FormControlPropType> = ({
         aria-labelledby={name}
         size="sm"
         autoComplete="off"
+        placeholder={placeholder ? placeholder : ''}
       />
 
       {isFocus && (

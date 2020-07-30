@@ -8,7 +8,7 @@ export type AppState = {
   inputTextFocused: boolean
   overlay: undefined | Overlay
   showFullScreen: boolean
-  customTheme: null | object
+  customTheme: null | any
   loadedFonts: null | Array<string>
 }
 

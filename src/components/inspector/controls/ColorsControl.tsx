@@ -19,7 +19,6 @@ import {
   TabPanels,
   TabPanel,
   Input,
-  useTheme,
 } from '@chakra-ui/core'
 import FormControl from './FormControl'
 import { useForm } from '../../../hooks/useForm'
@@ -27,6 +26,7 @@ import omit from 'lodash/omit'
 import ColorPicker from 'coloreact'
 import 'react-color-picker/index.css'
 import usePropsSelector from '../../../hooks/usePropsSelector'
+import useCustomTheme from '../../../hooks/useCustomTheme'
 
 type ColorControlPropsType = {
   name: string
@@ -39,14 +39,9 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const { setValue, setValueFromEvent } = useForm()
   const [hue, setHue] = useState(500)
   const value = usePropsSelector(props.name)
-  const theme = useTheme()
+  const theme = useCustomTheme()
 
-  const themeColors: any = omit(theme.colors, [
-    'transparent',
-    'current',
-    'black',
-    'white',
-  ])
+  const themeColors: any = omit(theme.colors, ['transparent', 'current'])
 
   let propsIconButton: any = { bg: value }
   if (value && themeColors[value]) {
@@ -56,25 +51,35 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const huesPicker = (
     <>
       <Grid mb={2} templateColumns="repeat(5, 1fr)" gap={0}>
-        {Object.keys(themeColors).map(colorName => (
-          <PseudoBox
-            border={colorName.includes('white') ? '1px solid lightgrey' : ''}
-            key={colorName}
-            _hover={{ shadow: 'lg' }}
-            cursor="pointer"
-            bg={`${colorName}.${props.enableHues ? hue : 500}`}
-            onClick={() =>
-              setValue(
-                props.name,
-                props.enableHues ? `${colorName}.${hue}` : colorName,
-              )
-            }
-            mt={2}
-            rounded="full"
-            height="30px"
-            width="30px"
-          />
-        ))}
+        {Object.keys(themeColors).map(colorName => {
+          const enableHues =
+            props.enableHues && typeof themeColors[colorName] !== 'string'
+          return (
+            <PseudoBox
+              border={colorName.includes('white') ? '1px solid lightgrey' : ''}
+              key={colorName}
+              _hover={{ shadow: 'lg' }}
+              cursor="pointer"
+              bg={
+                enableHues
+                  ? themeColors[colorName][hue]
+                  : typeof themeColors[colorName] !== 'string'
+                  ? themeColors[colorName][hue]
+                  : themeColors[colorName]
+              }
+              onClick={() =>
+                setValue(
+                  props.name,
+                  enableHues ? `${colorName}.${hue}` : colorName,
+                )
+              }
+              mt={2}
+              rounded="full"
+              height="30px"
+              width="30px"
+            />
+          )
+        })}
       </Grid>
 
       {props.enableHues && (

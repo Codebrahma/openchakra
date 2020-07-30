@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Box, ThemeProvider, theme } from '@chakra-ui/core'
+import { Flex, Box, ThemeProvider } from '@chakra-ui/core'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
@@ -12,28 +12,19 @@ import { HotKeys } from 'react-hotkeys'
 import useShortcuts, { keyMap } from './hooks/useShortcuts'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
 import { InspectorProvider } from './contexts/inspector-context'
-import {
-  getShowFullScreen,
-  getCustomTheme,
-  getLoadedFonts,
-} from './core/selectors/app'
+import { getShowFullScreen, getLoadedFonts } from './core/selectors/app'
 import ActionButton from './components/inspector/ActionButton'
 import useDispatch from './hooks/useDispatch'
-import merge from './utils/mergeObject'
 import loadFonts from './utils/loadFonts'
+import useCustomTheme from './hooks/useCustomTheme'
 
 const App = () => {
   const { handlers } = useShortcuts()
   const showFullScreen = useSelector(getShowFullScreen)
   const dispatch = useDispatch()
-  const customTheme = useSelector(getCustomTheme)
-
-  const customThemeContainer = customTheme
-    ? merge(theme, customTheme)
-    : { ...theme }
+  const theme = useCustomTheme()
 
   const loadedFonts = useSelector(getLoadedFonts)
-  console.log(loadedFonts)
   loadedFonts && loadFonts(loadedFonts)
 
   return (
@@ -58,7 +49,7 @@ const App = () => {
       <DndProvider backend={Backend}>
         <Flex h={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}>
           {!showFullScreen ? <Sidebar /> : null}
-          <ThemeProvider theme={customThemeContainer}>
+          <ThemeProvider theme={theme}>
             {/* <EditorErrorBoundary> */}
 
             <Box bg="white" flex={1} zIndex={10} position="relative">

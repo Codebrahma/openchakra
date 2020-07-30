@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { IconButton, ButtonGroup, useTheme } from '@chakra-ui/core'
+import { IconButton, ButtonGroup } from '@chakra-ui/core'
 import ColorsControl from '../../controls/ColorsControl'
 import { GoBold, GoItalic } from 'react-icons/go'
 import {
@@ -13,12 +13,13 @@ import { ComboboxOption } from '@reach/combobox'
 import InputSuggestion from '../../inputs/InputSuggestion'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
+import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 import '@reach/combobox/styles.css'
 
 const TextPanel = () => {
   const { setValue, setValueFromEvent } = useForm()
-  const theme = useTheme()
+  const theme = useCustomTheme()
 
   const fontWeight = usePropsSelector('fontWeight')
   const fontStyle = usePropsSelector('fontStyle')

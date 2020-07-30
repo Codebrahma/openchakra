@@ -11,13 +11,10 @@ import {
   LightMode,
   Box,
   Button,
-  useTheme,
 } from '@chakra-ui/core'
 import JSONTree from 'react-json-tree'
-import { useSelector } from 'react-redux'
-import merge from '../utils/mergeObject'
-import { getCustomTheme } from '../core/selectors/app'
 import useDispatch from '../hooks/useDispatch'
+import useCustomTheme from '../hooks/useCustomTheme'
 
 export const jsonTheme = {
   scheme: 'google',
@@ -45,8 +42,7 @@ const EditThemeModal: FunctionComponent<{
 }> = ({ isOpen, onClose }) => {
   const [fileLoaded, setFileLoaded] = useState(false)
   const [fileError, setFileError] = useState(false)
-  const customTheme = useSelector(getCustomTheme)
-  const theme = useTheme()
+  const theme = useCustomTheme()
   const dispatch = useDispatch()
 
   const handleChange = async (selectorFiles: any) => {
@@ -110,10 +106,7 @@ const EditThemeModal: FunctionComponent<{
               </p>
             )}
             <Box rounded={5}>
-              <JSONTree
-                data={customTheme ? merge(theme, customTheme) : { ...theme }}
-                theme={jsonTheme}
-              />
+              <JSONTree data={theme} theme={jsonTheme} />
             </Box>
           </ModalBody>
 
