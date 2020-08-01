@@ -78,7 +78,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
           </MenuItem>
           <MenuItem onClick={onOpen}>
             <Box mr={2} as={FaEdit} />
-            Edit theme
+            Edit/View theme
           </MenuItem>
 
           <MenuDivider />

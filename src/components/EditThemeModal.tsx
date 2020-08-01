@@ -11,10 +11,18 @@ import {
   LightMode,
   Box,
   Button,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Text,
 } from '@chakra-ui/core'
 import JSONTree from 'react-json-tree'
 import useDispatch from '../hooks/useDispatch'
 import useCustomTheme from '../hooks/useCustomTheme'
+import { useSelector } from 'react-redux'
+import { getCustomTheme } from '../core/selectors/app'
 
 export const jsonTheme = {
   scheme: 'google',
@@ -43,7 +51,9 @@ const EditThemeModal: FunctionComponent<{
   const [fileLoaded, setFileLoaded] = useState(false)
   const [fileError, setFileError] = useState(false)
   const theme = useCustomTheme()
+  const customTheme = useSelector(getCustomTheme)
   const dispatch = useDispatch()
+  const [saveStatus, changeSaveStatus] = useState('')
 
   const handleChange = async (selectorFiles: any) => {
     selectorFiles.preventDefault()
@@ -60,10 +70,30 @@ const EditThemeModal: FunctionComponent<{
     }
     reader.readAsText(selectorFiles.target.files[0])
   }
+  const editThemeHandler = () => {
+    const data = document.getElementById('customTheme')?.innerHTML
+    if (data) {
+      try {
+        dispatch.app.setCustomTheme(JSON.parse(data))
+        changeSaveStatus('✅ Changes had been saved successfully.')
+      } catch (e) {
+        changeSaveStatus('❌ Error in JSON data')
+      }
+    } else {
+      changeSaveStatus('❌ You can not leave the editor empty.')
+    }
+  }
 
   return (
     <LightMode>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          changeSaveStatus('')
+          onClose()
+        }}
+        size="xl"
+      >
         <ModalOverlay />
         <ModalContent rounded={10}>
           <ModalHeader fontSize="15px" textAlign="center">
@@ -71,47 +101,116 @@ const EditThemeModal: FunctionComponent<{
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input
-              id="themeFile"
-              type="file"
-              accept="application/json"
-              onChange={(selectorFiles: any) => handleChange(selectorFiles)}
-            />
+            <Tabs isFitted variant="enclosed">
+              <TabList mb="1em">
+                <Tab>View Theme</Tab>
+                <Tab>Edit Theme</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <Box rounded={5}>
+                    <JSONTree data={theme} theme={jsonTheme} />
+                  </Box>
+                </TabPanel>
+                <TabPanel>
+                  <Text mb="20px">
+                    You can edit the custom theme by uploading the theme file or
+                    by directly typing in the editor.
+                  </Text>
+                  <Input
+                    id="themeFile"
+                    type="file"
+                    accept="application/json"
+                    onChange={(selectorFiles: any) =>
+                      handleChange(selectorFiles)
+                    }
+                  />
 
-            {fileLoaded && (
-              <div>
-                <p style={{ textAlign: 'center', marginTop: '20px' }}>
-                  Your theme has been successfully loaded{' '}
-                  <span
-                    style={{ verticalAlign: 'middle' }}
-                    role="img"
-                    aria-label="light"
-                  >
-                    ✅
-                  </span>
-                </p>
-              </div>
-            )}
+                  {fileLoaded && (
+                    <div>
+                      <p style={{ textAlign: 'center', marginTop: '20px' }}>
+                        Your theme has been successfully loaded{' '}
+                        <span
+                          style={{ verticalAlign: 'middle' }}
+                          role="img"
+                          aria-label="light"
+                        >
+                          ✅
+                        </span>
+                      </p>
+                    </div>
+                  )}
 
-            {fileError && (
-              <p>
-                Can't read this file / theme{' '}
-                <span
-                  style={{ verticalAlign: 'middle' }}
-                  role="img"
-                  aria-label="light"
-                >
-                  ❌
-                </span>
-              </p>
-            )}
-            <Box rounded={5}>
-              <JSONTree data={theme} theme={jsonTheme} />
-            </Box>
+                  {fileError && (
+                    <p>
+                      Can't read this file / theme{' '}
+                      <span
+                        style={{ verticalAlign: 'middle' }}
+                        role="img"
+                        aria-label="light"
+                      >
+                        ❌
+                      </span>
+                    </p>
+                  )}
+                  <Box>
+                    <Box m="20px 0">
+                      <Box>
+                        <Box mb="20px">
+                          <Text>
+                            Don't forget to click the save button to save your
+                            changes.
+                          </Text>
+                        </Box>
+                        <Box
+                          bg="rgb(3 22 40)"
+                          color="white"
+                          fontSize="14px"
+                          borderRadius="10px"
+                          minHeight="100px"
+                        >
+                          <pre
+                            id="customTheme"
+                            contentEditable={true}
+                            style={{
+                              display: 'inline-block',
+                              minHeight: '100px',
+                              width: '100%',
+                            }}
+                            suppressContentEditableWarning={true}
+                          >
+                            {customTheme
+                              ? JSON.stringify(customTheme, undefined, 2)
+                              : '{ }'}
+                          </pre>
+                        </Box>
+                        <Button
+                          backgroundColor="#2e3748"
+                          color="white"
+                          onClick={editThemeHandler}
+                          mt="20px"
+                          mb="20px"
+                        >
+                          Save Theme
+                        </Button>
+                        <Text>{saveStatus}</Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose} size="sm">
+            <Button
+              mr={3}
+              onClick={() => {
+                changeSaveStatus('')
+                onClose()
+              }}
+              size="sm"
+            >
               Close
             </Button>
           </ModalFooter>
