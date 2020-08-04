@@ -137,22 +137,24 @@ export const generateCode = async (
     return isPresent
   }
 
-  const getUsedCustomComponents = (
-    list: string[],
-    components: IComponents,
-    customComponents: IComponents,
-  ) => {
+  const getUsedCustomComponents = () => {
     const usedCustomComponentsList: string[] = []
+    console.log(customComponentsList)
     const getUsedCustomComponentsRecursive = (id: string) => {
       const type = customComponents[id].type
-      if (list.includes(type) && usedCustomComponentsList.indexOf(type) === -1)
+      if (
+        customComponentsList.includes(type) &&
+        usedCustomComponentsList.indexOf(type) === -1
+      ) {
         usedCustomComponentsList.push(type)
+        getUsedCustomComponentsRecursive(type)
+      }
       customComponents[id].children.forEach(child =>
         getUsedCustomComponentsRecursive(child),
       )
     }
     Object.values(components)
-      .filter(component => list.includes(component.type))
+      .filter(component => customComponentsList.includes(component.type))
       .forEach(component => getUsedCustomComponentsRecursive(component.type))
     return usedCustomComponentsList
   }
@@ -181,11 +183,7 @@ export const generateCode = async (
   const theme = customTheme ? `customTheme` : `theme`
 
   //Find what are the custom components used.
-  const usedCustomComponentsList = getUsedCustomComponents(
-    customComponentsList,
-    components,
-    customComponents,
-  )
+  const usedCustomComponentsList = getUsedCustomComponents()
 
   //Generate the code for custom components
   const customComponentCode =
