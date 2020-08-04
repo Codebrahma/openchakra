@@ -125,13 +125,6 @@ export const generateCode = async (
   customComponentsProps: IProp[],
   customTheme: any,
 ) => {
-  let code = buildBlock(components.root, components, props)
-  const customThemeCode = `const customTheme={
-    ...theme,
-    ${objToString(customTheme)}
-  }`
-  const theme = customTheme ? `customTheme` : `theme`
-
   const checkInstanceInComponents = (componentType: string) => {
     let isPresent = false
     Object.values(components).forEach(component => {
@@ -144,9 +137,60 @@ export const generateCode = async (
     return isPresent
   }
 
+  const getUsedCustomComponents = (
+    list: string[],
+    components: IComponents,
+    customComponents: IComponents,
+  ) => {
+    const usedCustomComponentsList: string[] = []
+    const getUsedCustomComponentsRecursive = (id: string) => {
+      const type = customComponents[id].type
+      if (list.includes(type) && usedCustomComponentsList.indexOf(type) === -1)
+        usedCustomComponentsList.push(type)
+      customComponents[id].children.forEach(child =>
+        getUsedCustomComponentsRecursive(child),
+      )
+    }
+    Object.values(components)
+      .filter(component => list.includes(component.type))
+      .forEach(component => getUsedCustomComponentsRecursive(component.type))
+    return usedCustomComponentsList
+  }
+
+  const getImportsFromCustomComponents = () => {
+    const requiredImports: string[] = []
+    const getImportsFromCustomComponentsRecursive = (comp: IComponent) => {
+      if (customComponentsList.indexOf(comp.type) === -1)
+        requiredImports.push(comp.type)
+
+      comp.children.forEach(child =>
+        getImportsFromCustomComponentsRecursive(customComponents[child]),
+      )
+    }
+    usedCustomComponentsList.forEach(name => {
+      getImportsFromCustomComponentsRecursive(customComponents[name])
+    })
+    return requiredImports
+  }
+
+  let code = buildBlock(components.root, components, props)
+  const customThemeCode = `const customTheme={
+    ...theme,
+    ${objToString(customTheme)}
+  }`
+  const theme = customTheme ? `customTheme` : `theme`
+
+  //Find what are the custom components used.
+  const usedCustomComponentsList = getUsedCustomComponents(
+    customComponentsList,
+    components,
+    customComponents,
+  )
+
+  //Generate the code for custom components
   const customComponentCode =
-    customComponentsList &&
-    Object.values(customComponentsList).map(componentName => {
+    usedCustomComponentsList &&
+    Object.values(usedCustomComponentsList).map(componentName => {
       //Display custom component only if the custom component instance is present
       const customComponentInstance = checkInstanceInComponents(componentName)
       if (customComponentInstance) {
@@ -180,14 +224,7 @@ export const generateCode = async (
         )
         .map(name => components[name].type),
     ),
-    ...new Set(
-      Object.keys(customComponents)
-        .filter(
-          name =>
-            customComponentsList.indexOf(customComponents[name].type) === -1,
-        )
-        .map(name => customComponents[name].type),
-    ),
+    ...getImportsFromCustomComponents(),
   ]
   //remove duplicates from the imports array.
   imports = uniq(imports)
