@@ -28,7 +28,7 @@ type MenuItems = Partial<
   }
 >
 
-const menuItems: MenuItems = {
+export const menuItems: MenuItems = {
   Accordion: {
     children: {
       Accordion: {},

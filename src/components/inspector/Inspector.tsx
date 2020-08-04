@@ -23,6 +23,7 @@ import { generateComponentCode } from '../../utils/code'
 import useClipboard from '../../hooks/useClipboard'
 import { useInspectorUpdate } from '../../contexts/inspector-context'
 import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
+import { menuItems } from '../sidebar/Sidebar'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -131,23 +132,26 @@ const Inspector = () => {
                 onClick={() => {
                   const name = prompt('Enter the name for the Component')
                   if (name && name.length > 1) {
+                    let editedName = name.split(' ').join('')
+                    editedName =
+                      editedName.charAt(0).toUpperCase() + editedName.slice(1)
+
                     //check if the name already exist
                     if (
-                      customComponentsList.indexOf(
-                        name.charAt(0).toUpperCase() + name.slice(1),
-                      ) !== -1
+                      customComponentsList.indexOf(editedName) !== -1 ||
+                      Object.keys(menuItems).indexOf(editedName) !== -1
                     )
                       toast({
                         title: 'Duplicate type',
                         description:
-                          'An custom component already exists with the same name.',
+                          'A component already exists with the same name.',
                         status: 'error',
                         duration: 1000,
                         isClosable: true,
                         position: 'top',
                       })
                     else {
-                      dispatch.components.saveComponent(name)
+                      dispatch.components.saveComponent(editedName)
                       toast({
                         title: 'Component is saved successfully.',
                         status: 'success',
