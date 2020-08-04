@@ -1,14 +1,14 @@
-import { useRef, MouseEvent } from 'react'
+import { useRef, MouseEvent, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
 import {
   getIsSelectedComponent,
-  getIsHovered,
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
   getPropsBy,
   isImmediateChildOfCustomComponent,
+  getIsHovered,
 } from '../core/selectors/components'
 import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
@@ -23,7 +23,8 @@ export const useInteractive = (
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
-  const isHovered = useSelector(getIsHovered(component.id))
+  const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
+  const [isHovered, setIsHovered] = useState(false)
   const focusInput = useSelector(getFocusedComponent(component.id))
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
@@ -65,7 +66,7 @@ export const useInteractive = (
           name: 'onMouseOver',
           value: (event: MouseEvent) => {
             event.stopPropagation()
-            dispatch.components.hover(component.id)
+            setIsHovered(true)
           },
           componentId: component.id,
           derivedFromComponentType: null,
@@ -75,7 +76,7 @@ export const useInteractive = (
           id: generateId(),
           name: 'onMouseOut',
           value: () => {
-            dispatch.components.unhover()
+            setIsHovered(false)
           },
           componentId: component.id,
           derivedFromComponentType: null,
@@ -147,7 +148,7 @@ export const useInteractive = (
     ]
   }
 
-  if (isHovered || isComponentSelected) {
+  if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
     props = [
       ...props,
       {
