@@ -20,6 +20,7 @@ import { getState } from '../core/selectors/components'
 import { FaBomb, FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
+import { getCustomTheme } from '../core/selectors/app'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -41,10 +42,11 @@ const CustomMenuButton: React.FC<
 })
 
 const ExportMenuItem = () => {
-  const state = useSelector(getState)
+  const componentsState = useSelector(getState)
+  const theme = useSelector(getCustomTheme)
 
   return (
-    <MenuItem onClick={() => saveAsJSON(state)}>
+    <MenuItem onClick={() => saveAsJSON(componentsState, theme)}>
       <Box mr={2} as={FaSave} />
       Save workspace
     </MenuItem>
@@ -69,8 +71,9 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
           <ExportMenuItem />
           <MenuItem
             onClick={async () => {
-              const state = await loadFromJSON()
-              dispatch.components.resetAll(state)
+              const workspace = await loadFromJSON()
+              dispatch.components.resetAll(workspace.components)
+              dispatch.app.setCustomTheme(workspace.theme)
             }}
           >
             <Box mr={2} as={FiUpload} />

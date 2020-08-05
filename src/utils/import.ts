@@ -18,14 +18,15 @@ export async function loadFromJSON() {
   })
 
   try {
-    return JSON.parse(contents)
+    const workspace = JSON.parse(contents)
+    return { components: workspace.components, theme: workspace.theme }
   } catch (error) {}
 
-  return INITIAL_COMPONENTS
+  return { components: INITIAL_COMPONENTS, theme: {} }
 }
 
-export async function saveAsJSON(state: ComponentsState) {
-  const serialized = JSON.stringify(state)
+export async function saveAsJSON(components: ComponentsState, theme: any) {
+  const serialized = JSON.stringify({ components, theme })
   const name = `workspace.json`
 
   await fileSave(
