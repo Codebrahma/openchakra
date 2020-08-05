@@ -19,7 +19,9 @@ const formatCode = async (code: string) => {
       semi: false,
       singleQuote: true,
     })
-  } catch (e) {}
+  } catch (e) {
+    formattedCode = e.name + ': ' + e.message
+  }
 
   return formattedCode
 }
