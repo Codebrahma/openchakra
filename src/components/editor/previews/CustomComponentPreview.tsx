@@ -21,10 +21,16 @@ const CustomComponentPreview: React.FC<{
   const componentChildren = useSelector(getChildrenBy(component.type))
 
   //width of outer container will be the with of the child component
-  const width =
-    useSelector(getPropsBy(componentChildren[0])).find(
-      prop => prop.name === 'width',
-    )?.value || 'fit-content'
+  let widthProp = useSelector(getPropsBy(componentChildren[0])).find(
+    prop => prop.name === 'width',
+  )
+  if (widthProp?.derivedFromComponentType) {
+    widthProp = componentProps.find(
+      prop => prop.name === widthProp?.derivedFromPropName,
+    )
+  }
+
+  const width = widthProp ? widthProp.value : 'fit-content'
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const interactionProps = generatePropsKeyValue(
