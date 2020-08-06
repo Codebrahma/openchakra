@@ -56,7 +56,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
             props.enableHues && typeof themeColors[colorName] !== 'string'
           return (
             <PseudoBox
-              border={colorName.includes('white') ? '1px solid lightgrey' : ''}
+              border="1px solid rgba(0,0,0,0.1)"
               key={colorName}
               _hover={{ shadow: 'lg' }}
               cursor="pointer"
