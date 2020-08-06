@@ -1,7 +1,14 @@
 import React, { memo } from 'react'
-import { IconButton, ButtonGroup } from '@chakra-ui/core'
+import {
+  IconButton,
+  ButtonGroup,
+  Slider,
+  SliderThumb,
+  SliderTrack,
+  SliderFilledTrack,
+} from '@chakra-ui/core'
 import ColorsControl from '../../controls/ColorsControl'
-import { GoBold, GoItalic } from 'react-icons/go'
+import { GoItalic } from 'react-icons/go'
 import {
   MdFormatAlignLeft,
   MdFormatAlignRight,
@@ -32,19 +39,6 @@ const TextPanel = () => {
     <>
       <FormControl label="Style">
         <IconButton
-          mr={1}
-          aria-label="bold"
-          icon={GoBold}
-          onClick={() => {
-            setValue('fontWeight', fontWeight ? null : 'bold')
-          }}
-          size="xs"
-          variantColor={fontWeight ? 'whatsapp' : 'gray'}
-          variant={fontWeight ? 'solid' : 'outline'}
-        >
-          Bold
-        </IconButton>
-        <IconButton
           aria-label="italic"
           icon={GoItalic}
           onClick={() => {
@@ -56,6 +50,19 @@ const TextPanel = () => {
         >
           Italic
         </IconButton>
+      </FormControl>
+      <FormControl label="Font Weight">
+        <Slider
+          min={100}
+          max={900}
+          step={100}
+          onChange={value => setValue('fontWeight', value)}
+          value={fontWeight ? fontWeight : 100}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
       </FormControl>
 
       <FormControl label="Text align">
