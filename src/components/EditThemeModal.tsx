@@ -176,6 +176,7 @@ const EditThemeModal: FunctionComponent<{
                               display: 'inline-block',
                               minHeight: '100px',
                               width: '100%',
+                              whiteSpace: 'pre-wrap',
                             }}
                             suppressContentEditableWarning={true}
                           >
