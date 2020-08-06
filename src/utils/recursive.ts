@@ -12,7 +12,6 @@ export const duplicateComponent = (
 
   const cloneComponent = (component: IComponent) => {
     const newId = generateId()
-    const newPropId = generateId()
     const children = component.children.map(child => {
       return cloneComponent(sourceComponents[child])
     })
@@ -27,7 +26,7 @@ export const duplicateComponent = (
       .forEach(prop => {
         clonedProps.push({
           ...prop,
-          id: newPropId,
+          id: generateId(),
           componentId: newId,
         })
       })
