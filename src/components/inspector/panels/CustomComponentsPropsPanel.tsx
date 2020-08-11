@@ -1,11 +1,13 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Box } from '@chakra-ui/core'
+import { Box, Accordion } from '@chakra-ui/core'
 import {
   getSelectedComponentId,
   getPropsBy,
 } from '../../../core/selectors/components'
 import CustomComponentsPropsControl from '../controls/customComponentsPropsControl'
+import ParentInspector from '../ParentInspector'
+import AccordionContainer from '../AccordionContainer'
 
 const CustomComponentsPropsPanel = () => {
   const selectedId = useSelector(getSelectedComponentId)
@@ -18,6 +20,11 @@ const CustomComponentsPropsPanel = () => {
           <CustomComponentsPropsControl propName={prop.name} />
         </Box>
       ))}
+      <Accordion defaultIndex={[0]}>
+        <AccordionContainer title="Parent">
+          <ParentInspector />
+        </AccordionContainer>
+      </Accordion>
     </>
   )
 }
