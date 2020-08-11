@@ -35,7 +35,7 @@ const StylesPanel: React.FC<Props> = ({
         </AccordionContainer>
       )}
 
-      {!isRoot && !parentIsRoot && (
+      {!isRoot && (
         <AccordionContainer title="Parent">
           <ParentInspector />
         </AccordionContainer>
