@@ -109,11 +109,16 @@ export const generateComponentCode = async (
 }
 
 //object to string
-function objToString(obj: any) {
+function objToString(obj: any, key: string = 'theme') {
   let str = ''
   for (const p in obj) {
     if (typeof obj[p] === 'object')
-      str += p + ':{\n...theme.' + p + ',\n' + objToString(obj[p]) + '},\n'
+      str +=
+        p +
+        `:{\n...${key}.${p}` +
+        ',\n' +
+        objToString(obj[p], `${key}.${p}`) +
+        '},\n'
     else str += p + ': "' + obj[p] + '",\n'
   }
   return str
