@@ -13,6 +13,7 @@ import {
 import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
 import { useHoverComponent } from './useHoverComponent'
+import useCustomTheme from './useCustomTheme'
 
 export const useInteractive = (
   component: IComponent,
@@ -36,6 +37,7 @@ export const useInteractive = (
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
   const componentProps = onlyVisualHelper ? [] : [...fetchedProps]
+  const theme = useCustomTheme()
 
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
@@ -60,7 +62,6 @@ export const useInteractive = (
 
   let props = enableInteractive
     ? [
-        ...componentProps,
         {
           id: generateId(),
           name: 'onMouseOver',
@@ -108,6 +109,18 @@ export const useInteractive = (
           derivedFromComponentType: null,
           derivedFromPropName: null,
         },
+        {
+          id: generateId(),
+          name: 'fontFamily',
+          value:
+            component.type === 'Heading'
+              ? theme.fonts.heading
+              : theme.fonts.body,
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
+        ...componentProps,
       ]
     : [...componentProps]
 
