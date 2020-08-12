@@ -103,11 +103,11 @@ const Inspector = () => {
         <Box
           fontWeight="semibold"
           fontSize="md"
-          color="yellow.900"
+          color="primary.900"
           py={2}
           px={2}
           shadow="sm"
-          bg="yellow.100"
+          bg="primary.100"
           display="flex"
           alignItems="center"
           justifyContent="space-between"
@@ -214,7 +214,7 @@ const Inspector = () => {
       </Box>
       {!isCustomComponent ? (
         <Box>
-          <Box pb={1} bg="white" px={3}>
+          <Box bg="white" px={3}>
             <Panels component={component} isRoot={isRoot} />
           </Box>
           <StylesPanel

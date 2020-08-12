@@ -46,9 +46,9 @@ const DragItem: React.FC<ComponentItemProps> = ({
       _hover: {
         ml: -1,
         mr: 1,
-        bg: 'teal.100',
+        bg: 'primary.100',
         shadow: 'sm',
-        color: 'teal.800',
+        color: 'primary.800',
       },
     }
   }
@@ -114,9 +114,14 @@ const DragItem: React.FC<ComponentItemProps> = ({
         width="95%"
         p={1}
       >
-        <Icon fontSize="xs" mr={2} name="drag-handle" />
+        <Icon fontSize="xs" mr={2} name="drag-handle" color="neutrals.800" />
 
-        <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
+        <Text
+          letterSpacing="wide"
+          fontSize="sm"
+          textTransform="capitalize"
+          color="neutrals.800"
+        >
           {label}
         </Text>
 
@@ -124,8 +129,8 @@ const DragItem: React.FC<ComponentItemProps> = ({
           <Box
             ml={2}
             borderWidth="1px"
-            color="teal.300"
-            borderColor="teal.600"
+            color="primary.300"
+            borderColor="primary.600"
             fontSize="xs"
             rounded={4}
             px={1}

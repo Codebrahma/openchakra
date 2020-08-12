@@ -5,8 +5,7 @@ import {
   InputGroup,
   Icon,
   InputRightElement,
-  DarkMode,
-  IconButton,
+  LightMode,
 } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 
@@ -127,8 +126,6 @@ export const menuItems: MenuItems = {
   Tag: {},
   Text: {},
   Textarea: {},
-  Editable: { soon: true },
-  Tab: { soon: true },
   /*"Tabs",
   "TabList",
   "TabPanel",
@@ -141,7 +138,7 @@ const Menu = () => {
   const customComponents = useSelector(getCustomComponents)
 
   return (
-    <DarkMode>
+    <LightMode>
       <Box
         maxH="calc(100vh - 3rem)"
         overflowY="auto"
@@ -151,28 +148,27 @@ const Menu = () => {
         p={5}
         m={0}
         as="menu"
-        backgroundColor="#2e3748"
+        backgroundColor="white"
         width="15rem"
+        borderRight="1px solid rgb(225, 230, 235)"
       >
         <InputGroup size="sm" mb={4}>
           <InputRightElement>
             {searchTerm ? (
-              <IconButton
-                color="gray.300"
-                aria-label="clear"
-                icon="close"
-                size="xs"
+              <Icon
+                color="neutrals.300"
+                name="close"
+                cursor="pointer"
                 onClick={() => setSearchTerm('')}
               >
                 x
-              </IconButton>
+              </Icon>
             ) : (
-              <Icon name="search" color="gray.300" />
+              <Icon name="search" color="neutrals.300" />
             )}
           </InputRightElement>
           <Input
             value={searchTerm}
-            color="gray.300"
             placeholder="Search component…"
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(event.target.value)
@@ -245,7 +241,7 @@ const Menu = () => {
             )
           })}
       </Box>
-    </DarkMode>
+    </LightMode>
   )
 }
 

@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Box, Text, Link } from '@chakra-ui/core'
+import { Box, Text } from '@chakra-ui/core'
 import ComponentPreview from './ComponentPreview'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import SplitPane from 'react-split-pane'
@@ -12,9 +12,9 @@ import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 
 export const gridStyles = {
   backgroundImage:
-    'linear-gradient(to right, #d9e2e9 1px, transparent 1px),linear-gradient(to bottom, #d9e2e9 1px, transparent 1px);',
-  backgroundSize: '20px 20px',
-  bg: '#edf2f6',
+    'linear-gradient(0deg, transparent, transparent 7px, #E6E6FF 7px), linear-gradient(90deg, transparent, transparent 7px, #E6E6FF 7px);',
+  backgroundSize: '8px 8px',
+  bg: 'white',
 }
 
 const Editor: React.FC = () => {
@@ -59,18 +59,7 @@ const Editor: React.FC = () => {
     >
       {isEmpty && (
         <Text maxWidth="md" color="gray.400" fontSize="xl" textAlign="center">
-          Drag some component to start coding without code! Or load{' '}
-          <Link
-            color="gray.500"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation()
-              dispatch.components.loadDemo('onboarding')
-            }}
-            textDecoration="underline"
-          >
-            the onboarding components
-          </Link>
-          .
+          Drag and drop components to start building websites with zero coding.
         </Text>
       )}
 

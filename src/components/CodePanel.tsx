@@ -65,7 +65,7 @@ const CodePanel = () => {
         size="sm"
         position="absolute"
         textTransform="uppercase"
-        variantColor="teal"
+        variantColor="primary"
         fontSize="xs"
         height="24px"
         top={4}

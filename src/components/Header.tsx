@@ -6,7 +6,6 @@ import {
   Flex,
   Stack,
   FormLabel,
-  DarkMode,
   FormControl,
   Tooltip,
   useDisclosure,
@@ -48,7 +47,7 @@ const CodeSandboxButton = () => {
     <Tooltip
       zIndex={100}
       hasArrow
-      bg="yellow.100"
+      bg="neutrals.700"
       aria-label="Builder mode help"
       label="Export in CodeSandbox"
     >
@@ -90,129 +89,130 @@ const Header = () => {
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
-    <DarkMode>
+    <Flex
+      justifyContent="space-between"
+      as="header"
+      height="3rem"
+      px="1rem"
+      borderBottom="1px solid rgb(225, 230, 235)"
+      bg="white"
+    >
       <Flex
-        justifyContent="space-between"
-        bg="#1a202c"
-        as="header"
-        height="3rem"
-        px="1rem"
+        width="14rem"
+        height="100%"
+        backgroundColor="white"
+        color="white"
+        as="a"
+        fontSize="xl"
+        flexDirection="row"
+        alignItems="center"
+        aria-label="Chakra UI, Back to homepage"
       >
-        <Flex
-          width="14rem"
-          height="100%"
-          backgroundColor="#1a202c"
-          color="white"
-          as="a"
-          fontSize="xl"
-          flexDirection="row"
-          alignItems="center"
-          aria-label="Chakra UI, Back to homepage"
-        >
-          <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="teal.100" />{' '}
-          <Box fontWeight="bold">open</Box>chakra
-        </Flex>
+        <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
+        <Box fontWeight="bold" color="black">
+          Assembler
+        </Box>
+      </Flex>
 
-        <Flex flexGrow={1} justifyContent="space-between" alignItems="center">
-          <Stack isInline spacing={4} justify="center" align="center">
-            <Box>
-              <HeaderMenu onOpen={onOpen} />
-              <EditThemeModal isOpen={isOpen} onClose={onClose} />
-            </Box>
-            <FormControl>
-              <Tooltip
-                zIndex={100}
-                hasArrow
-                bg="yellow.100"
-                aria-label="Builder mode help"
-                label="Builder mode adds extra padding/borders"
-              >
-                <FormLabel
-                  cursor="help"
-                  color="gray.200"
-                  fontSize="xs"
-                  htmlFor="preview"
-                  pb={0}
-                >
-                  Builder mode
-                </FormLabel>
-              </Tooltip>
-              <Switch
-                isChecked={showLayout}
-                color="teal"
-                size="sm"
-                onChange={() => dispatch.app.toggleBuilderMode()}
-                id="preview"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel color="gray.200" fontSize="xs" htmlFor="code" pb={0}>
-                Code panel
-              </FormLabel>
-              <Switch
-                isChecked={showCode}
-                id="code"
-                color="teal"
-                onChange={() => dispatch.app.toggleCodePanel()}
-                size="sm"
-              />
-            </FormControl>
-
-            <FormControl>
+      <Flex flexGrow={1} justifyContent="space-between" alignItems="center">
+        <Stack isInline spacing={4} justify="center" align="center">
+          <Box>
+            <HeaderMenu onOpen={onOpen} />
+            <EditThemeModal isOpen={isOpen} onClose={onClose} />
+          </Box>
+          <FormControl>
+            <Tooltip
+              zIndex={100}
+              hasArrow
+              bg="neutrals.700"
+              aria-label="Builder mode help"
+              label="Builder mode adds extra padding/borders"
+            >
               <FormLabel
-                color="gray.200"
+                cursor="help"
+                color="black"
                 fontSize="xs"
-                htmlFor="customComponents"
+                htmlFor="preview"
                 pb={0}
               >
-                Custom Components
+                Builder mode
               </FormLabel>
-              <Switch
-                isChecked={showCustomPage}
-                id="customComponents"
-                color="teal"
-                onChange={() => {
-                  dispatch.components.unselect()
-                  if (showCustomPage) dispatch.components.switchPage('app')
-                  else dispatch.components.switchPage('customPage')
-                }}
-                size="sm"
-              />
-            </FormControl>
-          </Stack>
+            </Tooltip>
+            <Switch
+              isChecked={showLayout}
+              color="primary"
+              size="sm"
+              onChange={() => dispatch.app.toggleBuilderMode()}
+              id="preview"
+            />
+          </FormControl>
 
-          <Stack isInline>
-            <Button
-              rightIcon={AiOutlineFullscreen}
-              variant="ghost"
-              size="xs"
-              onClick={() => dispatch.app.toggleFullScreen()}
+          <FormControl>
+            <FormLabel color="black" fontSize="xs" htmlFor="code" pb={0}>
+              Code panel
+            </FormLabel>
+            <Switch
+              isChecked={showCode}
+              id="code"
+              color="primary"
+              onChange={() => dispatch.app.toggleCodePanel()}
+              size="sm"
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel
+              color="black"
+              fontSize="xs"
+              htmlFor="customComponents"
+              pb={0}
             >
-              Full Screen
-            </Button>
-            <CodeSandboxButton />
+              Custom Components
+            </FormLabel>
+            <Switch
+              isChecked={showCustomPage}
+              id="customComponents"
+              color="primary"
+              onChange={() => {
+                dispatch.components.unselect()
+                if (showCustomPage) dispatch.components.switchPage('app')
+                else dispatch.components.switchPage('customPage')
+              }}
+              size="sm"
+            />
+          </FormControl>
+        </Stack>
 
-            <ClearOptionPopover
-              name="Clear Theme"
-              message="Do you really want to remove the custom theme on the
+        <Stack isInline>
+          <Button
+            rightIcon={AiOutlineFullscreen}
+            variant="ghost"
+            size="xs"
+            onClick={() => dispatch.app.toggleFullScreen()}
+          >
+            Full Screen
+          </Button>
+          <CodeSandboxButton />
+
+          <ClearOptionPopover
+            name="Clear Theme"
+            message="Do you really want to remove the custom theme on the
                   editor?"
-              dispatchAction={() => dispatch.app.resetCustomTheme()}
-            />
-            <ClearOptionPopover
-              name="Clear Page"
-              message="Do you really want to remove all components on the page?"
-              dispatchAction={() => dispatch.components.resetComponents()}
-            />
-            <ClearOptionPopover
-              name="Clear All"
-              message="Do you really want to remove everything?"
-              dispatchAction={() => dispatch.components.resetAll()}
-            />
-          </Stack>
-        </Flex>
+            dispatchAction={() => dispatch.app.resetCustomTheme()}
+          />
+          <ClearOptionPopover
+            name="Clear Page"
+            message="Do you really want to remove all components on the page?"
+            dispatchAction={() => dispatch.components.resetComponents()}
+          />
+          <ClearOptionPopover
+            name="Clear All"
+            message="Do you really want to remove everything?"
+            dispatchAction={() => dispatch.components.resetAll()}
+          />
+        </Stack>
       </Flex>
-    </DarkMode>
+    </Flex>
   )
 }
 

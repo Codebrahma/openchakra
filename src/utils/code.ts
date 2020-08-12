@@ -146,7 +146,6 @@ export const generateCode = async (
 
   const getUsedCustomComponents = () => {
     const usedCustomComponentsList: string[] = []
-    console.log(customComponentsList)
     const getUsedCustomComponentsRecursive = (id: string) => {
       const type = customComponents[id].type
       if (
