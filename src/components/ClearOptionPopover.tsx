@@ -10,7 +10,10 @@ import {
   PopoverFooter,
   Button,
   LightMode,
+  Box,
 } from '@chakra-ui/core'
+import ActionButton from './inspector/ActionButton'
+import { FiTrash2 } from 'react-icons/fi'
 
 const ClearOptionPopover: FunctionComponent<{
   name: string
@@ -22,9 +25,14 @@ const ClearOptionPopover: FunctionComponent<{
       {({ onClose }) => (
         <>
           <PopoverTrigger>
-            <Button ml={4} rightIcon="small-close" size="xs" variant="ghost">
-              {name}
-            </Button>
+            <Box>
+              <ActionButton
+                icon={FiTrash2}
+                label={name}
+                size="sm"
+                color="black"
+              />
+            </Box>
           </PopoverTrigger>
           <LightMode>
             <PopoverContent zIndex={100}>

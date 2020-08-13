@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { Text, PseudoBox, Icon, Box, Flex, useToast } from '@chakra-ui/core'
+import { Text, PseudoBox, Icon, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../inspector/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
 import {
@@ -114,44 +114,16 @@ const DragItem: React.FC<ComponentItemProps> = ({
         width="95%"
         p={1}
       >
-        <Icon fontSize="xs" mr={2} name="drag-handle" color="neutrals.800" />
+        <Icon fontSize="xs" mr={2} name="drag-handle" color="neutrals.900" />
 
         <Text
           letterSpacing="wide"
           fontSize="sm"
           textTransform="capitalize"
-          color="neutrals.800"
+          color="neutrals.900"
         >
           {label}
         </Text>
-
-        {isMeta && (
-          <Box
-            ml={2}
-            borderWidth="1px"
-            color="primary.300"
-            borderColor="primary.600"
-            fontSize="xs"
-            rounded={4}
-            px={1}
-          >
-            preset
-          </Box>
-        )}
-
-        {soon && (
-          <Box
-            ml={2}
-            borderWidth="1px"
-            color="whiteAlpha.500"
-            borderColor="whiteAlpha.300"
-            fontSize="xs"
-            rounded={4}
-            px={1}
-          >
-            soon
-          </Box>
-        )}
       </PseudoBox>
 
       {custom && (

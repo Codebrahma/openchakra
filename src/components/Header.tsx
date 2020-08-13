@@ -1,15 +1,5 @@
 import React, { memo, useState } from 'react'
-import {
-  Box,
-  Switch,
-  Button,
-  Flex,
-  Stack,
-  FormLabel,
-  FormControl,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/core'
+import { Box, Flex, useDisclosure } from '@chakra-ui/core'
 import { AiFillThunderbolt, AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/code'
@@ -32,6 +22,10 @@ import {
 import HeaderMenu from './HeaderMenu'
 import ClearOptionPopover from './ClearOptionPopover'
 import EditThemeModal from './EditThemeModal'
+import ActionButton from './inspector/ActionButton'
+import { IoMdBuild } from 'react-icons/io'
+import { RiCodeLine } from 'react-icons/ri'
+import { MdCreateNewFolder } from 'react-icons/md'
 
 const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
@@ -43,41 +37,34 @@ const CodeSandboxButton = () => {
   const customTheme = useSelector(getCustomTheme)
   const fonts = useSelector(getLoadedFonts)
 
-  return (
-    <Tooltip
-      zIndex={100}
-      hasArrow
-      bg="neutrals.700"
-      aria-label="Builder mode help"
-      label="Export in CodeSandbox"
-    >
-      <Button
-        onClick={async () => {
-          setIsLoading(true)
-          const code = await generateCode(
-            components,
-            customComponents,
-            customComponentsList,
-            props,
-            customComponentsProps,
-            customTheme,
-          )
-          setIsLoading(false)
-          const parameters = buildParameters(code, fonts)
+  const clickHandler = async () => {
+    setIsLoading(true)
+    const code = await generateCode(
+      components,
+      customComponents,
+      customComponentsList,
+      props,
+      customComponentsProps,
+      customTheme,
+    )
+    setIsLoading(false)
+    const parameters = buildParameters(code, fonts)
 
-          window.open(
-            `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
-            '_blank',
-          )
-        }}
-        isLoading={isLoading}
-        rightIcon="external-link"
-        variant="ghost"
-        size="xs"
-      >
-        Export code
-      </Button>
-    </Tooltip>
+    window.open(
+      `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
+      '_blank',
+    )
+  }
+
+  return (
+    <ActionButton
+      label="Export to codesandbox"
+      icon="external-link"
+      onClick={clickHandler}
+      isLoading={isLoading}
+      size="sm"
+      color="black"
+    />
   )
 }
 
@@ -96,7 +83,14 @@ const Header = () => {
       px="1rem"
       borderBottom="1px solid rgb(225, 230, 235)"
       bg="white"
+      pr={1}
+      width="100%"
+      alignItems="center"
     >
+      <Box>
+        <HeaderMenu onOpen={onOpen} />
+        <EditThemeModal isOpen={isOpen} onClose={onClose} />
+      </Box>
       <Flex
         width="14rem"
         height="100%"
@@ -106,7 +100,8 @@ const Header = () => {
         fontSize="xl"
         flexDirection="row"
         alignItems="center"
-        aria-label="Chakra UI, Back to homepage"
+        flex={1}
+        justifyContent="center"
       >
         <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
         <Box fontWeight="bold" color="black">
@@ -114,104 +109,68 @@ const Header = () => {
         </Box>
       </Flex>
 
-      <Flex flexGrow={1} justifyContent="space-between" alignItems="center">
-        <Stack isInline spacing={4} justify="center" align="center">
-          <Box>
-            <HeaderMenu onOpen={onOpen} />
-            <EditThemeModal isOpen={isOpen} onClose={onClose} />
-          </Box>
-          <FormControl>
-            <Tooltip
-              zIndex={100}
-              hasArrow
-              bg="neutrals.700"
-              aria-label="Builder mode help"
-              label="Builder mode adds extra padding/borders"
-            >
-              <FormLabel
-                cursor="help"
-                color="black"
-                fontSize="xs"
-                htmlFor="preview"
-                pb={0}
-              >
-                Builder mode
-              </FormLabel>
-            </Tooltip>
-            <Switch
-              isChecked={showLayout}
-              color="primary"
-              size="sm"
-              onChange={() => dispatch.app.toggleBuilderMode()}
-              id="preview"
-            />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel color="black" fontSize="xs" htmlFor="code" pb={0}>
-              Code panel
-            </FormLabel>
-            <Switch
-              isChecked={showCode}
-              id="code"
-              color="primary"
-              onChange={() => dispatch.app.toggleCodePanel()}
-              size="sm"
-            />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel
-              color="black"
-              fontSize="xs"
-              htmlFor="customComponents"
-              pb={0}
-            >
-              Custom Components
-            </FormLabel>
-            <Switch
-              isChecked={showCustomPage}
-              id="customComponents"
-              color="primary"
-              onChange={() => {
+      <Box>
+        <Flex border="1px solid #9FB3C8" mr={2} alignItems="center">
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Create components"
+              icon={MdCreateNewFolder}
+              onClick={() => {
                 dispatch.components.unselect()
                 if (showCustomPage) dispatch.components.switchPage('app')
                 else dispatch.components.switchPage('customPage')
               }}
+              bg={showCustomPage ? 'primary.100' : 'white'}
+              color={showCustomPage ? 'primary.900' : 'black'}
               size="sm"
             />
-          </FormControl>
-        </Stack>
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Code"
+              icon={RiCodeLine}
+              onClick={() => dispatch.app.toggleCodePanel()}
+              bg={showCode ? 'primary.100' : 'white'}
+              color={showCode ? 'primary.900' : 'black'}
+              size="sm"
+            />
+          </Box>
 
-        <Stack isInline>
-          <Button
-            rightIcon={AiOutlineFullscreen}
-            variant="ghost"
-            size="xs"
-            onClick={() => dispatch.app.toggleFullScreen()}
-          >
-            Full Screen
-          </Button>
-          <CodeSandboxButton />
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Builder Mode"
+              icon={IoMdBuild}
+              onClick={() => dispatch.app.toggleBuilderMode()}
+              bg={showLayout ? 'primary.100' : 'white'}
+              color={showLayout ? 'primary.900' : 'black'}
+              size="sm"
+              isDisabled={showCode}
+            />
+          </Box>
 
-          <ClearOptionPopover
-            name="Clear Theme"
-            message="Do you really want to remove the custom theme on the
-                  editor?"
-            dispatchAction={() => dispatch.app.resetCustomTheme()}
-          />
-          <ClearOptionPopover
-            name="Clear Page"
-            message="Do you really want to remove all components on the page?"
-            dispatchAction={() => dispatch.components.resetComponents()}
-          />
-          <ClearOptionPopover
-            name="Clear All"
-            message="Do you really want to remove everything?"
-            dispatchAction={() => dispatch.components.resetAll()}
-          />
-        </Stack>
-      </Flex>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="fullScreen"
+              icon={AiOutlineFullscreen}
+              onClick={() => dispatch.app.toggleFullScreen()}
+              color="black"
+              size="sm"
+            />
+          </Box>
+
+          <Box borderRight="1px solid #9FB3C8">
+            <CodeSandboxButton />
+          </Box>
+
+          <Box>
+            <ClearOptionPopover
+              name="Clear Page"
+              message="Do you really want to remove all components on the page?"
+              dispatchAction={() => dispatch.components.resetComponents()}
+            />
+          </Box>
+        </Flex>
+      </Box>
     </Flex>
   )
 }

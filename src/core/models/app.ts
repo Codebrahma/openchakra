@@ -29,10 +29,10 @@ const app = createModel({
         showLayout: !state.showLayout,
       }
     },
-    toggleCodePanel(state: AppState): AppState {
+    toggleCodePanel(state: AppState, showCode?: boolean): AppState {
       return {
         ...state,
-        showCode: !state.showCode,
+        showCode: showCode || !state.showCode,
       }
     },
     toggleInputText(state: AppState): AppState {

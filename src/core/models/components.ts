@@ -795,7 +795,6 @@ const components = createModel({
             ...props,
           ]
         }
-        draftState.selectedId = id
       })
     },
     addCustomComponent(
@@ -859,8 +858,6 @@ const components = createModel({
             ...duplicatedProps,
           ]
         }
-
-        draftState.selectedId = id
       })
     },
     addMetaComponent(
@@ -919,7 +916,6 @@ const components = createModel({
           draftState.componentsById[componentsId][root].parent = parent
           draftState.componentsById[componentsId][parent].children.push(root)
         }
-        draftState.selectedId = root
       })
     },
     select(
