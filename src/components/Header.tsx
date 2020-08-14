@@ -146,7 +146,6 @@ const Header = () => {
               bg={showLayout ? 'primary.100' : 'white'}
               color={showLayout ? 'primary.900' : 'black'}
               size="sm"
-              isDisabled={showCode}
             />
           </Box>
         </Flex>

@@ -167,7 +167,7 @@ export const useInteractive = (
       {
         id: generateId(),
         name: 'boxShadow',
-        value: `#0C008C 0px 0px 0px 2px`,
+        value: `#0C008C 0px 0px 0px 2px inset`,
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
