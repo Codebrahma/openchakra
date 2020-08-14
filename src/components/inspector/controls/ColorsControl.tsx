@@ -42,11 +42,17 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const theme = useCustomTheme()
 
   const themeColors: any = omit(theme.colors, ['transparent', 'current'])
+  const colourValue = value.split('.')
 
-  let propsIconButton: any = { bg: value }
-  if (value && themeColors[value]) {
-    propsIconButton = { variantColor: value }
-  }
+  const propsIconButton: any =
+    props.name === 'variantColor'
+      ? { variantColor: value }
+      : {
+          bg:
+            colourValue && colourValue.length > 2
+              ? themeColors[colourValue[0]][colourValue[1]]
+              : themeColors[colourValue[0]],
+        }
 
   const huesPicker = (
     <>
