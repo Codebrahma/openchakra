@@ -23,9 +23,10 @@ import HeaderMenu from './HeaderMenu'
 import ClearOptionPopover from './ClearOptionPopover'
 import EditThemeModal from './EditThemeModal'
 import ActionButton from './inspector/ActionButton'
-import { IoMdBuild } from 'react-icons/io'
+import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { RiCodeLine } from 'react-icons/ri'
 import { MdCreateNewFolder } from 'react-icons/md'
+import { ActionCreators as UndoActionCreators } from 'redux-undo'
 
 const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
@@ -109,8 +110,8 @@ const Header = () => {
         </Box>
       </Flex>
 
-      <Box>
-        <Flex border="1px solid #9FB3C8" mr={2} alignItems="center">
+      <Flex>
+        <Flex border="1px solid #9FB3C8" mr={4} alignItems="center">
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="Create components"
@@ -136,7 +137,7 @@ const Header = () => {
             />
           </Box>
 
-          <Box borderRight="1px solid #9FB3C8">
+          <Box>
             <ActionButton
               label="Builder Mode"
               icon={IoMdBuild}
@@ -147,13 +148,30 @@ const Header = () => {
               isDisabled={showCode}
             />
           </Box>
-
+        </Flex>
+        <Flex border="1px solid #9FB3C8" mr={2} alignItems="center">
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="fullScreen"
               icon={AiOutlineFullscreen}
               onClick={() => dispatch.app.toggleFullScreen()}
               color="black"
+              size="sm"
+            />
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Undo"
+              icon={IoIosUndo}
+              onClick={() => dispatch(UndoActionCreators.undo())}
+              size="sm"
+            />
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Redo"
+              icon={IoIosRedo}
+              onClick={() => dispatch(UndoActionCreators.redo())}
               size="sm"
             />
           </Box>
@@ -170,7 +188,7 @@ const Header = () => {
             />
           </Box>
         </Flex>
-      </Box>
+      </Flex>
     </Flex>
   )
 }
