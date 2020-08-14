@@ -103,6 +103,7 @@ const Header = () => {
         alignItems="center"
         flex={1}
         justifyContent="center"
+        ml="12%"
       >
         <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
         <Box fontWeight="bold" color="black">
