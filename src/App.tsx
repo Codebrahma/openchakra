@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux'
 import Editor from './components/editor/Editor'
 import Header from './components/Header'
 import { Global } from '@emotion/core'
-import { HotKeys } from 'react-hotkeys'
-import useShortcuts, { keyMap } from './hooks/useShortcuts'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
 import {
   getShowFullScreen,
@@ -19,9 +17,9 @@ import loadFonts from './utils/loadFonts'
 import useCustomTheme from './hooks/useCustomTheme'
 import CodePanel from './components/CodePanel'
 import Sidebar from './components/sidebar/Sidebar'
+import useShortCutKeys from './hooks/useShortcutKeys'
 
 const App = () => {
-  const { handlers } = useShortcuts()
   const showFullScreen = useSelector(getShowFullScreen)
   const dispatch = useDispatch()
   const theme = useCustomTheme()
@@ -30,8 +28,10 @@ const App = () => {
   const loadedFonts = useSelector(getLoadedFonts)
   loadedFonts && loadFonts(loadedFonts)
 
+  useShortCutKeys()
+
   return (
-    <HotKeys allowChanges handlers={handlers} keyMap={keyMap}>
+    <Box>
       <Global
         styles={() => ({
           html: { minWidth: '860px', backgroundColor: '#1a202c' },
@@ -69,7 +69,7 @@ const App = () => {
           {!showFullScreen ? <Sidebar /> : null}
         </Flex>
       </DndProvider>
-    </HotKeys>
+    </Box>
   )
 }
 

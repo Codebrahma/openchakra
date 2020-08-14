@@ -21,7 +21,7 @@ import { useForm } from '../../../hooks/useForm'
 
 const SEPARATOR = '='
 
-const CustomPropsPanel = () => {
+const AdditionalPropsPanel = () => {
   const dispatch = useDispatch()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -120,4 +120,4 @@ const CustomPropsPanel = () => {
   )
 }
 
-export default memo(CustomPropsPanel)
+export default memo(AdditionalPropsPanel)

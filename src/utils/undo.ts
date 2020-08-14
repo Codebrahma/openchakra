@@ -3,8 +3,6 @@ import { Action } from '@rematch/core'
 export default function filterActions(action: Action) {
   if (
     [
-      'components/reset',
-      'components/loadDemo',
       'components/resetProps',
       'components/updateProps',
       'components/addComponent',
@@ -13,6 +11,12 @@ export default function filterActions(action: Action) {
       'components/addMetaComponent',
       'components/moveSelectedComponentChildren',
       'components/duplicate',
+      'components/saveComponent',
+      'components/exposeProp',
+      'components/unexpose',
+      'components/deleteCustomProp',
+      'components/deleteCustomComponent',
+      'components/resetComponents',
     ].includes(action.type)
   ) {
     return true
