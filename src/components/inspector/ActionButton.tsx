@@ -15,6 +15,8 @@ interface Props
   onClick?: IconButtonProps['onClick']
   variantColor?: IconButtonProps['variantColor']
   variant?: IconButtonProps['variant']
+  size?: IconButtonProps['size']
+  isDisabled?: boolean
 }
 
 const ActionButton: React.FC<Props> = ({
@@ -25,12 +27,14 @@ const ActionButton: React.FC<Props> = ({
   variantColor,
   isLoading,
   variant,
+  size = 'xs',
+  isDisabled = false,
   ...props
 }) => {
   return (
-    <Tooltip hasArrow aria-label={label} label={label} zIndex={11} {...props}>
+    <Tooltip hasArrow aria-label={label} label={label} zIndex={11}>
       <IconButton
-        size="xs"
+        size={size}
         as={as}
         isLoading={isLoading}
         onClick={onClick}
@@ -38,6 +42,11 @@ const ActionButton: React.FC<Props> = ({
         aria-label={label}
         variantColor={variantColor}
         variant={variant || 'ghost'}
+        isDisabled={isDisabled}
+        borderRadius="none"
+        mr={0}
+        _focus={{ shadow: 'none' }}
+        {...props}
       />
     </Tooltip>
   )

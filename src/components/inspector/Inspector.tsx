@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react'
-import { Link, Box, Stack, useToast } from '@chakra-ui/core'
+import { Link, Box, Flex, useToast } from '@chakra-ui/core'
 import Panels from './panels/Panels'
 import { GoRepo, GoCode } from 'react-icons/go'
 import { FiTrash2 } from 'react-icons/fi'
@@ -23,7 +23,7 @@ import { generateComponentCode } from '../../utils/code'
 import useClipboard from '../../hooks/useClipboard'
 import { useInspectorUpdate } from '../../contexts/inspector-context'
 import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
-import { menuItems } from '../sidebar/Sidebar'
+import { menuItems } from '../sidebar/componentsMenu'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -103,22 +103,19 @@ const Inspector = () => {
         <Box
           fontWeight="semibold"
           fontSize="md"
-          color="yellow.900"
+          color="black"
           py={2}
           px={2}
-          shadow="sm"
-          bg="yellow.100"
           display="flex"
           alignItems="center"
           justifyContent="space-between"
+          borderBottom="1px solid #9FB3C8"
         >
           {isRoot ? 'Document' : type}
         </Box>
         {!isRoot && (
-          <Stack
-            isInline
+          <Flex
             py={2}
-            spacing={4}
             align="center"
             zIndex={99}
             px={2}
@@ -204,17 +201,16 @@ const Inspector = () => {
               icon={GoRepo}
             />
             <ActionButton
-              bg="red.500"
               label="Remove"
               onClick={() => dispatch.components.deleteComponent(component.id)}
               icon={FiTrash2}
             />
-          </Stack>
+          </Flex>
         )}
       </Box>
       {!isCustomComponent ? (
         <Box>
-          <Box pb={1} bg="white" px={3}>
+          <Box bg="white" px={3}>
             <Panels component={component} isRoot={isRoot} />
           </Box>
           <StylesPanel

@@ -17,14 +17,14 @@ export type RootState = {
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
 
 const persistConfig = {
-  key: `openchakra_v${version}`,
+  key: `assembler_v${version}`,
   storage,
   whitelist: ['present'],
   version,
   throttle: 500,
 }
 const persistThemeConfig = {
-  key: `openchakra_customTheme_v${version}`,
+  key: `assembler_customTheme_v${version}`,
   storage,
   whitelist: ['customTheme', 'loadedFonts'],
   version,

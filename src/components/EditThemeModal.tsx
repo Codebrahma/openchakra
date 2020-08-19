@@ -17,6 +17,7 @@ import {
   TabPanels,
   TabPanel,
   Text,
+  Flex,
 } from '@chakra-ui/core'
 import JSONTree from 'react-json-tree'
 import useDispatch from '../hooks/useDispatch'
@@ -84,6 +85,14 @@ const EditThemeModal: FunctionComponent<{
     }
   }
 
+  const deleteThemeHandler = () => {
+    const deleteConfirmation = window.confirm(
+      'Are you sure to clear your custom theme?',
+    )
+
+    if (deleteConfirmation) dispatch.app.resetCustomTheme()
+  }
+
   return (
     <LightMode>
       <Modal
@@ -97,7 +106,7 @@ const EditThemeModal: FunctionComponent<{
         <ModalOverlay />
         <ModalContent rounded={10}>
           <ModalHeader fontSize="15px" textAlign="center">
-            Add your custom JSON Theme Object
+            View / Edit Theme
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -113,9 +122,9 @@ const EditThemeModal: FunctionComponent<{
                   </Box>
                 </TabPanel>
                 <TabPanel>
-                  <Text mb="20px">
-                    You can edit the custom theme by uploading the theme file or
-                    by directly typing in the editor.
+                  <Text mb="20px" fontSize="14px">
+                    You can edit the custom theme either by uploading the theme
+                    file or by directly typing in the editor.
                   </Text>
                   <Input
                     id="themeFile"
@@ -124,6 +133,7 @@ const EditThemeModal: FunctionComponent<{
                     onChange={(selectorFiles: any) =>
                       handleChange(selectorFiles)
                     }
+                    fontSize="14px"
                   />
 
                   {fileLoaded && (
@@ -154,29 +164,25 @@ const EditThemeModal: FunctionComponent<{
                     </p>
                   )}
                   <Box>
-                    <Box m="20px 0">
+                    <Box m="30px 0">
                       <Box>
-                        <Box mb="20px">
-                          <Text>
-                            Don't forget to click the save button to save your
-                            changes.
-                          </Text>
-                        </Box>
                         <Box
                           bg="rgb(3 22 40)"
                           color="white"
                           fontSize="14px"
                           borderRadius="10px"
-                          minHeight="100px"
+                          minHeight="120px"
+                          maxHeight="50vh"
+                          overflowY="scroll"
                         >
                           <pre
                             id="customTheme"
                             contentEditable={true}
                             style={{
                               display: 'inline-block',
-                              minHeight: '100px',
                               width: '100%',
                               whiteSpace: 'pre-wrap',
+                              minHeight: '120px',
                             }}
                             suppressContentEditableWarning={true}
                           >
@@ -185,16 +191,34 @@ const EditThemeModal: FunctionComponent<{
                               : '{ }'}
                           </pre>
                         </Box>
-                        <Button
-                          backgroundColor="#2e3748"
-                          color="white"
-                          onClick={editThemeHandler}
-                          mt="20px"
-                          mb="20px"
-                        >
-                          Save Theme
-                        </Button>
+                        <Flex mt="20px" mb="20px">
+                          <Button
+                            backgroundColor="green.500"
+                            color="white"
+                            onClick={editThemeHandler}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            backgroundColor="white"
+                            color="#E12D39"
+                            border="1px solid #E12D39"
+                            onClick={deleteThemeHandler}
+                            ml="10px"
+                          >
+                            Clear
+                          </Button>
+                        </Flex>
                         <Text>{saveStatus}</Text>
+                        <Box mt="20px" fontSize="12px" color="neutrals.700">
+                          <Text>
+                            * Don't forget to click the save button to save your
+                            changes.
+                          </Text>
+                          <Text>
+                            * Clear button will clears your custom theme
+                          </Text>
+                        </Box>
                       </Box>
                     </Box>
                   </Box>

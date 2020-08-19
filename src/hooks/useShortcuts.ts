@@ -4,18 +4,17 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import { getSelectedComponent } from '../core/selectors/components'
 
 export const keyMap = {
-  DELETE_NODE: ['backspace', 'del'],
+  DELETE_NODE: 'del',
   TOGGLE_BUILDER_MODE: 'b',
   TOGGLE_CODE_PANEL: 'c',
-  UNDO: ['ctrl+z', 'cmd+z'],
-  REDO: ['ctrl+y', 'cmd+y'],
-  UNSELECT: ['Escape'],
-  PARENT: 'p',
-  DUPLICATE: ['ctrl+d', 'cmd+d'],
-  KONAMI_CODE: [
-    'up up down down left right left right b a',
-    'up up down down left right left right B A',
-  ],
+  UNDO: 'ctrl+z',
+  CMD_UNDO: 'cmd+z',
+  REDO: 'ctrl+y',
+  CMD_REDO: 'cmd+shift+z',
+  UNSELECT: 'Escape',
+  DUPLICATE: 'ctrl+d',
+  CMD_DUPLICATE: 'cmd+d',
+  FULL_SCREEN: 'f',
 }
 
 const hasNoSpecialKeyPressed = (event: KeyboardEvent | undefined) =>
@@ -66,13 +65,6 @@ const useShortcuts = () => {
     dispatch.components.unselect()
   }
 
-  const onSelectParent = (event: KeyboardEvent | undefined) => {
-    if (event && hasNoSpecialKeyPressed(event)) {
-      event.preventDefault()
-      dispatch.components.selectParent()
-    }
-  }
-
   const onDuplicate = (event: KeyboardEvent | undefined) => {
     if (event) {
       event.preventDefault()
@@ -81,8 +73,12 @@ const useShortcuts = () => {
     dispatch.components.duplicate()
   }
 
-  const onKonamiCode = () => {
-    dispatch.components.loadDemo('secretchakra')
+  const fullScreen = (event: KeyboardEvent | undefined) => {
+    if (event) {
+      event.preventDefault()
+    }
+
+    dispatch.app.toggleFullScreen()
   }
 
   const handlers = {
@@ -92,9 +88,8 @@ const useShortcuts = () => {
     UNDO: undo,
     REDO: redo,
     UNSELECT: onUnselect,
-    PARENT: onSelectParent,
     DUPLICATE: onDuplicate,
-    KONAMI_CODE: onKonamiCode,
+    FULL_SCREEN: fullScreen,
   }
 
   return { handlers }

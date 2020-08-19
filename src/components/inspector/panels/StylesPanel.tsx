@@ -12,7 +12,7 @@ import ColorsControl from '../controls/ColorsControl'
 import EffectsPanel from './styles/EffectsPanel'
 import ChildrenInspector from '../ChildrenInspector'
 import ParentInspector from '../ParentInspector'
-import CustomPropsPanel from './CustomPropsPanel'
+import AdditionalPropsPanel from './AdditionalPropsPanel'
 import DownloadFontPanel from './DownloadFontPanel'
 import LoadedFontsPanel from './LoadedFontsPanel'
 
@@ -30,8 +30,8 @@ const StylesPanel: React.FC<Props> = ({
   return (
     <Accordion defaultIndex={[0]} allowMultiple>
       {!isRoot && (
-        <AccordionContainer title="Custom props">
-          <CustomPropsPanel />
+        <AccordionContainer title="Additional props">
+          <AdditionalPropsPanel />
         </AccordionContainer>
       )}
 

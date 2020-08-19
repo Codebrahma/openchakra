@@ -1,24 +1,25 @@
 import React, { memo } from 'react'
-import { Box, Text, Link } from '@chakra-ui/core'
+import { Box, Text } from '@chakra-ui/core'
 import ComponentPreview from './ComponentPreview'
 import { useDropComponent } from '../../hooks/useDropComponent'
-import SplitPane from 'react-split-pane'
-import CodePanel from '../CodePanel'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
-import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
-import { getShowLayout, getShowCode } from '../../core/selectors/app'
+import {
+  getChildrenBy,
+  getPropsBy,
+  getShowCustomComponentPage,
+} from '../../core/selectors/components'
+import { getShowLayout } from '../../core/selectors/app'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 
 export const gridStyles = {
   backgroundImage:
-    'linear-gradient(to right, #d9e2e9 1px, transparent 1px),linear-gradient(to bottom, #d9e2e9 1px, transparent 1px);',
-  backgroundSize: '20px 20px',
-  bg: '#edf2f6',
+    'linear-gradient(0deg, transparent, transparent 7px, #E6E6FF 7px), linear-gradient(90deg, transparent, transparent 7px, #E6E6FF 7px);',
+  backgroundSize: '8px 8px',
+  bg: 'white',
 }
 
 const Editor: React.FC = () => {
-  const showCode = useSelector(getShowCode)
   const showLayout = useSelector(getShowLayout)
   const dispatch = useDispatch()
 
@@ -26,6 +27,7 @@ const Editor: React.FC = () => {
   const children = useSelector(getChildrenBy('root'))
   const isEmpty = !children.length
   const rootProps = useSelector(getPropsBy('root'))
+  const isComponentsCreationPage = useSelector(getShowCustomComponentPage)
 
   let editorBackgroundProps = {}
 
@@ -42,7 +44,7 @@ const Editor: React.FC = () => {
     ...generatePropsKeyValue(rootProps),
   }
 
-  const Playground = (
+  return (
     <Box
       {...editorBackgroundProps}
       height="100%"
@@ -59,18 +61,9 @@ const Editor: React.FC = () => {
     >
       {isEmpty && (
         <Text maxWidth="md" color="gray.400" fontSize="xl" textAlign="center">
-          Drag some component to start coding without code! Or load{' '}
-          <Link
-            color="gray.500"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation()
-              dispatch.components.loadDemo('onboarding')
-            }}
-            textDecoration="underline"
-          >
-            the onboarding components
-          </Link>
-          .
+          {isComponentsCreationPage
+            ? 'This page allows you to create custom components.'
+            : 'Drag and drop components to start building websites with zero coding.'}
         </Text>
       )}
 
@@ -78,26 +71,6 @@ const Editor: React.FC = () => {
         <ComponentPreview key={name} componentName={name} />
       ))}
     </Box>
-  )
-
-  if (!showCode) {
-    return Playground
-  }
-
-  return (
-    <SplitPane
-      style={{ overflow: 'auto' }}
-      defaultSize="50%"
-      resizerStyle={{
-        border: '3px solid rgba(1, 22, 39, 0.21)',
-        zIndex: 20,
-        cursor: 'row-resize',
-      }}
-      split="horizontal"
-    >
-      {Playground}
-      <CodePanel />
-    </SplitPane>
   )
 }
 
