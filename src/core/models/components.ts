@@ -365,24 +365,20 @@ const components = createModel({
                   derivedFromPropName: null,
                   derivedFromComponentType: null,
                 }
+                const boxComponent = {
+                  id,
+                  type: 'Box',
+                  parent: 'Prop',
+                  children: [],
+                }
                 if (updateInCustomComponent) {
                   draftState.customComponentsProps.push(prop)
                   if (targetedProp === 'children')
-                    draftState.customComponents[id] = {
-                      id,
-                      type: 'Box',
-                      parent: 'Prop',
-                      children: [],
-                    }
+                    draftState.customComponents[id] = boxComponent
                 } else {
                   draftState.propsById[propsId].push(prop)
                   if (targetedProp === 'children')
-                    draftState.componentsById[componentsId][id] = {
-                      id,
-                      type: 'Box',
-                      parent: 'Prop',
-                      children: [],
-                    }
+                    draftState.componentsById[componentsId][id] = boxComponent
                 }
               },
             )
@@ -509,8 +505,20 @@ const components = createModel({
               draftState.customComponents = { ...updatedCustomComponents }
             })
         } else {
-          draftState.componentsById[componentsId] = updatedComponents
-          draftState.propsById[propsId] = updatedProps
+          draftState.propsById[propsId] = [...updatedProps]
+          draftState.componentsById[componentsId] = { ...updatedComponents }
+
+          deletedProps
+            .filter(prop => draftState.componentsById[componentsId][prop.value])
+            .forEach(prop => {
+              const { updatedComponents, updatedProps } = deleteComp(
+                draftState.componentsById[componentsId][prop.value],
+                draftState.componentsById[componentsId],
+                draftState.propsById[propsId],
+              )
+              draftState.propsById[propsId] = [...updatedProps]
+              draftState.componentsById[componentsId] = { ...updatedComponents }
+            })
         }
       })
     },
@@ -1556,13 +1564,24 @@ const components = createModel({
       type: string,
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const { updatedComponents, updatedProps } = deleteComp(
+        const { updatedComponents, updatedProps, deletedProps } = deleteComp(
           draftState.customComponents[type],
           draftState.customComponents,
           draftState.customComponentsProps,
         )
         draftState.customComponents = { ...updatedComponents }
         draftState.customComponentsProps = [...updatedProps]
+        deletedProps
+          .filter(prop => draftState.customComponents[prop.value])
+          .forEach(prop => {
+            const { updatedComponents, updatedProps } = deleteComp(
+              draftState.customComponents[prop.value],
+              draftState.customComponents,
+              draftState.customComponentsProps,
+            )
+            draftState.customComponentsProps = [...updatedProps]
+            draftState.customComponents = { ...updatedComponents }
+          })
       })
     },
     updateTextChildrenProp(
