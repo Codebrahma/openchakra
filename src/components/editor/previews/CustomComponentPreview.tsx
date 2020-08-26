@@ -46,6 +46,7 @@ const CustomComponentPreview: React.FC<{
           key={key}
           componentName={key}
           customProps={propsKeyValue}
+          customRootParentId={component.id}
         />
       ))}
     </Box>

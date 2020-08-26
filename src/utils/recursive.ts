@@ -117,6 +117,7 @@ export const fetchAndUpdateExposedProps = (
         updatedProps[index].derivedFromComponentType = rootParentId
 
         //No duplicate props allowed to store in root parent.
+        //If the children prop for the box component is exposed, the value for the custom propName is saved as Root to identify it.
         if (
           rootParentProps.findIndex(
             rootProp => rootProp.name === prop.derivedFromPropName,
@@ -125,7 +126,10 @@ export const fetchAndUpdateExposedProps = (
           rootParentProps.push({
             id: generateId(),
             name: prop.derivedFromPropName || '',
-            value: prop.value,
+            value:
+              prop.name === 'children' && component.type === 'Box'
+                ? 'Root'
+                : prop.value,
             componentId: rootParentId,
             derivedFromPropName: null,
             derivedFromComponentType: null,
@@ -219,19 +223,21 @@ export const findControl = (
 }
 
 export const deleteCustomProp = (
-  exposedProp: IProp,
+  prop: IProp,
   pages: IPages,
   componentsById: IComponentsById,
   customComponents: IComponents,
   propsById: IPropsById,
   customComponentsProps: IProp[],
 ) => {
-  const updatedPropsById = { ...propsById }
-  const updatedCustomComponentProps = [...customComponentsProps]
+  let updatedPropsById = { ...propsById }
+  let updatedCustomComponentProps = [...customComponentsProps]
+  let updatedCustomComponents = { ...customComponents }
+  let updatedComponentsById = { ...componentsById }
 
-  const deleteCustomPropRecursive = (exposedProp: IProp) => {
-    const customComponentType = exposedProp.derivedFromComponentType
-    const derivedFromPropName = exposedProp.derivedFromPropName
+  const deleteCustomPropRecursive = (prop: IProp) => {
+    const customComponentType = prop.derivedFromComponentType
+    const derivedFromPropName = prop.derivedFromPropName
 
     // delete the prop in all the instances of custom components
     // only when there is no other children inside the root custom component uses the custom prop
@@ -251,6 +257,7 @@ export const deleteCustomProp = (
           component: IComponent,
           updateInCustomComponent: Boolean,
           propsId: string,
+          componentsId: string,
         ) => {
           if (updateInCustomComponent) {
             const index = updatedCustomComponentProps.findIndex(
@@ -258,25 +265,49 @@ export const deleteCustomProp = (
                 prop.name === derivedFromPropName &&
                 prop.componentId === component.id,
             )
-            const exposedProp = updatedCustomComponentProps[index]
+            const customProp = updatedCustomComponentProps[index]
+
             updatedCustomComponentProps.splice(index, 1)
-            if (exposedProp.derivedFromComponentType)
-              deleteCustomPropRecursive(exposedProp)
+
+            if (customComponents[customProp.value]) {
+              const { updatedComponents, updatedProps } = deleteComp(
+                customComponents[customProp.value],
+                customComponents,
+                updatedCustomComponentProps,
+              )
+              updatedCustomComponentProps = [...updatedProps]
+              updatedCustomComponents = { ...updatedComponents }
+            }
+            if (customProp.derivedFromComponentType)
+              deleteCustomPropRecursive(customProp)
           } else {
             const index = updatedPropsById[propsId].findIndex(
               prop =>
                 prop.name === derivedFromPropName &&
                 prop.componentId === component.id,
             )
+            const customProp = updatedPropsById[propsId][index]
+
             updatedPropsById[propsId].splice(index, 1)
+            if (componentsById[componentsId][customProp.value]) {
+              const { updatedComponents, updatedProps } = deleteComp(
+                componentsById[componentsId][customProp.value],
+                componentsById[componentsId],
+                updatedPropsById[propsId],
+              )
+              updatedPropsById[propsId] = [...updatedProps]
+              updatedComponentsById[componentsId] = { ...updatedComponents }
+            }
           }
         },
       )
     }
   }
-  deleteCustomPropRecursive(exposedProp)
+  deleteCustomPropRecursive(prop)
   return {
     updatedPropsById,
     updatedCustomComponentProps,
+    updatedCustomComponents,
+    updatedComponentsById,
   }
 }

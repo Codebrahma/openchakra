@@ -7,9 +7,10 @@ import {
   getCustomComponents,
   getPropsBy,
   getCustomComponentsProps,
+  checkIsCustomChildrenProp,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
-import { Input, Select } from '@chakra-ui/core'
+import { Input, Select, Text } from '@chakra-ui/core'
 import IconControl from './IconControl'
 import SizeControl from './SizeControl'
 import SwitchControl from './SwitchControl'
@@ -42,6 +43,11 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
+
+  const isCustomChildrenProp = useSelector(
+    checkIsCustomChildrenProp(selectedProp),
+  )
+
   if (selectedProp && selectedCustomComponentProp) {
     const controlProp = findControl(
       selectedCustomComponentProp,
@@ -58,12 +64,18 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
     const defaultControl = (
       <FormControl label={propName} htmlFor={propName}>
-        <Input
-          value={selectedProp?.value}
-          size="sm"
-          name={propName}
-          onChange={setValueFromEvent}
-        />
+        {!isCustomChildrenProp ? (
+          <Input
+            value={selectedProp?.value}
+            size="sm"
+            name={propName}
+            onChange={setValueFromEvent}
+          />
+        ) : (
+          <Text fontSize="10px" color="blackAlpha.700">
+            Component as prop
+          </Text>
+        )}
       </FormControl>
     )
     switch (controlProp?.name) {

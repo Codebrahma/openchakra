@@ -20,14 +20,14 @@ const ParentInspector = () => {
     dispatch.components.unhover()
   }
 
-  return (
+  return parentComponent ? (
     <ElementListItem
       type={parentComponent.type}
       onMouseOver={onHover}
       onMouseOut={onUnhover}
       onSelect={onSelect}
     />
-  )
+  ) : null
 }
 
 export default ParentInspector

@@ -33,6 +33,8 @@ export const useHoverComponent = (
         if (selectedComponents[item.id] === undefined) return
 
         const selectedComponent = selectedComponents[item.id]
+        if (selectedComponent.parent === 'Prop') return
+
         const { top, bottom } = boundingPosition
         const hoverMiddleY = (bottom - top) / 2
         const clientOffset = monitor.getClientOffset()

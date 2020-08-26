@@ -30,8 +30,15 @@ import TextPreview from './previews/TextPreview'
 const ComponentPreview: React.FC<{
   componentName: string
   customProps?: any
+  customRootParentId?: string
   disableSelection?: boolean
-}> = ({ componentName, customProps, disableSelection, ...forwardedProps }) => {
+}> = ({
+  componentName,
+  customProps,
+  customRootParentId,
+  disableSelection,
+  ...forwardedProps
+}) => {
   const component = useSelector(getComponentBy(componentName))
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
@@ -120,6 +127,7 @@ const ComponentPreview: React.FC<{
           type={Chakra[type]}
           customProps={customProps}
           disableSelection={disableSelection}
+          customRootParentId={customRootParentId}
           {...forwardedProps}
         />
       )

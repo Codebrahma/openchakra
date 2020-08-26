@@ -18,6 +18,7 @@ const WithChildrenPreviewContainer: React.FC<{
   isBoxWrapped?: boolean
   customProps?: any
   disableSelection?: boolean
+  customRootParentId?: string
 }> = ({
   component,
   type,
@@ -25,6 +26,7 @@ const WithChildrenPreviewContainer: React.FC<{
   isBoxWrapped,
   customProps,
   disableSelection,
+  customRootParentId,
   ...forwardedProps
 }) => {
   const { drop, isOver } = useDropComponent(component.id)
@@ -37,8 +39,27 @@ const WithChildrenPreviewContainer: React.FC<{
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
   )
-  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
-  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  const childrenProp = componentProps.find(prop => prop.name === 'children')
+
+  //If the children for the component is exposed, the component becomes un-droppable
+
+  const enableInteractive =
+    (isCustomComponentPage && childrenProp === undefined) ||
+    !isCustomComponentChild
+  let componentChildren = useSelector(getChildrenBy(component.id))
+
+  const customChildrenPropName =
+    childrenProp && childrenProp.derivedFromPropName
+
+  if (
+    customChildrenPropName &&
+    customProps &&
+    customProps[customChildrenPropName]
+  ) {
+    const propValue = customProps[customChildrenPropName]
+    componentChildren = [propValue]
+  }
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
@@ -47,7 +68,7 @@ const WithChildrenPreviewContainer: React.FC<{
   const asProp = propsElement.as
 
   if (!isBoxWrapped) {
-    propsElement.ref = drop(ref)
+    propsElement.ref = enableInteractive ? drop(ref) : ref
   }
 
   if (isOver && enableInteractive) {
@@ -62,6 +83,7 @@ const WithChildrenPreviewContainer: React.FC<{
         key={key}
         componentName={key}
         customProps={customProps}
+        customRootParentId={customRootParentId}
       />
     )),
   )

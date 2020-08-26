@@ -23,6 +23,7 @@ const PreviewContainer: React.FC<{
   )
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+
   const children = React.createElement(type, {
     ...propsKeyValue,
     ...forwardedProps,

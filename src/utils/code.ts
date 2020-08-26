@@ -53,6 +53,11 @@ const buildBlock = (
               if (prop.derivedFromPropName) {
                 operand = `={${prop.derivedFromPropName}}`
               } else {
+                if (components[propsValue]) {
+                  operand = `={<Box>
+                     ${buildBlock(components[propsValue], components, props)} 
+                  </Box>}`
+                }
                 if (
                   propsValue === true ||
                   propsValue === 'true' ||
