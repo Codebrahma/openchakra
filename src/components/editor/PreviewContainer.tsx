@@ -2,6 +2,10 @@ import React, { FunctionComponent, ComponentClass } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import { getInputTextFocused } from '../../core/selectors/app'
+import { useSelector } from 'react-redux'
+import { getComponents } from '../../core/selectors/components'
+import ComponentPreview from './ComponentPreview'
 
 const PreviewContainer: React.FC<{
   component: IComponent
@@ -23,23 +27,48 @@ const PreviewContainer: React.FC<{
   )
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
-  const children = React.createElement(type, {
-    ...propsKeyValue,
-    ...forwardedProps,
-    ref,
-  })
+  const makeEditable = useSelector(getInputTextFocused)
+  const components = useSelector(getComponents)
+
+  const componentChildren =
+    propsKeyValue.children && Array.isArray(propsKeyValue.children)
+      ? propsKeyValue.children
+      : [propsKeyValue.children]
+
+  const children = React.createElement(
+    type,
+    {
+      ...propsKeyValue,
+      ...forwardedProps,
+      ref,
+    },
+    componentChildren.map((key: string) => {
+      if (components[key])
+        return <ComponentPreview key={key} componentName={key} />
+      else return key
+    }),
+  )
+
+  const editableChildren = React.createElement(
+    type,
+    {
+      ...propsKeyValue,
+      ...forwardedProps,
+    },
+    componentChildren.map((key: string) => {
+      if (components[key])
+        return <ComponentPreview key={key} componentName={key} />
+      else return key
+    }),
+  )
 
   if (isBoxWrapped) {
     let boxProps: any = {}
 
-    return (
-      <Box {...boxProps} ref={ref}>
-        {children}
-      </Box>
-    )
+    return <Box {...boxProps}>{makeEditable ? editableChildren : children}</Box>
   }
 
-  return children
+  return makeEditable ? editableChildren : children
 }
 
 export default PreviewContainer

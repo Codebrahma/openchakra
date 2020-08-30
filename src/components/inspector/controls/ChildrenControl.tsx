@@ -1,16 +1,13 @@
-import React, { useRef, useEffect, KeyboardEvent } from 'react'
+import React, { useRef, KeyboardEvent } from 'react'
 import { Input } from '@chakra-ui/core'
 import FormControl from './FormControl'
 import useDispatch from '../../../hooks/useDispatch'
 import { useForm } from '../../../hooks/useForm'
 import usePropsSelector from '../../../hooks/usePropsSelector'
-import { useSelector } from 'react-redux'
-import { getInputTextFocused } from '../../../core/selectors/app'
 
 const ChildrenControl: React.FC = () => {
   const dispatch = useDispatch()
   const textInput = useRef<HTMLInputElement>(null)
-  const focusInput = useSelector(getInputTextFocused)
   const { setValueFromEvent } = useForm()
   const children = usePropsSelector('children')
   const onKeyUp = (event: KeyboardEvent) => {
@@ -18,13 +15,6 @@ const ChildrenControl: React.FC = () => {
       textInput.current.blur()
     }
   }
-  useEffect(() => {
-    if (focusInput && textInput.current) {
-      textInput.current.focus()
-    } else if (focusInput === false && textInput.current) {
-      textInput.current.blur()
-    }
-  }, [focusInput])
 
   return (
     <FormControl htmlFor="children" label="Text">

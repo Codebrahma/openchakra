@@ -40,6 +40,9 @@ const WithChildrenPreviewContainer: React.FC<{
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   const propsElement = { ...forwardedProps, ...propsKeyValue }
+
+  const asProp = propsElement.as
+
   if (!isBoxWrapped) {
     propsElement.ref = drop(ref)
   }
@@ -60,6 +63,12 @@ const WithChildrenPreviewContainer: React.FC<{
     )),
   )
 
+  const spanChildren = React.createElement(type, {
+    ...propsKeyValue,
+    ...forwardedProps,
+    ref,
+  })
+
   if (isBoxWrapped) {
     let boxProps: any = {
       display: 'inline',
@@ -67,12 +76,12 @@ const WithChildrenPreviewContainer: React.FC<{
 
     return (
       <Box {...boxProps} ref={enableInteractive ? drop(ref) : ref}>
-        {children}
+        {asProp === 'span' ? spanChildren : children}
       </Box>
     )
   }
 
-  return children
+  return asProp === 'span' ? spanChildren : children
 }
 
 export default WithChildrenPreviewContainer

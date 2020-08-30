@@ -172,6 +172,8 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const { id, name, value } = payload
+
+        console.log(value)
         const isCustomComponentChild = checkIsChildOfCustomComponent(
           id,
           draftState.customComponents,
@@ -1261,6 +1263,71 @@ const components = createModel({
         )
         draftState.customComponents = { ...updatedComponents }
         draftState.customComponentsProps = [...updatedProps]
+      })
+    },
+    addSpanComponent(
+      state,
+      payload: { start: number; end: number },
+    ): ComponentsState {
+      return produce(state, (draftState: ComponentsState) => {
+        const componentsId =
+          draftState.pages[draftState.selectedPage].componentsId
+        const propsId = draftState.pages[draftState.selectedPage].propsId
+        const id = draftState.selectedId
+
+        const isCustomComponentChild = checkIsChildOfCustomComponent(
+          id,
+          draftState.customComponents,
+        )
+        const { start, end } = payload
+        console.log(start)
+        console.log(end)
+
+        const components = isCustomComponentChild
+          ? draftState.customComponents
+          : draftState.componentsById[componentsId]
+
+        const props = isCustomComponentChild
+          ? draftState.customComponentsProps
+          : draftState.propsById[propsId]
+
+        const childrenPropIndex = props.findIndex(
+          prop => prop.name === 'children',
+        )
+        const childrenProp = props[childrenPropIndex]
+
+        const croppedValue = childrenProp?.value.substring(start, end)
+
+        console.log(croppedValue)
+        const newId = generateId()
+        props[childrenPropIndex].value = [
+          childrenProp.value.substring(0, start),
+          newId,
+          childrenProp.value.substring(end, childrenProp.value.length),
+        ]
+
+        components[newId] = {
+          id: newId,
+          type: 'Box',
+          children: [],
+          parent: id,
+        }
+        props.push({
+          id: generateId(),
+          componentId: newId,
+          value: croppedValue,
+          name: 'children',
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        })
+        props.push({
+          id: generateId(),
+          componentId: newId,
+          value: 'span',
+          name: 'as',
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        })
       })
     },
   },

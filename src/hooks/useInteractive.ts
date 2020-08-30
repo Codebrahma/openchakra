@@ -10,7 +10,11 @@ import {
   isImmediateChildOfCustomComponent,
   getIsHovered,
 } from '../core/selectors/components'
-import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
+import {
+  getShowLayout,
+  getFocusedComponent,
+  getInputTextFocused,
+} from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
 import { useHoverComponent } from './useHoverComponent'
 import useCustomTheme from './useCustomTheme'
@@ -34,6 +38,8 @@ export const useInteractive = (
   const isImmediateChild = useSelector(
     isImmediateChildOfCustomComponent(component),
   )
+  const makeEditable = useSelector(getInputTextFocused)
+
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
   const componentProps = onlyVisualHelper ? [] : [...fetchedProps]
@@ -111,6 +117,20 @@ export const useInteractive = (
         },
         {
           id: generateId(),
+          name: 'onBlur',
+          value: (event: MouseEvent) => {
+            event.preventDefault()
+            event.stopPropagation()
+            if (focusInput === true) {
+              dispatch.app.toggleInputText()
+            }
+          },
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
+        {
+          id: generateId(),
           name: 'fontFamily',
           value:
             component.type === 'Heading'
@@ -168,6 +188,60 @@ export const useInteractive = (
         id: generateId(),
         name: 'boxShadow',
         value: `#0C008C 0px 0px 0px 2px inset`,
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+    ]
+  }
+
+  if (component.type === 'Text' && isComponentSelected && makeEditable) {
+    props = [
+      ...props,
+      {
+        id: generateId(),
+        name: 'contentEditable',
+        value: 'true',
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+      {
+        id: generateId(),
+        name: 'suppressContentEditableWarning',
+        value: 'true',
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+      {
+        id: generateId(),
+        name: 'onInput',
+        value: (e: any) => {
+          dispatch.components.updateProps({
+            id: component.id,
+            name: 'children',
+            value: e.currentTarget.textContent,
+          })
+        },
+
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+      {
+        id: generateId(),
+        name: 'onMouseUp',
+        value: () => {
+          const selection = window.getSelection() || document.getSelection()
+          if (selection) {
+            const start = selection.anchorOffset
+            const end = selection.focusOffset
+            if (start >= 0 && end >= 0)
+              dispatch.app.setSelectedIndex({ start, end })
+          }
+        },
+
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,

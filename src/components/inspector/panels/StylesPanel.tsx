@@ -6,7 +6,7 @@ import DimensionPanel from '../panels/styles/DimensionPanel'
 import BorderPanel from '../panels/styles/BorderPanel'
 import DisplayPanel from '../panels/styles/DisplayPanel'
 import PositionPanel from '../panels/styles/PositionPanel'
-import TextPanel from '../panels/styles/TextPanel'
+import TypographyPanel from './styles/TypographyPanel'
 import AccordionContainer from '../AccordionContainer'
 import ColorsControl from '../controls/ColorsControl'
 import EffectsPanel from './styles/EffectsPanel'
@@ -63,7 +63,7 @@ const StylesPanel: React.FC<Props> = ({
             <DimensionPanel />
           </AccordionContainer>
           <AccordionContainer title="Typography">
-            <TextPanel />
+            <TypographyPanel />
           </AccordionContainer>
         </>
       )}
