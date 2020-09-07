@@ -1,11 +1,7 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { useSelector } from 'react-redux'
 import { useInteractive } from '../../hooks/useInteractive'
-import {
-  getShowCustomComponentPage,
-  isChildrenOfCustomComponent,
-  getChildrenBy,
-} from '../../core/selectors/components'
+import { getChildrenBy } from '../../core/selectors/components'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
@@ -34,10 +30,6 @@ const WithChildrenPreviewContainer: React.FC<{
     component,
     enableVisualHelper,
     disableSelection ? true : false,
-  )
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
-  const isCustomComponentChild = useSelector(
-    isChildrenOfCustomComponent(component.id),
   )
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')
