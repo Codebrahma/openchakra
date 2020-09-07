@@ -81,7 +81,7 @@ const buildBlock = (
       } else if (
         childrenProp &&
         Array.isArray(childrenProp?.value) &&
-        children.length === 0
+        children.length
       ) {
         let childrenValue = ''
         childrenProp.value.forEach((child: string) => {

@@ -17,18 +17,21 @@ const WithChildrenPreviewContainer: React.FC<{
   enableVisualHelper?: boolean
   isBoxWrapped?: boolean
   customProps?: any
+  disableSelection?: boolean
 }> = ({
   component,
   type,
   enableVisualHelper = false,
   isBoxWrapped,
   customProps,
+  disableSelection,
   ...forwardedProps
 }) => {
   const { drop, isOver } = useDropComponent(component.id)
   const { props: componentProps, ref } = useInteractive(
     component,
     enableVisualHelper,
+    disableSelection ? true : false,
   )
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(

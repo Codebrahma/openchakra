@@ -29,7 +29,8 @@ import CustomComponentPreview from './previews/CustomComponentPreview'
 const ComponentPreview: React.FC<{
   componentName: string
   customProps?: any
-}> = ({ componentName, customProps, ...forwardedProps }) => {
+  disableSelection?: boolean
+}> = ({ componentName, customProps, disableSelection, ...forwardedProps }) => {
   const component = useSelector(getComponentBy(componentName))
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
@@ -109,6 +110,7 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           customProps={customProps}
+          disableSelection={disableSelection}
           {...forwardedProps}
         />
       )

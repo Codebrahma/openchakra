@@ -9,12 +9,9 @@ import {
   getPropsBy,
   isImmediateChildOfCustomComponent,
   getIsHovered,
+  getSelectedComponentId,
 } from '../core/selectors/components'
-import {
-  getShowLayout,
-  getFocusedComponent,
-  getInputTextFocused,
-} from '../core/selectors/app'
+import { getShowLayout, getInputTextFocused } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
 import { useHoverComponent } from './useHoverComponent'
 import useCustomTheme from './useCustomTheme'
@@ -22,15 +19,15 @@ import useCustomTheme from './useCustomTheme'
 export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
+  disableSelection: boolean = false,
   isCustomComponent?: boolean,
-  onlyVisualHelper?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
   const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
   const [isHovered, setIsHovered] = useState(false)
-  const focusInput = useSelector(getFocusedComponent(component.id))
+  // const focusInput = useSelector(getFocusedComponent(component.id))
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
@@ -39,10 +36,11 @@ export const useInteractive = (
     isImmediateChildOfCustomComponent(component),
   )
   const makeEditable = useSelector(getInputTextFocused)
+  const currentSelectedId = useSelector(getSelectedComponentId)
 
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive = isCustomComponentPage || !isCustomComponentChild
-  const componentProps = onlyVisualHelper ? [] : [...fetchedProps]
+  const componentProps = isCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
 
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
@@ -54,7 +52,55 @@ export const useInteractive = (
     },
   })
 
+  const blurHandler = (event: MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    dispatch.text.setSelectionDetails()
+
+    const elem = event.currentTarget
+    if (elem) {
+      if (elem.childNodes.length === 0)
+        dispatch.components.updateTextChildrenProp({
+          id: component.id,
+          value: '',
+        })
+      else {
+        const childrenDetails: Array<{
+          type: string
+          value: string
+          componentId?: string
+        }> = []
+
+        let spanChildrenIndex = 0
+        elem.childNodes.forEach(child => {
+          let value: any = child.nodeValue
+          if (child.nodeName === 'SPAN') {
+            value = child.firstChild?.nodeValue
+            childrenDetails.push({
+              type: child.nodeName,
+              value: value || '',
+              componentId: elem.children[spanChildrenIndex].id,
+            })
+            spanChildrenIndex = spanChildrenIndex + 1
+          } else
+            childrenDetails.push({
+              type: child.nodeName,
+              value: value || '',
+            })
+        })
+        dispatch.components.updateTextChildrenProp({
+          id: component.id,
+          value: childrenDetails,
+        })
+      }
+    }
+    dispatch.app.toggleInputText(false)
+  }
+
   const ref = useRef<HTMLDivElement>(null)
+
+  //In order to find the styles for the span we are storing the id.
+  if (ref.current) ref.current.id = component.id
 
   const boundingPosition =
     ref.current !== null ? ref.current.getBoundingClientRect() : undefined
@@ -91,39 +137,11 @@ export const useInteractive = (
         },
         {
           id: generateId(),
-          name: 'onClick',
-          value: (event: MouseEvent) => {
-            event.preventDefault()
-            event.stopPropagation()
-            dispatch.components.select(component.id)
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
-        {
-          id: generateId(),
           name: 'onDoubleClick',
           value: (event: MouseEvent) => {
             event.preventDefault()
             event.stopPropagation()
-            if (focusInput === false) {
-              dispatch.app.toggleInputText()
-            }
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
-        {
-          id: generateId(),
-          name: 'onBlur',
-          value: (event: MouseEvent) => {
-            event.preventDefault()
-            event.stopPropagation()
-            if (focusInput === true) {
-              dispatch.app.toggleInputText()
-            }
+            dispatch.app.toggleInputText(true)
           },
           componentId: component.id,
           derivedFromComponentType: null,
@@ -181,18 +199,33 @@ export const useInteractive = (
     ]
   }
 
-  if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
-    props = [
-      ...props,
-      {
+  if (!disableSelection) {
+    props.push({
+      id: generateId(),
+      name: 'onClick',
+      value: (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (currentSelectedId !== component.id) {
+          dispatch.components.select(component.id)
+          dispatch.text.removeSelection()
+        }
+      },
+      componentId: component.id,
+      derivedFromComponentType: null,
+      derivedFromPropName: null,
+    })
+
+    if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
+      props.push({
         id: generateId(),
         name: 'boxShadow',
         value: `#0C008C 0px 0px 0px 2px inset`,
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
-      },
-    ]
+      })
+    }
   }
 
   if (component.type === 'Text' && isComponentSelected && makeEditable) {
@@ -216,15 +249,14 @@ export const useInteractive = (
       },
       {
         id: generateId(),
-        name: 'onInput',
+        name: 'onKeyDown',
         value: (e: any) => {
-          dispatch.components.updateProps({
-            id: component.id,
-            name: 'children',
-            value: e.currentTarget.textContent,
-          })
-        },
+          if ((e.which === 37 && e.shiftKey) || (e.which === 39 && e.shiftKey))
+            dispatch.text.setSelectionDetails()
 
+          //Enter key not allowed(paragraph breaks)
+          if (e.which === 13) e.preventDefault()
+        },
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
@@ -233,15 +265,18 @@ export const useInteractive = (
         id: generateId(),
         name: 'onMouseUp',
         value: () => {
-          const selection = window.getSelection() || document.getSelection()
-          if (selection) {
-            const start = selection.anchorOffset
-            const end = selection.focusOffset
-            if (start >= 0 && end >= 0)
-              dispatch.app.setSelectedIndex({ start, end })
-          }
+          dispatch.text.setSelectionDetails()
+          dispatch.app.toggleInputText(true)
         },
 
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+      {
+        id: generateId(),
+        name: 'onBlur',
+        value: blurHandler,
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,

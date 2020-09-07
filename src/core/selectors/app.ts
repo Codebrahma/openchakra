@@ -17,9 +17,3 @@ export const getCustomTheme = (state: RootState) => state.app.customTheme
 
 export const getLoadedFonts = (state: RootState) => state.app.loadedFonts
 
-export const getSelectedIndex = (state: RootState) => {
-  return {
-    start: state.app.selectedStartIndex,
-    end: state.app.selectedEndIndex,
-  }
-}

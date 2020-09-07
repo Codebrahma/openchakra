@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 import { getInputTextFocused } from '../../core/selectors/app'
 import { useSelector } from 'react-redux'
-import { getComponents } from '../../core/selectors/components'
+import { getCurrentSelectedComponents } from '../../core/selectors/components'
 import ComponentPreview from './ComponentPreview'
 
 const PreviewContainer: React.FC<{
@@ -27,8 +27,10 @@ const PreviewContainer: React.FC<{
   )
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
-  const makeEditable = useSelector(getInputTextFocused)
-  const components = useSelector(getComponents)
+  const inputTextFocused = useSelector(getInputTextFocused)
+  const selectedComponents = useSelector(
+    getCurrentSelectedComponents(component.id),
+  )
 
   const componentChildren =
     propsKeyValue.children && Array.isArray(propsKeyValue.children)
@@ -43,8 +45,14 @@ const PreviewContainer: React.FC<{
       ref,
     },
     componentChildren.map((key: string) => {
-      if (components[key])
-        return <ComponentPreview key={key} componentName={key} />
+      if (selectedComponents[key])
+        return (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            disableSelection={inputTextFocused ? true : false}
+          />
+        )
       else return key
     }),
   )
@@ -56,8 +64,14 @@ const PreviewContainer: React.FC<{
       ...forwardedProps,
     },
     componentChildren.map((key: string) => {
-      if (components[key])
-        return <ComponentPreview key={key} componentName={key} />
+      if (selectedComponents[key])
+        return (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            disableSelection={inputTextFocused ? true : false}
+          />
+        )
       else return key
     }),
   )
@@ -65,10 +79,12 @@ const PreviewContainer: React.FC<{
   if (isBoxWrapped) {
     let boxProps: any = {}
 
-    return <Box {...boxProps}>{makeEditable ? editableChildren : children}</Box>
+    return (
+      <Box {...boxProps}>{inputTextFocused ? editableChildren : children}</Box>
+    )
   }
 
-  return makeEditable ? editableChildren : children
+  return inputTextFocused ? editableChildren : children
 }
 
 export default PreviewContainer

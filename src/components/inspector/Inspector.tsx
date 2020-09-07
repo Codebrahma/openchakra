@@ -3,7 +3,8 @@ import { Link, Box, Flex, useToast } from '@chakra-ui/core'
 import Panels from './panels/Panels'
 import { GoRepo, GoCode } from 'react-icons/go'
 import { FiTrash2 } from 'react-icons/fi'
-import { IoMdRefresh } from 'react-icons/io'
+import { IoMdRefresh, IoMdBrush } from 'react-icons/io'
+import { MdFormatClear } from 'react-icons/md'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
 import StylesPanel from './panels/StylesPanel'
@@ -17,6 +18,7 @@ import {
   getProps,
   getCustomComponents,
   getCustomComponentsProps,
+  isSelectedRangeContainsTwoSpan,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/code'
@@ -24,6 +26,11 @@ import useClipboard from '../../hooks/useClipboard'
 import { useInspectorUpdate } from '../../contexts/inspector-context'
 import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
 import { menuItems } from '../sidebar/componentsMenu'
+import {
+  getIsContainsOnlySpan,
+  getIsSelectionEnabled,
+  getSelectedTextDetails,
+} from '../../core/selectors/text'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -84,6 +91,16 @@ const Inspector = () => {
 
   const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(isChildrenOfCustomComponent(id))
+  const containsOnlySpan = useSelector(getIsContainsOnlySpan)
+  const selectionEnabled = useSelector(getIsSelectionEnabled)
+  const selectedTextDetails = useSelector(getSelectedTextDetails)
+  const isSelectedTwoSpan = useSelector(
+    isSelectedRangeContainsTwoSpan({
+      start: selectedTextDetails.startNodePosition,
+      end: selectedTextDetails.endNodePosition,
+    }),
+  )
+
   const enableSaveIcon =
     isCustomComponentsPage && !isCustomComponentChild && !isCustomComponent
 
@@ -96,6 +113,26 @@ const Inspector = () => {
   useEffect(() => {
     clearActiveProps()
   }, [clearActiveProps])
+
+  const wrapSpanClickHandler = () => {
+    if (isSelectedTwoSpan) {
+      toast({
+        title: 'Multiple span components',
+        description: 'Multiple span components are selected.',
+        status: 'error',
+        duration: 1000,
+        isClosable: true,
+        position: 'top',
+      })
+    } else {
+      if (containsOnlySpan) {
+        dispatch.components.removeSpan(selectedTextDetails)
+      } else {
+        dispatch.components.addSpanComponent(selectedTextDetails)
+      }
+      dispatch.text.removeSelection()
+    }
+  }
 
   return (
     <>
@@ -160,6 +197,14 @@ const Inspector = () => {
                   }
                 }}
                 icon="add"
+              />
+            ) : null}
+            {component.type === 'Text' ? (
+              <ActionButton
+                label={containsOnlySpan ? 'Remove Span' : 'Wrap with Span'}
+                onClick={wrapSpanClickHandler}
+                icon={containsOnlySpan ? MdFormatClear : IoMdBrush}
+                isDisabled={!selectionEnabled}
               />
             ) : null}
             {!isCustomComponentsPage ? (
