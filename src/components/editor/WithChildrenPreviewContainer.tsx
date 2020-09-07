@@ -44,9 +44,8 @@ const WithChildrenPreviewContainer: React.FC<{
 
   //If the children for the component is exposed, the component becomes un-droppable
 
-  const enableInteractive =
-    (isCustomComponentPage && childrenProp === undefined) ||
-    !isCustomComponentChild
+  const isDroppable = childrenProp === undefined ? true : false
+
   let componentChildren = useSelector(getChildrenBy(component.id))
 
   const customChildrenPropName =
@@ -68,10 +67,10 @@ const WithChildrenPreviewContainer: React.FC<{
   const asProp = propsElement.as
 
   if (!isBoxWrapped) {
-    propsElement.ref = enableInteractive ? drop(ref) : ref
+    propsElement.ref = isDroppable ? drop(ref) : ref
   }
 
-  if (isOver && enableInteractive) {
+  if (isOver && isDroppable) {
     propsElement.bg = 'teal.50'
   }
 
@@ -100,8 +99,8 @@ const WithChildrenPreviewContainer: React.FC<{
     }
 
     return (
-      <Box {...boxProps} ref={enableInteractive ? drop(ref) : ref}>
-        {asProp === 'span' ? spanChildren : children}
+      <Box {...boxProps} ref={isDroppable ? drop(ref) : ref}>
+        {children}
       </Box>
     )
   }
