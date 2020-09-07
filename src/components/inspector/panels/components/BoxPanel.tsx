@@ -69,6 +69,9 @@ const BoxPanel = () => {
               bg: '#EBEBE4',
               cursor: 'not-allowed',
             }}
+            onKeyPress={(e: any) => {
+              if (e.which === 13) clickHandler()
+            }}
             fontSize="sm"
             width="90%"
           />
