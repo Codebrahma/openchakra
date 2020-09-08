@@ -1131,6 +1131,11 @@ const components = createModel({
           components,
           props,
         )
+        const childrenPropIndex = props.findIndex(
+          prop =>
+            prop.componentId === selectedComponent.parent &&
+            prop.name === 'children',
+        )
         if (isChildOfCustomComponent) {
           draftState.customComponents = {
             ...draftState.customComponents,
@@ -1143,6 +1148,12 @@ const components = createModel({
           draftState.customComponents[selectedComponent.parent].children.push(
             newId,
           )
+
+          draftState.customComponents[selectedComponent.parent].type ===
+            'Text' &&
+            draftState.customComponentsProps[childrenPropIndex].value.push(
+              newId,
+            )
         } else {
           draftState.componentsById[componentsId] = {
             ...draftState.componentsById[componentsId],
@@ -1155,6 +1166,10 @@ const components = createModel({
           draftState.componentsById[componentsId][
             selectedComponent.parent
           ].children.push(newId)
+
+          draftState.componentsById[componentsId][selectedComponent.parent]
+            .type === 'Text' &&
+            draftState.propsById[propsId][childrenPropIndex].value.push(newId)
         }
       })
     },
