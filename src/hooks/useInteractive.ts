@@ -281,6 +281,18 @@ export const useInteractive = (
         derivedFromComponentType: null,
         derivedFromPropName: null,
       },
+      {
+        id: generateId(),
+        name: 'onPaste',
+        value: (e: any) => {
+          e.preventDefault()
+          const text = e.clipboardData.getData('text/plain')
+          document.execCommand('insertText', false, text)
+        },
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
     ]
   }
   return {
