@@ -365,12 +365,14 @@ const components = createModel({
                   derivedFromPropName: null,
                   derivedFromComponentType: null,
                 }
+
                 const boxComponent = {
                   id,
                   type: 'Box',
                   parent: 'Prop',
                   children: [],
                 }
+
                 if (updateInCustomComponent) {
                   draftState.customComponentsProps.push(prop)
                   if (targetedProp === 'children')
@@ -1007,6 +1009,14 @@ const components = createModel({
           id,
         )
 
+        const heightProp = {
+          id: generateId(),
+          name: 'height',
+          value: '100%',
+          componentId: '',
+          derivedFromPropName: null,
+          derivedFromComponentType: null,
+        }
         if (isCustomComponentChild) {
           draftState.customComponents[id] = {
             id,
@@ -1025,6 +1035,10 @@ const components = createModel({
                 parent: 'Prop',
                 children: [],
               }
+              draftState.customComponentsProps.push({
+                ...heightProp,
+                componentId: id,
+              })
               duplicatedProps[index].value = id
             }
           })
@@ -1050,6 +1064,10 @@ const components = createModel({
                 parent: 'Prop',
                 children: [],
               }
+              draftState.propsById[propsId].push({
+                ...heightProp,
+                componentId: id,
+              })
               duplicatedProps[index].value = id
             }
           })
