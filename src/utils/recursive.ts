@@ -7,8 +7,8 @@ export const duplicateComponent = (
   sourceComponents: IComponents,
   props: IProp[],
 ) => {
-  const clonedComponents: IComponents = {}
-  const clonedProps: IProp[] = []
+  let clonedComponents: IComponents = {}
+  let clonedProps: IProp[] = []
 
   const cloneComponent = (component: IComponent) => {
     const newId = generateId()
@@ -24,10 +24,29 @@ export const duplicateComponent = (
     props
       .filter(prop => prop.componentId === component.id)
       .forEach(prop => {
+        let propValue = prop.value
+        if (sourceComponents[prop.value]) {
+          const {
+            newId,
+            clonedComponents: duplicatedComponents,
+            clonedProps: duplicatedProps,
+          } = duplicateComponent(
+            sourceComponents[prop.value],
+            sourceComponents,
+            props,
+          )
+          propValue = newId
+          clonedComponents = {
+            ...clonedComponents,
+            ...duplicatedComponents,
+          }
+          clonedProps = [...clonedProps, ...duplicatedProps]
+        }
         clonedProps.push({
           ...prop,
           id: generateId(),
           componentId: newId,
+          value: propValue,
         })
       })
 

@@ -366,6 +366,15 @@ const components = createModel({
                   derivedFromComponentType: null,
                 }
 
+                const heightProp = {
+                  id: generateId(),
+                  name: 'height',
+                  value: '100%',
+                  componentId: '',
+                  derivedFromPropName: null,
+                  derivedFromComponentType: null,
+                }
+
                 const boxComponent = {
                   id,
                   type: 'Box',
@@ -375,12 +384,22 @@ const components = createModel({
 
                 if (updateInCustomComponent) {
                   draftState.customComponentsProps.push(prop)
-                  if (targetedProp === 'children')
+                  if (targetedProp === 'children') {
                     draftState.customComponents[id] = boxComponent
+                    draftState.customComponentsProps.push({
+                      ...heightProp,
+                      componentId: id,
+                    })
+                  }
                 } else {
                   draftState.propsById[propsId].push(prop)
-                  if (targetedProp === 'children')
+                  if (targetedProp === 'children') {
                     draftState.componentsById[componentsId][id] = boxComponent
+                    draftState.propsById[propsId].push({
+                      ...heightProp,
+                      componentId: id,
+                    })
+                  }
                 }
               },
             )
@@ -1206,18 +1225,7 @@ const components = createModel({
             ...draftState.customComponents,
             ...clonedComponents,
           }
-          clonedProps.forEach((prop, index) => {
-            if (draftState.customComponents[prop.value]) {
-              const id = generateId()
-              draftState.customComponents[id] = {
-                id,
-                type: 'Box',
-                parent: 'Prop',
-                children: [],
-              }
-              clonedProps[index].value = id
-            }
-          })
+
           draftState.customComponentsProps = [
             ...draftState.customComponentsProps,
             ...clonedProps,
@@ -1236,18 +1244,7 @@ const components = createModel({
             ...draftState.componentsById[componentsId],
             ...clonedComponents,
           }
-          clonedProps.forEach((prop, index) => {
-            if (draftState.componentsById[componentsId][prop.value]) {
-              const id = generateId()
-              draftState.componentsById[componentsId][id] = {
-                id,
-                type: 'Box',
-                parent: 'Prop',
-                children: [],
-              }
-              clonedProps[index].value = id
-            }
-          })
+
           draftState.propsById[propsId] = [
             ...draftState.propsById[propsId],
             ...clonedProps,
