@@ -2,10 +2,6 @@ import React, { FunctionComponent, ComponentClass } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
-import { getInputTextFocused } from '../../core/selectors/app'
-import { useSelector } from 'react-redux'
-import { getCurrentSelectedComponents } from '../../core/selectors/components'
-import ComponentPreview from './ComponentPreview'
 
 const PreviewContainer: React.FC<{
   component: IComponent
@@ -27,64 +23,23 @@ const PreviewContainer: React.FC<{
   )
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
-  const inputTextFocused = useSelector(getInputTextFocused)
-  const selectedComponents = useSelector(
-    getCurrentSelectedComponents(component.id),
-  )
-
-  const componentChildren =
-    propsKeyValue.children && Array.isArray(propsKeyValue.children)
-      ? propsKeyValue.children
-      : [propsKeyValue.children]
-
-  const children = React.createElement(
-    type,
-    {
-      ...propsKeyValue,
-      ...forwardedProps,
-      ref,
-    },
-    componentChildren.map((key: string) => {
-      if (selectedComponents[key])
-        return (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            disableSelection={inputTextFocused ? true : false}
-          />
-        )
-      else return key
-    }),
-  )
-
-  const editableChildren = React.createElement(
-    type,
-    {
-      ...propsKeyValue,
-      ...forwardedProps,
-    },
-    componentChildren.map((key: string) => {
-      if (selectedComponents[key])
-        return (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            disableSelection={inputTextFocused ? true : false}
-          />
-        )
-      else return key
-    }),
-  )
+  const children = React.createElement(type, {
+    ...propsKeyValue,
+    ...forwardedProps,
+    ref,
+  })
 
   if (isBoxWrapped) {
     let boxProps: any = {}
 
     return (
-      <Box {...boxProps}>{inputTextFocused ? editableChildren : children}</Box>
+      <Box {...boxProps} ref={ref}>
+        {children}
+      </Box>
     )
   }
 
-  return inputTextFocused ? editableChildren : children
+  return children
 }
 
 export default PreviewContainer

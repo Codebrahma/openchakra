@@ -25,6 +25,7 @@ import MenuPreview, {
   MenuItemPreview,
 } from './previews/MenuPreview'
 import CustomComponentPreview from './previews/CustomComponentPreview'
+import TextPreview from './previews/TextPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
@@ -42,7 +43,6 @@ const ComponentPreview: React.FC<{
     case 'Button':
     case 'IconButton':
     case 'Image':
-    case 'Text':
     case 'Link':
     case 'Spinner':
     case 'Checkbox':
@@ -63,6 +63,15 @@ const ComponentPreview: React.FC<{
     case 'Select':
       return (
         <PreviewContainer
+          component={component}
+          type={Chakra[type]}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'Text':
+      return (
+        <TextPreview
           component={component}
           type={Chakra[type]}
           {...forwardedProps}
