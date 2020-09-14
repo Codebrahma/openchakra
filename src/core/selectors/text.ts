@@ -8,3 +8,5 @@ export const getIsSelectionEnabled = (state: RootState) =>
 
 export const getIsContainsOnlySpan = (state: RootState) =>
   state.text.containsOnlySpan
+
+export const getTextValue = (state: RootState) => state.text.textValue

@@ -1,11 +1,16 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
-import { Box } from '@chakra-ui/core'
+import { Box, Text } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { getInputTextFocused } from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
-import { getCurrentSelectedComponents } from '../../../core/selectors/components'
+import {
+  getCurrentSelectedComponents,
+  getSelectedComponentId,
+} from '../../../core/selectors/components'
 import ComponentPreview from '../ComponentPreview'
+import useDispatch from '../../../hooks/useDispatch'
+import { getTextValue } from '../../../core/selectors/text'
 
 const TextPreview: React.FC<{
   component: IComponent
@@ -21,70 +26,125 @@ const TextPreview: React.FC<{
   isBoxWrapped,
   ...forwardedProps
 }) => {
-  const { props: componentProps, ref } = useInteractive(
+  const { props: componentProps, ref, elem } = useInteractive(
     component,
     enableVisualHelper,
   )
-
+  const dispatch = useDispatch()
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const inputTextFocused = useSelector(getInputTextFocused)
   const selectedComponents = useSelector(
     getCurrentSelectedComponents(component.id),
   )
+  const textValue = useSelector(getTextValue)
+  const selectedId = useSelector(getSelectedComponentId)
 
   const componentChildren =
     propsKeyValue.children && Array.isArray(propsKeyValue.children)
       ? propsKeyValue.children
       : [propsKeyValue.children]
 
-  const children = React.createElement(
-    type,
-    {
-      ...propsKeyValue,
-      ...forwardedProps,
-      ref,
-    },
-    componentChildren.map((key: string) => {
-      if (selectedComponents[key])
-        return (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            disableSelection={inputTextFocused ? true : false}
-          />
-        )
-      else return key
-    }),
-  )
+  const blurHandler = (event: React.SyntheticEvent<any>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    dispatch.text.setSelectionDetails()
 
-  const editableChildren = React.createElement(
-    type,
-    {
-      ...propsKeyValue,
-      ...forwardedProps,
-    },
-    componentChildren.map((key: string) => {
-      if (selectedComponents[key])
-        return (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            disableSelection={inputTextFocused ? true : false}
-          />
-        )
-      else return key
-    }),
-  )
+    const element = event.currentTarget
+    if (element) {
+      if (element.childNodes.length === 0)
+        dispatch.components.updateTextChildrenProp({
+          id: component.id,
+          value: '',
+        })
+      else {
+        const childrenDetails: Array<{
+          type: string
+          value: string
+          componentId?: string
+        }> = []
 
-  if (isBoxWrapped) {
-    let boxProps: any = {}
-
-    return (
-      <Box {...boxProps}>{inputTextFocused ? editableChildren : children}</Box>
-    )
+        let spanChildrenIndex = 0
+        element.childNodes.forEach((child: Node) => {
+          let value: any = child.nodeValue
+          if (child.nodeName === 'SPAN') {
+            value = child.firstChild?.nodeValue
+            childrenDetails.push({
+              type: child.nodeName,
+              value: value || '',
+              componentId: element.children[spanChildrenIndex].id,
+            })
+            spanChildrenIndex = spanChildrenIndex + 1
+          } else
+            childrenDetails.push({
+              type: child.nodeName,
+              value: value || '',
+            })
+        })
+        dispatch.components.updateTextChildrenProp({
+          id: component.id,
+          value: childrenDetails,
+        })
+      }
+    }
+    dispatch.app.toggleInputText(false)
   }
 
-  return inputTextFocused ? editableChildren : children
+  const doubleClickHandler = (event: MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    dispatch.text.setTextValue(elem?.innerHTML || '')
+    dispatch.app.toggleInputText(true)
+  }
+
+  const pasteHandler = (e: any) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text/plain')
+    document.execCommand('insertText', false, text)
+  }
+  const mouseUpHandler = () => {
+    dispatch.text.setSelectionDetails()
+    dispatch.app.toggleInputText(true)
+  }
+  const keyDownHandler = (e: any) => {
+    if ((e.which === 37 && e.shiftKey) || (e.which === 39 && e.shiftKey))
+      dispatch.text.setSelectionDetails()
+
+    //Enter key not allowed(paragraph breaks)
+    if (e.which === 13) e.preventDefault()
+  }
+
+  return inputTextFocused && component.id === selectedId ? (
+    <Box {...propsKeyValue} {...forwardedProps}>
+      <Box
+        contentEditable={true}
+        suppressContentEditableWarning={true}
+        onBlur={blurHandler}
+        onPaste={pasteHandler}
+        onMouseUp={mouseUpHandler}
+        onKeyDown={keyDownHandler}
+        dangerouslySetInnerHTML={{ __html: textValue }}
+      />
+    </Box>
+  ) : (
+    <Text
+      ref={ref}
+      {...propsKeyValue}
+      {...forwardedProps}
+      onDoubleClick={doubleClickHandler}
+    >
+      {componentChildren.map((key: string) => {
+        if (selectedComponents[key])
+          return (
+            <ComponentPreview
+              key={key}
+              componentName={key}
+              disableSelection={inputTextFocused ? true : false}
+            />
+          )
+        else return key
+      })}
+    </Text>
+  )
 }
 
 export default TextPreview

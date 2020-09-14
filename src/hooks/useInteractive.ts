@@ -11,7 +11,7 @@ import {
   getIsHovered,
   getSelectedComponentId,
 } from '../core/selectors/components'
-import { getShowLayout, getInputTextFocused } from '../core/selectors/app'
+import { getShowLayout } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
 import { useHoverComponent } from './useHoverComponent'
 import useCustomTheme from './useCustomTheme'
@@ -35,7 +35,6 @@ export const useInteractive = (
   const isImmediateChild = useSelector(
     isImmediateChildOfCustomComponent(component),
   )
-  const makeEditable = useSelector(getInputTextFocused)
   const currentSelectedId = useSelector(getSelectedComponentId)
 
   const fetchedProps = useSelector(getPropsBy(component.id))
@@ -51,51 +50,6 @@ export const useInteractive = (
       isMoved: true,
     },
   })
-
-  const blurHandler = (event: MouseEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    dispatch.text.setSelectionDetails()
-
-    const elem = event.currentTarget
-    if (elem) {
-      if (elem.childNodes.length === 0)
-        dispatch.components.updateTextChildrenProp({
-          id: component.id,
-          value: '',
-        })
-      else {
-        const childrenDetails: Array<{
-          type: string
-          value: string
-          componentId?: string
-        }> = []
-
-        let spanChildrenIndex = 0
-        elem.childNodes.forEach(child => {
-          let value: any = child.nodeValue
-          if (child.nodeName === 'SPAN') {
-            value = child.firstChild?.nodeValue
-            childrenDetails.push({
-              type: child.nodeName,
-              value: value || '',
-              componentId: elem.children[spanChildrenIndex].id,
-            })
-            spanChildrenIndex = spanChildrenIndex + 1
-          } else
-            childrenDetails.push({
-              type: child.nodeName,
-              value: value || '',
-            })
-        })
-        dispatch.components.updateTextChildrenProp({
-          id: component.id,
-          value: childrenDetails,
-        })
-      }
-    }
-    dispatch.app.toggleInputText(false)
-  }
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -130,18 +84,6 @@ export const useInteractive = (
           name: 'onMouseOut',
           value: () => {
             setIsHovered(false)
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
-        {
-          id: generateId(),
-          name: 'onDoubleClick',
-          value: (event: MouseEvent) => {
-            event.preventDefault()
-            event.stopPropagation()
-            dispatch.app.toggleInputText(true)
           },
           componentId: component.id,
           derivedFromComponentType: null,
@@ -208,7 +150,6 @@ export const useInteractive = (
         event.stopPropagation()
         if (currentSelectedId !== component.id) {
           dispatch.components.select(component.id)
-          dispatch.text.removeSelection()
         }
       },
       componentId: component.id,
@@ -228,76 +169,10 @@ export const useInteractive = (
     }
   }
 
-  if (component.type === 'Text' && isComponentSelected && makeEditable) {
-    props = [
-      ...props,
-      {
-        id: generateId(),
-        name: 'contentEditable',
-        value: 'true',
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-      {
-        id: generateId(),
-        name: 'suppressContentEditableWarning',
-        value: 'true',
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-      {
-        id: generateId(),
-        name: 'onKeyDown',
-        value: (e: any) => {
-          if ((e.which === 37 && e.shiftKey) || (e.which === 39 && e.shiftKey))
-            dispatch.text.setSelectionDetails()
-
-          //Enter key not allowed(paragraph breaks)
-          if (e.which === 13) e.preventDefault()
-        },
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-      {
-        id: generateId(),
-        name: 'onMouseUp',
-        value: () => {
-          dispatch.text.setSelectionDetails()
-          dispatch.app.toggleInputText(true)
-        },
-
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-      {
-        id: generateId(),
-        name: 'onBlur',
-        value: blurHandler,
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-      {
-        id: generateId(),
-        name: 'onPaste',
-        value: (e: any) => {
-          e.preventDefault()
-          const text = e.clipboardData.getData('text/plain')
-          document.execCommand('insertText', false, text)
-        },
-        componentId: component.id,
-        derivedFromComponentType: null,
-        derivedFromPropName: null,
-      },
-    ]
-  }
   return {
     props,
     ref: enableInteractive ? drag(hover(ref)) : ref,
+    elem: ref.current,
     drag,
   }
 }

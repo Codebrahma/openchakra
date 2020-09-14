@@ -28,7 +28,6 @@ import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
 import { menuItems } from '../sidebar/componentsMenu'
 import {
   getIsContainsOnlySpan,
-  getIsSelectionEnabled,
   getSelectedTextDetails,
 } from '../../core/selectors/text'
 
@@ -92,8 +91,8 @@ const Inspector = () => {
   const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(isChildrenOfCustomComponent(id))
   const containsOnlySpan = useSelector(getIsContainsOnlySpan)
-  const selectionEnabled = useSelector(getIsSelectionEnabled)
   const selectedTextDetails = useSelector(getSelectedTextDetails)
+
   const isSelectedTwoSpan = useSelector(
     isSelectedRangeContainsTwoSpan({
       start: selectedTextDetails.startNodePosition,
@@ -203,10 +202,20 @@ const Inspector = () => {
               <ActionButton
                 label={containsOnlySpan ? 'Remove Span' : 'Wrap with Span'}
                 onClick={wrapSpanClickHandler}
-                icon={containsOnlySpan ? MdFormatClear : IoMdBrush}
-                isDisabled={!selectionEnabled}
+                icon={IoMdBrush}
+                color={containsOnlySpan ? 'primary.800' : 'black'}
+                bg={containsOnlySpan ? 'primary.100' : 'white'}
               />
             ) : null}
+            {component.type === 'Text' && (
+              <ActionButton
+                label="Remove all formatting"
+                onClick={(e: any) => {
+                  dispatch.components.clearAllFormatting()
+                }}
+                icon={MdFormatClear}
+              />
+            )}
             {!isCustomComponentsPage ? (
               <ActionButton
                 label="Export to custom components page"
