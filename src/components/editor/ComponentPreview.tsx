@@ -48,7 +48,6 @@ const ComponentPreview: React.FC<{
     case 'Checkbox':
     case 'Textarea':
     case 'CircularProgress':
-    case 'Heading':
     case 'Switch':
     case 'FormLabel':
     case 'FormHelperText':
@@ -70,6 +69,7 @@ const ComponentPreview: React.FC<{
         />
       )
     case 'Text':
+    case 'Heading':
       return (
         <TextPreview
           component={component}

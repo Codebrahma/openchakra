@@ -29,6 +29,7 @@ import { menuItems } from '../sidebar/componentsMenu'
 import {
   getIsContainsOnlySpan,
   getSelectedTextDetails,
+  getIsSelectionEnabled,
 } from '../../core/selectors/text'
 
 const CodeActionButton = memo(() => {
@@ -99,6 +100,7 @@ const Inspector = () => {
       end: selectedTextDetails.endNodePosition,
     }),
   )
+  const isSelectionEnabled = useSelector(getIsSelectionEnabled)
 
   const enableSaveIcon =
     isCustomComponentsPage && !isCustomComponentChild && !isCustomComponent
@@ -198,13 +200,14 @@ const Inspector = () => {
                 icon="add"
               />
             ) : null}
-            {component.type === 'Text' ? (
+            {component.type === 'Text' || component.type === 'Heading' ? (
               <ActionButton
                 label={containsOnlySpan ? 'Remove Span' : 'Wrap with Span'}
                 onClick={wrapSpanClickHandler}
                 icon={IoMdBrush}
                 color={containsOnlySpan ? 'primary.800' : 'black'}
                 bg={containsOnlySpan ? 'primary.100' : 'white'}
+                isDisabled={!isSelectionEnabled}
               />
             ) : null}
             {component.type === 'Text' && (

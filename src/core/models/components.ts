@@ -11,6 +11,10 @@ import {
   deleteCustomProp,
 } from '../../utils/recursive'
 import _ from 'lodash'
+import {
+  addSpanForSelection,
+  removeSpanForSelection,
+} from '../../utils/selectionUtility'
 
 export type ComponentsState = {
   pages: IPages
@@ -91,7 +95,7 @@ const duplicateProps = (props: IProp[], componentId: string) => {
   return duplicatedProps
 }
 
-const isKeyForComponent = (value: string, components: IComponents) => {
+export const isKeyForComponent = (value: string, components: IComponents) => {
   if (components[value]) return true
   return false
 }
@@ -139,110 +143,26 @@ export const updateInAllInstances = (
     .forEach(component => updateCallBack(component, true))
 }
 
-const selectionUtility = (
+// joining the adjacent text in the array
+const joinAdjacentTextNodes = (
   childrenPropIndex: number,
-  props: IProp[],
   components: IComponents,
-  selectionDetails: {
-    start: number
-    end: number
-    startNodePosition: number
-    endNodePosition: number
-  },
+  props: IProp[],
 ) => {
-  const { start, end, startNodePosition, endNodePosition } = selectionDetails
-  let startValue = props[childrenPropIndex].value[startNodePosition]
-  let endValue = props[childrenPropIndex].value[endNodePosition]
-  const childrenProp = props[childrenPropIndex]
+  const propValue: string[] = []
 
-  //selected left to right
-  if (startNodePosition < endNodePosition) {
-    if (isKeyForComponent(childrenProp.value[startNodePosition], components)) {
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === startValue && prop.name === 'children',
-      )
-
-      startValue = props[spanChildrenPropIndex].value
-      startValue = startValue + endValue.substring(0, end)
-      endValue = endValue.substring(end, endValue.length)
-
-      props[spanChildrenPropIndex].value = startValue
-      props[childrenPropIndex].value[endNodePosition] = endValue
-    } else if (
-      isKeyForComponent(childrenProp.value[endNodePosition], components)
-    ) {
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === endValue && prop.name === 'children',
-      )
-      endValue = props[spanChildrenPropIndex].value
-      endValue = startValue.substring(start, startValue.length) + endValue
-      startValue = startValue.substring(0, start)
-
-      props[childrenPropIndex].value[startNodePosition] = startValue
-      props[spanChildrenPropIndex].value = endValue
+  props[childrenPropIndex].value.forEach((val: string) => {
+    if (propValue.length === 0 || isKeyForComponent(val, components)) {
+      propValue.push(val)
     } else {
-      let middleValue = props[childrenPropIndex].value[startNodePosition + 1]
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === middleValue && prop.name === 'children',
-      )
-      middleValue = props[spanChildrenPropIndex].value
-
-      middleValue =
-        startValue.substring(start, startValue.length) +
-        middleValue +
-        endValue.substring(0, end)
-      startValue = startValue.substring(0, start)
-      endValue = endValue.substring(end, endValue.length)
-
-      props[childrenPropIndex].value[startNodePosition] = startValue
-      props[childrenPropIndex].value[endNodePosition] = endValue
-      props[spanChildrenPropIndex].value = middleValue
+      if (!isKeyForComponent(propValue[propValue.length - 1], components)) {
+        propValue[propValue.length - 1] = propValue[propValue.length - 1] + val
+      } else {
+        propValue.push(val)
+      }
     }
-  }
-  //right to left
-  else {
-    if (isKeyForComponent(childrenProp.value[startNodePosition], components)) {
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === startValue && prop.name === 'children',
-      )
-
-      startValue = props[spanChildrenPropIndex].value
-      startValue = endValue.substring(end, endValue.length) + startValue
-      endValue = endValue.substring(0, end)
-
-      props[spanChildrenPropIndex].value = startValue
-      props[childrenPropIndex].value[endNodePosition] = endValue
-    } else if (
-      isKeyForComponent(childrenProp.value[endNodePosition], components)
-    ) {
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === endValue && prop.name === 'children',
-      )
-      endValue = props[spanChildrenPropIndex].value
-      endValue = endValue + startValue.substring(0, start)
-      startValue = startValue.substring(start, startValue.length)
-
-      props[childrenPropIndex].value[startNodePosition] = startValue
-      props[spanChildrenPropIndex].value = endValue
-    } else {
-      let middleValue = props[childrenPropIndex].value[startNodePosition - 1]
-      const spanChildrenPropIndex = props.findIndex(
-        prop => prop.componentId === middleValue && prop.name === 'children',
-      )
-      middleValue = props[spanChildrenPropIndex].value
-
-      middleValue =
-        endValue.substring(end, endValue.length) +
-        middleValue +
-        startValue.substring(0, start)
-      startValue = startValue.substring(start, startValue.length)
-      endValue = endValue.substring(0, end)
-
-      props[childrenPropIndex].value[startNodePosition] = startValue
-      props[childrenPropIndex].value[endNodePosition] = endValue
-      props[spanChildrenPropIndex].value = middleValue
-    }
-  }
+  })
+  return propValue
 }
 
 const components = createModel({
@@ -521,6 +441,13 @@ const components = createModel({
           updatedProps[childrenPropIndex].value = updatedProps[
             childrenPropIndex
           ].value.filter((val: string) => val !== componentId)
+
+          const propValue = joinAdjacentTextNodes(
+            childrenPropIndex,
+            components,
+            props,
+          )
+          updatedProps[childrenPropIndex].value = propValue
         }
 
         draftState.selectedId = DEFAULT_ID
@@ -1496,23 +1423,34 @@ const components = createModel({
         if (Array.isArray(value)) {
           const propArray: string[] = []
           const children: string[] = []
-          value.forEach(val => {
-            if (val.type === 'SPAN' && val.componentId) {
-              const index = spanComponentsToBeDeleted.indexOf(val.componentId)
-              spanComponentsToBeDeleted.splice(index, 1)
+          value.forEach(
+            (
+              val: {
+                type: string
+                value: string
+                componentId?: string
+              },
+              index,
+            ) => {
+              if (val.type === 'SPAN' && val.componentId) {
+                const index = spanComponentsToBeDeleted.indexOf(val.componentId)
+                spanComponentsToBeDeleted.splice(index, 1)
 
-              const spanChildrenPropIndex = props.findIndex(
-                prop =>
-                  prop.componentId === val.componentId &&
-                  prop.name === 'children',
-              )
-              props[spanChildrenPropIndex].value = val.value
-              propArray.push(val.componentId)
-              children.push(val.componentId)
-            } else {
-              propArray.push(val.value)
-            }
-          })
+                const spanChildrenPropIndex = props.findIndex(
+                  prop =>
+                    prop.componentId === val.componentId &&
+                    prop.name === 'children',
+                )
+                props[spanChildrenPropIndex].value = val.value
+                propArray.push(val.componentId)
+                children.push(val.componentId)
+              } else {
+                if (index > 0 && value[index - 1].type !== 'SPAN')
+                  propArray[index - 1] = propArray[index - 1] + val.value
+                else propArray.push(val.value)
+              }
+            },
+          )
           props[childrenPropIndex].value = propArray
           components[id].children = children
         } else {
@@ -1570,6 +1508,7 @@ const components = createModel({
 
         let croppedValue = ''
 
+        //Only text node.
         if (startNodePosition === endNodePosition) {
           //  selected the text from right to left
           if (startIndex > endIndex) {
@@ -1608,8 +1547,10 @@ const components = createModel({
           props[childrenPropIndex].value = _.flatten(
             props[childrenPropIndex].value,
           )
-        } else {
-          selectionUtility(childrenPropIndex, props, components, {
+        }
+        //Combination of text node and span node.
+        else {
+          addSpanForSelection(childrenPropIndex, props, components, {
             start,
             end,
             endNodePosition,
@@ -1647,7 +1588,12 @@ const components = createModel({
           id,
           draftState.customComponents,
         )
-        const { startIndex, endIndex, startNodePosition } = payload
+        const {
+          startIndex,
+          endIndex,
+          startNodePosition,
+          endNodePosition,
+        } = payload
 
         let start = startIndex
         let end = endIndex
@@ -1669,139 +1615,30 @@ const components = createModel({
         const childrenPropIndex = props.findIndex(
           prop => prop.name === 'children' && prop.componentId === id,
         )
-        const childrenProp = props[childrenPropIndex]
 
-        const spanId = childrenProp.value[startNodePosition]
-
-        const spanChildrenPropIndex = props.findIndex(
-          prop => prop.componentId === spanId && prop.name === 'children',
+        props = removeSpanForSelection(
+          childrenPropIndex,
+          props,
+          components,
+          id,
+          {
+            start,
+            end,
+            startNodePosition,
+            endNodePosition,
+          },
         )
 
-        const spanChildrenPropValue = props[spanChildrenPropIndex].value
-
-        //Selected from beginning of the span to end of the span
-        if (start === 0 && end === spanChildrenPropValue.length) {
-          props = props.filter(prop => prop.componentId !== spanId)
-          delete components[spanId]
-          props[childrenPropIndex].value.splice(
-            startNodePosition,
-            1,
-            spanChildrenPropValue,
-          )
-        }
-        //Selected from beginning of the span to middle of the span
-        else if (start === 0 && end !== spanChildrenPropValue.length) {
-          props[childrenPropIndex].value[startNodePosition] = [
-            spanChildrenPropValue.substring(start, end),
-            props[childrenPropIndex].value[startNodePosition],
-          ]
-          props[spanChildrenPropIndex].value = spanChildrenPropValue.substring(
-            end,
-            spanChildrenPropValue.length,
-          )
-        }
-        //Selected from middle of the span to end of the span
-        else if (start !== 0 && end === spanChildrenPropValue.length) {
-          props[childrenPropIndex].value[startNodePosition] = [
-            props[childrenPropIndex].value[startNodePosition],
-            spanChildrenPropValue.substring(start, end),
-          ]
-          props[spanChildrenPropIndex].value = spanChildrenPropValue.substring(
-            0,
-            start,
-          )
-        }
-        //Selected in the middle of the span
-        else {
-          const id1 = generateId()
-          const id2 = generateId()
-          const filteredProps = props.filter(
-            prop => prop.componentId === spanId,
-          )
-
-          props[childrenPropIndex].value[startNodePosition] = [
-            id1,
-            spanChildrenPropValue.substring(start, end),
-            id2,
-          ]
-          components[id1] = {
-            ...components[spanId],
-            id: id1,
-          }
-          components[id2] = {
-            ...components[spanId],
-            id: id2,
-          }
-          props = [
-            ...props,
-            ...filteredProps.map(prop => {
-              if (prop.name === 'children') {
-                return {
-                  ...prop,
-                  id: generateId(),
-                  componentId: id1,
-                  value: spanChildrenPropValue.substring(0, start),
-                }
-              }
-              return {
-                ...prop,
-                id: generateId(),
-                componentId: id1,
-              }
-            }),
-            ...filteredProps.map(prop => {
-              if (prop.name === 'children') {
-                return {
-                  ...prop,
-                  id: generateId(),
-                  componentId: id2,
-                  value: spanChildrenPropValue.substring(
-                    end,
-                    spanChildrenPropValue.length,
-                  ),
-                }
-              }
-              return {
-                ...prop,
-                id: generateId(),
-                componentId: id2,
-              }
-            }),
-          ]
-
-          //delete the original component
-          props = props.filter(prop => prop.componentId !== spanId)
-          delete components[spanId]
-        }
         props[childrenPropIndex].value = _.flatten(
           props[childrenPropIndex].value,
         )
 
-        const finalPropValue: string[] = []
-
-        // joining the adjacent text in the array
-        props[childrenPropIndex].value.forEach((val: string) => {
-          if (
-            finalPropValue.length === 0 ||
-            isKeyForComponent(val, components)
-          ) {
-            finalPropValue.push(val)
-          } else {
-            if (
-              !isKeyForComponent(
-                finalPropValue[finalPropValue.length - 1],
-                components,
-              )
-            ) {
-              finalPropValue[finalPropValue.length - 1] =
-                finalPropValue[finalPropValue.length - 1] + val
-            } else {
-              finalPropValue.push(val)
-            }
-          }
-        })
-
-        props[childrenPropIndex].value = finalPropValue
+        const propValue = joinAdjacentTextNodes(
+          childrenPropIndex,
+          components,
+          props,
+        )
+        props[childrenPropIndex].value = propValue
 
         if (isCustomComponentChild) draftState.customComponentsProps = props
         else draftState.propsById[propsId] = props

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
-import { Box, Text } from '@chakra-ui/core'
+import { Box } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { getInputTextFocused } from '../../../core/selectors/app'
@@ -92,7 +92,7 @@ const TextPreview: React.FC<{
   const doubleClickHandler = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    dispatch.text.setTextValue(elem?.innerHTML || '')
+    dispatch.text.setTextValue(elem?.innerHTML || textValue)
     dispatch.app.toggleInputText(true)
   }
 
@@ -113,38 +113,48 @@ const TextPreview: React.FC<{
     if (e.which === 13) e.preventDefault()
   }
 
-  return inputTextFocused && component.id === selectedId ? (
-    <Box {...propsKeyValue} {...forwardedProps}>
-      <Box
-        contentEditable={true}
-        suppressContentEditableWarning={true}
-        onBlur={blurHandler}
-        onPaste={pasteHandler}
-        onMouseUp={mouseUpHandler}
-        onKeyDown={keyDownHandler}
-        dangerouslySetInnerHTML={{ __html: textValue }}
-      />
-    </Box>
-  ) : (
-    <Text
-      ref={ref}
-      {...propsKeyValue}
-      {...forwardedProps}
-      onDoubleClick={doubleClickHandler}
-    >
-      {componentChildren.map((key: string) => {
-        if (selectedComponents[key])
-          return (
-            <ComponentPreview
-              key={key}
-              componentName={key}
-              disableSelection={inputTextFocused ? true : false}
-            />
-          )
-        else return key
-      })}
-    </Text>
+  propsKeyValue['onDoubleClick'] = doubleClickHandler
+
+  const Element = React.createElement(
+    type,
+    {
+      ...propsKeyValue,
+      ...forwardedProps,
+      ref,
+    },
+    componentChildren.map((key: string) => {
+      if (selectedComponents[key])
+        return (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            disableSelection={inputTextFocused ? true : false}
+          />
+        )
+      else return key
+    }),
   )
+
+  const contentEditableElement = React.createElement(
+    type,
+    {
+      ...propsKeyValue,
+      ...forwardedProps,
+    },
+    <Box
+      contentEditable={true}
+      suppressContentEditableWarning={true}
+      onBlur={blurHandler}
+      onPaste={pasteHandler}
+      onMouseUp={mouseUpHandler}
+      onKeyDown={keyDownHandler}
+      dangerouslySetInnerHTML={{ __html: textValue }}
+    />,
+  )
+
+  return inputTextFocused && component.id === selectedId
+    ? contentEditableElement
+    : Element
 }
 
 export default TextPreview

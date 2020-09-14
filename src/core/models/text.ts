@@ -31,6 +31,7 @@ const text = createModel({
     setSelectionDetails: (state: TextState): TextState => {
       return produce(state, (draftState: TextState) => {
         const selection = window.getSelection() || document.getSelection()
+
         let startNodeIndex = 0
         let endNodeIndex = 0
 
