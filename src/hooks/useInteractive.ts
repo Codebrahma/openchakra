@@ -19,7 +19,7 @@ import useCustomTheme from './useCustomTheme'
 export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
-  disableSelection: boolean = false,
+  disableInteraction: boolean = false,
   isCustomComponent?: boolean,
 ) => {
   const dispatch = useDispatch()
@@ -38,7 +38,8 @@ export const useInteractive = (
   const currentSelectedId = useSelector(getSelectedComponentId)
 
   const fetchedProps = useSelector(getPropsBy(component.id))
-  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
+  const enableInteractive =
+    (isCustomComponentPage || !isCustomComponentChild) && !disableInteraction
   const componentProps = isCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
 
@@ -141,7 +142,7 @@ export const useInteractive = (
     ]
   }
 
-  if (!disableSelection) {
+  if (enableInteractive) {
     props.push({
       id: generateId(),
       name: 'onClick',
