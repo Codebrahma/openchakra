@@ -101,10 +101,8 @@ const TextPreview: React.FC<{
     const text = e.clipboardData.getData('text/plain')
     document.execCommand('insertText', false, text)
   }
-  const mouseUpHandler = () => {
-    dispatch.text.setSelectionDetails()
-    dispatch.app.toggleInputText(true)
-  }
+  const mouseUpHandler = () => dispatch.text.setSelectionDetails()
+
   const keyDownHandler = (e: any) => {
     if ((e.which === 37 && e.shiftKey) || (e.which === 39 && e.shiftKey))
       dispatch.text.setSelectionDetails()

@@ -73,7 +73,7 @@ const ComponentPreview: React.FC<{
       return (
         <TextPreview
           component={component}
-          type={Chakra[type]}
+          type={type === 'Text' ? Chakra['Box'] : Chakra['Heading']}
           {...forwardedProps}
           customProps={customProps}
         />

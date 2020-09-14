@@ -78,11 +78,7 @@ const buildBlock = (
         } else {
           content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
         }
-      } else if (
-        childrenProp &&
-        Array.isArray(childrenProp?.value) &&
-        children.length
-      ) {
+      } else if (childrenProp && Array.isArray(childrenProp?.value)) {
         let childrenValue = ''
         childrenProp.value.forEach((child: string) => {
           if (components[child]) {
