@@ -33,7 +33,7 @@ export async function saveAsJSON(components: ComponentsState, theme: any) {
     new Blob([serialized], { type: 'application/json' }),
     {
       fileName: name,
-      description: 'Assembler file',
+      description: 'Composer file',
     },
     (window as any).handle,
   )

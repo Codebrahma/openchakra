@@ -107,7 +107,7 @@ const Header = () => {
       >
         <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
         <Box fontWeight="bold" color="black">
-          Assembler
+          Composer
         </Box>
       </Flex>
 
