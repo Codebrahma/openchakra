@@ -1,7 +1,11 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { useSelector } from 'react-redux'
 import { useInteractive } from '../../hooks/useInteractive'
-import { getChildrenBy } from '../../core/selectors/components'
+import {
+  getChildrenBy,
+  getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
+} from '../../core/selectors/components'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
@@ -33,10 +37,15 @@ const WithChildrenPreviewContainer: React.FC<{
   )
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')
+  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponentChild = useSelector(
+    isChildrenOfCustomComponent(component.id),
+  )
 
   //If the children for the component is exposed, the component becomes un-droppable
 
   const isDroppable = childrenProp === undefined ? true : false
+  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
 
   let componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -62,7 +71,7 @@ const WithChildrenPreviewContainer: React.FC<{
     propsElement.ref = isDroppable ? drop(ref) : ref
   }
 
-  if (isOver && isDroppable) {
+  if (isOver && isDroppable && enableInteractive) {
     propsElement.bg = 'teal.50'
   }
 
