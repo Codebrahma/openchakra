@@ -7,7 +7,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
 } from '@chakra-ui/core'
-import ColorsControl from '../../controls/ColorsControl'
 import { GoItalic } from 'react-icons/go'
 import {
   MdFormatAlignLeft,
@@ -15,6 +14,8 @@ import {
   MdFormatAlignCenter,
   MdFormatAlignJustify,
 } from 'react-icons/md'
+
+import ColorsControl from '../../controls/ColorsControl'
 import FormControl from '../../controls/FormControl'
 import { ComboboxOption } from '@reach/combobox'
 import InputSuggestion from '../../inputs/InputSuggestion'
@@ -34,7 +35,7 @@ const TextPanel = () => {
   const fontSize = usePropsSelector('fontSize')
   const letterSpacing = usePropsSelector('letterSpacing')
   const lineHeight = usePropsSelector('lineHeight')
-
+  
   return (
     <>
       <FormControl label="Style">

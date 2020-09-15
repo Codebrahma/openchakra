@@ -1,16 +1,15 @@
-import React, { memo } from "react";
-import { Select } from "@chakra-ui/core";
-import { useForm } from "../../../../hooks/useForm";
-import FormControl from "../../controls/FormControl";
-import ChildrenControl from "../../controls/ChildrenControl";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
-import SwitchControl from "../../controls/SwitchControl";
+import React, { memo } from 'react'
+import { Select } from '@chakra-ui/core'
+import { useForm } from '../../../../hooks/useForm'
+import FormControl from '../../controls/FormControl'
+import ChildrenControl from '../../controls/ChildrenControl'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
+import SwitchControl from '../../controls/SwitchControl'
 
 const HeadingPanel = () => {
-  const { setValueFromEvent } = useForm();
+  const { setValueFromEvent } = useForm()
 
-  const size = usePropsSelector("size");
-  const as = usePropsSelector("as");
+  const size = usePropsSelector('size')
 
   return (
     <>
@@ -31,25 +30,10 @@ const HeadingPanel = () => {
           <option>2xl</option>
         </Select>
       </FormControl>
-      <FormControl label="As">
-        <Select
-          size="sm"
-          value={as || ""}
-          onChange={setValueFromEvent}
-          name="as"
-        >
-          <option>h1</option>
-          <option>h2</option>
-          <option>h3</option>
-          <option>h4</option>
-          <option>h5</option>
-          <option>h6</option>
-        </Select>
-      </FormControl>
 
       <SwitchControl label="Truncated" name="isTruncated" />
     </>
-  );
-};
+  )
+}
 
-export default memo(HeadingPanel);
+export default memo(HeadingPanel)

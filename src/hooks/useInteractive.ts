@@ -9,8 +9,9 @@ import {
   getPropsBy,
   isImmediateChildOfCustomComponent,
   getIsHovered,
+  getSelectedComponentId,
 } from '../core/selectors/components'
-import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
+import { getShowLayout } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
 import { useHoverComponent } from './useHoverComponent'
 import useCustomTheme from './useCustomTheme'
@@ -18,15 +19,15 @@ import useCustomTheme from './useCustomTheme'
 export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
+  disableInteraction: boolean = false,
   isCustomComponent?: boolean,
-  onlyVisualHelper?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
   const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
   const [isHovered, setIsHovered] = useState(false)
-  const focusInput = useSelector(getFocusedComponent(component.id))
+  // const focusInput = useSelector(getFocusedComponent(component.id))
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
@@ -34,9 +35,12 @@ export const useInteractive = (
   const isImmediateChild = useSelector(
     isImmediateChildOfCustomComponent(component),
   )
+  const currentSelectedId = useSelector(getSelectedComponentId)
+
   const fetchedProps = useSelector(getPropsBy(component.id))
-  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
-  const componentProps = onlyVisualHelper ? [] : [...fetchedProps]
+  const enableInteractive =
+    (isCustomComponentPage || !isCustomComponentChild) && !disableInteraction
+  const componentProps = isCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
 
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
@@ -49,6 +53,9 @@ export const useInteractive = (
   })
 
   const ref = useRef<HTMLDivElement>(null)
+
+  //In order to find the styles for the span we are storing the id.
+  if (ref.current) ref.current.id = component.id
 
   const boundingPosition =
     ref.current !== null ? ref.current.getBoundingClientRect() : undefined
@@ -78,32 +85,6 @@ export const useInteractive = (
           name: 'onMouseOut',
           value: () => {
             setIsHovered(false)
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
-        {
-          id: generateId(),
-          name: 'onClick',
-          value: (event: MouseEvent) => {
-            event.preventDefault()
-            event.stopPropagation()
-            dispatch.components.select(component.id)
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
-        {
-          id: generateId(),
-          name: 'onDoubleClick',
-          value: (event: MouseEvent) => {
-            event.preventDefault()
-            event.stopPropagation()
-            if (focusInput === false) {
-              dispatch.app.toggleInputText()
-            }
           },
           componentId: component.id,
           derivedFromComponentType: null,
@@ -161,22 +142,40 @@ export const useInteractive = (
     ]
   }
 
-  if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
-    props = [
-      ...props,
-      {
+  if (enableInteractive) {
+    props.push({
+      id: generateId(),
+      name: 'onClick',
+      value: (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (currentSelectedId !== component.id) {
+          dispatch.components.select(component.id)
+          dispatch.text.reset()
+          dispatch.text.setTextValue(ref.current?.innerHTML || '')
+        }
+      },
+      componentId: component.id,
+      derivedFromComponentType: null,
+      derivedFromPropName: null,
+    })
+
+    if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
+      props.push({
         id: generateId(),
         name: 'boxShadow',
         value: `#0C008C 0px 0px 0px 2px inset`,
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
-      },
-    ]
+      })
+    }
   }
+
   return {
     props,
     ref: enableInteractive ? drag(hover(ref)) : ref,
+    elem: ref.current,
     drag,
   }
 }

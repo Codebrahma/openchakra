@@ -13,9 +13,10 @@ const CustomComponentPreview: React.FC<{
   const { props: visualInteractionProps, ref } = useInteractive(
     component,
     true,
-    true,
+    false,
     true,
   )
+
   const { props: componentProps } = useInteractive(component, true, true)
 
   const componentChildren = useSelector(getChildrenBy(component.type))

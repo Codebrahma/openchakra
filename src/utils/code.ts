@@ -27,13 +27,13 @@ const formatCode = async (code: string) => {
 }
 
 const buildBlock = (
-  component: IComponent,
+  children: string[],
   components: IComponents,
   props: IProp[],
 ) => {
   let content = ''
 
-  component.children.forEach((key: string) => {
+  children.forEach((key: string) => {
     let childComponent = components[key]
     if (!childComponent) {
       console.error(`invalid component ${key}`)
@@ -70,10 +70,7 @@ const buildBlock = (
         prop =>
           prop.componentId === childComponent.id && prop.name === 'children',
       )
-      const children: string[] = []
-      Object.values(components)
-        .filter(comp => comp.parent === childComponent.id)
-        .forEach(comp => children.push(comp.id))
+      const children = childComponent.children
 
       if (typeof childrenProp?.value === 'string' && children.length === 0) {
         if (childrenProp.derivedFromPropName) {
@@ -81,9 +78,23 @@ const buildBlock = (
         } else {
           content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
         }
+      } else if (childrenProp && Array.isArray(childrenProp?.value)) {
+        let childrenValue = ''
+        childrenProp.value.forEach((child: string) => {
+          if (components[child]) {
+            childrenValue =
+              childrenValue + buildBlock([child], components, props)
+          } else {
+            childrenValue = childrenValue + child
+          }
+        })
+
+        content += `<${componentName} ${propsContent}>
+        ${childrenValue}
+        </${componentName}>`
       } else if (children.length) {
         content += `<${componentName} ${propsContent}>
-      ${buildBlock(childComponent, components, props)}
+      ${buildBlock(childComponent.children, components, props)}
       </${componentName}>`
       } else {
         content += `<${componentName} ${propsContent} />`
@@ -99,7 +110,7 @@ export const generateComponentCode = async (
   components: IComponents,
   props: IProp[],
 ) => {
-  let code = buildBlock(component, components, props)
+  let code = buildBlock(component.children, components, props)
 
   code = `
   const My${component.type} = () => (
@@ -181,7 +192,7 @@ export const generateCode = async (
     return requiredImports
   }
 
-  let code = buildBlock(components.root, components, props)
+  let code = buildBlock(components.root.children, components, props)
   const customThemeCode = `const customTheme={
     ...theme,
     ${objToString(customTheme)}
@@ -203,7 +214,7 @@ export const generateCode = async (
           .map(prop => `${prop.name}`)
 
         const componentCode = buildBlock(
-          customComponents[componentName],
+          customComponents[componentName].children,
           customComponents,
           customComponentsProps,
         )

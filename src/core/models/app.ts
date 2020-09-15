@@ -21,6 +21,7 @@ const app = createModel({
     showFullScreen: false,
     customTheme: null,
     loadedFonts: null,
+    selectedTextDetails: undefined,
   } as AppState,
   reducers: {
     toggleBuilderMode(state: AppState): AppState {
@@ -35,10 +36,10 @@ const app = createModel({
         showCode: showCode || !state.showCode,
       }
     },
-    toggleInputText(state: AppState): AppState {
+    toggleInputText(state: AppState, showInputText?: boolean): AppState {
       return {
         ...state,
-        inputTextFocused: !state.inputTextFocused,
+        inputTextFocused: showInputText || !state.inputTextFocused,
       }
     },
     toggleFullScreen(state: AppState): AppState {

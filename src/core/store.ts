@@ -8,10 +8,12 @@ import { ComponentsStateWithUndo } from './models/components'
 import { AppState } from './models/app'
 import models from './models'
 import filterUndoableActions from '../utils/undo'
+import { TextState } from './models/text'
 
 export type RootState = {
   app: AppState
   components: ComponentsStateWithUndo
+  text: TextState
 }
 
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
@@ -51,6 +53,7 @@ export const storeConfig = {
             filter: filterUndoableActions,
           }),
         ),
+        text: reducers.text,
       })
     },
   },
