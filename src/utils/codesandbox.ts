@@ -1,9 +1,12 @@
-import { getParameters } from "codesandbox/lib/api/define";
+import { getParameters } from 'codesandbox/lib/api/define'
 
-export const buildParameters = (code: string): string => {
+export const buildParameters = (
+  code: string,
+  fonts: Array<string> | null,
+): string => {
   return getParameters({
     files: {
-      "public/index.html": {
+      'public/index.html': {
         content: `<!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +15,14 @@ export const buildParameters = (code: string): string => {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#000000">
 	<link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-	<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+  ${fonts &&
+    fonts.length > 0 &&
+    fonts
+      .map(font => {
+        return `<link href="https://fonts.googleapis.com/css2?family=${font}" rel="stylesheet">`
+      })
+      .join(' ')}
 	<title>React App</title>
 </head>
 
@@ -24,9 +34,9 @@ export const buildParameters = (code: string): string => {
 </body>
 
 </html>`,
-        isBinary: false
+        isBinary: false,
       },
-      "index.js": {
+      'index.js': {
         content: `import React from "react";
 import ReactDOM from "react-dom";
 
@@ -35,13 +45,13 @@ import App from "./App";
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 `,
-        isBinary: false
+        isBinary: false,
       },
-      "App.js": {
+      'App.js': {
         content: code,
-        isBinary: false
+        isBinary: false,
       },
-      "package.json": {
+      'package.json': {
         content: `{
   "name": "react",
   "version": "1.0.0",
@@ -73,8 +83,8 @@ ReactDOM.render(<App />, rootElement);
     "not op_mini all"
   ]
 }`,
-        isBinary: false
-      }
-    }
-  });
-};
+        isBinary: false,
+      },
+    },
+  })
+}

@@ -25,11 +25,13 @@ import MenuPreview, {
   MenuItemPreview,
 } from './previews/MenuPreview'
 import CustomComponentPreview from './previews/CustomComponentPreview'
+import TextPreview from './previews/TextPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
   customProps?: any
-}> = ({ componentName, customProps, ...forwardedProps }) => {
+  disableSelection?: boolean
+}> = ({ componentName, customProps, disableSelection, ...forwardedProps }) => {
   const component = useSelector(getComponentBy(componentName))
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
@@ -41,13 +43,11 @@ const ComponentPreview: React.FC<{
     case 'Button':
     case 'IconButton':
     case 'Image':
-    case 'Text':
     case 'Link':
     case 'Spinner':
     case 'Checkbox':
     case 'Textarea':
     case 'CircularProgress':
-    case 'Heading':
     case 'Switch':
     case 'FormLabel':
     case 'FormHelperText':
@@ -64,6 +64,16 @@ const ComponentPreview: React.FC<{
         <PreviewContainer
           component={component}
           type={Chakra[type]}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'Text':
+    case 'Heading':
+      return (
+        <TextPreview
+          component={component}
+          type={type === 'Text' ? Chakra['Box'] : Chakra['Heading']}
           {...forwardedProps}
           customProps={customProps}
         />
@@ -109,6 +119,7 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           customProps={customProps}
+          disableSelection={disableSelection}
           {...forwardedProps}
         />
       )

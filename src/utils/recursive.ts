@@ -12,7 +12,6 @@ export const duplicateComponent = (
 
   const cloneComponent = (component: IComponent) => {
     const newId = generateId()
-    const newPropId = generateId()
     const children = component.children.map(child => {
       return cloneComponent(sourceComponents[child])
     })
@@ -27,10 +26,28 @@ export const duplicateComponent = (
       .forEach(prop => {
         clonedProps.push({
           ...prop,
-          id: newPropId,
+          id: generateId(),
           componentId: newId,
         })
       })
+
+    //Updating the value of the children prop in text component
+    if (component.type === 'Text') {
+      const childrenPropIndex = clonedProps.findIndex(
+        prop => prop.componentId === newId && prop.name === 'children',
+      )
+
+      const propValue = [...clonedProps[childrenPropIndex].value]
+
+      let childrenIndex = 0
+      propValue.forEach((val: string, index: number) => {
+        if (sourceComponents[val]) {
+          propValue[index] = children[childrenIndex]
+          childrenIndex = childrenIndex + 1
+        }
+      })
+      clonedProps[childrenPropIndex].value = propValue
+    }
 
     children.forEach(child => {
       clonedComponents[child].parent = newId

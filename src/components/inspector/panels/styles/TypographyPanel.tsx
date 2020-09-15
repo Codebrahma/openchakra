@@ -1,24 +1,33 @@
 import React, { memo } from 'react'
-import { IconButton, ButtonGroup, useTheme } from '@chakra-ui/core'
-import ColorsControl from '../../controls/ColorsControl'
-import { GoBold, GoItalic } from 'react-icons/go'
+import {
+  IconButton,
+  ButtonGroup,
+  Slider,
+  SliderThumb,
+  SliderTrack,
+  SliderFilledTrack,
+} from '@chakra-ui/core'
+import { GoItalic } from 'react-icons/go'
 import {
   MdFormatAlignLeft,
   MdFormatAlignRight,
   MdFormatAlignCenter,
   MdFormatAlignJustify,
 } from 'react-icons/md'
+
+import ColorsControl from '../../controls/ColorsControl'
 import FormControl from '../../controls/FormControl'
 import { ComboboxOption } from '@reach/combobox'
 import InputSuggestion from '../../inputs/InputSuggestion'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
+import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 import '@reach/combobox/styles.css'
 
 const TextPanel = () => {
   const { setValue, setValueFromEvent } = useForm()
-  const theme = useTheme()
+  const theme = useCustomTheme()
 
   const fontWeight = usePropsSelector('fontWeight')
   const fontStyle = usePropsSelector('fontStyle')
@@ -26,23 +35,10 @@ const TextPanel = () => {
   const fontSize = usePropsSelector('fontSize')
   const letterSpacing = usePropsSelector('letterSpacing')
   const lineHeight = usePropsSelector('lineHeight')
-
+  
   return (
     <>
       <FormControl label="Style">
-        <IconButton
-          mr={1}
-          aria-label="bold"
-          icon={GoBold}
-          onClick={() => {
-            setValue('fontWeight', fontWeight ? null : 'bold')
-          }}
-          size="xs"
-          variantColor={fontWeight ? 'whatsapp' : 'gray'}
-          variant={fontWeight ? 'solid' : 'outline'}
-        >
-          Bold
-        </IconButton>
         <IconButton
           aria-label="italic"
           icon={GoItalic}
@@ -55,6 +51,19 @@ const TextPanel = () => {
         >
           Italic
         </IconButton>
+      </FormControl>
+      <FormControl label="Font Weight">
+        <Slider
+          min={100}
+          max={900}
+          step={100}
+          onChange={value => setValue('fontWeight', value)}
+          value={fontWeight ? fontWeight : 100}
+        >
+          <SliderTrack />
+          <SliderFilledTrack />
+          <SliderThumb />
+        </Slider>
       </FormControl>
 
       <FormControl label="Text align">

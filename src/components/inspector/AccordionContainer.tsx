@@ -14,7 +14,7 @@ const AccordionContainer: React.FC<{
   children: ReactNode
 } & AccordionItemProps> = ({ title, children, defaultIsOpen = true }) => {
   return (
-    <AccordionItem defaultIsOpen={defaultIsOpen}>
+    <AccordionItem defaultIsOpen={defaultIsOpen} bg="#F0F4F8">
       <AccordionHeader zIndex={2} px={3} py={2} fontSize="sm">
         <Box flex="1" textAlign="left">
           {title}

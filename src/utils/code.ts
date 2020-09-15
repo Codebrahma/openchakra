@@ -19,19 +19,21 @@ const formatCode = async (code: string) => {
       semi: false,
       singleQuote: true,
     })
-  } catch (e) {}
+  } catch (e) {
+    formattedCode = e.name + ': ' + e.message
+  }
 
   return formattedCode
 }
 
 const buildBlock = (
-  component: IComponent,
+  children: string[],
   components: IComponents,
   props: IProp[],
 ) => {
   let content = ''
 
-  component.children.forEach((key: string) => {
+  children.forEach((key: string) => {
     let childComponent = components[key]
     if (!childComponent) {
       console.error(`invalid component ${key}`)
@@ -68,10 +70,7 @@ const buildBlock = (
         prop =>
           prop.componentId === childComponent.id && prop.name === 'children',
       )
-      const children: string[] = []
-      Object.values(components)
-        .filter(comp => comp.parent === childComponent.id)
-        .forEach(comp => children.push(comp.id))
+      const children = childComponent.children
 
       if (typeof childrenProp?.value === 'string' && children.length === 0) {
         if (childrenProp.derivedFromPropName) {
@@ -79,9 +78,23 @@ const buildBlock = (
         } else {
           content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
         }
+      } else if (childrenProp && Array.isArray(childrenProp?.value)) {
+        let childrenValue = ''
+        childrenProp.value.forEach((child: string) => {
+          if (components[child]) {
+            childrenValue =
+              childrenValue + buildBlock([child], components, props)
+          } else {
+            childrenValue = childrenValue + child
+          }
+        })
+
+        content += `<${componentName} ${propsContent}>
+        ${childrenValue}
+        </${componentName}>`
       } else if (children.length) {
         content += `<${componentName} ${propsContent}>
-      ${buildBlock(childComponent, components, props)}
+      ${buildBlock(childComponent.children, components, props)}
       </${componentName}>`
       } else {
         content += `<${componentName} ${propsContent} />`
@@ -97,7 +110,7 @@ export const generateComponentCode = async (
   components: IComponents,
   props: IProp[],
 ) => {
-  let code = buildBlock(component, components, props)
+  let code = buildBlock(component.children, components, props)
 
   code = `
   const My${component.type} = () => (
@@ -106,15 +119,30 @@ export const generateComponentCode = async (
   return await formatCode(code)
 }
 
+//object to string
+function objToString(obj: any, key: string = 'theme') {
+  let str = ''
+  for (const p in obj) {
+    if (typeof obj[p] === 'object')
+      str +=
+        p +
+        `:{\n...${key}.${p}` +
+        ',\n' +
+        objToString(obj[p], `${key}.${p}`) +
+        '},\n'
+    else str += p + ': "' + obj[p] + '",\n'
+  }
+  return str
+}
+
 export const generateCode = async (
   components: IComponents,
   customComponents: IComponents,
   customComponentsList: string[],
   props: IProp[],
   customComponentsProps: IProp[],
+  customTheme: any,
 ) => {
-  let code = buildBlock(components.root, components, props)
-
   const checkInstanceInComponents = (componentType: string) => {
     let isPresent = false
     Object.values(components).forEach(component => {
@@ -127,9 +155,57 @@ export const generateCode = async (
     return isPresent
   }
 
+  const getUsedCustomComponents = () => {
+    const usedCustomComponentsList: string[] = []
+    const getUsedCustomComponentsRecursive = (id: string) => {
+      const type = customComponents[id].type
+      if (
+        customComponentsList.includes(type) &&
+        usedCustomComponentsList.indexOf(type) === -1
+      ) {
+        usedCustomComponentsList.push(type)
+        getUsedCustomComponentsRecursive(type)
+      }
+      customComponents[id].children.forEach(child =>
+        getUsedCustomComponentsRecursive(child),
+      )
+    }
+    Object.values(components)
+      .filter(component => customComponentsList.includes(component.type))
+      .forEach(component => getUsedCustomComponentsRecursive(component.type))
+    return usedCustomComponentsList
+  }
+
+  const getImportsFromCustomComponents = () => {
+    const requiredImports: string[] = []
+    const getImportsFromCustomComponentsRecursive = (comp: IComponent) => {
+      if (customComponentsList.indexOf(comp.type) === -1)
+        requiredImports.push(comp.type)
+
+      comp.children.forEach(child =>
+        getImportsFromCustomComponentsRecursive(customComponents[child]),
+      )
+    }
+    usedCustomComponentsList.forEach(name => {
+      getImportsFromCustomComponentsRecursive(customComponents[name])
+    })
+    return requiredImports
+  }
+
+  let code = buildBlock(components.root.children, components, props)
+  const customThemeCode = `const customTheme={
+    ...theme,
+    ${objToString(customTheme)}
+  }`
+  const theme = customTheme ? `customTheme` : `theme`
+
+  //Find what are the custom components used.
+  const usedCustomComponentsList = getUsedCustomComponents()
+
+  //Generate the code for custom components
   const customComponentCode =
-    customComponentsList &&
-    Object.values(customComponentsList).map(componentName => {
+    usedCustomComponentsList &&
+    Object.values(usedCustomComponentsList).map(componentName => {
       //Display custom component only if the custom component instance is present
       const customComponentInstance = checkInstanceInComponents(componentName)
       if (customComponentInstance) {
@@ -138,7 +214,7 @@ export const generateCode = async (
           .map(prop => `${prop.name}`)
 
         const componentCode = buildBlock(
-          customComponents[componentName],
+          customComponents[componentName].children,
           customComponents,
           customComponentsProps,
         )
@@ -163,14 +239,7 @@ export const generateCode = async (
         )
         .map(name => components[name].type),
     ),
-    ...new Set(
-      Object.keys(customComponents)
-        .filter(
-          name =>
-            customComponentsList.indexOf(customComponents[name].type) === -1,
-        )
-        .map(name => customComponents[name].type),
-    ),
+    ...getImportsFromCustomComponents(),
   ]
   //remove duplicates from the imports array.
   imports = uniq(imports)
@@ -184,14 +253,16 @@ export const generateCode = async (
   } from "@chakra-ui/core";
 
   ${customComponentCode && customComponentCode.join('')}
-  const App = () => (
-    <ThemeProvider theme={theme}>
+  const App = () => {
+    ${customTheme ? customThemeCode : ''}
+    return(
+    <ThemeProvider theme={${theme}}>
       <CSSReset />
       ${code}
     </ThemeProvider>
-  );
+    )
+  };
 
   export default App;`
-
   return await formatCode(code)
 }
