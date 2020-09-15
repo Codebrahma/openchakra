@@ -1,54 +1,23 @@
 import React, { memo } from 'react'
-import {
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-} from '@chakra-ui/core'
-import FormControl from '../../controls/FormControl'
-import { useForm } from '../../../../hooks/useForm'
 import ColorsControl from '../../controls/ColorsControl'
-import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
 import TextControl from '../../controls/TextControl'
+import SliderControl from '../../controls/SliderControl'
 
 const CircularProgressPanel = () => {
-  const { setValue } = useForm()
-
-  const value = usePropsSelector('value')
-  const thickness = usePropsSelector('thickness')
-
   return (
     <>
-      <FormControl label="Value">
-        <Slider
-          onChange={value => setValue('value', value)}
-          min={0}
-          max={100}
-          step={1}
-          value={value || 100}
-        >
-          <SliderTrack />
-          <SliderFilledTrack />
-          <SliderThumb />
-        </Slider>
-      </FormControl>
+      <SliderControl label="Value" htmlFor="value" />
 
       <TextControl name="size" label="Size" />
 
-      <FormControl label="Thickness">
-        <Slider
-          onChange={value => setValue('thickness', value)}
-          min={0.1}
-          max={1}
-          step={0.1}
-          defaultValue={thickness}
-        >
-          <SliderTrack />
-          <SliderFilledTrack />
-          <SliderThumb />
-        </Slider>
-      </FormControl>
+      <SliderControl
+        label="Thickness"
+        htmlFor="thickness"
+        min={0.1}
+        max={1}
+        step={0.1}
+      />
 
       <ColorsControl label="Color" name="color" />
 

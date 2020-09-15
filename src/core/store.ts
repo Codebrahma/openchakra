@@ -8,18 +8,27 @@ import { ComponentsStateWithUndo } from './models/components'
 import { AppState } from './models/app'
 import models from './models'
 import filterUndoableActions from '../utils/undo'
+import { TextState } from './models/text'
 
 export type RootState = {
   app: AppState
   components: ComponentsStateWithUndo
+  text: TextState
 }
 
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
 
 const persistConfig = {
-  key: `openchakra_v${version}`,
+  key: `composer_v${version}`,
   storage,
   whitelist: ['present'],
+  version,
+  throttle: 500,
+}
+const persistThemeConfig = {
+  key: `composer_customTheme_v${version}`,
+  storage,
+  whitelist: ['customTheme', 'loadedFonts'],
   version,
   throttle: 500,
 }
@@ -36,7 +45,7 @@ export const storeConfig = {
     // @ts-ignore
     combineReducers: reducers => {
       return combineReducers({
-        ...reducers,
+        app: persistReducer(persistThemeConfig, reducers.app),
         components: persistReducer(
           persistConfig,
           undoable(reducers.components, {
@@ -44,6 +53,7 @@ export const storeConfig = {
             filter: filterUndoableActions,
           }),
         ),
+        text: reducers.text,
       })
     },
   },

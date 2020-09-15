@@ -7,12 +7,17 @@ import {
   InputLeftElement,
   Icon,
 } from '@chakra-ui/core'
+import { ComboboxOption } from '@reach/combobox'
+
 import FormControl from '../../controls/FormControl'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
+import InputSuggestion from '../../inputs/InputSuggestion'
+import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const PositionPanel = () => {
   const { setValueFromEvent } = useForm()
+  const theme = useCustomTheme()
   const position = usePropsSelector('position')
   const left = usePropsSelector('left')
   const right = usePropsSelector('right')
@@ -37,16 +42,16 @@ const PositionPanel = () => {
         </Select>
       </FormControl>
 
-      <FormControl label="z-index">
-        <Input
-          placeholder="zIndex"
-          size="sm"
-          type="text"
+      <FormControl label="z-index" htmlFor="zIndex">
+        <InputSuggestion
           value={zIndex}
+          handleChange={setValueFromEvent}
           name="zIndex"
-          onChange={setValueFromEvent}
-          autoComplete="off"
-        />
+        >
+          {Object.keys(theme.zIndices).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
       </FormControl>
 
       <SimpleGrid columns={2} spacing={1}>

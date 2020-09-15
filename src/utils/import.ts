@@ -1,5 +1,5 @@
 import { fileOpen, fileSave } from 'browser-nativefs'
-import { INITIAL_COMPONENTS } from '../core/models/components'
+import { INITIAL_COMPONENTS, ComponentsState } from '../core/models/components'
 
 export async function loadFromJSON() {
   const blob = await fileOpen({
@@ -18,21 +18,22 @@ export async function loadFromJSON() {
   })
 
   try {
-    return JSON.parse(contents)
+    const workspace = JSON.parse(contents)
+    return { components: workspace.components, theme: workspace.theme }
   } catch (error) {}
 
-  return INITIAL_COMPONENTS
+  return { components: INITIAL_COMPONENTS, theme: {} }
 }
 
-export async function saveAsJSON(components: IComponents) {
-  const serialized = JSON.stringify(components)
-  const name = `components.json`
+export async function saveAsJSON(components: ComponentsState, theme: any) {
+  const serialized = JSON.stringify({ components, theme })
+  const name = `workspace.json`
 
   await fileSave(
     new Blob([serialized], { type: 'application/json' }),
     {
       fileName: name,
-      description: 'OpenChakra file',
+      description: 'Composer file',
     },
     (window as any).handle,
   )

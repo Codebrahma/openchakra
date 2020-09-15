@@ -24,30 +24,30 @@ import MenuPreview, {
   MenuGroupPreview,
   MenuItemPreview,
 } from './previews/MenuPreview'
+import CustomComponentPreview from './previews/CustomComponentPreview'
+import TextPreview from './previews/TextPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
-}> = ({ componentName, ...forwardedProps }) => {
+  customProps?: any
+  disableSelection?: boolean
+}> = ({ componentName, customProps, disableSelection, ...forwardedProps }) => {
   const component = useSelector(getComponentBy(componentName))
   if (!component) {
     console.error(`ComponentPreview unavailable for component ${componentName}`)
   }
-
   const type = (component && component.type) || null
-  console.log(type)
   switch (type) {
     // Simple components
     case 'Badge':
     case 'Button':
     case 'IconButton':
     case 'Image':
-    case 'Text':
     case 'Link':
     case 'Spinner':
     case 'Checkbox':
     case 'Textarea':
     case 'CircularProgress':
-    case 'Heading':
     case 'Switch':
     case 'FormLabel':
     case 'FormHelperText':
@@ -65,6 +65,17 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'Text':
+    case 'Heading':
+      return (
+        <TextPreview
+          component={component}
+          type={type === 'Text' ? Chakra['Box'] : Chakra['Heading']}
+          {...forwardedProps}
+          customProps={customProps}
         />
       )
     // Wrapped functional components (forward ref issue)
@@ -89,6 +100,7 @@ const ComponentPreview: React.FC<{
           type={Chakra[type]}
           {...forwardedProps}
           isBoxWrapped
+          customProps={customProps}
         />
       )
     // Components with childrens
@@ -106,6 +118,8 @@ const ComponentPreview: React.FC<{
           enableVisualHelper
           component={component}
           type={Chakra[type]}
+          customProps={customProps}
+          disableSelection={disableSelection}
           {...forwardedProps}
         />
       )
@@ -120,45 +134,88 @@ const ComponentPreview: React.FC<{
           enableVisualHelper
           component={component}
           type={Chakra[type]}
+          customProps={customProps}
           {...forwardedProps}
           isBoxWrapped
         />
       )
     // More complex components
     case 'InputRightElement':
-      return <InputRightElementPreview component={component} />
+      return (
+        <InputRightElementPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'InputLeftElement':
-      return <InputLeftElementPreview component={component} />
+      return (
+        <InputLeftElementPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'Avatar':
-      return <AvatarPreview component={component} />
+      return <AvatarPreview component={component} customProps={customProps} />
     case 'AvatarBadge':
-      return <AvatarBadgePreview component={component} />
+      return (
+        <AvatarBadgePreview component={component} customProps={customProps} />
+      )
     case 'AvatarGroup':
-      return <AvatarGroupPreview component={component} />
+      return (
+        <AvatarGroupPreview component={component} customProps={customProps} />
+      )
     case 'Alert':
-      return <AlertPreview component={component} />
+      return <AlertPreview component={component} customProps={customProps} />
     case 'Accordion':
-      return <AccordionPreview component={component} />
+      return (
+        <AccordionPreview component={component} customProps={customProps} />
+      )
     case 'AccordionHeader':
-      return <AccordionHeaderPreview component={component} />
+      return (
+        <AccordionHeaderPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'AccordionItem':
-      return <AccordionItemPreview component={component} />
+      return (
+        <AccordionItemPreview component={component} customProps={customProps} />
+      )
     case 'AccordionPanel':
-      return <AccordionPanelPreview component={component} />
+      return (
+        <AccordionPanelPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'AspectRatioBox':
-      return <AspectRatioBoxPreview component={component} />
+      return (
+        <AspectRatioBoxPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
     case 'Menu':
-      return <MenuPreview component={component} />
+      return <MenuPreview component={component} customProps={customProps} />
     case 'MenuList':
-      return <MenuListPreview component={component} />
+      return <MenuListPreview component={component} customProps={customProps} />
     case 'MenuButton':
-      return <MenuButtonPreview component={component} />
+      return (
+        <MenuButtonPreview component={component} customProps={customProps} />
+      )
     case 'MenuItem':
-      return <MenuItemPreview component={component} />
+      return <MenuItemPreview component={component} customProps={customProps} />
     case 'MenuGroup':
-      return <MenuGroupPreview component={component} />
+      return (
+        <MenuGroupPreview component={component} customProps={customProps} />
+      )
     default:
-      return null
+      return (
+        <CustomComponentPreview
+          component={component}
+          customProps={customProps}
+        />
+      )
   }
 }
 

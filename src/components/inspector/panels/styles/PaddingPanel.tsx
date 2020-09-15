@@ -1,16 +1,10 @@
 import React, { memo } from 'react'
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  SimpleGrid,
-  InputGroup,
-  InputLeftElement,
-  Icon,
-  Box,
-} from '@chakra-ui/core'
+import { FormLabel, SimpleGrid, Box } from '@chakra-ui/core'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
+import { ComboboxOption } from '@reach/combobox'
+import InputSuggestion from '../../inputs/InputSuggestion'
+import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 type PaddingPanelPropsType = {
   type: 'margin' | 'padding'
@@ -41,94 +35,71 @@ const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
   const right = usePropsSelector(ATTRIBUTES[type].right)
   const bottom = usePropsSelector(ATTRIBUTES[type].bottom)
   const top = usePropsSelector(ATTRIBUTES[type].top)
+  const theme = useCustomTheme()
 
   return (
     <Box mb={4}>
-      <FormControl>
-        <FormLabel fontSize="xs" htmlFor="width" textTransform="capitalize">
-          {type}
-        </FormLabel>
+      <FormLabel fontSize="xs" htmlFor="width" textTransform="capitalize">
+        {type}
+      </FormLabel>
+      <Box mb="5px">
+        <InputSuggestion
+          value={all || ''}
+          handleChange={setValueFromEvent}
+          name={ATTRIBUTES[type].all}
+          placeholder="All"
+        >
+          {Object.keys(theme.space).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
+      </Box>
 
-        <InputGroup size="sm">
-          <Input
-            mb={1}
-            placeholder="All"
-            size="sm"
-            type="text"
-            name={ATTRIBUTES[type].all}
-            value={all || ''}
-            onChange={setValueFromEvent}
-          />
-        </InputGroup>
+      <SimpleGrid columns={2} spacing={1}>
+        <InputSuggestion
+          value={left || ''}
+          handleChange={setValueFromEvent}
+          name={ATTRIBUTES[type].left}
+          placeholder="Left"
+        >
+          {Object.keys(theme.space).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
 
-        <SimpleGrid columns={2} spacing={1}>
-          <InputGroup size="sm">
-            <InputLeftElement
-              children={
-                <Icon fontSize="md" name="arrow-back" color="gray.300" />
-              }
-            />
-            <Input
-              placeholder="left"
-              size="sm"
-              type="text"
-              name={ATTRIBUTES[type].left}
-              value={left || ''}
-              onChange={setValueFromEvent}
-              autoComplete="off"
-            />
-          </InputGroup>
+        <InputSuggestion
+          value={right || ''}
+          handleChange={setValueFromEvent}
+          name={ATTRIBUTES[type].right}
+          placeholder="Right"
+        >
+          {Object.keys(theme.space).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
 
-          <InputGroup size="sm">
-            <InputLeftElement
-              children={
-                <Icon fontSize="md" name="arrow-forward" color="gray.300" />
-              }
-            />
-            <Input
-              placeholder="right"
-              size="sm"
-              type="text"
-              value={right || ''}
-              name={ATTRIBUTES[type].right}
-              onChange={setValueFromEvent}
-              autoComplete="off"
-            />
-          </InputGroup>
+        <InputSuggestion
+          value={top || ''}
+          handleChange={setValueFromEvent}
+          name={ATTRIBUTES[type].top}
+          placeholder="Top"
+        >
+          {Object.keys(theme.space).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
 
-          <InputGroup size="sm">
-            <InputLeftElement
-              children={<Icon fontSize="md" name="arrow-up" color="gray.300" />}
-            />
-            <Input
-              placeholder="top"
-              size="sm"
-              type="text"
-              value={top || ''}
-              name={ATTRIBUTES[type].top}
-              onChange={setValueFromEvent}
-              autoComplete="off"
-            />
-          </InputGroup>
-
-          <InputGroup size="sm">
-            <InputLeftElement
-              children={
-                <Icon fontSize="md" name="chevron-down" color="gray.300" />
-              }
-            />
-            <Input
-              placeholder="bottom"
-              size="sm"
-              type="text"
-              value={bottom || ''}
-              name={ATTRIBUTES[type].bottom}
-              onChange={setValueFromEvent}
-              autoComplete="off"
-            />
-          </InputGroup>
-        </SimpleGrid>
-      </FormControl>
+        <InputSuggestion
+          value={bottom || ''}
+          handleChange={setValueFromEvent}
+          name={ATTRIBUTES[type].bottom}
+          placeholder="Bottom"
+        >
+          {Object.keys(theme.space).map(option => (
+            <ComboboxOption key={option} value={option} />
+          ))}
+        </InputSuggestion>
+      </SimpleGrid>
     </Box>
   )
 }

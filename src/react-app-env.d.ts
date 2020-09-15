@@ -83,22 +83,40 @@ type MetaComponentType =
   | 'InputGroupMeta'
   | 'BreadcrumbMeta'
   | 'MenuMeta'
+  | 'Custom'
+
+interface PropRef {
+  customPropName: string
+  targetedProp: string
+  value?: string
+}
+
+interface PropRefs {
+  [name: string]: PropRef
+}
+
+interface ExposedChildren {
+  [name: string]: string[]
+}
 
 interface IComponent {
-  children: string[]
-  type: ComponentType
-  parent: string
   id: string
-  props: any
-  rootParentType?: ComponentType
+  type: ComponentType | string
+  parent: string
+  children: string[]
 }
 
 interface IComponents {
   [name: string]: IComponent
 }
 
+interface IComponentsById {
+  [name: string]: IComponents
+}
+
 interface IPreviewProps {
   component: IComponent
+  customProps?: any
 }
 
 interface ComponentItemProps {
@@ -110,4 +128,29 @@ interface ComponentItemProps {
   isMeta?: boolean
   soon?: boolean
   rootParentType?: ComponentType
+  custom?: boolean
+}
+
+interface IPage {
+  id: string
+  name: string
+  componentsId: string
+  propsId: string
+}
+
+interface IPages {
+  [name: string]: IPage
+}
+
+interface IProp {
+  id: string
+  name: string
+  value: string | any
+  componentId: string
+  derivedFromPropName: string | null
+  derivedFromComponentType: string | null
+}
+
+interface IPropsById {
+  [name: string]: IProp[]
 }

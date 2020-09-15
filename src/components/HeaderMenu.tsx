@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, FunctionComponent } from 'react'
 import {
   Box,
   Button,
@@ -16,10 +16,12 @@ import {
 import useDispatch from '../hooks/useDispatch'
 import { loadFromJSON, saveAsJSON } from '../utils/import'
 import { useSelector } from 'react-redux'
-import { getComponents } from '../core/selectors/components'
-import { FaBomb, FaSave } from 'react-icons/fa'
+import { getState } from '../core/selectors/components'
+import { FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
+import { MdDeleteForever } from 'react-icons/md'
+import { getCustomTheme } from '../core/selectors/app'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -41,40 +43,62 @@ const CustomMenuButton: React.FC<
 })
 
 const ExportMenuItem = () => {
-  const components = useSelector(getComponents)
+  const componentsState = useSelector(getState)
+  const theme = useSelector(getCustomTheme)
 
   return (
-    <MenuItem onClick={() => saveAsJSON(components)}>
+    <MenuItem onClick={() => saveAsJSON(componentsState, theme)}>
       <Box mr={2} as={FaSave} />
-      Save components
+      Save workspace
     </MenuItem>
   )
 }
-const HeaderMenu = () => {
+
+const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
+
+  const clearWorkSpaceHandler = () => {
+    const confirmClearing = window.confirm(
+      'Are you sure to clear your workspace',
+    )
+    if (confirmClearing) {
+      dispatch.components.resetAll()
+      dispatch.app.resetCustomTheme()
+    }
+  }
 
   return (
     <Menu>
       <CustomMenuButton
         rightIcon="chevron-down"
         as={Button}
-        size="xs"
+        size="sm"
         variant="ghost"
         variantColor="gray"
       >
-        Editor
+        Workspace
       </CustomMenuButton>
       <LightMode>
-        <MenuList zIndex={100}>
+        <MenuList zIndex={5000}>
           <ExportMenuItem />
           <MenuItem
             onClick={async () => {
-              const components = await loadFromJSON()
-              dispatch.components.reset(components)
+              const workspace = await loadFromJSON()
+              dispatch.components.resetAll(workspace.components)
+              dispatch.app.setCustomTheme(workspace.theme)
             }}
           >
             <Box mr={2} as={FiUpload} />
-            Import components
+            Import workspace
+          </MenuItem>
+          <MenuItem onClick={clearWorkSpaceHandler}>
+            <Box mr={2} as={MdDeleteForever} />
+            Clear workspace
+          </MenuItem>
+
+          <MenuItem onClick={onOpen}>
+            <Box mr={2} as={FaEdit} />
+            Edit/View theme
           </MenuItem>
 
           <MenuDivider />
@@ -82,10 +106,6 @@ const HeaderMenu = () => {
           <MenuItemLink isExternal href="https://chakra-ui.com/getting-started">
             <Box mr={2} as={GoRepo} />
             Chakra UI Docs
-          </MenuItemLink>
-          <MenuItemLink href="https://github.com/premieroctet/openchakra/issues">
-            <Box mr={2} as={FaBomb} />
-            Report issue
           </MenuItemLink>
         </MenuList>
       </LightMode>

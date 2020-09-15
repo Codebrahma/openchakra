@@ -1,65 +1,181 @@
-import { useRef, MouseEvent } from 'react'
+import { useRef, MouseEvent, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
 import {
   getIsSelectedComponent,
+  getShowCustomComponentPage,
+  isChildrenOfCustomComponent,
+  getPropsBy,
+  isImmediateChildOfCustomComponent,
   getIsHovered,
+  getSelectedComponentId,
 } from '../core/selectors/components'
-import { getShowLayout, getFocusedComponent } from '../core/selectors/app'
+import { getShowLayout } from '../core/selectors/app'
+import { generateId } from '../utils/generateId'
+import { useHoverComponent } from './useHoverComponent'
+import useCustomTheme from './useCustomTheme'
 
 export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
+  disableInteraction: boolean = false,
+  isCustomComponent?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
-  const isHovered = useSelector(getIsHovered(component.id))
-  const focusInput = useSelector(getFocusedComponent(component.id))
+  const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
+  const [isHovered, setIsHovered] = useState(false)
+  // const focusInput = useSelector(getFocusedComponent(component.id))
+  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomComponentChild = useSelector(
+    isChildrenOfCustomComponent(component.id),
+  )
+  const isImmediateChild = useSelector(
+    isImmediateChildOfCustomComponent(component),
+  )
+  const currentSelectedId = useSelector(getSelectedComponentId)
 
+  const fetchedProps = useSelector(getPropsBy(component.id))
+  const enableInteractive =
+    (isCustomComponentPage || !isCustomComponentChild) && !disableInteraction
+  const componentProps = isCustomComponent ? [] : [...fetchedProps]
+  const theme = useCustomTheme()
+
+  //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
-    item: { id: component.id, type: component.type, isMoved: true },
+    item: {
+      id: component.id,
+      type: isCustomComponent ? 'Custom' : component.type,
+      isMoved: true,
+    },
   })
 
   const ref = useRef<HTMLDivElement>(null)
-  let props = {
-    ...component.props,
-    onMouseOver: (event: MouseEvent) => {
-      event.stopPropagation()
-      dispatch.components.hover(component.id)
+
+  //In order to find the styles for the span we are storing the id.
+  if (ref.current) ref.current.id = component.id
+
+  const boundingPosition =
+    ref.current !== null ? ref.current.getBoundingClientRect() : undefined
+  const { hover } = useHoverComponent(
+    component.id,
+    boundingPosition && {
+      top: boundingPosition.top,
+      bottom: boundingPosition.bottom,
     },
-    onMouseOut: () => {
-      dispatch.components.unhover()
-    },
-    onClick: (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      dispatch.components.select(component.id)
-    },
-    onDoubleClick: (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      if (focusInput === false) {
-        dispatch.app.toggleInputText()
-      }
-    },
-  }
+  )
+
+  let props = enableInteractive
+    ? [
+        {
+          id: generateId(),
+          name: 'onMouseOver',
+          value: (event: MouseEvent) => {
+            event.stopPropagation()
+            setIsHovered(true)
+          },
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
+        {
+          id: generateId(),
+          name: 'onMouseOut',
+          value: () => {
+            setIsHovered(false)
+          },
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
+        {
+          id: generateId(),
+          name: 'fontFamily',
+          value:
+            component.type === 'Heading'
+              ? theme.fonts.heading
+              : theme.fonts.body,
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
+        ...componentProps,
+      ]
+    : [...componentProps]
 
   if (showLayout && enableVisualHelper) {
-    props = {
+    props = [
+      {
+        id: generateId(),
+        name: 'border',
+        value: `1px dashed #718096`,
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+      {
+        id: generateId(),
+        name: 'padding',
+        value: '1rem',
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
       ...props,
-      border: `1px dashed #718096`,
-      padding: props.p || props.padding ? props.p || props.padding : 4,
+    ]
+  }
+
+  //If it is a immediate child of custom component, its width should be 100%.
+  if (isImmediateChild) {
+    props = [
+      ...props,
+      {
+        id: generateId(),
+        name: 'width',
+        value: '100%',
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      },
+    ]
+  }
+
+  if (enableInteractive) {
+    props.push({
+      id: generateId(),
+      name: 'onClick',
+      value: (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (currentSelectedId !== component.id) {
+          dispatch.components.select(component.id)
+          dispatch.text.reset()
+          dispatch.text.setTextValue(ref.current?.innerHTML || '')
+        }
+      },
+      componentId: component.id,
+      derivedFromComponentType: null,
+      derivedFromPropName: null,
+    })
+
+    if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
+      props.push({
+        id: generateId(),
+        name: 'boxShadow',
+        value: `#0C008C 0px 0px 0px 2px inset`,
+        componentId: component.id,
+        derivedFromComponentType: null,
+        derivedFromPropName: null,
+      })
     }
   }
 
-  if (isHovered || isComponentSelected) {
-    props = {
-      ...props,
-      boxShadow: `${focusInput ? '#ffc4c7' : '#4FD1C5'} 0px 0px 0px 2px inset`,
-    }
+  return {
+    props,
+    ref: enableInteractive ? drag(hover(ref)) : ref,
+    elem: ref.current,
+    drag,
   }
-
-  return { props, ref: drag(ref), drag }
 }

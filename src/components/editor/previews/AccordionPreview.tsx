@@ -10,83 +10,153 @@ import {
 } from '@chakra-ui/core'
 import ComponentPreview from '../ComponentPreview'
 import { AccordionWhitelist } from '../../../utils/editor'
+import { useSelector } from 'react-redux'
+import { getChildrenBy } from '../../../core/selectors/components'
+import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import { generateId } from '../../../utils/generateId'
 
 const acceptedTypes: ComponentType[] = ['AccordionItem']
 
-const AccordionPreview: React.FC<IPreviewProps> = ({ component }) => {
-  const { props, ref } = useInteractive(component, true)
+const AccordionPreview: React.FC<IPreviewProps> = ({
+  component,
+  customProps,
+}) => {
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
+  const componentChildren = useSelector(getChildrenBy(component.id))
 
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   let boxProps: any = {}
-
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <Accordion {...props}>
-        {component.children.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+      <Accordion {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </Accordion>
     </Box>
   )
 }
 
-export const AccordionHeaderPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+export const AccordionHeaderPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
-    <AccordionHeader ref={drop(ref)} {...props}>
-      {component.children.map((key: string) => (
-        <ComponentPreview key={key} componentName={key} />
+    <AccordionHeader ref={drop(ref)} {...propsKeyValue}>
+      {componentChildren.map((key: string) => (
+        <ComponentPreview
+          key={key}
+          componentName={key}
+          customProps={customProps}
+        />
       ))}
     </AccordionHeader>
   )
 }
 
-export const AccordionItemPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+export const AccordionItemPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
   let boxProps: any = {}
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <AccordionItem {...props}>
-        {component.children.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+      <AccordionItem {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </AccordionItem>
     </Box>
   )
 }
 
-export const AccordionPanelPreview = ({ component }: IPreviewProps) => {
-  const { props, ref } = useInteractive(component, true)
+export const AccordionPanelPreview = ({
+  component,
+  customProps,
+}: IPreviewProps) => {
+  const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
 
   let boxProps: any = {}
 
-  if (isOver) {
-    props.bg = 'teal.50'
-  }
+  const componentChildren = useSelector(getChildrenBy(component.id))
+
+  if (isOver)
+    componentProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+
+  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
-      <AccordionPanel {...props}>
-        {component.children.map((key: string) => (
-          <ComponentPreview key={key} componentName={key} />
+      <AccordionPanel {...propsKeyValue}>
+        {componentChildren.map((key: string) => (
+          <ComponentPreview
+            key={key}
+            componentName={key}
+            customProps={customProps}
+          />
         ))}
       </AccordionPanel>
     </Box>

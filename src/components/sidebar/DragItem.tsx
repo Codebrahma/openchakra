@@ -1,6 +1,13 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { Text, PseudoBox, Icon, Box } from '@chakra-ui/core'
+import { Text, PseudoBox, Icon, Flex, useToast } from '@chakra-ui/core'
+import ActionButton from '../inspector/ActionButton'
+import useDispatch from '../../hooks/useDispatch'
+import {
+  getAllTheComponents,
+  getCustomComponents,
+} from '../../core/selectors/components'
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
@@ -9,10 +16,22 @@ const DragItem: React.FC<ComponentItemProps> = ({
   isMeta,
   isChild,
   rootParentType,
+  custom,
 }) => {
+  //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
-    item: { id: type, type, isMeta, rootParentType },
+    item: {
+      id: type,
+      type: custom ? 'Custom' : type,
+      isMeta,
+      rootParentType,
+      custom,
+    },
   })
+  const dispatch = useDispatch()
+  const toast = useToast()
+  const allComponents = useSelector(getAllTheComponents)
+  const customComponents = useSelector(getCustomComponents)
 
   let boxProps: any = {
     cursor: 'no-drop',
@@ -27,9 +46,9 @@ const DragItem: React.FC<ComponentItemProps> = ({
       _hover: {
         ml: -1,
         mr: 1,
-        bg: 'teal.100',
+        bg: 'primary.100',
         shadow: 'sm',
-        color: 'teal.800',
+        color: 'primary.800',
       },
     }
   }
@@ -38,51 +57,83 @@ const DragItem: React.FC<ComponentItemProps> = ({
     boxProps = { ...boxProps, ml: 4 }
   }
 
+  //Check if there is a instance of the custom component in all the pages.
+  const isInstancePresent = () => {
+    let instanceFound = false
+    Object.values(allComponents).forEach(components => {
+      if (
+        Object.values(components).findIndex(
+          component => component.type === type,
+        ) !== -1
+      ) {
+        instanceFound = true
+      }
+    })
+    if (
+      Object.values(customComponents).findIndex(
+        component => component.type === type && component.id !== type,
+      ) !== -1
+    ) {
+      instanceFound = true
+    }
+    return instanceFound
+  }
+
+  const deleteComponentHandler = (componentType: string) => {
+    if (isInstancePresent())
+      toast({
+        title: 'Error in deletion.',
+        description: 'Instance of the custom component exists.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      })
+    else {
+      dispatch.components.deleteCustomComponent(componentType)
+      toast({
+        title: 'Success.',
+        description: 'Component had been deleted Successfully.',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }
+
   return (
-    <PseudoBox
-      boxSizing="border-box"
-      transition="margin 200ms"
-      my={1}
-      rounded="md"
-      p={1}
-      display="flex"
-      alignItems="center"
-      {...boxProps}
-    >
-      <Icon fontSize="xs" mr={2} name="drag-handle" />
+    <Flex my={1}>
+      <PseudoBox
+        boxSizing="border-box"
+        transition="margin 200ms"
+        rounded="md"
+        display="flex"
+        alignItems="center"
+        {...boxProps}
+        width="95%"
+        p={1}
+      >
+        <Icon fontSize="xs" mr={2} name="drag-handle" color="neutrals.900" />
 
-      <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
-        {label}
-      </Text>
-
-      {isMeta && (
-        <Box
-          ml={2}
-          borderWidth="1px"
-          color="teal.300"
-          borderColor="teal.600"
-          fontSize="xs"
-          rounded={4}
-          px={1}
+        <Text
+          letterSpacing="wide"
+          fontSize="sm"
+          textTransform="capitalize"
+          color="neutrals.900"
         >
-          preset
-        </Box>
-      )}
+          {label}
+        </Text>
+      </PseudoBox>
 
-      {soon && (
-        <Box
-          ml={2}
-          borderWidth="1px"
-          color="whiteAlpha.500"
-          borderColor="whiteAlpha.300"
-          fontSize="xs"
-          rounded={4}
-          px={1}
-        >
-          soon
-        </Box>
+      {custom && (
+        <ActionButton
+          label="Delete component"
+          icon="delete"
+          onClick={() => deleteComponentHandler(type)}
+        />
       )}
-    </PseudoBox>
+    </Flex>
   )
 }
 

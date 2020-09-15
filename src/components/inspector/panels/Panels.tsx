@@ -53,6 +53,7 @@ import MenuOptionGroupPanel from './components/MenuOptionGroupPanel'
 import MenuItemPanel from './components/MenuItemPanel'
 import MenuItemOptionPanel from './components/MenuItemOptionPanel'
 import MenuListPanel from './components/MenuListPanel'
+import TextPanel from './components/TextPanel'
 
 const Panels: React.FC<{ component: IComponent; isRoot: boolean }> = ({
   component,
@@ -74,7 +75,7 @@ const Panels: React.FC<{ component: IComponent; isRoot: boolean }> = ({
       {type === 'Icon' && <IconPanel />}
       {type === 'IconButton' && <IconButtonPanel />}
       {type === 'Progress' && <ProgressPanel />}
-      {type === 'Text' && <ChildrenControl />}
+      {type === 'Text' && <TextPanel />}
       {type === 'Link' && <LinkPanel />}
       {type === 'Avatar' && <AvatarPanel />}
       {type === 'AvatarGroup' && <AvatarGroupPanel />}

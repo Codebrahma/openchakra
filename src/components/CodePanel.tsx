@@ -2,48 +2,74 @@ import React, { memo, useState, useEffect } from 'react'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import { Box, Button, useClipboard } from '@chakra-ui/core'
 import { generateCode } from '../utils/code'
-import theme from 'prism-react-renderer/themes/nightOwl'
+import theme from 'prism-react-renderer/themes/nightOwlLight'
 import { useSelector } from 'react-redux'
-import { getComponents } from '../core/selectors/components'
+import {
+  getComponents,
+  getCustomComponents,
+  getCustomComponentsList,
+  getProps,
+  getCustomComponentsProps,
+} from '../core/selectors/components'
+import { getCustomTheme } from '../core/selectors/app'
 
 const CodePanel = () => {
   const components = useSelector(getComponents)
+  const customComponents = useSelector(getCustomComponents)
+  const customComponentsList = useSelector(getCustomComponentsList)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [code, setCode] = useState<string | undefined>(undefined)
+  const customTheme = useSelector(getCustomTheme)
 
   useEffect(() => {
     const getCode = async () => {
-      const code = await generateCode(components)
+      const code = await generateCode(
+        components,
+        customComponents,
+        customComponentsList,
+        props,
+        customComponentsProps,
+        customTheme,
+      )
       setCode(code)
     }
 
     getCode()
-  }, [components])
+  }, [
+    components,
+    customComponents,
+    customComponentsList,
+    props,
+    customComponentsProps,
+    customTheme,
+  ])
 
   const { onCopy, hasCopied } = useClipboard(code)
 
   return (
     <Box
-      zIndex={40}
       p={4}
       fontSize="sm"
-      backgroundColor="#011627"
+      backgroundColor="rgb(251 251 251)"
       overflow="auto"
-      position="absolute"
-      top={0}
-      bottom={0}
-      left={0}
-      right={0}
+      height="100%"
+      position="relative"
+      maxWidth="83vw"
     >
       <Button
         onClick={onCopy}
         size="sm"
         position="absolute"
         textTransform="uppercase"
-        variantColor="teal"
         fontSize="xs"
-        height="24px"
-        top={4}
-        right="1.25em"
+        height="30px"
+        top={3}
+        right="2.25em"
+        zIndex={100}
+        bg="#8888FC"
+        color="white"
+        _hover={{ bg: '#4D3DF7' }}
       >
         {hasCopied ? 'copied' : 'copy'}
       </Button>
@@ -57,6 +83,14 @@ const CodePanel = () => {
           <pre className={className} style={style}>
             {tokens.map((line, i) => (
               <div {...getLineProps({ line, key: i })}>
+                <Box
+                  display="inline-block"
+                  width="2em"
+                  userSelect="none"
+                  opacity={0.3}
+                >
+                  {i + 1}
+                </Box>
                 {line.map((token, key) => (
                   <span {...getTokenProps({ token, key })} />
                 ))}

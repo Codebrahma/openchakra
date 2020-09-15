@@ -1,212 +1,195 @@
 import React, { memo, useState } from 'react'
-import {
-  Box,
-  Switch,
-  Button,
-  Flex,
-  Link,
-  Stack,
-  FormLabel,
-  DarkMode,
-  FormControl,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
-  LightMode,
-  PopoverFooter,
-  Tooltip,
-} from '@chakra-ui/core'
-import { DiGithubBadge } from 'react-icons/di'
-import { AiFillThunderbolt } from 'react-icons/ai'
+import { Box, Flex, useDisclosure } from '@chakra-ui/core'
+import { AiFillThunderbolt, AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/code'
 import useDispatch from '../hooks/useDispatch'
 import { useSelector } from 'react-redux'
-import { getComponents } from '../core/selectors/components'
-import { getShowLayout, getShowCode } from '../core/selectors/app'
+import {
+  getComponents,
+  getCustomComponents,
+  getCustomComponentsList,
+  getShowCustomComponentPage,
+  getProps,
+  getCustomComponentsProps,
+} from '../core/selectors/components'
+import {
+  getShowLayout,
+  getShowCode,
+  getCustomTheme,
+  getLoadedFonts,
+} from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
+import ClearOptionPopover from './ClearOptionPopover'
+import EditThemeModal from './EditThemeModal'
+import ActionButton from './inspector/ActionButton'
+import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
+import { RiCodeLine } from 'react-icons/ri'
+import { MdCreateNewFolder } from 'react-icons/md'
+import { ActionCreators as UndoActionCreators } from 'redux-undo'
 
 const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
+  const customComponents = useSelector(getCustomComponents)
+  const customComponentsList = useSelector(getCustomComponentsList)
+  const props = useSelector(getProps)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
+  const customTheme = useSelector(getCustomTheme)
+  const fonts = useSelector(getLoadedFonts)
+
+  const clickHandler = async () => {
+    setIsLoading(true)
+    const code = await generateCode(
+      components,
+      customComponents,
+      customComponentsList,
+      props,
+      customComponentsProps,
+      customTheme,
+    )
+    setIsLoading(false)
+    const parameters = buildParameters(code, fonts)
+
+    window.open(
+      `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
+      '_blank',
+    )
+  }
 
   return (
-    <Tooltip
-      zIndex={100}
-      hasArrow
-      bg="yellow.100"
-      aria-label="Builder mode help"
-      label="Export in CodeSandbox"
-    >
-      <Button
-        onClick={async () => {
-          setIsLoading(true)
-          const code = await generateCode(components)
-          setIsLoading(false)
-          const parameters = buildParameters(code)
-
-          window.open(
-            `https://codesandbox.io/api/v1/sandboxes/define?parameters=${parameters}`,
-            '_blank',
-          )
-        }}
-        isLoading={isLoading}
-        rightIcon="external-link"
-        variant="ghost"
-        size="xs"
-      >
-        Export code
-      </Button>
-    </Tooltip>
+    <ActionButton
+      label="Export to codesandbox"
+      icon="external-link"
+      onClick={clickHandler}
+      isLoading={isLoading}
+      size="sm"
+      color="black"
+    />
   )
 }
 
 const Header = () => {
   const showLayout = useSelector(getShowLayout)
   const showCode = useSelector(getShowCode)
+  const showCustomPage = useSelector(getShowCustomComponentPage)
   const dispatch = useDispatch()
+  const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
-    <DarkMode>
+    <Flex
+      justifyContent="space-between"
+      as="header"
+      height="3rem"
+      px="1rem"
+      borderBottom="1px solid rgb(225, 230, 235)"
+      bg="white"
+      pr={1}
+      width="100%"
+      alignItems="center"
+    >
+      <Box>
+        <HeaderMenu onOpen={onOpen} />
+        <EditThemeModal isOpen={isOpen} onClose={onClose} />
+      </Box>
       <Flex
-        justifyContent="space-between"
-        bg="#1a202c"
-        as="header"
-        height="3rem"
-        px="1rem"
+        width="14rem"
+        height="100%"
+        backgroundColor="white"
+        color="white"
+        as="a"
+        fontSize="xl"
+        flexDirection="row"
+        alignItems="center"
+        flex={1}
+        justifyContent="center"
+        ml="12%"
       >
-        <Flex
-          width="14rem"
-          height="100%"
-          backgroundColor="#1a202c"
-          color="white"
-          as="a"
-          fontSize="xl"
-          flexDirection="row"
-          alignItems="center"
-          aria-label="Chakra UI, Back to homepage"
-        >
-          <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="teal.100" />{' '}
-          <Box fontWeight="bold">open</Box>chakra
-        </Flex>
-
-        <Flex flexGrow={1} justifyContent="space-between" alignItems="center">
-          <Stack isInline spacing={4} justify="center" align="center">
-            <Box>
-              <HeaderMenu />
-            </Box>
-            <FormControl>
-              <Tooltip
-                zIndex={100}
-                hasArrow
-                bg="yellow.100"
-                aria-label="Builder mode help"
-                label="Builder mode adds extra padding/borders"
-              >
-                <FormLabel
-                  cursor="help"
-                  color="gray.200"
-                  fontSize="xs"
-                  htmlFor="preview"
-                  pb={0}
-                >
-                  Builder mode
-                </FormLabel>
-              </Tooltip>
-              <Switch
-                isChecked={showLayout}
-                color="teal"
-                size="sm"
-                onChange={() => dispatch.app.toggleBuilderMode()}
-                id="preview"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel color="gray.200" fontSize="xs" htmlFor="code" pb={0}>
-                Code panel
-              </FormLabel>
-              <Switch
-                isChecked={showCode}
-                id="code"
-                color="teal"
-                onChange={() => dispatch.app.toggleCodePanel()}
-                size="sm"
-              />
-            </FormControl>
-          </Stack>
-
-          <Stack isInline>
-            <CodeSandboxButton />
-            <Popover>
-              {({ onClose }) => (
-                <>
-                  <PopoverTrigger>
-                    <Button
-                      ml={4}
-                      rightIcon="small-close"
-                      size="xs"
-                      variant="ghost"
-                    >
-                      Clear
-                    </Button>
-                  </PopoverTrigger>
-                  <LightMode>
-                    <PopoverContent zIndex={100}>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverHeader>Are you sure?</PopoverHeader>
-                      <PopoverBody fontSize="sm">
-                        Do you really want to remove all components on the
-                        editor?
-                      </PopoverBody>
-                      <PopoverFooter display="flex" justifyContent="flex-end">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          variantColor="red"
-                          rightIcon="check"
-                          onClick={() => {
-                            dispatch.components.reset()
-                            if (onClose) {
-                              onClose()
-                            }
-                          }}
-                        >
-                          Yes, clear
-                        </Button>
-                      </PopoverFooter>
-                    </PopoverContent>
-                  </LightMode>
-                </>
-              )}
-            </Popover>
-          </Stack>
-        </Flex>
-
-        <Stack
-          justifyContent="flex-end"
-          width="13rem"
-          align="center"
-          isInline
-          spacing="2"
-        >
-          <Link isExternal href="https://github.com/premieroctet/openchakra">
-            <Box as={DiGithubBadge} size="8" color="gray.200" />
-          </Link>
-          <Box lineHeight="shorter" color="white" fontSize="xs">
-            by{' '}
-            <Link isExternal href="https://premieroctet.com" color="teal.100">
-              Premier Octet
-            </Link>
-          </Box>
-        </Stack>
+        <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
+        <Box fontWeight="bold" color="black">
+          Composer
+        </Box>
       </Flex>
-    </DarkMode>
+
+      <Flex>
+        <Flex border="1px solid #9FB3C8" mr={4} alignItems="center">
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Create components"
+              icon={MdCreateNewFolder}
+              onClick={() => {
+                dispatch.components.unselect()
+                if (showCustomPage) dispatch.components.switchPage('app')
+                else dispatch.components.switchPage('customPage')
+              }}
+              bg={showCustomPage ? 'primary.100' : 'white'}
+              color={showCustomPage ? 'primary.900' : 'black'}
+              size="sm"
+            />
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Code"
+              icon={RiCodeLine}
+              onClick={() => dispatch.app.toggleCodePanel()}
+              bg={showCode ? 'primary.100' : 'white'}
+              color={showCode ? 'primary.900' : 'black'}
+              size="sm"
+            />
+          </Box>
+
+          <Box>
+            <ActionButton
+              label="Builder Mode"
+              icon={IoMdBuild}
+              onClick={() => dispatch.app.toggleBuilderMode()}
+              bg={showLayout ? 'primary.100' : 'white'}
+              color={showLayout ? 'primary.900' : 'black'}
+              size="sm"
+            />
+          </Box>
+        </Flex>
+        <Flex border="1px solid #9FB3C8" mr={2} alignItems="center">
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="fullScreen"
+              icon={AiOutlineFullscreen}
+              onClick={() => dispatch.app.toggleFullScreen()}
+              color="black"
+              size="sm"
+            />
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Undo"
+              icon={IoIosUndo}
+              onClick={() => dispatch(UndoActionCreators.undo())}
+              size="sm"
+            />
+          </Box>
+          <Box borderRight="1px solid #9FB3C8">
+            <ActionButton
+              label="Redo"
+              icon={IoIosRedo}
+              onClick={() => dispatch(UndoActionCreators.redo())}
+              size="sm"
+            />
+          </Box>
+
+          <Box borderRight="1px solid #9FB3C8">
+            <CodeSandboxButton />
+          </Box>
+
+          <Box>
+            <ClearOptionPopover
+              name="Clear Page"
+              message="Do you really want to remove all components on the page?"
+              dispatchAction={() => dispatch.components.resetComponents()}
+            />
+          </Box>
+        </Flex>
+      </Flex>
+    </Flex>
   )
 }
 
