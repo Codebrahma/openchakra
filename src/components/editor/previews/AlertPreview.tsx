@@ -32,7 +32,6 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   let boxProps: any = {}
-  console.log('here')
 
   return (
     <Box ref={drop(ref)} {...boxProps}>

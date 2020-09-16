@@ -42,7 +42,7 @@ const InputSuggestion: React.FC<FormControlPropType> = ({
       <ComboboxInput
         onFocus={() => setIsFocus(true)}
         id={name}
-        value={ltrim(value)}
+        value={ltrim(value.toString())}
         name={name}
         onChange={handleChange}
         as={Input}

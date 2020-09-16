@@ -31,7 +31,7 @@ const CustomComponentPreview: React.FC<{
     )
   }
 
-  const width = widthProp ? widthProp.value : 'fit-content'
+  const width = widthProp ? widthProp.value : '100%'
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const interactionProps = generatePropsKeyValue(
