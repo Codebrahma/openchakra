@@ -30,7 +30,7 @@ const CustomComponentPreview: React.FC<{
 
   const boxProps = []
 
-  if (isOver) {
+  if (isOver && isWrapperComponent) {
     boxProps.push({
       id: generateId(),
       name: 'bg',

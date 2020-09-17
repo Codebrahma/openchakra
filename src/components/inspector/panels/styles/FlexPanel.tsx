@@ -16,7 +16,6 @@ import {
   getShowCustomComponentPage,
   getChildrenBy,
   getSelectedComponent,
-  checkIsChildrenExposed,
 } from '../../../../core/selectors/components'
 
 const FlexPanel = () => {
@@ -29,7 +28,7 @@ const FlexPanel = () => {
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const children = useSelector(getChildrenBy(component.id))
   const isComponentDerivedFromProps = component.parent === 'Prop'
-  const isChildrenExposed = useSelector(checkIsChildrenExposed)
+  const isChildrenExposed = childrenProp?.derivedFromPropName ? true : false
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {

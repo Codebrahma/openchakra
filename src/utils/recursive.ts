@@ -286,7 +286,8 @@ export const deleteCustomProp = (
             )
             const customProp = updatedCustomComponentProps[index]
 
-            updatedCustomComponentProps.splice(index, 1)
+            if (customProp.name !== 'children')
+              updatedCustomComponentProps.splice(index, 1)
 
             //Delete the component if the prop is custom children prop(derived prop of exposed children)
             if (customComponents[customProp.value]) {
@@ -306,9 +307,11 @@ export const deleteCustomProp = (
                 prop.name === derivedFromPropName &&
                 prop.componentId === component.id,
             )
+
             const customProp = updatedPropsById[propsId][index]
 
-            updatedPropsById[propsId].splice(index, 1)
+            if (customProp.name !== 'children')
+              updatedPropsById[propsId].splice(index, 1)
 
             //Delete the component if the prop is custom children prop(derived prop of exposed children)
             if (componentsById[componentsId][customProp.value]) {

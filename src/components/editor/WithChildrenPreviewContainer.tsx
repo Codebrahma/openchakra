@@ -58,7 +58,12 @@ const WithChildrenPreviewContainer: React.FC<{
   const customChildrenPropName =
     childrenProp && childrenProp.derivedFromPropName
 
-  if (customChildrenPropName && customChildrenPropName !== 'children') {
+  if (
+    customChildrenPropName &&
+    customChildrenPropName !== 'children' &&
+    customProps &&
+    customProps[customChildrenPropName]
+  ) {
     const propValue = customProps[customChildrenPropName]
     componentChildren = [propValue]
   }

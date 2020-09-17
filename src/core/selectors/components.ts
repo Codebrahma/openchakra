@@ -1,4 +1,5 @@
 import { RootState } from '../store'
+import { searchRootCustomComponent } from '../../utils/recursive'
 
 export const getComponents = (state: RootState) => {
   const componentsId =
@@ -253,21 +254,21 @@ export const checkIsCustomChildrenProp = (prop: IProp | undefined) => (
   else return false
 }
 
-export const checkIsChildrenExposed = (state: RootState) => {
-  const id = state.components.present.selectedId
-  const propsId =
-    state.components.present.pages[state.components.present.selectedPage]
-      .propsId
-  if (isChildrenOfCustomComponent(id)(state))
-    return (
+export const checkIsChildrenOfWrapperComponent = (id: string) => (
+  state: RootState,
+) => {
+  if (state.components.present.customComponents[id]) {
+    const rootParentComponentId = searchRootCustomComponent(
+      state.components.present.customComponents[id],
+      state.components.present.customComponents,
+    )
+    const isChildrenPropPresent =
       state.components.present.customComponentsProps.findIndex(
-        prop => prop.componentId === id && prop.name === 'children',
+        prop =>
+          prop.componentId === rootParentComponentId &&
+          prop.name === 'children',
       ) !== -1
-    )
-  else
-    return (
-      state.components.present.propsById[propsId].findIndex(
-        prop => prop.componentId === id && prop.name === 'children',
-      ) !== -1
-    )
+
+    return isChildrenPropPresent
+  } else return false
 }

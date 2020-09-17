@@ -16,7 +16,7 @@ import {
   getShowCustomComponentPage,
   getChildrenBy,
   getSelectedComponent,
-  checkIsChildrenExposed,
+  checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
 
 const BoxPanel = () => {
@@ -29,7 +29,11 @@ const BoxPanel = () => {
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const children = useSelector(getChildrenBy(component.id))
   const isComponentDerivedFromProps = component.parent === 'Prop'
-  const isChildrenExposed = useSelector(checkIsChildrenExposed)
+  const isChildrenExposed = childrenProp?.derivedFromPropName ? true : false
+
+  const isChildrenOfWrapperComponent = useSelector(
+    checkIsChildrenOfWrapperComponent(component.id),
+  )
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {
@@ -131,7 +135,7 @@ const BoxPanel = () => {
           </Button>
         </Flex>
       ) : null}
-      {isCustomComponentPage ? (
+      {isCustomComponentPage && isChildrenOfWrapperComponent ? (
         <Flex mt={4} alignItems="center">
           <Text p={0} mr={2} color="gray.500" lineHeight="1rem" fontSize="xs">
             Use children of Root component

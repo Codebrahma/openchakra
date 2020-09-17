@@ -167,6 +167,55 @@ const joinAdjacentTextNodes = (
   return propValue
 }
 
+const deleteCustomPropUtility = (
+  component: IComponent,
+  propName: string,
+  components: IComponents,
+  props: IProp[],
+) => {
+  const index = props.findIndex(
+    prop => prop.name === propName && prop.componentId === component.id,
+  )
+  const customProp = props[index]
+  props.splice(index, 1)
+
+  if (component.id !== component.type) {
+    // Wrapper-components
+    if (customProp.name === 'children') {
+      components[component.id].children.length > 0 &&
+        components[component.id].children.forEach(child => {
+          const { updatedComponents, updatedProps } = deleteComp(
+            components[child],
+            components,
+            props,
+          )
+          return {
+            props: updatedProps,
+            components: updatedComponents,
+          }
+        })
+      components[component.id].children = []
+    }
+    // Layout-components
+    if (components[customProp.value]) {
+      const { updatedComponents, updatedProps } = deleteComp(
+        components[customProp.value],
+        components,
+        props,
+      )
+
+      return {
+        props: updatedProps,
+        components: updatedComponents,
+      }
+    }
+  }
+  return {
+    props: props,
+    components: components,
+  }
+}
+
 const components = createModel({
   state: {
     pages: INITIAL_PAGES,
@@ -353,7 +402,8 @@ const components = createModel({
 
                 if (
                   targetedProp === 'children' &&
-                  draftState.customComponents[componentId].type === 'Box'
+                  draftState.customComponents[componentId].type === 'Box' &&
+                  name !== 'children'
                 ) {
                   propValue = id
                 }
@@ -384,7 +434,7 @@ const components = createModel({
 
                 if (updateInCustomComponent) {
                   draftState.customComponentsProps.push(prop)
-                  if (targetedProp === 'children') {
+                  if (targetedProp === 'children' && name !== 'children') {
                     draftState.customComponents[id] = boxComponent
                     draftState.customComponentsProps.push({
                       ...heightProp,
@@ -393,7 +443,7 @@ const components = createModel({
                   }
                 } else {
                   draftState.propsById[propsId].push(prop)
-                  if (targetedProp === 'children') {
+                  if (targetedProp === 'children' && name !== 'children') {
                     draftState.componentsById[componentsId][id] = boxComponent
                     draftState.propsById[propsId].push({
                       ...heightProp,
@@ -1490,13 +1540,13 @@ const components = createModel({
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const componentId = draftState.selectedId
-        const componentsId = state.pages[state.selectedPage].componentsId
+        const currentComponentsId = state.pages[state.selectedPage].componentsId
         const componentType = checkIsChildOfCustomComponent(
           componentId,
           draftState.customComponents,
         )
           ? draftState.customComponents[componentId].type
-          : draftState.componentsById[componentsId][componentId].type
+          : draftState.componentsById[currentComponentsId][componentId].type
 
         // delete the prop in all the instances of custom components
 
@@ -1509,47 +1559,26 @@ const components = createModel({
             component: IComponent,
             updateInCustomComponent: Boolean,
             propsId: string,
+            componentsId: string,
           ) => {
             if (updateInCustomComponent) {
-              const index = draftState.customComponentsProps.findIndex(
-                prop =>
-                  prop.name === propName && prop.componentId === component.id,
+              const { props, components } = deleteCustomPropUtility(
+                component,
+                propName,
+                draftState.customComponents,
+                draftState.customComponentsProps,
               )
-              const customProp = draftState.customComponentsProps[index]
-
-              draftState.customComponentsProps.splice(index, 1)
-
-              if (draftState.componentsById[componentsId][customProp.value]) {
-                const { updatedComponents, updatedProps } = deleteComp(
-                  draftState.componentsById[componentsId][customProp.value],
-                  draftState.componentsById[componentsId],
-                  draftState.customComponentsProps,
-                )
-                draftState.customComponentsProps = [...updatedProps]
-                draftState.customComponents = {
-                  ...updatedComponents,
-                }
-              }
+              draftState.customComponents = { ...components }
+              draftState.customComponentsProps = [...props]
             } else {
-              const index = draftState.propsById[propsId].findIndex(
-                prop =>
-                  prop.name === propName && prop.componentId === component.id,
+              const { props, components } = deleteCustomPropUtility(
+                component,
+                propName,
+                draftState.componentsById[componentsId],
+                draftState.propsById[propsId],
               )
-              const customProp = draftState.propsById[propsId][index]
-
-              draftState.propsById[propsId].splice(index, 1)
-
-              if (draftState.componentsById[componentsId][customProp.value]) {
-                const { updatedComponents, updatedProps } = deleteComp(
-                  draftState.componentsById[componentsId][customProp.value],
-                  draftState.componentsById[componentsId],
-                  draftState.propsById[propsId],
-                )
-                draftState.propsById[propsId] = [...updatedProps]
-                draftState.componentsById[componentsId] = {
-                  ...updatedComponents,
-                }
-              }
+              draftState.componentsById[componentsId] = { ...components }
+              draftState.propsById[propsId] = [...props]
             }
           },
         )
@@ -1928,6 +1957,47 @@ const components = createModel({
         if (isCustomComponentChild)
           draftState.customComponentsProps = [...props]
         else draftState.propsById[propsId] = [...props]
+      })
+    },
+    convertToContainerComponent(
+      state: ComponentsState,
+      payload: { customComponentType: string },
+    ) {
+      return produce(state, (draftState: ComponentsState) => {
+        const { customComponentType } = payload
+
+        const childrenProp = {
+          id: '',
+          name: 'children',
+          value: '',
+          componentId: customComponentType,
+          derivedFromPropName: null,
+          derivedFromComponentType: null,
+        }
+        updateInAllInstances(
+          draftState.pages,
+          draftState.componentsById,
+          draftState.customComponents,
+          customComponentType,
+          (
+            component: IComponent,
+            updateInCustomComponent: Boolean,
+            propsId: string,
+          ) => {
+            if (updateInCustomComponent)
+              draftState.customComponentsProps.push({
+                ...childrenProp,
+                id: generateId(),
+                componentId: component.id,
+              })
+            else
+              draftState.propsById[propsId].push({
+                ...childrenProp,
+                id: generateId(),
+                componentId: component.id,
+              })
+          },
+        )
       })
     },
   },
