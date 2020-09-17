@@ -290,7 +290,7 @@ const components = createModel({
             ) !== -1
           let samePropName = ''
 
-          if (isCustomPropPresent) {
+          if (isCustomPropPresent && name !== 'children') {
             samePropName =
               window
                 .prompt(

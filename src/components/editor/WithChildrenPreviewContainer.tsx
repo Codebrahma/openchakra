@@ -19,6 +19,7 @@ const WithChildrenPreviewContainer: React.FC<{
   customProps?: any
   disableSelection?: boolean
   customRootParentId?: string
+  rootComponentChildren?: any
 }> = ({
   component,
   type,
@@ -27,6 +28,7 @@ const WithChildrenPreviewContainer: React.FC<{
   customProps,
   disableSelection,
   customRootParentId,
+  rootComponentChildren,
   ...forwardedProps
 }) => {
   const { drop, isOver } = useDropComponent(component.id)
@@ -37,26 +39,26 @@ const WithChildrenPreviewContainer: React.FC<{
   )
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')
+  let componentChildren = useSelector(getChildrenBy(component.id))
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
   )
 
+  const isChildrenExposed = childrenProp !== undefined
+
+  const enableInteractive =
+    !isChildrenExposed && (isCustomComponentPage || !isCustomComponentChild)
+
+  if (rootComponentChildren && isChildrenExposed)
+    componentChildren = [...componentChildren, ...rootComponentChildren]
+
   //If the children for the component is exposed, the component becomes un-droppable
-
-  const isDroppable = childrenProp === undefined ? true : false
-  const enableInteractive = isCustomComponentPage || !isCustomComponentChild
-
-  let componentChildren = useSelector(getChildrenBy(component.id))
 
   const customChildrenPropName =
     childrenProp && childrenProp.derivedFromPropName
 
-  if (
-    customChildrenPropName &&
-    customProps &&
-    customProps[customChildrenPropName]
-  ) {
+  if (customChildrenPropName && customChildrenPropName !== 'children') {
     const propValue = customProps[customChildrenPropName]
     componentChildren = [propValue]
   }
@@ -68,10 +70,10 @@ const WithChildrenPreviewContainer: React.FC<{
   const asProp = propsElement.as
 
   if (!isBoxWrapped) {
-    propsElement.ref = isDroppable ? drop(ref) : ref
+    propsElement.ref = enableInteractive ? drop(ref) : ref
   }
 
-  if (isOver && isDroppable && enableInteractive) {
+  if (isOver && enableInteractive) {
     propsElement.bg = 'teal.50'
   }
 
@@ -84,6 +86,7 @@ const WithChildrenPreviewContainer: React.FC<{
         componentName={key}
         customProps={customProps}
         customRootParentId={customRootParentId}
+        rootComponentChildren={rootComponentChildren}
       />
     )),
   )
@@ -100,7 +103,7 @@ const WithChildrenPreviewContainer: React.FC<{
     }
 
     return (
-      <Box {...boxProps} ref={isDroppable ? drop(ref) : ref}>
+      <Box {...boxProps} ref={enableInteractive ? drop(ref) : ref}>
         {children}
       </Box>
     )

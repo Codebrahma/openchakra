@@ -8,6 +8,7 @@ import {
 import CustomComponentsPropsControl from '../controls/customComponentsPropsControl'
 import ParentInspector from '../ParentInspector'
 import AccordionContainer from '../AccordionContainer'
+import ChildrenInspector from '../ChildrenInspector'
 
 const CustomComponentsPropsPanel = () => {
   const selectedId = useSelector(getSelectedComponentId)
@@ -23,6 +24,9 @@ const CustomComponentsPropsPanel = () => {
       <Accordion defaultIndex={[0]}>
         <AccordionContainer title="Parent">
           <ParentInspector />
+        </AccordionContainer>
+        <AccordionContainer title="Children">
+          <ChildrenInspector />
         </AccordionContainer>
       </Accordion>
     </>

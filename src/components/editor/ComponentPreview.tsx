@@ -32,11 +32,13 @@ const ComponentPreview: React.FC<{
   customProps?: any
   customRootParentId?: string
   disableSelection?: boolean
+  rootComponentChildren?: any
 }> = ({
   componentName,
   customProps,
   customRootParentId,
   disableSelection,
+  rootComponentChildren,
   ...forwardedProps
 }) => {
   const component = useSelector(getComponentBy(componentName))
@@ -128,6 +130,7 @@ const ComponentPreview: React.FC<{
           customProps={customProps}
           disableSelection={disableSelection}
           customRootParentId={customRootParentId}
+          rootComponentChildren={rootComponentChildren}
           {...forwardedProps}
         />
       )
@@ -143,6 +146,7 @@ const ComponentPreview: React.FC<{
           component={component}
           type={Chakra[type]}
           customProps={customProps}
+          rootComponentChildren={rootComponentChildren}
           {...forwardedProps}
           isBoxWrapped
         />

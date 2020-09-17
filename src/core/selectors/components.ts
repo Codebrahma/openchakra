@@ -252,3 +252,22 @@ export const checkIsCustomChildrenProp = (prop: IProp | undefined) => (
   if (components[prop.value]) return true
   else return false
 }
+
+export const checkIsChildrenExposed = (state: RootState) => {
+  const id = state.components.present.selectedId
+  const propsId =
+    state.components.present.pages[state.components.present.selectedPage]
+      .propsId
+  if (isChildrenOfCustomComponent(id)(state))
+    return (
+      state.components.present.customComponentsProps.findIndex(
+        prop => prop.componentId === id && prop.name === 'children',
+      ) !== -1
+    )
+  else
+    return (
+      state.components.present.propsById[propsId].findIndex(
+        prop => prop.componentId === id && prop.name === 'children',
+      ) !== -1
+    )
+}
