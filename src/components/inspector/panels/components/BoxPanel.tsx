@@ -31,9 +31,17 @@ const BoxPanel = () => {
   const isComponentDerivedFromProps = component.parent === 'Prop'
   const isChildrenExposed = childrenProp?.derivedFromPropName ? true : false
 
+  const asProp = props.find(prop => prop.name === 'as')
+  let isSpanElement = false
+
+  if (asProp && asProp.value === 'span') isSpanElement = true
+
   const isChildrenOfWrapperComponent = useSelector(
     checkIsChildrenOfWrapperComponent(component.id),
   )
+
+  const enableWayToExposeChildren =
+    isCustomComponentPage && !isComponentDerivedFromProps && !isSpanElement
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {
@@ -104,7 +112,7 @@ const BoxPanel = () => {
         name="backgroundColor"
         enableHues
       />
-      {isCustomComponentPage && !isComponentDerivedFromProps ? (
+      {enableWayToExposeChildren ? (
         <Flex flexDirection="column" alignItems="center">
           <Input
             onChange={changeHandler}

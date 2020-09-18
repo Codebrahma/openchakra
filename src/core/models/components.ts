@@ -1952,7 +1952,8 @@ const components = createModel({
               newValue = newValue + val
             }
           })
-        }
+        } else newValue = childrenProp.value
+        console.log(newValue)
         props[childrenPropIndex].value = [newValue]
 
         if (isCustomComponentChild)

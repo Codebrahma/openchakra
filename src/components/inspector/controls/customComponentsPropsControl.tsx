@@ -7,7 +7,7 @@ import {
   getCustomComponents,
   getPropsBy,
   getCustomComponentsProps,
-  checkIsCustomChildrenProp,
+  checkIsKeyForComponent,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
 import { Input, Select, Text } from '@chakra-ui/core'
@@ -44,9 +44,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
 
-  const isCustomChildrenProp = useSelector(
-    checkIsCustomChildrenProp(selectedProp),
-  )
+  const isKeyForComponent = useSelector(checkIsKeyForComponent(selectedProp))
 
   if (selectedProp && selectedCustomComponentProp) {
     const controlProp = findControl(
@@ -64,7 +62,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
     const defaultControl = (
       <FormControl label={propName} htmlFor={propName}>
-        {!isCustomChildrenProp ? (
+        {!isKeyForComponent ? (
           <Input
             value={selectedProp?.value}
             size="sm"

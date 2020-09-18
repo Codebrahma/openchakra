@@ -11,6 +11,7 @@ import {
   Button,
   Input,
   Tooltip,
+  useToast,
 } from '@chakra-ui/core'
 
 type FormControlPropType = {
@@ -27,6 +28,8 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
+  const toast = useToast()
+
   const rightClickHandler = (e: any) => {
     e.preventDefault()
     //Check whether the children is present inside custom component
@@ -34,11 +37,23 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   }
   const propInputChangeHandler = (e: any) => setPropName(e.target.value)
   const savePropClickHandler = () => {
-    if (propName && propName.length > 1)
-      dispatch.components.exposeProp({
-        name: propName,
-        targetedProp: htmlFor || '',
-      })
+    if (propName && propName.length > 1) {
+      if (propName === 'children')
+        toast({
+          title: 'Custom Prop-name not accepted',
+          description:
+            'The name children is not allowed as the custom prop-name.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+      else
+        dispatch.components.exposeProp({
+          name: propName,
+          targetedProp: htmlFor || '',
+        })
+    }
   }
   return (
     <Popover

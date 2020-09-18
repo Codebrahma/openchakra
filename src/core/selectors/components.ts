@@ -238,7 +238,7 @@ export const isSelectedRangeContainsTwoSpan = (range: {
   return spanElementCount > 1 ? true : false
 }
 
-export const checkIsCustomChildrenProp = (prop: IProp | undefined) => (
+export const checkIsKeyForComponent = (prop: IProp | undefined) => (
   state: RootState,
 ) => {
   if (prop === undefined) return false

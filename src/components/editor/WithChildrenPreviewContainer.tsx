@@ -98,6 +98,7 @@ const WithChildrenPreviewContainer: React.FC<{
 
   const spanChildren = React.createElement(type, {
     ...propsKeyValue,
+    padding: '5px',
     ...forwardedProps,
     ref,
   })

@@ -82,10 +82,7 @@ const buildBlock = (
       const children = childComponent.children
 
       //For components like text,badge
-      if (
-        components[childrenProp?.value] === undefined &&
-        childrenProp?.value
-      ) {
+      if (childrenProp?.value && childrenProp?.derivedFromPropName === null) {
         //For span elements
         if (Array.isArray(childrenProp?.value)) {
           let childrenValue = ''
