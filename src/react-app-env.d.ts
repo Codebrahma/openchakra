@@ -104,6 +104,7 @@ interface IComponent {
   type: ComponentType | string
   parent: string
   children: string[]
+  isWrapperComponent?: boolean
 }
 
 interface IComponents {

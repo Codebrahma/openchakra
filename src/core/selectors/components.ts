@@ -1,4 +1,5 @@
 import { RootState } from '../store'
+import { searchRootCustomComponent } from '../../utils/recursive'
 
 export const getComponents = (state: RootState) => {
   const componentsId =
@@ -235,4 +236,39 @@ export const isSelectedRangeContainsTwoSpan = (range: {
     }
   }
   return spanElementCount > 1 ? true : false
+}
+
+export const checkIsCustomChildrenProp = (prop: IProp | undefined) => (
+  state: RootState,
+) => {
+  if (prop === undefined) return false
+
+  const id = prop.componentId
+  const componentsId =
+    state.components.present.pages[state.components.present.selectedPage]
+      .componentsId
+  const components = isChildrenOfCustomComponent(id)(state)
+    ? state.components.present.customComponents
+    : state.components.present.componentsById[componentsId]
+  if (components[prop.value]) return true
+  else return false
+}
+
+export const checkIsChildrenOfWrapperComponent = (id: string) => (
+  state: RootState,
+) => {
+  if (state.components.present.customComponents[id]) {
+    const rootParentComponentId = searchRootCustomComponent(
+      state.components.present.customComponents[id],
+      state.components.present.customComponents,
+    )
+    const isChildrenPropPresent =
+      state.components.present.customComponentsProps.findIndex(
+        prop =>
+          prop.componentId === rootParentComponentId &&
+          prop.name === 'children',
+      ) !== -1
+
+    return isChildrenPropPresent
+  } else return false
 }

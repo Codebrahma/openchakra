@@ -53,6 +53,15 @@ const buildBlock = (
               if (prop.derivedFromPropName) {
                 operand = `={${prop.derivedFromPropName}}`
               } else {
+                if (components[propsValue]) {
+                  operand = `={<Box>
+                     ${buildBlock(
+                       components[propsValue].children,
+                       components,
+                       props,
+                     )} 
+                  </Box>}`
+                }
                 if (
                   propsValue === true ||
                   propsValue === 'true' ||
@@ -72,31 +81,42 @@ const buildBlock = (
       )
       const children = childComponent.children
 
-      if (typeof childrenProp?.value === 'string' && children.length === 0) {
-        if (childrenProp.derivedFromPropName) {
-          content += `<${componentName} ${propsContent}>{${childrenProp.derivedFromPropName}}</${componentName}>`
-        } else {
-          content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
-        }
-      } else if (childrenProp && Array.isArray(childrenProp?.value)) {
-        let childrenValue = ''
-        childrenProp.value.forEach((child: string) => {
-          if (components[child]) {
-            childrenValue =
-              childrenValue + buildBlock([child], components, props)
-          } else {
-            childrenValue = childrenValue + child
-          }
-        })
+      //For components like text,badge
+      if (
+        components[childrenProp?.value] === undefined &&
+        childrenProp?.value
+      ) {
+        //For span elements
+        if (Array.isArray(childrenProp?.value)) {
+          let childrenValue = ''
+          childrenProp.value.forEach((child: string) => {
+            if (components[child]) {
+              childrenValue =
+                childrenValue + buildBlock([child], components, props)
+            } else {
+              childrenValue = childrenValue + child
+            }
+          })
 
-        content += `<${componentName} ${propsContent}>
-        ${childrenValue}
-        </${componentName}>`
-      } else if (children.length) {
+          content += `<${componentName} ${propsContent}>
+          ${childrenValue}
+          </${componentName}>`
+        } else
+          content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
+      }
+      //For components like Box, Flex if they have children
+      else if (children.length) {
         content += `<${componentName} ${propsContent}>
       ${buildBlock(childComponent.children, components, props)}
       </${componentName}>`
-      } else {
+      }
+
+      //For components like Box,Flex if they have exposed children
+      else if (childrenProp?.derivedFromPropName) {
+        content += `<${componentName} ${propsContent}>{${childrenProp.derivedFromPropName}}</${componentName}>`
+      }
+      //For component like Box,Flex if they have no children
+      else {
         content += `<${componentName} ${propsContent} />`
       }
     }

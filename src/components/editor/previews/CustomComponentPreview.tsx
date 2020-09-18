@@ -5,19 +5,41 @@ import ComponentPreview from '../ComponentPreview'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { getChildrenBy, getPropsBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import { generateId } from '../../../utils/generateId'
+import { useDropComponent } from '../../../hooks/useDropComponent'
 
 const CustomComponentPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
-  const { props: visualInteractionProps, ref } = useInteractive(
+  const { props: visualInteractionProps } = useInteractive(
     component,
     true,
     false,
     true,
   )
 
-  const { props: componentProps } = useInteractive(component, true, true)
+  const { drop, isOver } = useDropComponent(component.id)
+
+  const { props: componentProps, ref } = useInteractive(component, true, true)
+
+  const isWrapperComponent =
+    componentProps.findIndex(
+      prop => prop.componentId === component.id && prop.name === 'children',
+    ) !== -1
+
+  const boxProps = []
+
+  if (isOver && isWrapperComponent) {
+    boxProps.push({
+      id: generateId(),
+      name: 'bg',
+      value: 'teal.50',
+      componentId: component.id,
+      derivedFromPropName: null,
+      derivedFromComponentType: null,
+    })
+  }
 
   const componentChildren = useSelector(getChildrenBy(component.type))
 
@@ -35,17 +57,25 @@ const CustomComponentPreview: React.FC<{
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const interactionProps = generatePropsKeyValue(
-    visualInteractionProps,
+    [...visualInteractionProps, ...boxProps],
     customProps,
   )
 
   return (
-    <Box {...interactionProps} ref={ref} width={width}>
+    <Box
+      {...interactionProps}
+      ref={isWrapperComponent ? drop(ref) : ref}
+      width={width}
+    >
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}
           componentName={key}
           customProps={propsKeyValue}
+          customRootParentId={component.id}
+          rootComponentChildren={
+            component.children.length > 0 ? component.children : null
+          }
         />
       ))}
     </Box>

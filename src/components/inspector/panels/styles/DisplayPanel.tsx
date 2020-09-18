@@ -3,7 +3,7 @@ import { Select } from '@chakra-ui/core'
 import FormControl from '../../controls/FormControl'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
-import FlexPanel from './FlexPanel'
+import DisplayFlexPanel from './DisplayFlexPanel'
 
 const DisplayPanel = () => {
   const { setValueFromEvent } = useForm()
@@ -26,7 +26,7 @@ const DisplayPanel = () => {
         </Select>
       </FormControl>
 
-      {display === 'flex' && <FlexPanel />}
+      {display === 'flex' && <DisplayFlexPanel />}
     </>
   )
 }
