@@ -286,6 +286,7 @@ export const deleteCustomProp = (
             )
             const customProp = updatedCustomComponentProps[index]
 
+            // we must not delete the custom prop if it uses the children of the instance of custom component(wrapper component)
             if (customProp.name !== 'children')
               updatedCustomComponentProps.splice(index, 1)
 

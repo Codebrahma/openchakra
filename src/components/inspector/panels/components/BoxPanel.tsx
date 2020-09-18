@@ -136,7 +136,7 @@ const BoxPanel = () => {
         </Flex>
       ) : null}
       {isCustomComponentPage && isChildrenOfWrapperComponent ? (
-        <Flex mt={4} alignItems="center">
+        <Flex mt={4} alignItems="center" mb={2}>
           <Text p={0} mr={2} color="gray.500" lineHeight="1rem" fontSize="xs">
             Use children of Root component
           </Text>

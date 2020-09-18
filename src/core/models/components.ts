@@ -402,7 +402,8 @@ const components = createModel({
 
                 if (
                   targetedProp === 'children' &&
-                  draftState.customComponents[componentId].type === 'Box' &&
+                  (draftState.customComponents[componentId].type === 'Box' ||
+                    draftState.customComponents[componentId].type === 'Flex') &&
                   name !== 'children'
                 ) {
                   propValue = id

@@ -43,8 +43,22 @@ const CustomComponentsPropsPanel = () => {
         </Box>
       ))}
 
+      <Accordion defaultIndex={[0]}>
+        <AccordionContainer title="Parent">
+          <ParentInspector />
+        </AccordionContainer>
+        <AccordionContainer title="Children">
+          <ChildrenInspector />
+        </AccordionContainer>
+      </Accordion>
       {isCustomComponentPage ? (
-        <Flex mt={4} alignItems="center" ml={3}>
+        <Flex
+          mt={4}
+          alignItems="center"
+          ml={3}
+          justifyContent="space-between"
+          mr={3}
+        >
           <Text p={0} mr={2} color="gray.500" lineHeight="1rem" fontSize="xs">
             Container component
           </Text>
@@ -55,14 +69,6 @@ const CustomComponentsPropsPanel = () => {
           />
         </Flex>
       ) : null}
-      <Accordion defaultIndex={[0]}>
-        <AccordionContainer title="Parent">
-          <ParentInspector />
-        </AccordionContainer>
-        <AccordionContainer title="Children">
-          <ChildrenInspector />
-        </AccordionContainer>
-      </Accordion>
     </>
   )
 }

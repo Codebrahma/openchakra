@@ -16,7 +16,9 @@ import {
   getShowCustomComponentPage,
   getChildrenBy,
   getSelectedComponent,
+  checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
+import DisplayFlexPanel from './DisplayFlexPanel'
 
 const FlexPanel = () => {
   const dispatch = useDispatch()
@@ -29,6 +31,9 @@ const FlexPanel = () => {
   const children = useSelector(getChildrenBy(component.id))
   const isComponentDerivedFromProps = component.parent === 'Prop'
   const isChildrenExposed = childrenProp?.derivedFromPropName ? true : false
+  const isChildrenOfWrapperComponent = useSelector(
+    checkIsChildrenOfWrapperComponent(component.id),
+  )
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {
@@ -88,6 +93,8 @@ const FlexPanel = () => {
         name="backgroundColor"
         enableHues
       />
+
+      <DisplayFlexPanel />
       {isCustomComponentPage && !isComponentDerivedFromProps ? (
         <Flex flexDirection="column" alignItems="center">
           <Input
@@ -119,8 +126,8 @@ const FlexPanel = () => {
           </Button>
         </Flex>
       ) : null}
-      {isCustomComponentPage ? (
-        <Flex mt={4} alignItems="center">
+      {isCustomComponentPage && isChildrenOfWrapperComponent ? (
+        <Flex mt={4} alignItems="center" mb={2}>
           <Text p={0} mr={2} color="gray.500" lineHeight="1rem" fontSize="xs">
             Use children of Root component
           </Text>
