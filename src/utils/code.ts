@@ -86,7 +86,23 @@ const buildBlock = (
         components[childrenProp?.value] === undefined &&
         childrenProp?.value
       ) {
-        content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
+        //For span elements
+        if (Array.isArray(childrenProp?.value)) {
+          let childrenValue = ''
+          childrenProp.value.forEach((child: string) => {
+            if (components[child]) {
+              childrenValue =
+                childrenValue + buildBlock([child], components, props)
+            } else {
+              childrenValue = childrenValue + child
+            }
+          })
+
+          content += `<${componentName} ${propsContent}>
+          ${childrenValue}
+          </${componentName}>`
+        } else
+          content += `<${componentName} ${propsContent}>${childrenProp.value}</${componentName}>`
       }
       //For components like Box, Flex if they have children
       else if (children.length) {
@@ -94,22 +110,7 @@ const buildBlock = (
       ${buildBlock(childComponent.children, components, props)}
       </${componentName}>`
       }
-      //For span elements
-      else if (childrenProp && Array.isArray(childrenProp?.value)) {
-        let childrenValue = ''
-        childrenProp.value.forEach((child: string) => {
-          if (components[child]) {
-            childrenValue =
-              childrenValue + buildBlock([child], components, props)
-          } else {
-            childrenValue = childrenValue + child
-          }
-        })
 
-        content += `<${componentName} ${propsContent}>
-        ${childrenValue}
-        </${componentName}>`
-      }
       //For components like Box,Flex if they have exposed children
       else if (childrenProp?.derivedFromPropName) {
         content += `<${componentName} ${propsContent}>{${childrenProp.derivedFromPropName}}</${componentName}>`
