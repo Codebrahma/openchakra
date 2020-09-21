@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react'
-import { Box, Flex, useDisclosure } from '@chakra-ui/core'
-import { AiFillThunderbolt, AiOutlineFullscreen } from 'react-icons/ai'
+import { Box, Flex, useDisclosure, Image } from '@chakra-ui/core'
+import { AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/code'
 import useDispatch from '../hooks/useDispatch'
@@ -27,6 +27,7 @@ import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { RiCodeLine } from 'react-icons/ri'
 import { MdCreateNewFolder } from 'react-icons/md'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
+import composerIcon from '../composer-icon.png'
 
 const CodeSandboxButton = () => {
   const components = useSelector(getComponents)
@@ -105,7 +106,7 @@ const Header = () => {
         justifyContent="center"
         ml="12%"
       >
-        <Box fontSize="2xl" as={AiFillThunderbolt} mr={1} color="primary.100" />{' '}
+        <Image src={composerIcon} mr="0.5rem" w="30px" h="25px" />
         <Box fontWeight="bold" color="black">
           Composer
         </Box>
