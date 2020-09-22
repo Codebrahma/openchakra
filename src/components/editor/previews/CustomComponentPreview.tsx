@@ -12,7 +12,7 @@ const CustomComponentPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
-  const { props: visualInteractionProps } = useInteractive(
+  const { props: visualInteractionProps, ref } = useInteractive(
     component,
     true,
     false,
@@ -21,7 +21,7 @@ const CustomComponentPreview: React.FC<{
 
   const { drop, isOver } = useDropComponent(component.id)
 
-  const { props: componentProps, ref } = useInteractive(component, true, true)
+  const { props: componentProps } = useInteractive(component, true)
 
   const isWrapperComponent =
     componentProps.findIndex(

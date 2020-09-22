@@ -20,7 +20,7 @@ export const useInteractive = (
   component: IComponent,
   enableVisualHelper: boolean = false,
   disableInteraction: boolean = false,
-  isCustomComponent?: boolean,
+  isInstanceOfCustomComponent?: boolean,
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
@@ -40,14 +40,15 @@ export const useInteractive = (
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive =
     (isCustomComponentPage || !isCustomComponentChild) && !disableInteraction
-  const componentProps = isCustomComponent ? [] : [...fetchedProps]
+
+  const componentProps = isInstanceOfCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
 
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
     item: {
       id: component.id,
-      type: isCustomComponent ? 'Custom' : component.type,
+      type: isInstanceOfCustomComponent ? 'Custom' : component.type,
       isMoved: true,
     },
   })

@@ -18,7 +18,7 @@ export default function filterActions(action: Action) {
       'components/deleteCustomComponent',
       'components/resetComponents',
       'components/updateTextChildrenProp',
-      'components/addSpanComponent',
+      'components/addSpan',
       'components/removeSpan',
     ].includes(action.type)
   ) {

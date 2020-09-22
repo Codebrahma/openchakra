@@ -1,8 +1,8 @@
 // import omit from 'lodash/omit'
 import { generateId } from './generateId'
-import { updateInAllInstances } from '../core/models/components'
+import { updateInAllInstances } from './reducerUtilities'
 
-export const duplicateComponent = (
+export const duplicateComp = (
   componentToClone: IComponent,
   sourceComponents: IComponents,
   props: IProp[],
@@ -30,7 +30,7 @@ export const duplicateComponent = (
             newId,
             clonedComponents: duplicatedComponents,
             clonedProps: duplicatedProps,
-          } = duplicateComponent(
+          } = duplicateComp(
             sourceComponents[prop.value],
             sourceComponents,
             props,
@@ -136,7 +136,7 @@ export const fetchAndUpdateExposedProps = (
         updatedProps[index].derivedFromComponentType = rootParentId
 
         //No duplicate props allowed to store in root parent.
-        //If the children prop for the box component is exposed, the value for the custom propName is saved as Root to identify it.
+        //If the children prop for the box component is exposed, the value for the custom propName is saved as RootCbComposer to identify it.
         if (
           rootParentProps.findIndex(
             rootProp => rootProp.name === prop.derivedFromPropName,
@@ -146,8 +146,9 @@ export const fetchAndUpdateExposedProps = (
             id: generateId(),
             name: prop.derivedFromPropName || '',
             value:
-              prop.name === 'children' && component.type === 'Box'
-                ? 'Root'
+              prop.name === 'children' &&
+              (component.type === 'Box' || component.type === 'Flex')
+                ? 'RootCbComposer'
                 : prop.value,
             componentId: rootParentId,
             derivedFromPropName: null,
@@ -160,7 +161,7 @@ export const fetchAndUpdateExposedProps = (
 }
 
 //moves both the components and also the props
-export const moveComponent = (
+export const moveComp = (
   componentId: string,
   sourceComponents: IComponents,
   sourceProps: IProp[],
@@ -241,7 +242,7 @@ export const findControl = (
   return finalControlProp
 }
 
-export const deleteCustomProp = (
+export const deleteCustomPropInRootComponent = (
   prop: IProp,
   pages: IPages,
   componentsById: IComponentsById,

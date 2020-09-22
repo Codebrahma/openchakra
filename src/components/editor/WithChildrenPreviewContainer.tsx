@@ -35,7 +35,7 @@ const WithChildrenPreviewContainer: React.FC<{
   const { props: componentProps, ref } = useInteractive(
     component,
     enableVisualHelper,
-    disableSelection ? true : false,
+    disableSelection,
   )
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')

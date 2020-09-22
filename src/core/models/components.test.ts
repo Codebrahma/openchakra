@@ -1,4 +1,7 @@
-import components, { ComponentsState, INITIAL_COMPONENTS } from './components'
+import components, {
+  ComponentsState,
+  INITIAL_COMPONENTS,
+} from './components/components'
 import { onboarding } from '../../templates/onboarding'
 import produce from 'immer'
 

@@ -1,4 +1,4 @@
-import { isKeyForComponent } from '../core/models/components'
+import { isKeyForComponent } from './reducerUtilities'
 import { generateId } from './generateId'
 
 const addSpanForSelection = (

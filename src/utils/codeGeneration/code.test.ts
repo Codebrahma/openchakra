@@ -1,4 +1,4 @@
-import { generateComponentCode, generateCode } from './code'
+import { generateComponentCode, generateCode } from './codeGeneration/code'
 
 const componentFixtures: IComponents = {
   root: {
