@@ -1,10 +1,9 @@
 import useDispatch from './useDispatch'
-import { useSelector } from 'react-redux'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
-import { getSelectedComponent } from '../core/selectors/components'
 
 export const keyMap = {
-  DELETE_NODE: 'del',
+  DELETE_NODE_DEL: 'del',
+  DELETE_NODE_BACKSPACE: 'backspace',
   TOGGLE_BUILDER_MODE: 'b',
   TOGGLE_CODE_PANEL: 'c',
   UNDO: 'ctrl+z',
@@ -22,13 +21,12 @@ const hasNoSpecialKeyPressed = (event: KeyboardEvent | undefined) =>
 
 const useShortcuts = () => {
   const dispatch = useDispatch()
-  const selected = useSelector(getSelectedComponent)
 
   const deleteNode = (event: KeyboardEvent | undefined) => {
     if (event) {
       event.preventDefault()
     }
-    dispatch.components.deleteComponent(selected.id)
+    dispatch.components.deleteComponent()
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {

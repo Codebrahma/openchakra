@@ -133,12 +133,13 @@ const components = createModel({
         deleteProps(draftState, { ...payload })
       })
     },
-    deleteComponent(state: ComponentsState, componentId: string) {
+    deleteComponent(state: ComponentsState, componentId?: string) {
       if (componentId === 'root') return state
 
       return produce(state, (draftState: ComponentsState) => {
         const { components, isCustomComponentChild } = loadRequired(draftState)
-        const parentId = components[componentId].parent
+        const selectedId = componentId || draftState.selectedId
+        const parentId = components[selectedId].parent
 
         //The additional box of the exposed children of the box/flex can not be deleted.
         //Can not delete the immediate(outermost) children of custom component
@@ -149,7 +150,7 @@ const components = createModel({
         )
           return state
 
-        deleteComponent(draftState, { componentId, parentId })
+        deleteComponent(draftState, { componentId: selectedId, parentId })
       })
     },
     moveComponent(
