@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react'
 import { Box, Flex, useDisclosure, Image } from '@chakra-ui/core'
 import { AiOutlineFullscreen } from 'react-icons/ai'
 import { buildParameters } from '../utils/codesandbox'
-import { generateCode } from '../utils/code'
+import { generateCode } from '../utils/codeGeneration/code'
 import useDispatch from '../hooks/useDispatch'
 import { useSelector } from 'react-redux'
 import {

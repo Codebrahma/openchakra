@@ -169,6 +169,10 @@ export const isImmediateChildOfCustomComponent = (component: IComponent) => (
 ) => {
   if (state.components.present.customComponents[component.id] === undefined)
     return false
+
+  //Additional box for layout components
+  if (component.parent === 'Prop') return false
+
   const parentComponent =
     state.components.present.customComponents[component.parent]
   return parentComponent.parent.length === 0 ? true : false

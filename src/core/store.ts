@@ -4,7 +4,7 @@ import undoable from 'redux-undo'
 import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import { ComponentsStateWithUndo } from './models/components'
+import { ComponentsStateWithUndo } from './models/components/components-types'
 import { AppState } from './models/app'
 import models from './models'
 import filterUndoableActions from '../utils/undo'

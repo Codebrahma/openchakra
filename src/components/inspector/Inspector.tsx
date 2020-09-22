@@ -21,7 +21,7 @@ import {
   isSelectedRangeContainsTwoSpan,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
-import { generateComponentCode } from '../../utils/code'
+import { generateComponentCode } from '../../utils/codeGeneration/code'
 import useClipboard from '../../hooks/useClipboard'
 import { useInspectorUpdate } from '../../contexts/inspector-context'
 import CustomComponentsPropsPanel from './panels/CustomComponentsPropsPanel'
@@ -129,7 +129,7 @@ const Inspector = () => {
       if (containsOnlySpan) {
         dispatch.components.removeSpan(selectedTextDetails)
       } else {
-        dispatch.components.addSpanComponent(selectedTextDetails)
+        dispatch.components.addSpan(selectedTextDetails)
       }
       dispatch.text.removeSelection()
     }
