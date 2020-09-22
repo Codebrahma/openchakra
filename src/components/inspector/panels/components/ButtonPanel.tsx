@@ -36,7 +36,7 @@ const ButtonPanel = () => {
         </Select>
       </FormControl>
 
-      <ColorsControl label="Variant Color" name="variantColor" />
+      <ColorsControl label="Color Scheme" name="colorScheme" />
       <IconControl label="Left icon" name="leftIcon" />
       <IconControl label="Right icon" name="rightIcon" />
     </>

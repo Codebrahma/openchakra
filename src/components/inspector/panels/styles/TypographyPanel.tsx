@@ -35,7 +35,7 @@ const TextPanel = () => {
   const fontSize = usePropsSelector('fontSize')
   const letterSpacing = usePropsSelector('letterSpacing')
   const lineHeight = usePropsSelector('lineHeight')
-  
+
   return (
     <>
       <FormControl label="Style">
@@ -46,7 +46,7 @@ const TextPanel = () => {
             setValue('fontStyle', fontStyle === 'italic' ? null : 'italic')
           }}
           size="xs"
-          variantColor={fontStyle === 'italic' ? 'whatsapp' : 'gray'}
+          colorScheme={fontStyle === 'italic' ? 'whatsapp' : 'gray'}
           variant={fontStyle === 'italic' ? 'solid' : 'outline'}
         >
           Italic
@@ -74,7 +74,7 @@ const TextPanel = () => {
             onClick={() => {
               setValue('textAlign', 'left')
             }}
-            variantColor={textAlign === 'left' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'left' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'left' ? 'solid' : 'outline'}
           />
 
@@ -84,7 +84,7 @@ const TextPanel = () => {
             onClick={() => {
               setValue('textAlign', 'center')
             }}
-            variantColor={textAlign === 'center' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'center' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'center' ? 'solid' : 'outline'}
           />
 
@@ -94,7 +94,7 @@ const TextPanel = () => {
             onClick={() => {
               setValue('textAlign', 'right')
             }}
-            variantColor={textAlign === 'right' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'right' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'right' ? 'solid' : 'outline'}
           />
 
@@ -104,7 +104,7 @@ const TextPanel = () => {
             onClick={() => {
               setValue('textAlign', 'justify')
             }}
-            variantColor={textAlign === 'justify' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'justify' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'justify' ? 'solid' : 'outline'}
           />
         </ButtonGroup>

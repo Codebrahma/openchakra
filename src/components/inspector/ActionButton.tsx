@@ -13,7 +13,7 @@ interface Props
   label: string
   isLoading?: boolean
   onClick?: IconButtonProps['onClick']
-  variantColor?: IconButtonProps['variantColor']
+  colorScheme?: IconButtonProps['colorScheme']
   variant?: IconButtonProps['variant']
   size?: IconButtonProps['size']
   isDisabled?: boolean
@@ -24,7 +24,7 @@ const ActionButton: React.FC<Props> = ({
   as,
   label,
   onClick,
-  variantColor,
+  colorScheme,
   isLoading,
   variant,
   size = 'xs',
@@ -40,7 +40,7 @@ const ActionButton: React.FC<Props> = ({
         onClick={onClick}
         icon={icon}
         aria-label={label}
-        variantColor={variantColor}
+        colorScheme={colorScheme}
         variant={variant || 'ghost'}
         isDisabled={isDisabled}
         borderRadius="none"

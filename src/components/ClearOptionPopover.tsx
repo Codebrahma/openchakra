@@ -44,7 +44,7 @@ const ClearOptionPopover: FunctionComponent<{
                 <Button
                   size="sm"
                   variant="ghost"
-                  variantColor="red"
+                  colorScheme="red"
                   rightIcon="check"
                   onClick={() => {
                     dispatchAction()

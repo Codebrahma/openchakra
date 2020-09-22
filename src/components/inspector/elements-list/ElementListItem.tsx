@@ -41,7 +41,7 @@ const ElementListItem = forwardRef(
             label="Inspect"
             onClick={onSelect}
             icon="settings"
-            variantColor="blackAlpha"
+            colorScheme="blackAlpha"
           />
         </Flex>
       </PseudoBox>

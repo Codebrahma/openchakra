@@ -50,7 +50,7 @@ const CodeActionButton = memo(() => {
     <ActionButton
       isLoading={isLoading}
       label="Copy code component"
-      variantColor={hasCopied ? 'green' : 'gray'}
+      colorScheme={hasCopied ? 'green' : 'gray'}
       onClick={async () => {
         setIsLoading(true)
         const code = isCustomComponentChild

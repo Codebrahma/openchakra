@@ -45,8 +45,8 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const colourValue = value.split('.')
 
   const propsIconButton: any =
-    props.name === 'variantColor'
-      ? { variantColor: value }
+    props.name === 'colorScheme'
+      ? { colorScheme: value }
       : {
           bg:
             colourValue && colourValue.length > 2
@@ -131,7 +131,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
           <PopoverArrow />
           <PopoverBody>
             {props.withFullColor ? (
-              <Tabs size="sm" variant="soft-rounded" variantColor="green">
+              <Tabs size="sm" variant="soft-rounded" colorScheme="green">
                 <TabList>
                   <Tab>Theme</Tab>
                   <Tab>All</Tab>

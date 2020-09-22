@@ -88,7 +88,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
         return (
           <ColorsControl name={propName} label={propName} enableHues={true} />
         )
-      case 'variantColor':
+      case 'colorScheme':
         return <ColorsControl name={propName} label={propName} />
       case 'backgroundColor':
         return (

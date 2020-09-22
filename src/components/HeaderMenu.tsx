@@ -74,7 +74,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
         as={Button}
         size="sm"
         variant="ghost"
-        variantColor="gray"
+        colorScheme="gray"
       >
         Workspace
       </CustomMenuButton>
