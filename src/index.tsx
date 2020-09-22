@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import { theme, ChakraProvider } from '@chakra-ui/core'
 import { Provider } from 'react-redux'
 
 import { store } from './core/store'
@@ -38,14 +38,13 @@ const customTheme = {
 }
 ReactDOM.render(
   // <BugsnagErrorBoundary>
-  <ThemeProvider theme={customTheme}>
+  <ChakraProvider resetCSS theme={customTheme}>
     <AppErrorBoundary>
       <Provider store={store}>
-        <CSSReset />
         <App />
       </Provider>
     </AppErrorBoundary>
-  </ThemeProvider>,
+  </ChakraProvider>,
   // </BugsnagErrorBoundary>,
 
   document.getElementById('root'),
