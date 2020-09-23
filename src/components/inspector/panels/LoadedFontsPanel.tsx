@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Flex, Text, PseudoBox } from '@chakra-ui/core'
+import { Flex, Text, Box } from '@chakra-ui/core'
 import { ArrowRightIcon, CloseIcon } from '@chakra-ui/icons'
 
 import useDispatch from '../../../hooks/useDispatch'
@@ -16,7 +16,7 @@ const LoadedFontsPanel = () => {
     <Flex direction="column">
       {loadedFonts ? (
         loadedFonts.map(font => (
-          <PseudoBox
+          <Box
             display="flex"
             alignItems="center"
             p="10px 5px"
@@ -38,7 +38,7 @@ const LoadedFontsPanel = () => {
               cursor="pointer"
               onClick={() => deleteFontHandler(font)}
             />
-          </PseudoBox>
+          </Box>
         ))
       ) : (
         <Text
