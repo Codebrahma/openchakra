@@ -55,10 +55,10 @@ const Sidebar = () => {
         </TabList>
 
         <TabPanels>
-          <TabPanel>
+          <TabPanel p={0}>
             <ComponentsMenu />
           </TabPanel>
-          <TabPanel>
+          <TabPanel p={0}>
             <InspectorProvider>
               <Inspector />
             </InspectorProvider>

@@ -103,7 +103,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
 
           <MenuDivider />
 
-          <MenuItemLink isExternal href="https://chakra-ui.com/getting-started">
+          <MenuItemLink href="https://chakra-ui.com/getting-started">
             <Box mr={2} as={GoRepo} />
             Chakra UI Docs
           </MenuItemLink>

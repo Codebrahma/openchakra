@@ -5,7 +5,7 @@ interface ActionButtonProps {
   icon: IconButtonProps['icon']
   label: string
   isLoading?: boolean
-  onClick?: IconButtonProps['onClick']
+  onClick?: any
   colorScheme?: IconButtonProps['colorScheme']
   variant?: IconButtonProps['variant']
   size?: IconButtonProps['size']

@@ -1,5 +1,7 @@
 import React, { forwardRef } from 'react'
+import { SettingsIcon } from '@chakra-ui/icons'
 import { Icon, Box, Text, BoxProps, Flex } from '@chakra-ui/core'
+
 import ActionButton from '../ActionButton'
 
 interface Props extends Pick<IComponent, 'type'> {
@@ -40,7 +42,7 @@ const ElementListItem = forwardRef(
           <ActionButton
             label="Inspect"
             onClick={onSelect}
-            icon="settings"
+            icon={<SettingsIcon />}
             colorScheme="blackAlpha"
           />
         </Flex>
