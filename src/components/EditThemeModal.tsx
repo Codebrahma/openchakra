@@ -103,143 +103,144 @@ const EditThemeModal: FunctionComponent<{
         }}
         size="xl"
       >
-        <ModalOverlay />
-        <ModalContent rounded={10}>
-          <ModalHeader fontSize="15px" textAlign="center">
-            View / Edit Theme
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Tabs isFitted variant="enclosed">
-              <TabList mb="1em">
-                <Tab>View Theme</Tab>
-                <Tab>Edit Theme</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <Box rounded={5}>
-                    <JSONTree data={theme} theme={jsonTheme} />
-                  </Box>
-                </TabPanel>
-                <TabPanel>
-                  <Text mb="20px" fontSize="14px">
-                    You can edit the custom theme either by uploading the theme
-                    file or by directly typing in the editor.
-                  </Text>
-                  <Input
-                    id="themeFile"
-                    type="file"
-                    accept="application/json"
-                    onChange={(selectorFiles: any) =>
-                      handleChange(selectorFiles)
-                    }
-                    fontSize="14px"
-                  />
+        <ModalOverlay>
+          <ModalContent rounded={10}>
+            <ModalHeader fontSize="15px" textAlign="center">
+              View / Edit Theme
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Tabs isFitted variant="enclosed">
+                <TabList mb="1em">
+                  <Tab>View Theme</Tab>
+                  <Tab>Edit Theme</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>
+                    <Box rounded={5}>
+                      <JSONTree data={theme} theme={jsonTheme} />
+                    </Box>
+                  </TabPanel>
+                  <TabPanel>
+                    <Text mb="20px" fontSize="14px">
+                      You can edit the custom theme either by uploading the
+                      theme file or by directly typing in the editor.
+                    </Text>
+                    <Input
+                      id="themeFile"
+                      type="file"
+                      accept="application/json"
+                      onChange={(selectorFiles: any) =>
+                        handleChange(selectorFiles)
+                      }
+                      fontSize="14px"
+                    />
 
-                  {fileLoaded && (
-                    <div>
-                      <p style={{ textAlign: 'center', marginTop: '20px' }}>
-                        Your theme has been successfully loaded{' '}
+                    {fileLoaded && (
+                      <div>
+                        <p style={{ textAlign: 'center', marginTop: '20px' }}>
+                          Your theme has been successfully loaded{' '}
+                          <span
+                            style={{ verticalAlign: 'middle' }}
+                            role="img"
+                            aria-label="light"
+                          >
+                            ✅
+                          </span>
+                        </p>
+                      </div>
+                    )}
+
+                    {fileError && (
+                      <p>
+                        Can't read this file / theme{' '}
                         <span
                           style={{ verticalAlign: 'middle' }}
                           role="img"
                           aria-label="light"
                         >
-                          ✅
+                          ❌
                         </span>
                       </p>
-                    </div>
-                  )}
-
-                  {fileError && (
-                    <p>
-                      Can't read this file / theme{' '}
-                      <span
-                        style={{ verticalAlign: 'middle' }}
-                        role="img"
-                        aria-label="light"
-                      >
-                        ❌
-                      </span>
-                    </p>
-                  )}
-                  <Box>
-                    <Box m="30px 0">
-                      <Box>
-                        <Box
-                          bg="rgb(3 22 40)"
-                          color="white"
-                          fontSize="14px"
-                          borderRadius="10px"
-                          minHeight="120px"
-                          maxHeight="50vh"
-                          overflowY="scroll"
-                        >
-                          <pre
-                            id="customTheme"
-                            contentEditable={true}
-                            style={{
-                              display: 'inline-block',
-                              width: '100%',
-                              whiteSpace: 'pre-wrap',
-                              minHeight: '120px',
-                            }}
-                            suppressContentEditableWarning={true}
-                          >
-                            {customTheme
-                              ? JSON.stringify(customTheme, undefined, 2)
-                              : '{ }'}
-                          </pre>
-                        </Box>
-                        <Flex mt="20px" mb="20px">
-                          <Button
-                            backgroundColor="green.500"
+                    )}
+                    <Box>
+                      <Box m="30px 0">
+                        <Box>
+                          <Box
+                            bg="rgb(3 22 40)"
                             color="white"
-                            onClick={editThemeHandler}
+                            fontSize="14px"
+                            borderRadius="10px"
+                            minHeight="120px"
+                            maxHeight="50vh"
+                            overflowY="scroll"
                           >
-                            Save
-                          </Button>
-                          <Button
-                            backgroundColor="white"
-                            color="#E12D39"
-                            border="1px solid #E12D39"
-                            onClick={deleteThemeHandler}
-                            ml="10px"
-                          >
-                            Clear
-                          </Button>
-                        </Flex>
-                        <Text>{saveStatus}</Text>
-                        <Box mt="20px" fontSize="12px" color="neutrals.700">
-                          <Text>
-                            * Don't forget to click the save button to save your
-                            changes.
-                          </Text>
-                          <Text>
-                            * Clear button will clears your custom theme
-                          </Text>
+                            <pre
+                              id="customTheme"
+                              contentEditable={true}
+                              style={{
+                                display: 'inline-block',
+                                width: '100%',
+                                whiteSpace: 'pre-wrap',
+                                minHeight: '120px',
+                              }}
+                              suppressContentEditableWarning={true}
+                            >
+                              {customTheme
+                                ? JSON.stringify(customTheme, undefined, 2)
+                                : '{ }'}
+                            </pre>
+                          </Box>
+                          <Flex mt="20px" mb="20px">
+                            <Button
+                              backgroundColor="green.500"
+                              color="white"
+                              onClick={editThemeHandler}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              backgroundColor="white"
+                              color="#E12D39"
+                              border="1px solid #E12D39"
+                              onClick={deleteThemeHandler}
+                              ml="10px"
+                            >
+                              Clear
+                            </Button>
+                          </Flex>
+                          <Text>{saveStatus}</Text>
+                          <Box mt="20px" fontSize="12px" color="neutrals.700">
+                            <Text>
+                              * Don't forget to click the save button to save
+                              your changes.
+                            </Text>
+                            <Text>
+                              * Clear button will clears your custom theme
+                            </Text>
+                          </Box>
                         </Box>
                       </Box>
                     </Box>
-                  </Box>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </ModalBody>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </ModalBody>
 
-          <ModalFooter>
-            <Button
-              mr={3}
-              onClick={() => {
-                changeSaveStatus('')
-                onClose()
-              }}
-              size="sm"
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+            <ModalFooter>
+              <Button
+                mr={3}
+                onClick={() => {
+                  changeSaveStatus('')
+                  onClose()
+                }}
+                size="sm"
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
       </Modal>
     </LightMode>
   )
