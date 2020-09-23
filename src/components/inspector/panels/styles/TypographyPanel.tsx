@@ -41,7 +41,7 @@ const TextPanel = () => {
       <FormControl label="Style">
         <IconButton
           aria-label="italic"
-          icon={GoItalic}
+          icon={<GoItalic />}
           onClick={() => {
             setValue('fontStyle', fontStyle === 'italic' ? null : 'italic')
           }}
@@ -70,7 +70,7 @@ const TextPanel = () => {
         <ButtonGroup size="xs" isAttached>
           <IconButton
             aria-label="bold"
-            icon={MdFormatAlignLeft}
+            icon={<MdFormatAlignLeft />}
             onClick={() => {
               setValue('textAlign', 'left')
             }}
@@ -80,7 +80,7 @@ const TextPanel = () => {
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignCenter}
+            icon={<MdFormatAlignCenter />}
             onClick={() => {
               setValue('textAlign', 'center')
             }}
@@ -90,7 +90,7 @@ const TextPanel = () => {
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignRight}
+            icon={<MdFormatAlignRight />}
             onClick={() => {
               setValue('textAlign', 'right')
             }}
@@ -100,7 +100,7 @@ const TextPanel = () => {
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignJustify}
+            icon={<MdFormatAlignJustify />}
             onClick={() => {
               setValue('textAlign', 'justify')
             }}

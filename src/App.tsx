@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import Editor from './components/editor/Editor'
 import Header from './components/Header'
 import { Global } from '@emotion/core'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
 import {
   getShowFullScreen,
@@ -40,11 +41,11 @@ const App = () => {
       {showFullScreen ? (
         <Box bg="neutrals.900" zIndex={500} width="100%">
           <IconButton
-            icon="arrow-back"
+            icon={<ArrowBackIcon />}
             variant="solid"
             onClick={() => dispatch.app.toggleFullScreen()}
             aria-label="go-back"
-            size="xs"
+            boxSize="xs"
           />
         </Box>
       ) : null}

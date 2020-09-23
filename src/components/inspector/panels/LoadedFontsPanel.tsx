@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Flex, Text, Icon, PseudoBox } from '@chakra-ui/core'
+import { Flex, Text, PseudoBox } from '@chakra-ui/core'
+import { ArrowRightIcon, CloseIcon } from '@chakra-ui/icons'
 
 import useDispatch from '../../../hooks/useDispatch'
 import { getLoadedFonts } from '../../../core/selectors/app'
@@ -26,14 +27,13 @@ const LoadedFontsPanel = () => {
             key={font}
           >
             <Flex alignItems="center">
-              <Icon fontSize="sm" name="arrow-right" color="gray.300" />
+              <ArrowRightIcon fontSize="sm" color="gray.300" />
               <Text fontSize="14px" pl={2}>
                 {font}
               </Text>
             </Flex>
-            <Icon
+            <CloseIcon
               fontSize="10px"
-              name="close"
               color="red.500"
               cursor="pointer"
               onClick={() => deleteFontHandler(font)}
