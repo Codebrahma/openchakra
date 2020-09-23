@@ -32,7 +32,7 @@ export const menuItems: MenuItems = {
     children: {
       Accordion: {},
       AccordionItem: {},
-      AccordionHeader: {},
+      AccordionButton: {},
       AccordionPanel: {},
       AccordionIcon: {},
     },

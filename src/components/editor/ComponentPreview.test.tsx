@@ -83,7 +83,7 @@ const componentsToTest = [
   'AlertDescription',
   'Stack',
   'Accordion',
-  // 'AccordionHeader',
+  // 'AccordionButton',
   'MenuMeta',
 ]
 
