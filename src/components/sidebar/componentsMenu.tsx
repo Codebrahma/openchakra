@@ -45,7 +45,7 @@ export const menuItems: MenuItems = {
       AlertTitle: {},
     },
   },
-  AspectRatioBox: {},
+  AspectRatio: {},
   AvatarGroup: {
     rootParentType: 'Avatar',
   },

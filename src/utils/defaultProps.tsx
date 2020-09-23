@@ -31,7 +31,7 @@ import {
   TabPanelsProps,
   TabsProps,
   InputProps,
-  AspectRatioBoxProps,
+  AspectRatioProps,
   BreadcrumbItemProps,
   BreadcrumbItem,
   EditableProps,
@@ -97,7 +97,7 @@ type PreviewDefaultProps = {
   InputRightAddon?: any
   InputLeftElement?: any
   InputRightElement?: any
-  AspectRatioBox?: AspectRatioBoxProps
+  AspectRatio?: AspectRatioProps
   Breadcrumb?: BreadcrumbItemProps
   BreadcrumbItem?: BreadcrumbItemProps
   BreadcrumbLink?: any

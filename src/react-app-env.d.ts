@@ -4,7 +4,7 @@ declare module 'coloreact'
 declare module 'browser-nativefs'
 
 type ComponentType =
-  | 'AspectRatioBox'
+  | 'AspectRatio'
   | 'Badge'
   | 'Box'
   | 'Button'

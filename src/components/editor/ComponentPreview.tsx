@@ -17,7 +17,7 @@ import { getComponentBy } from '../../core/selectors/components'
 import PreviewContainer from './PreviewContainer'
 import { InputRightElementPreview } from './previews/InputRightElement'
 import { InputLeftElementPreview } from './previews/InputLeftElement'
-import AspectRatioBoxPreview from './previews/AspectRatioBoxPreview'
+import AspectRatioPreview from './previews/AspectRatioPreview'
 import MenuPreview, {
   MenuListPreview,
   MenuButtonPreview,
@@ -200,12 +200,9 @@ const ComponentPreview: React.FC<{
           customProps={customProps}
         />
       )
-    case 'AspectRatioBox':
+    case 'AspectRatio':
       return (
-        <AspectRatioBoxPreview
-          component={component}
-          customProps={customProps}
-        />
+        <AspectRatioPreview component={component} customProps={customProps} />
       )
     case 'Menu':
       return <MenuPreview component={component} customProps={customProps} />
