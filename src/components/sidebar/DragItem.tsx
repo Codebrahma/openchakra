@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { Text, PseudoBox, Icon, Flex, useToast } from '@chakra-ui/core'
+import { Text, Box, Icon, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../inspector/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
 import {
@@ -104,7 +104,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
 
   return (
     <Flex my={1}>
-      <PseudoBox
+      <Box
         boxSizing="border-box"
         transition="margin 200ms"
         rounded="md"
@@ -124,7 +124,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
         >
           {label}
         </Text>
-      </PseudoBox>
+      </Box>
 
       {custom && (
         <ActionButton

@@ -17,7 +17,7 @@ import { getComponentBy } from '../../core/selectors/components'
 import PreviewContainer from './PreviewContainer'
 import { InputRightElementPreview } from './previews/InputRightElement'
 import { InputLeftElementPreview } from './previews/InputLeftElement'
-import AspectRatioPreview from './previews/AspectRatioPreview'
+import AspectRatioPreview from './previews/AspectRatioBoxPreview'
 import MenuPreview, {
   MenuListPreview,
   MenuButtonPreview,

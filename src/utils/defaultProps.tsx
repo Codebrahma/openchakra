@@ -42,8 +42,8 @@ import {
   InputGroupProps,
   GridProps,
   BreadcrumbLink,
+  FormLabelProps,
 } from '@chakra-ui/core'
-import { FormLabelProps } from '@chakra-ui/core/dist/FormLabel'
 
 type PreviewDefaultProps = {
   Badge?: BadgeProps
@@ -138,7 +138,6 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   Divider: { borderColor: 'blackAlpha.500' },
   IconButton: {
     'aria-label': 'icon',
-    icon: 'copy',
   },
   Icon: { name: 'copy' },
   Image: {
@@ -192,9 +191,7 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   Radio: { children: 'Radio' },
   ListItem: { children: 'list' },
-  AccordionItem: {
-    defaultIsOpen: true,
-  },
+  AccordionItem: {},
   InputLeftAddon: { children: 'left' },
   InputRightAddon: {
     children: 'right',
@@ -207,9 +204,7 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
     max: 3,
     size: 'md',
   },
-  Select: {
-    icon: 'chevron-down',
-  },
+  Select: {},
   Menu: {
     isOpen: true,
   },
@@ -257,7 +252,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   },
   Heading: {
     size: 'xl',
-    as: 'h2',
     lineHeight: 'shorter',
     fontWeight: 'bold',
     fontFamily: 'heading',
@@ -278,7 +272,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   Select: {
     variant: 'outline',
     size: 'md',
-    iconSize: '20px',
     children: (
       <>
         <option value="option1">Option 1</option>

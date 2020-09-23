@@ -5,14 +5,13 @@ import {
   PopoverContent,
   PopoverArrow,
   Grid,
-  PseudoBox,
+  Box,
   PopoverBody,
   IconButton,
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Box,
   Tabs,
   TabList,
   Tab,
@@ -61,7 +60,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
           const enableHues =
             props.enableHues && typeof themeColors[colorName] !== 'string'
           return (
-            <PseudoBox
+            <Box
               border="1px solid rgba(0,0,0,0.1)"
               key={colorName}
               _hover={{ shadow: 'lg' }}
@@ -101,7 +100,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
         >
           <SliderTrack />
           <SliderFilledTrack />
-          <SliderThumb size={8}>
+          <SliderThumb boxSize={8}>
             <Box rounded="full" fontSize="xs">
               {hue}
             </Box>

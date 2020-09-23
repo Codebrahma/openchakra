@@ -1,5 +1,6 @@
 import React, { ReactNode, memo } from 'react'
 import {
+  Accordion,
   AccordionItem,
   AccordionButton,
   AccordionIcon,
@@ -14,17 +15,19 @@ const AccordionContainer: React.FC<{
   children: ReactNode
 } & AccordionItemProps> = ({ title, children, defaultIsOpen = true }) => {
   return (
-    <AccordionItem defaultIsOpen={defaultIsOpen} bg="#F0F4F8">
-      <AccordionButton zIndex={2} px={3} py={2} fontSize="sm">
-        <Box flex="1" textAlign="left">
-          {title}
-        </Box>
-        <AccordionIcon />
-      </AccordionButton>
-      <AccordionPanel bg="white" px={3} pb={4}>
-        {children}
-      </AccordionPanel>
-    </AccordionItem>
+    <Accordion defaultChecked={defaultIsOpen}>
+      <AccordionItem bg="#F0F4F8">
+        <AccordionButton zIndex={2} px={3} py={2} fontSize="sm">
+          <Box flex="1" textAlign="left">
+            {title}
+          </Box>
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel bg="white" px={3} pb={4}>
+          {children}
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
   )
 }
 
