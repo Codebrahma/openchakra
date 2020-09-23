@@ -292,7 +292,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   Flex: { display: 'flex' },
   Breadcrumb: {
     separator: '/',
-    addSeparator: true,
   },
   CloseButton: { size: 'md' },
   BreadcrumbItem: { ...BreadcrumbItem.defaultProps },
