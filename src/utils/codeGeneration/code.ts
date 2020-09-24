@@ -143,11 +143,18 @@ export const generateCode = async (
   componentsImports = uniq(componentsImports)
 
   //find the name of the icons to import from the @chakra-ui/icons
-  const chakraIconImports = props
+  const chakraIconsUsed = props
     .filter(prop =>
       isPropRelatedToIcon(components[prop.componentId].type, prop.name),
     )
     .map(prop => prop.value)
+
+  const chakraIconImport =
+    chakraIconsUsed.length > 0
+      ? `import {
+    ${chakraIconsUsed.join(',')}
+  } from "@chakra-ui/icons";`
+      : ''
 
   code = `import React from 'react';
   import {
@@ -156,10 +163,8 @@ export const generateCode = async (
     ${componentsImports.join(',')}
   } from "@chakra-ui/core";
 
-  import {
-    ${chakraIconImports.join(',')}
-  } from "@chakra-ui/icons";
-
+  ${chakraIconImport}
+  
   ${customComponentCode && customComponentCode.join('')}
   const App = () => {
     ${customTheme ? customThemeCode : ''}
