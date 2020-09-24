@@ -11,13 +11,26 @@ const StackPanel = () => {
 
   const alignItems = usePropsSelector('alignItems')
   const justifyContent = usePropsSelector('justifyContent')
+  const direction = usePropsSelector('direction')
 
   return (
     <>
       <SwitchControl label="Inline" name="isInline" />
-      <SwitchControl label="Reversed" name="isReversed" />
       <SwitchControl label="Wrap children" name="shouldWrapChildren" />
       <TextControl name="spacing" label="Spacing" />
+      <FormControl label="Direction">
+        <Select
+          name="direction"
+          size="sm"
+          value={direction || ''}
+          onChange={setValueFromEvent}
+        >
+          <option>row</option>
+          <option>column</option>
+          <option>row-reverse</option>
+          <option>column-reverse</option>
+        </Select>
+      </FormControl>
       <FormControl label="Justify content">
         <Select
           name="justifyContent"
@@ -46,7 +59,7 @@ const StackPanel = () => {
           <option>space-between</option>
           <option>space-around</option>
         </Select>
-      </FormControl>{' '}
+      </FormControl>
     </>
   )
 }

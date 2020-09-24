@@ -281,7 +281,7 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
     ),
   },
   List: { styleType: 'none' },
-  Stack: { display: 'flex', spacing: 2 },
+  Stack: { direction: 'row', spacing: 2 },
   Flex: { display: 'flex' },
   Breadcrumb: {
     separator: '/',
