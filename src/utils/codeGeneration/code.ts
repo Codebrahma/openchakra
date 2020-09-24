@@ -1,6 +1,7 @@
 import uniq from 'lodash/uniq'
 import { buildBlock, capitalize } from './buildBlock'
 import formatCode from './formatCode'
+import { isPropRelatedToIcon } from '../../components/editor/PreviewContainer'
 
 export const generateComponentCode = async (
   component: IComponent,
@@ -127,7 +128,7 @@ export const generateCode = async (
     })
 
   //filter the custom components types
-  let imports = [
+  let componentsImports = [
     ...new Set(
       Object.keys(components)
         .filter(name => name !== 'root')
@@ -138,25 +139,34 @@ export const generateCode = async (
     ),
     ...getImportsFromCustomComponents(),
   ]
-  //remove duplicates from the imports array.
-  imports = uniq(imports)
+  //remove duplicates from the componentsImports array.
+  componentsImports = uniq(componentsImports)
+
+  //find the name of the icons to import from the @chakra-ui/icons
+  const chakraIconImports = props
+    .filter(prop =>
+      isPropRelatedToIcon(components[prop.componentId].type, prop.name),
+    )
+    .map(prop => prop.value)
 
   code = `import React from 'react';
   import {
-    ThemeProvider,
-    CSSReset,
+    ChakraProvider,
     theme,
-    ${imports.join(',')}
+    ${componentsImports.join(',')}
   } from "@chakra-ui/core";
+
+  import {
+    ${chakraIconImports.join(',')}
+  } from "@chakra-ui/icons";
 
   ${customComponentCode && customComponentCode.join('')}
   const App = () => {
     ${customTheme ? customThemeCode : ''}
     return(
-    <ThemeProvider theme={${theme}}>
-      <CSSReset />
+    <ChakraProvider resetCSS theme={${theme}}>
       ${code}
-    </ThemeProvider>
+    </ChakraProvider>
     )
   };
 
