@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
-import { SettingsIcon } from '@chakra-ui/icons'
-import { Icon, Box, Text, BoxProps, Flex } from '@chakra-ui/core'
+import { SettingsIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { Box, Text, BoxProps, Flex } from '@chakra-ui/core'
 
 import ActionButton from '../ActionButton'
 
@@ -34,7 +34,7 @@ const ElementListItem = forwardRef(
       >
         <Flex justify="space-between" align="center" w="100%">
           <Flex align="center">
-            {draggable && <Icon fontSize="xs" mr={2} name="arrow-up-down" />}
+            {draggable && <ArrowUpDownIcon fontSize="xs" mr={2} />}
             <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
               {type}
             </Text>

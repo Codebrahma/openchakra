@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import * as icons from '@chakra-ui/icons'
 import ColorsControl from '../../controls/ColorsControl'
 import InputSuggestion from '../../inputs/InputSuggestion'
 import theme from '../../../../theme/theme'
@@ -12,6 +13,8 @@ const IconPanel = () => {
   const { setValueFromEvent } = useForm()
 
   const fontSize = usePropsSelector('fontSize')
+
+  console.log(icons)
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
+import { Flex, Box, ChakraProvider, IconButton } from '@chakra-ui/core'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
@@ -54,7 +54,7 @@ const App = () => {
           <Box flex={1}>
             {!showFullScreen ? <Header /> : null}
 
-            <ThemeProvider theme={theme}>
+            <ChakraProvider theme={theme} resetCSS>
               {/* <EditorErrorBoundary> */}
 
               <Box
@@ -64,7 +64,7 @@ const App = () => {
                 {showCode ? <CodePanel /> : <Editor />}
               </Box>
               {/* </EditorErrorBoundary> */}
-            </ThemeProvider>
+            </ChakraProvider>
           </Box>
 
           {!showFullScreen ? <Sidebar /> : null}

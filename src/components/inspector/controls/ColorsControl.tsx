@@ -78,6 +78,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
                   enableHues ? `${colorName}.${hue}` : colorName,
                 )
               }
+              m="2px"
               mt={2}
               rounded="full"
               height="30px"
@@ -136,9 +137,9 @@ const ColorsControl = (props: ColorControlPropsType) => {
                   <Tab>All</Tab>
                 </TabList>
                 <TabPanels mt={4}>
-                  <TabPanel>{huesPicker}</TabPanel>
+                  <TabPanel p={0}>{huesPicker}</TabPanel>
 
-                  <TabPanel>
+                  <TabPanel p={0}>
                     <Box position="relative" height="150px">
                       <ColorPicker
                         color={value}
