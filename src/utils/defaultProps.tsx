@@ -6,7 +6,6 @@ import {
   BoxProps,
   ButtonProps,
   IconProps,
-  IconButtonProps,
   ImageProps,
   ProgressProps,
   AvatarGroupProps,
@@ -49,8 +48,8 @@ type PreviewDefaultProps = {
   Badge?: BadgeProps
   Box?: BoxProps
   Button?: ButtonProps
-  Icon?: IconProps
-  IconButton?: IconButtonProps
+  Icon?: any
+  IconButton?: any
   Image?: ImageProps
   Text?: BoxProps
   Progress?: ProgressProps
@@ -138,8 +137,9 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   Divider: { borderColor: 'blackAlpha.500' },
   IconButton: {
     'aria-label': 'icon',
+    icon: 'CopyIcon',
   },
-  Icon: { name: 'copy' },
+  Icon: { as: 'CopyIcon' },
   Image: {
     height: '100px',
     width: '100px',
