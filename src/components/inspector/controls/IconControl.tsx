@@ -24,10 +24,9 @@ const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
         handleChange={setValueFromEvent}
         name={name}
       >
-        {Object.values(icons).map((icon, index) => {
-          // @ts-ignore
-          const iconName = icon.displayName
-          if (iconName) {
+        {Object.keys(icons).map((key, index) => {
+          const iconName = key
+          if (iconName && iconName !== 'createIcon') {
             // @ts-ignore
             const Icon = React.createElement(icons[iconName])
             return (
