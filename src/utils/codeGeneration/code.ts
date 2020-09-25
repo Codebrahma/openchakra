@@ -143,11 +143,13 @@ export const generateCode = async (
   componentsImports = uniq(componentsImports)
 
   //find the name of the icons to import from the @chakra-ui/icons
-  const chakraIconsUsed = props
+  let chakraIconsUsed = props
     .filter(prop =>
       isPropRelatedToIcon(components[prop.componentId].type, prop.name),
     )
     .map(prop => prop.value)
+
+  chakraIconsUsed = uniq(chakraIconsUsed)
 
   const chakraIconImport =
     chakraIconsUsed.length > 0
