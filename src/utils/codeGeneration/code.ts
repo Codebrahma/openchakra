@@ -22,12 +22,7 @@ function objToString(obj: any, key: string = 'theme') {
   let str = ''
   for (const p in obj) {
     if (typeof obj[p] === 'object')
-      str +=
-        p +
-        `:{\n...${key}.${p}` +
-        ',\n' +
-        objToString(obj[p], `${key}.${p}`) +
-        '},\n'
+      str += p + `:{` + objToString(obj[p], `${key}.${p}`) + '},\n'
     else str += p + ': "' + obj[p] + '",\n'
   }
   return str
@@ -91,11 +86,11 @@ export const generateCode = async (
   }
 
   let code = buildBlock(components.root.children, components, props)
-  const customThemeCode = `const customTheme={
-    ...theme,
-    ${objToString(customTheme)}
-  }`
-  const theme = customTheme ? `customTheme` : `theme`
+
+  const customThemeCode = `const theme = extendTheme({${objToString(
+    customTheme,
+  )}
+  })`
 
   //Find what are the custom components used.
   const usedCustomComponentsList = getUsedCustomComponents()
@@ -151,6 +146,8 @@ export const generateCode = async (
 
   chakraIconsUsed = uniq(chakraIconsUsed)
 
+  console.log(customTheme)
+
   const chakraIconImport =
     chakraIconsUsed.length > 0
       ? `import {
@@ -161,7 +158,7 @@ export const generateCode = async (
   code = `import React from 'react';
   import {
     ChakraProvider,
-    theme,
+    ${customTheme ? 'extendTheme,' : 'theme,'}
     ${componentsImports.join(',')}
   } from "@chakra-ui/core";
 
@@ -171,7 +168,7 @@ export const generateCode = async (
   const App = () => {
     ${customTheme ? customThemeCode : ''}
     return(
-    <ChakraProvider resetCSS theme={${theme}}>
+    <ChakraProvider resetCSS theme={theme}>
       ${code}
     </ChakraProvider>
     )
