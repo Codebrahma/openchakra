@@ -10,11 +10,10 @@ import {
 
 const AccordionContainer: React.FC<{
   title: ReactNode
-  defaultIsOpen?: boolean
   children: ReactNode
-} & AccordionItemProps> = ({ title, children, defaultIsOpen = true }) => {
+} & AccordionItemProps> = ({ title, children }) => {
   return (
-    <AccordionItem bg="#F0F4F8" defaultChecked={defaultIsOpen}>
+    <AccordionItem bg="#F0F4F8">
       <AccordionButton zIndex={2} px={3} py={2} fontSize="sm">
         <Box flex="1" textAlign="left">
           {title}
