@@ -93,6 +93,12 @@ const EditThemeModal: FunctionComponent<{
     if (deleteConfirmation) dispatch.app.resetCustomTheme()
   }
 
+  const pasteHandler = (e: any) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text/plain')
+    document.execCommand('insertText', false, text)
+  }
+
   return (
     <LightMode>
       <Modal
@@ -185,6 +191,7 @@ const EditThemeModal: FunctionComponent<{
                                 minHeight: '120px',
                               }}
                               suppressContentEditableWarning={true}
+                              onPaste={pasteHandler}
                             >
                               {customTheme
                                 ? JSON.stringify(customTheme, undefined, 2)

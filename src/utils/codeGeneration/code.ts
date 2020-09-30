@@ -146,8 +146,6 @@ export const generateCode = async (
 
   chakraIconsUsed = uniq(chakraIconsUsed)
 
-  console.log(customTheme)
-
   const chakraIconImport =
     chakraIconsUsed.length > 0
       ? `import {

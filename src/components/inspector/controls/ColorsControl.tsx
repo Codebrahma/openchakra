@@ -99,8 +99,9 @@ const ColorsControl = (props: ColorControlPropsType) => {
           step={100}
           value={hue}
         >
-          <SliderTrack />
-          <SliderFilledTrack />
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
           <SliderThumb boxSize={8}>
             <Box rounded="full" fontSize="xs">
               {hue}
@@ -127,7 +128,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
             {props.label}
           </IconButton>
         </PopoverTrigger>
-        <PopoverContent width="200px" zIndex={theme.zIndices.modal}>
+        <PopoverContent width="200px" zIndex="modal">
           <PopoverArrow />
           <PopoverBody>
             {props.withFullColor ? (

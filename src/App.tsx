@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Box, ChakraProvider, IconButton } from '@chakra-ui/core'
+import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
@@ -45,7 +45,7 @@ const App = () => {
             variant="solid"
             onClick={() => dispatch.app.toggleFullScreen()}
             aria-label="go-back"
-            boxSize="xs"
+            size="xs"
           />
         </Box>
       ) : null}
@@ -54,7 +54,7 @@ const App = () => {
           <Box flex={1}>
             {!showFullScreen ? <Header /> : null}
 
-            <ChakraProvider theme={theme} resetCSS>
+            <ThemeProvider theme={theme}>
               {/* <EditorErrorBoundary> */}
 
               <Box
@@ -64,7 +64,7 @@ const App = () => {
                 {showCode ? <CodePanel /> : <Editor />}
               </Box>
               {/* </EditorErrorBoundary> */}
-            </ChakraProvider>
+            </ThemeProvider>
           </Box>
 
           {!showFullScreen ? <Sidebar /> : null}

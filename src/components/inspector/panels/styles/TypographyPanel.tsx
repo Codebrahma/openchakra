@@ -60,8 +60,9 @@ const TextPanel = () => {
           onChange={value => setValue('fontWeight', value)}
           value={fontWeight ? fontWeight : 100}
         >
-          <SliderTrack />
-          <SliderFilledTrack />
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
           <SliderThumb />
         </Slider>
       </FormControl>
