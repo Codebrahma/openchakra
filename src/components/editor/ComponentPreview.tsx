@@ -27,6 +27,7 @@ import MenuPreview, {
 import CustomComponentPreview from './previews/CustomComponentPreview'
 import TextPreview from './previews/TextPreview'
 import NumberInputPreview from './previews/NumberInputPreview'
+import EditablePreviewContainer from './previews/EditablePreviewContainer'
 
 const ComponentPreview: React.FC<{
   componentName: string
@@ -49,26 +50,21 @@ const ComponentPreview: React.FC<{
   const type = (component && component.type) || null
   switch (type) {
     // Simple components
-    case 'Badge':
-    case 'Button':
     case 'IconButton':
     case 'Image':
     case 'Link':
     case 'Spinner':
-    case 'Checkbox':
     case 'Textarea':
     case 'CircularProgress':
     case 'Switch':
     case 'FormLabel':
-    case 'FormHelperText':
-    case 'FormErrorMessage':
     case 'TabPanel':
     case 'Tab':
     case 'Input':
     case 'Radio':
-    case 'ListItem':
     case 'BreadcrumbLink':
     case 'Select':
+    case 'Checkbox':
       return (
         <PreviewContainer
           component={component}
@@ -81,6 +77,22 @@ const ComponentPreview: React.FC<{
       return (
         <NumberInputPreview
           component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+
+    case 'Badge':
+    case 'Button':
+    case 'AlertDescription':
+    case 'AlertTitle':
+    case 'FormHelperText':
+    case 'FormErrorMessage':
+    case 'ListItem':
+      return (
+        <EditablePreviewContainer
+          component={component}
+          type={Chakra[type]}
           {...forwardedProps}
           customProps={customProps}
         />
@@ -104,8 +116,6 @@ const ComponentPreview: React.FC<{
     case 'Icon':
     case 'ListIcon':
     case 'Divider':
-    case 'AlertDescription':
-    case 'AlertTitle':
     case 'InputRightAddon':
     case 'InputLeftAddon':
     case 'Tag':
