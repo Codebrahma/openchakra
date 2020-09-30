@@ -21,8 +21,16 @@ const AccordionPreview: React.FC<IPreviewProps> = ({
   component,
   customProps,
 }) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    acceptedTypes,
+    undefined,
+    boundingPosition,
+  )
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -57,8 +65,16 @@ export const AccordionButtonPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    AccordionWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -91,8 +107,16 @@ export const AccordionItemPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    AccordionWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   let boxProps: any = {}
 
@@ -129,8 +153,16 @@ export const AccordionPanelPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, AccordionWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    AccordionWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   let boxProps: any = {}
 

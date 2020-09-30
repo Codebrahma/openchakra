@@ -23,8 +23,15 @@ const AvatarPreview: React.FC<IPreviewProps & {
   spacing?: BoxProps['marginLeft']
   index?: number
 }> = ({ component, spacing, index, customProps }) => {
-  const { drop, isOver } = useDropComponent(component.id, ['AvatarBadge'])
-  const { props: componentProps, ref } = useInteractive(component)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    ['AvatarBadge'],
+    undefined,
+    boundingPosition,
+  )
 
   let boxProps: any = {
     display: 'inline-block',

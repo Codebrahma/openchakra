@@ -14,8 +14,16 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
     'AlertTitle',
     'AlertDescription',
   ] as ComponentType[]
-  const { props: componentProps, ref } = useInteractive(component, false)
-  const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    false,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    acceptedTypes,
+    undefined,
+    boundingPosition,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 

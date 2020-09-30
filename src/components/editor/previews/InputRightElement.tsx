@@ -12,8 +12,16 @@ export const InputRightElementPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
-  const { drop, isOver } = useDropComponent(component.id)
-  const { props: componentProps, ref } = useInteractive(component, true)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    undefined,
+    undefined,
+    boundingPosition,
+  )
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)

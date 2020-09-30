@@ -12,14 +12,18 @@ const CustomComponentPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
-  const { props: visualInteractionProps, ref } = useInteractive(
-    component,
-    true,
-    false,
-    true,
-  )
+  const {
+    props: visualInteractionProps,
+    ref,
+    boundingPosition,
+  } = useInteractive(component, true, false, true)
 
-  const { drop, isOver } = useDropComponent(component.id)
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    undefined,
+    undefined,
+    boundingPosition,
+  )
 
   const { props: componentProps } = useInteractive(component, true)
 

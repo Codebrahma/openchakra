@@ -31,11 +31,16 @@ const WithChildrenPreviewContainer: React.FC<{
   rootComponentChildren,
   ...forwardedProps
 }) => {
-  const { drop, isOver } = useDropComponent(component.id)
-  const { props: componentProps, ref } = useInteractive(
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
     component,
     enableVisualHelper,
     disableSelection,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    undefined,
+    undefined,
+    boundingPosition,
   )
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')

@@ -3,6 +3,7 @@ import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 import stringToIconConvertor from '../../utils/stringToIconConvertor'
+import { useDropComponent } from '../../hooks/useDropComponent'
 
 export const isPropRelatedToIcon = (type: string, propName: string) => {
   if (
@@ -29,9 +30,17 @@ const PreviewContainer: React.FC<{
   isBoxWrapped,
   ...forwardedProps
 }) => {
-  const { props: componentProps, ref } = useInteractive(
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
     component,
     enableVisualHelper,
+  )
+
+  //Here useDropComponent is used only for re-ordering
+  const { drop } = useDropComponent(
+    component.id,
+    undefined,
+    false,
+    boundingPosition,
   )
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
@@ -45,14 +54,14 @@ const PreviewContainer: React.FC<{
   const children = React.createElement(type, {
     ...propsKeyValue,
     ...forwardedProps,
-    ref,
+    ref: drop(ref),
   })
 
   if (isBoxWrapped) {
     let boxProps: any = {}
 
     return (
-      <Box {...boxProps} ref={ref}>
+      <Box {...boxProps} ref={drop(ref)}>
         {children}
       </Box>
     )

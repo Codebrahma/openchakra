@@ -13,7 +13,6 @@ import {
 } from '../core/selectors/components'
 import { getShowLayout } from '../core/selectors/app'
 import { generateId } from '../utils/generateId'
-import { useHoverComponent } from './useHoverComponent'
 import useCustomTheme from './useCustomTheme'
 
 export const useInteractive = (
@@ -27,7 +26,6 @@ export const useInteractive = (
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
   const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
   const [isHovered, setIsHovered] = useState(false)
-  // const focusInput = useSelector(getFocusedComponent(component.id))
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
@@ -60,13 +58,6 @@ export const useInteractive = (
 
   const boundingPosition =
     ref.current !== null ? ref.current.getBoundingClientRect() : undefined
-  const { hover } = useHoverComponent(
-    component.id,
-    boundingPosition && {
-      top: boundingPosition.top,
-      bottom: boundingPosition.bottom,
-    },
-  )
 
   let props = enableInteractive
     ? [
@@ -175,8 +166,9 @@ export const useInteractive = (
 
   return {
     props,
-    ref: enableInteractive ? drag(hover(ref)) : ref,
+    ref: enableInteractive ? drag(ref) : ref,
     elem: ref.current,
     drag,
+    boundingPosition,
   }
 }

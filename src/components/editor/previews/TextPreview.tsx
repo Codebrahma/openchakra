@@ -11,6 +11,7 @@ import {
 import ComponentPreview from '../ComponentPreview'
 import useDispatch from '../../../hooks/useDispatch'
 import { getTextValue } from '../../../core/selectors/text'
+import { useDropComponent } from '../../../hooks/useDropComponent'
 
 const TextPreview: React.FC<{
   component: IComponent
@@ -26,9 +27,15 @@ const TextPreview: React.FC<{
   isBoxWrapped,
   ...forwardedProps
 }) => {
-  const { props: componentProps, ref, elem } = useInteractive(
+  const { props: componentProps, ref, elem, boundingPosition } = useInteractive(
     component,
     enableVisualHelper,
+  )
+  const { drop } = useDropComponent(
+    component.id,
+    undefined,
+    false,
+    boundingPosition,
   )
   const dispatch = useDispatch()
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
@@ -118,7 +125,7 @@ const TextPreview: React.FC<{
     {
       ...propsKeyValue,
       ...forwardedProps,
-      ref,
+      ref: drop(ref),
     },
     componentChildren.map((key: string) => {
       if (selectedComponents[key])

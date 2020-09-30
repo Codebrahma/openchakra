@@ -12,7 +12,10 @@ const AspectRatioPreview: React.FC<IPreviewProps> = ({
   component,
   customProps,
 }) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -20,6 +23,7 @@ const AspectRatioPreview: React.FC<IPreviewProps> = ({
     component.id,
     undefined,
     componentChildren.length === 0,
+    boundingPosition,
   )
   if (isOver)
     componentProps.push({

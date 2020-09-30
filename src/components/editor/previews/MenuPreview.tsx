@@ -19,8 +19,16 @@ import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 const acceptedTypes = ['MenuButton', 'MenuList'] as ComponentType[]
 
 const MenuPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, acceptedTypes)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    acceptedTypes,
+    undefined,
+    boundingPosition,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -53,8 +61,16 @@ const MenuPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
 }
 
 export const MenuListPreview = ({ component, customProps }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    MenuWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -91,8 +107,16 @@ export const MenuButtonPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    MenuWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   const componentChildren = useSelector(getChildrenBy(component.id))
 
@@ -122,8 +146,16 @@ export const MenuButtonPreview = ({
 }
 
 export const MenuItemPreview = ({ component, customProps }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    MenuWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   let boxProps: any = {}
 
@@ -157,8 +189,16 @@ export const MenuItemPreview = ({ component, customProps }: IPreviewProps) => {
 }
 
 export const MenuGroupPreview = ({ component, customProps }: IPreviewProps) => {
-  const { props: componentProps, ref } = useInteractive(component, true)
-  const { drop, isOver } = useDropComponent(component.id, MenuWhitelist)
+  const { props: componentProps, ref, boundingPosition } = useInteractive(
+    component,
+    true,
+  )
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    MenuWhitelist,
+    undefined,
+    boundingPosition,
+  )
 
   let boxProps: any = {}
 

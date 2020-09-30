@@ -173,7 +173,7 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   AvatarBadge: {
     bg: 'green.500',
-    size: '1.25em',
+    boxSize: '1.25em',
     borderColor: 'white',
   },
   TabPanel: { children: 'Tab' },
