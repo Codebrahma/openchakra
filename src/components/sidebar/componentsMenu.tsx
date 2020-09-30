@@ -3,11 +3,11 @@ import {
   Box,
   Input,
   InputGroup,
-  Icon,
   InputRightElement,
   LightMode,
 } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
+import { CloseIcon, SearchIcon } from '@chakra-ui/icons'
 
 import DragItem from './DragItem'
 import {
@@ -32,7 +32,7 @@ export const menuItems: MenuItems = {
     children: {
       Accordion: {},
       AccordionItem: {},
-      AccordionHeader: {},
+      AccordionButton: {},
       AccordionPanel: {},
       AccordionIcon: {},
     },
@@ -45,7 +45,7 @@ export const menuItems: MenuItems = {
       AlertTitle: {},
     },
   },
-  AspectRatioBox: {},
+  AspectRatio: {},
   AvatarGroup: {
     rootParentType: 'Avatar',
   },
@@ -151,16 +151,13 @@ const Menu = () => {
         <InputGroup size="sm" mb={4}>
           <InputRightElement>
             {searchTerm ? (
-              <Icon
+              <CloseIcon
                 color="neutrals.300"
-                name="close"
                 cursor="pointer"
                 onClick={() => setSearchTerm('')}
-              >
-                x
-              </Icon>
+              />
             ) : (
-              <Icon name="search" color="neutrals.300" />
+              <SearchIcon color="neutrals.300" />
             )}
           </InputRightElement>
           <Input

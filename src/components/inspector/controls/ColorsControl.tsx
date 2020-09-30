@@ -5,14 +5,13 @@ import {
   PopoverContent,
   PopoverArrow,
   Grid,
-  PseudoBox,
+  Box,
   PopoverBody,
   IconButton,
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Box,
   Tabs,
   TabList,
   Tab,
@@ -45,8 +44,8 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const colourValue = value.split('.')
 
   const propsIconButton: any =
-    props.name === 'variantColor'
-      ? { variantColor: value }
+    props.name === 'colorScheme'
+      ? { colorScheme: value }
       : {
           bg:
             colourValue && colourValue.length > 2
@@ -61,7 +60,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
           const enableHues =
             props.enableHues && typeof themeColors[colorName] !== 'string'
           return (
-            <PseudoBox
+            <Box
               border="1px solid rgba(0,0,0,0.1)"
               key={colorName}
               _hover={{ shadow: 'lg' }}
@@ -79,6 +78,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
                   enableHues ? `${colorName}.${hue}` : colorName,
                 )
               }
+              m="2px"
               mt={2}
               rounded="full"
               height="30px"
@@ -101,7 +101,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
         >
           <SliderTrack />
           <SliderFilledTrack />
-          <SliderThumb size={8}>
+          <SliderThumb boxSize={8}>
             <Box rounded="full" fontSize="xs">
               {hue}
             </Box>
@@ -131,15 +131,15 @@ const ColorsControl = (props: ColorControlPropsType) => {
           <PopoverArrow />
           <PopoverBody>
             {props.withFullColor ? (
-              <Tabs size="sm" variant="soft-rounded" variantColor="green">
+              <Tabs size="sm" variant="soft-rounded" colorScheme="green">
                 <TabList>
                   <Tab>Theme</Tab>
                   <Tab>All</Tab>
                 </TabList>
                 <TabPanels mt={4}>
-                  <TabPanel>{huesPicker}</TabPanel>
+                  <TabPanel p={0}>{huesPicker}</TabPanel>
 
-                  <TabPanel>
+                  <TabPanel p={0}>
                     <Box position="relative" height="150px">
                       <ColorPicker
                         color={value}

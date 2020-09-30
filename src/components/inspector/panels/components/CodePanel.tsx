@@ -1,14 +1,14 @@
-import React, { memo } from "react";
-import ColorsControl from "../../controls/ColorsControl";
-import ChildrenControl from "../../controls/ChildrenControl";
+import React, { memo } from 'react'
+import ColorsControl from '../../controls/ColorsControl'
+import ChildrenControl from '../../controls/ChildrenControl'
 
 const CodePanel = () => {
   return (
     <>
       <ChildrenControl />
-      <ColorsControl label="Variant Color" name="variantColor" />
+      <ColorsControl label="Color Scheme" name="colorScheme" />
     </>
-  );
-};
+  )
+}
 
-export default memo(CodePanel);
+export default memo(CodePanel)

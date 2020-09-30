@@ -35,18 +35,18 @@ const TextPanel = () => {
   const fontSize = usePropsSelector('fontSize')
   const letterSpacing = usePropsSelector('letterSpacing')
   const lineHeight = usePropsSelector('lineHeight')
-  
+
   return (
     <>
       <FormControl label="Style">
         <IconButton
           aria-label="italic"
-          icon={GoItalic}
+          icon={<GoItalic />}
           onClick={() => {
             setValue('fontStyle', fontStyle === 'italic' ? null : 'italic')
           }}
           size="xs"
-          variantColor={fontStyle === 'italic' ? 'whatsapp' : 'gray'}
+          colorScheme={fontStyle === 'italic' ? 'whatsapp' : 'gray'}
           variant={fontStyle === 'italic' ? 'solid' : 'outline'}
         >
           Italic
@@ -70,41 +70,41 @@ const TextPanel = () => {
         <ButtonGroup size="xs" isAttached>
           <IconButton
             aria-label="bold"
-            icon={MdFormatAlignLeft}
+            icon={<MdFormatAlignLeft />}
             onClick={() => {
               setValue('textAlign', 'left')
             }}
-            variantColor={textAlign === 'left' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'left' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'left' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignCenter}
+            icon={<MdFormatAlignCenter />}
             onClick={() => {
               setValue('textAlign', 'center')
             }}
-            variantColor={textAlign === 'center' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'center' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'center' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignRight}
+            icon={<MdFormatAlignRight />}
             onClick={() => {
               setValue('textAlign', 'right')
             }}
-            variantColor={textAlign === 'right' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'right' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'right' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
-            icon={MdFormatAlignJustify}
+            icon={<MdFormatAlignJustify />}
             onClick={() => {
               setValue('textAlign', 'justify')
             }}
-            variantColor={textAlign === 'justify' ? 'whatsapp' : 'gray'}
+            colorScheme={textAlign === 'justify' ? 'whatsapp' : 'gray'}
             variant={textAlign === 'justify' ? 'solid' : 'outline'}
           />
         </ButtonGroup>

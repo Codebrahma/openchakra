@@ -15,7 +15,7 @@ const IconPanel = () => {
 
   return (
     <>
-      <IconControl label="Icon" name="name" />
+      <IconControl label="Icon" name="as" />
 
       <FormControl label="Font size" htmlFor="fontSize">
         <InputSuggestion

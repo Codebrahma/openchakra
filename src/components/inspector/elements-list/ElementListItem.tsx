@@ -1,12 +1,14 @@
 import React, { forwardRef } from 'react'
-import { Icon, PseudoBox, Text, PseudoBoxProps, Flex } from '@chakra-ui/core'
+import { SettingsIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
+import { Box, Text, BoxProps, Flex } from '@chakra-ui/core'
+
 import ActionButton from '../ActionButton'
 
 interface Props extends Pick<IComponent, 'type'> {
   opacity?: number
-  onSelect: PseudoBoxProps['onClick']
-  onMouseOver: PseudoBoxProps['onMouseOver']
-  onMouseOut: PseudoBoxProps['onMouseOut']
+  onSelect: BoxProps['onClick']
+  onMouseOver: BoxProps['onMouseOver']
+  onMouseOut: BoxProps['onMouseOut']
   draggable?: boolean
 }
 
@@ -16,7 +18,7 @@ const ElementListItem = forwardRef(
     ref: React.Ref<HTMLDivElement>,
   ) => {
     return (
-      <PseudoBox
+      <Box
         boxSizing="border-box"
         transition="margin 200ms"
         my={1}
@@ -32,7 +34,7 @@ const ElementListItem = forwardRef(
       >
         <Flex justify="space-between" align="center" w="100%">
           <Flex align="center">
-            {draggable && <Icon fontSize="xs" mr={2} name="arrow-up-down" />}
+            {draggable && <ArrowUpDownIcon fontSize="xs" mr={2} />}
             <Text letterSpacing="wide" fontSize="sm" textTransform="capitalize">
               {type}
             </Text>
@@ -40,11 +42,11 @@ const ElementListItem = forwardRef(
           <ActionButton
             label="Inspect"
             onClick={onSelect}
-            icon="settings"
-            variantColor="blackAlpha"
+            icon={<SettingsIcon />}
+            colorScheme="blackAlpha"
           />
         </Flex>
-      </PseudoBox>
+      </Box>
     )
   },
 )

@@ -1,11 +1,12 @@
 import React from 'react'
-import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
+import { Flex, Box, ChakraProvider, IconButton } from '@chakra-ui/core'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
 import Editor from './components/editor/Editor'
 import Header from './components/Header'
 import { Global } from '@emotion/core'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
 import {
   getShowFullScreen,
@@ -40,11 +41,11 @@ const App = () => {
       {showFullScreen ? (
         <Box bg="neutrals.900" zIndex={500} width="100%">
           <IconButton
-            icon="arrow-back"
+            icon={<ArrowBackIcon />}
             variant="solid"
             onClick={() => dispatch.app.toggleFullScreen()}
             aria-label="go-back"
-            size="xs"
+            boxSize="xs"
           />
         </Box>
       ) : null}
@@ -53,7 +54,7 @@ const App = () => {
           <Box flex={1}>
             {!showFullScreen ? <Header /> : null}
 
-            <ThemeProvider theme={theme}>
+            <ChakraProvider theme={theme} resetCSS>
               {/* <EditorErrorBoundary> */}
 
               <Box
@@ -63,7 +64,7 @@ const App = () => {
                 {showCode ? <CodePanel /> : <Editor />}
               </Box>
               {/* </EditorErrorBoundary> */}
-            </ThemeProvider>
+            </ChakraProvider>
           </Box>
 
           {!showFullScreen ? <Sidebar /> : null}

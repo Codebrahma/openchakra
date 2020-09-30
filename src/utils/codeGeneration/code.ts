@@ -1,6 +1,7 @@
 import uniq from 'lodash/uniq'
 import { buildBlock, capitalize } from './buildBlock'
 import formatCode from './formatCode'
+import { isPropRelatedToIcon } from '../../components/editor/PreviewContainer'
 
 export const generateComponentCode = async (
   component: IComponent,
@@ -21,12 +22,7 @@ function objToString(obj: any, key: string = 'theme') {
   let str = ''
   for (const p in obj) {
     if (typeof obj[p] === 'object')
-      str +=
-        p +
-        `:{\n...${key}.${p}` +
-        ',\n' +
-        objToString(obj[p], `${key}.${p}`) +
-        '},\n'
+      str += p + `:{` + objToString(obj[p], `${key}.${p}`) + '},\n'
     else str += p + ': "' + obj[p] + '",\n'
   }
   return str
@@ -90,11 +86,11 @@ export const generateCode = async (
   }
 
   let code = buildBlock(components.root.children, components, props)
-  const customThemeCode = `const customTheme={
-    ...theme,
-    ${objToString(customTheme)}
-  }`
-  const theme = customTheme ? `customTheme` : `theme`
+
+  const customThemeCode = `const theme = extendTheme({${objToString(
+    customTheme,
+  )}
+  })`
 
   //Find what are the custom components used.
   const usedCustomComponentsList = getUsedCustomComponents()
@@ -127,7 +123,7 @@ export const generateCode = async (
     })
 
   //filter the custom components types
-  let imports = [
+  let componentsImports = [
     ...new Set(
       Object.keys(components)
         .filter(name => name !== 'root')
@@ -138,25 +134,43 @@ export const generateCode = async (
     ),
     ...getImportsFromCustomComponents(),
   ]
-  //remove duplicates from the imports array.
-  imports = uniq(imports)
+  //remove duplicates from the componentsImports array.
+  componentsImports = uniq(componentsImports)
+
+  //find the name of the icons to import from the @chakra-ui/icons
+  let chakraIconsUsed = props
+    .filter(prop =>
+      isPropRelatedToIcon(components[prop.componentId].type, prop.name),
+    )
+    .map(prop => prop.value)
+
+  chakraIconsUsed = uniq(chakraIconsUsed)
+
+  console.log(customTheme)
+
+  const chakraIconImport =
+    chakraIconsUsed.length > 0
+      ? `import {
+    ${chakraIconsUsed.join(',')}
+  } from "@chakra-ui/icons";`
+      : ''
 
   code = `import React from 'react';
   import {
-    ThemeProvider,
-    CSSReset,
-    theme,
-    ${imports.join(',')}
+    ChakraProvider,
+    ${customTheme ? 'extendTheme,' : 'theme,'}
+    ${componentsImports.join(',')}
   } from "@chakra-ui/core";
 
+  ${chakraIconImport}
+  
   ${customComponentCode && customComponentCode.join('')}
   const App = () => {
     ${customTheme ? customThemeCode : ''}
     return(
-    <ThemeProvider theme={${theme}}>
-      <CSSReset />
+    <ChakraProvider resetCSS theme={theme}>
       ${code}
-    </ThemeProvider>
+    </ChakraProvider>
     )
   };
 

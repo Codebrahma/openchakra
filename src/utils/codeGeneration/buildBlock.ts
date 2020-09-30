@@ -4,6 +4,24 @@ export const capitalize = (value: string) => {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
+export const iconPropsHandler = (payload: {
+  componentType: string
+  propName: string
+  propValue: string
+}) => {
+  const { componentType, propName, propValue } = payload
+  if (componentType === 'Icon' && propName === 'as') {
+    return `={${propValue}}`
+  } else if (
+    propName === 'icon' ||
+    propName === 'leftIcon' ||
+    propName === 'rightIcon'
+  ) {
+    return `={<${propValue} />}`
+  }
+  return `='${propValue}'`
+}
+
 export const buildBlock = (
   children: string[],
   components: IComponents,
@@ -31,6 +49,12 @@ export const buildBlock = (
               if (prop.derivedFromPropName) {
                 operand = `={${prop.derivedFromPropName}}`
               } else {
+                operand = iconPropsHandler({
+                  componentType: components[prop.componentId].type,
+                  propName,
+                  propValue: propsValue,
+                })
+
                 if (components[propsValue]) {
                   operand = `={<Box>
                        ${buildBlock(

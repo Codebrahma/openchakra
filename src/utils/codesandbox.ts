@@ -59,10 +59,8 @@ ReactDOM.render(<App />, rootElement);
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@chakra-ui/core": "0.5.2",
-    "@emotion/core": "10.0.27",
-    "@emotion/styled": "10.0.27",
-    "emotion-theming": "10.0.27",
+    "@chakra-ui/core": "next",
+    "@chakra-ui/icons": "^1.0.0-rc.3",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-scripts": "3.0.1"

@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
-import { Icon, useTheme } from '@chakra-ui/core'
+import * as icons from '@chakra-ui/icons'
+import { Box, Flex, Text } from '@chakra-ui/core'
+import { ComboboxOption } from '@reach/combobox'
+import InputSuggestion from '../inputs/InputSuggestion'
 import FormControl from './FormControl'
 import { useForm } from '../../../hooks/useForm'
 import usePropsSelector from '../../../hooks/usePropsSelector'
-import InputSuggestion from '../inputs/InputSuggestion'
-import { ComboboxOption, ComboboxOptionText } from '@reach/combobox'
-import { Icons } from '@chakra-ui/core/dist/theme/icons'
 
 type IconControlProps = {
   name: string
@@ -14,7 +14,7 @@ type IconControlProps = {
 
 const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
   const { setValueFromEvent } = useForm()
-  const theme = useTheme()
+
   const value = usePropsSelector(name)
 
   return (
@@ -24,13 +24,23 @@ const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
         handleChange={setValueFromEvent}
         name={name}
       >
-        {Object.keys(theme.icons)
-          .filter(icon => icon.includes(value) || !value)
-          .map((icon, index) => (
-            <ComboboxOption key={index} value={icon}>
-              <Icon name={icon as Icons} /> <ComboboxOptionText />
-            </ComboboxOption>
-          ))}
+        {Object.keys(icons).map((key, index) => {
+          const iconName = key
+          if (iconName && iconName !== 'createIcon') {
+            // @ts-ignore
+            const Icon = React.createElement(icons[iconName])
+            return (
+              <ComboboxOption key={index} value={iconName.toString()}>
+                <Flex>
+                  <Box mr={1}>{Icon}</Box>
+                  <Text fontSize="12px" fontWeight="bold">
+                    {iconName}
+                  </Text>
+                </Flex>
+              </ComboboxOption>
+            )
+          } else return null
+        })}
       </InputSuggestion>
     </FormControl>
   )

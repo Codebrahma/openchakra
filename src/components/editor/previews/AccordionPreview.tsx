@@ -4,7 +4,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import {
   Box,
   Accordion,
-  AccordionHeader,
+  AccordionButton,
   AccordionItem,
   AccordionPanel,
 } from '@chakra-ui/core'
@@ -53,7 +53,7 @@ const AccordionPreview: React.FC<IPreviewProps> = ({
   )
 }
 
-export const AccordionHeaderPreview = ({
+export const AccordionButtonPreview = ({
   component,
   customProps,
 }: IPreviewProps) => {
@@ -75,7 +75,7 @@ export const AccordionHeaderPreview = ({
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
-    <AccordionHeader ref={drop(ref)} {...propsKeyValue}>
+    <AccordionButton ref={drop(ref)} {...propsKeyValue}>
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}
@@ -83,7 +83,7 @@ export const AccordionHeaderPreview = ({
           customProps={customProps}
         />
       ))}
-    </AccordionHeader>
+    </AccordionButton>
   )
 }
 

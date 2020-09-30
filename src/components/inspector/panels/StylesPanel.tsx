@@ -27,8 +27,11 @@ const StylesPanel: React.FC<Props> = ({
   showChildren,
   parentIsRoot,
 }) => {
+  const defaultIndicesArray = []
+  for (let i = 0; i < 14; i++) defaultIndicesArray.push(i)
+
   return (
-    <Accordion defaultIndex={[0]} allowMultiple>
+    <Accordion defaultIndex={defaultIndicesArray} allowMultiple>
       {!isRoot && (
         <AccordionContainer title="Additional props">
           <AdditionalPropsPanel />
@@ -94,7 +97,7 @@ const StylesPanel: React.FC<Props> = ({
         </AccordionContainer>
       )}
       {isRoot && (
-        <AccordionContainer title="Loaded Fonts" defaultIsOpen={false}>
+        <AccordionContainer title="Loaded Fonts">
           <LoadedFontsPanel />
         </AccordionContainer>
       )}

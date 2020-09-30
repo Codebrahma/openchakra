@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/core'
 import ActionButton from './inspector/ActionButton'
 import { FiTrash2 } from 'react-icons/fi'
+import { CheckIcon } from '@chakra-ui/icons'
 
 const ClearOptionPopover: FunctionComponent<{
   name: string
@@ -27,7 +28,7 @@ const ClearOptionPopover: FunctionComponent<{
           <PopoverTrigger>
             <Box>
               <ActionButton
-                icon={FiTrash2}
+                icon={<FiTrash2 />}
                 label={name}
                 size="sm"
                 color="black"
@@ -44,8 +45,8 @@ const ClearOptionPopover: FunctionComponent<{
                 <Button
                   size="sm"
                   variant="ghost"
-                  variantColor="red"
-                  rightIcon="check"
+                  colorScheme="red"
+                  rightIcon={<CheckIcon />}
                   onClick={() => {
                     dispatchAction()
                     if (onClose) {

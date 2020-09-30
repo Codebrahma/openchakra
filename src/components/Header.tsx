@@ -1,10 +1,16 @@
 import React, { memo, useState } from 'react'
 import { Box, Flex, useDisclosure, Image } from '@chakra-ui/core'
 import { AiOutlineFullscreen } from 'react-icons/ai'
+import { useSelector } from 'react-redux'
+import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
+import { RiCodeLine } from 'react-icons/ri'
+import { MdCreateNewFolder } from 'react-icons/md'
+import { ActionCreators as UndoActionCreators } from 'redux-undo'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+
 import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/codeGeneration/code'
 import useDispatch from '../hooks/useDispatch'
-import { useSelector } from 'react-redux'
 import {
   getComponents,
   getCustomComponents,
@@ -23,10 +29,6 @@ import HeaderMenu from './HeaderMenu'
 import ClearOptionPopover from './ClearOptionPopover'
 import EditThemeModal from './EditThemeModal'
 import ActionButton from './inspector/ActionButton'
-import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
-import { RiCodeLine } from 'react-icons/ri'
-import { MdCreateNewFolder } from 'react-icons/md'
-import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import composerIcon from '../composer-icon.png'
 
 const CodeSandboxButton = () => {
@@ -61,7 +63,7 @@ const CodeSandboxButton = () => {
   return (
     <ActionButton
       label="Export to codesandbox"
-      icon="external-link"
+      icon={<ExternalLinkIcon />}
       onClick={clickHandler}
       isLoading={isLoading}
       size="sm"
@@ -117,7 +119,7 @@ const Header = () => {
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="Create components"
-              icon={MdCreateNewFolder}
+              icon={<MdCreateNewFolder />}
               onClick={() => {
                 dispatch.components.unselect()
                 if (showCustomPage) dispatch.components.switchPage('app')
@@ -131,7 +133,7 @@ const Header = () => {
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="Code"
-              icon={RiCodeLine}
+              icon={<RiCodeLine />}
               onClick={() => dispatch.app.toggleCodePanel()}
               bg={showCode ? 'primary.100' : 'white'}
               color={showCode ? 'primary.900' : 'black'}
@@ -142,7 +144,7 @@ const Header = () => {
           <Box>
             <ActionButton
               label="Builder Mode"
-              icon={IoMdBuild}
+              icon={<IoMdBuild />}
               onClick={() => dispatch.app.toggleBuilderMode()}
               bg={showLayout ? 'primary.100' : 'white'}
               color={showLayout ? 'primary.900' : 'black'}
@@ -154,7 +156,7 @@ const Header = () => {
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="fullScreen"
-              icon={AiOutlineFullscreen}
+              icon={<AiOutlineFullscreen />}
               onClick={() => dispatch.app.toggleFullScreen()}
               color="black"
               size="sm"
@@ -163,7 +165,7 @@ const Header = () => {
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="Undo"
-              icon={IoIosUndo}
+              icon={<IoIosUndo />}
               onClick={() => dispatch(UndoActionCreators.undo())}
               size="sm"
             />
@@ -171,7 +173,7 @@ const Header = () => {
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton
               label="Redo"
-              icon={IoIosRedo}
+              icon={<IoIosRedo />}
               onClick={() => dispatch(UndoActionCreators.redo())}
               size="sm"
             />

@@ -13,6 +13,7 @@ import {
   MenuButtonProps,
   ButtonProps,
 } from '@chakra-ui/core'
+import { ChevronDownIcon } from '@chakra-ui/icons'
 import useDispatch from '../hooks/useDispatch'
 import { loadFromJSON, saveAsJSON } from '../utils/import'
 import { useSelector } from 'react-redux'
@@ -70,11 +71,10 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   return (
     <Menu>
       <CustomMenuButton
-        rightIcon="chevron-down"
-        as={Button}
+        rightIcon={<ChevronDownIcon />}
         size="sm"
         variant="ghost"
-        variantColor="gray"
+        colorScheme="gray"
       >
         Workspace
       </CustomMenuButton>
@@ -103,7 +103,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
 
           <MenuDivider />
 
-          <MenuItemLink isExternal href="https://chakra-ui.com/getting-started">
+          <MenuItemLink href="https://chakra-ui.com/getting-started">
             <Box mr={2} as={GoRepo} />
             Chakra UI Docs
           </MenuItemLink>

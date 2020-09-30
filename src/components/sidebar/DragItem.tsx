@@ -1,7 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { Text, PseudoBox, Icon, Flex, useToast } from '@chakra-ui/core'
+import { DeleteIcon, DragHandleIcon } from '@chakra-ui/icons'
+import { Text, Box, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../inspector/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
 import {
@@ -104,7 +105,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
 
   return (
     <Flex my={1}>
-      <PseudoBox
+      <Box
         boxSizing="border-box"
         transition="margin 200ms"
         rounded="md"
@@ -114,7 +115,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
         width="95%"
         p={1}
       >
-        <Icon fontSize="xs" mr={2} name="drag-handle" color="neutrals.900" />
+        <DragHandleIcon fontSize="xs" mr={2} color="neutrals.900" />
 
         <Text
           letterSpacing="wide"
@@ -124,12 +125,12 @@ const DragItem: React.FC<ComponentItemProps> = ({
         >
           {label}
         </Text>
-      </PseudoBox>
+      </Box>
 
       {custom && (
         <ActionButton
           label="Delete component"
-          icon="delete"
+          icon={<DeleteIcon />}
           onClick={() => deleteComponentHandler(type)}
         />
       )}

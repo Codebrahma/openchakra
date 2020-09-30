@@ -6,7 +6,6 @@ import {
   BoxProps,
   ButtonProps,
   IconProps,
-  IconButtonProps,
   ImageProps,
   ProgressProps,
   AvatarGroupProps,
@@ -23,7 +22,7 @@ import {
   FlexProps,
   StackProps,
   AccordionProps,
-  AccordionHeaderProps,
+  AccordionButtonProps,
   AccordionItemProps,
   FormControlProps,
   TabListProps,
@@ -31,7 +30,7 @@ import {
   TabPanelsProps,
   TabsProps,
   InputProps,
-  AspectRatioBoxProps,
+  AspectRatioProps,
   BreadcrumbItemProps,
   BreadcrumbItem,
   EditableProps,
@@ -42,15 +41,15 @@ import {
   InputGroupProps,
   GridProps,
   BreadcrumbLink,
+  FormLabelProps,
 } from '@chakra-ui/core'
-import { FormLabelProps } from '@chakra-ui/core/dist/FormLabel'
 
 type PreviewDefaultProps = {
   Badge?: BadgeProps
   Box?: BoxProps
   Button?: ButtonProps
-  Icon?: IconProps
-  IconButton?: IconButtonProps
+  Icon?: any
+  IconButton?: any
   Image?: ImageProps
   Text?: BoxProps
   Progress?: ProgressProps
@@ -76,7 +75,7 @@ type PreviewDefaultProps = {
   Flex?: FlexProps
   Stack?: StackProps
   Accordion?: Omit<AccordionProps, 'children'>
-  AccordionHeader?: AccordionHeaderProps
+  AccordionButton?: AccordionButtonProps
   AccordionItem?: Omit<AccordionItemProps, 'children'>
   AccordionPanel?: any
   AccordionIcon?: IconProps
@@ -97,7 +96,7 @@ type PreviewDefaultProps = {
   InputRightAddon?: any
   InputLeftElement?: any
   InputRightElement?: any
-  AspectRatioBox?: AspectRatioBoxProps
+  AspectRatio?: AspectRatioProps
   Breadcrumb?: BreadcrumbItemProps
   BreadcrumbItem?: BreadcrumbItemProps
   BreadcrumbLink?: any
@@ -138,9 +137,9 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   Divider: { borderColor: 'blackAlpha.500' },
   IconButton: {
     'aria-label': 'icon',
-    icon: 'copy',
+    icon: 'CopyIcon',
   },
-  Icon: { name: 'copy' },
+  Icon: { as: 'CopyIcon' },
   Image: {
     height: '100px',
     width: '100px',
@@ -192,9 +191,7 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   Radio: { children: 'Radio' },
   ListItem: { children: 'list' },
-  AccordionItem: {
-    defaultIsOpen: true,
-  },
+  AccordionItem: {},
   InputLeftAddon: { children: 'left' },
   InputRightAddon: {
     children: 'right',
@@ -207,9 +204,7 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
     max: 3,
     size: 'md',
   },
-  Select: {
-    icon: 'chevron-down',
-  },
+  Select: {},
   Menu: {
     isOpen: true,
   },
@@ -257,7 +252,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   },
   Heading: {
     size: 'xl',
-    as: 'h2',
     lineHeight: 'shorter',
     fontWeight: 'bold',
     fontFamily: 'heading',
@@ -278,7 +272,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   Select: {
     variant: 'outline',
     size: 'md',
-    iconSize: '20px',
     children: (
       <>
         <option value="option1">Option 1</option>
@@ -288,11 +281,10 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
     ),
   },
   List: { styleType: 'none' },
-  Stack: { display: 'flex', spacing: 2 },
+  Stack: { direction: 'row', spacing: 2 },
   Flex: { display: 'flex' },
   Breadcrumb: {
     separator: '/',
-    addSeparator: true,
   },
   CloseButton: { size: 'md' },
   BreadcrumbItem: { ...BreadcrumbItem.defaultProps },

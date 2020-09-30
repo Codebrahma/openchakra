@@ -45,7 +45,7 @@ const CodePanel = () => {
     customTheme,
   ])
 
-  const { onCopy, hasCopied } = useClipboard(code)
+  const { onCopy, hasCopied } = useClipboard(code || '')
 
   return (
     <Box

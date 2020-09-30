@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Box, Flex, Stack, Button } from '@chakra-ui/core'
 import { FaBomb } from 'react-icons/fa'
+import { CheckCircleIcon } from '@chakra-ui/icons'
+
 import { gridStyles } from '../editor/Editor'
 // import { bugsnagClient } from '../../utils/bugsnag'
 
@@ -55,7 +57,7 @@ export default class AppErrorBoundary extends Component<
                   window.location.reload()
                 }}
                 variant="outline"
-                rightIcon="check-circle"
+                rightIcon={<CheckCircleIcon />}
                 size="sm"
                 mt={4}
                 display="block"

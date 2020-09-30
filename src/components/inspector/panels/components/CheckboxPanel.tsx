@@ -15,7 +15,7 @@ const CheckboxPanel = () => {
     <>
       <ChildrenControl />
       <SwitchControl label="Checked" name="isChecked" />
-      <ColorsControl label="Variant Color" name="variantColor" />
+      <ColorsControl label="Color Scheme" name="colorScheme" />
       <FormControl label="Size" htmlFor="size">
         <Select
           name="size"

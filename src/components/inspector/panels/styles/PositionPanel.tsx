@@ -5,9 +5,14 @@ import {
   SimpleGrid,
   InputGroup,
   InputLeftElement,
-  Icon,
 } from '@chakra-ui/core'
 import { ComboboxOption } from '@reach/combobox'
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  ArrowUpIcon,
+  ChevronDownIcon,
+} from '@chakra-ui/icons'
 
 import FormControl from '../../controls/FormControl'
 import { useForm } from '../../../../hooks/useForm'
@@ -57,7 +62,7 @@ const PositionPanel = () => {
       <SimpleGrid columns={2} spacing={1}>
         <InputGroup size="sm">
           <InputLeftElement
-            children={<Icon fontSize="md" name="arrow-back" color="gray.300" />}
+            children={<ArrowBackIcon color="gray.300" fontSize="md" />}
           />
           <Input
             placeholder="left"
@@ -72,9 +77,7 @@ const PositionPanel = () => {
 
         <InputGroup size="sm">
           <InputLeftElement
-            children={
-              <Icon fontSize="md" name="arrow-forward" color="gray.300" />
-            }
+            children={<ArrowForwardIcon color="gray.300" fontSize="md" />}
           />
           <Input
             placeholder="right"
@@ -89,7 +92,7 @@ const PositionPanel = () => {
 
         <InputGroup size="sm">
           <InputLeftElement
-            children={<Icon fontSize="md" name="arrow-up" color="gray.300" />}
+            children={<ArrowUpIcon color="gray.300" fontSize="md" />}
           />
           <Input
             placeholder="top"
@@ -104,9 +107,7 @@ const PositionPanel = () => {
 
         <InputGroup size="sm">
           <InputLeftElement
-            children={
-              <Icon fontSize="md" name="chevron-down" color="gray.300" />
-            }
+            children={<ChevronDownIcon color="gray.300" fontSize="md" />}
           />
           <Input
             placeholder="bottom"

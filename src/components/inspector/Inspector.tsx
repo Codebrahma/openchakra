@@ -1,11 +1,18 @@
 import React, { useState, memo, useEffect } from 'react'
-import { Link, Box, Flex, useToast } from '@chakra-ui/core'
+import { Box, Flex, useToast } from '@chakra-ui/core'
 import Panels from './panels/Panels'
 import { GoRepo, GoCode } from 'react-icons/go'
 import { FiTrash2 } from 'react-icons/fi'
 import { IoMdRefresh, IoMdBrush } from 'react-icons/io'
 import { MdFormatClear } from 'react-icons/md'
 import { useSelector } from 'react-redux'
+import {
+  ExternalLinkIcon,
+  CheckIcon,
+  AddIcon,
+  CopyIcon,
+} from '@chakra-ui/icons'
+
 import useDispatch from '../../hooks/useDispatch'
 import StylesPanel from './panels/StylesPanel'
 import {
@@ -50,7 +57,7 @@ const CodeActionButton = memo(() => {
     <ActionButton
       isLoading={isLoading}
       label="Copy code component"
-      variantColor={hasCopied ? 'green' : 'gray'}
+      colorScheme={hasCopied ? 'green' : 'gray'}
       onClick={async () => {
         setIsLoading(true)
         const code = isCustomComponentChild
@@ -70,7 +77,7 @@ const CodeActionButton = memo(() => {
         onCopy(code)
         setIsLoading(false)
       }}
-      icon={hasCopied ? 'check' : GoCode}
+      icon={hasCopied ? <CheckIcon /> : <GoCode />}
     />
   )
 })
@@ -197,14 +204,14 @@ const Inspector = () => {
                     }
                   }
                 }}
-                icon="add"
+                icon={<AddIcon />}
               />
             ) : null}
             {component.type === 'Text' || component.type === 'Heading' ? (
               <ActionButton
                 label={containsOnlySpan ? 'Remove Span' : 'Wrap with Span'}
                 onClick={wrapSpanClickHandler}
-                icon={IoMdBrush}
+                icon={<IoMdBrush />}
                 color={containsOnlySpan ? 'primary.800' : 'black'}
                 bg={containsOnlySpan ? 'primary.100' : 'white'}
                 isDisabled={!isSelectionEnabled}
@@ -216,7 +223,7 @@ const Inspector = () => {
                 onClick={(e: any) => {
                   dispatch.components.clearAllFormatting()
                 }}
-                icon={MdFormatClear}
+                icon={<MdFormatClear />}
               />
             )}
             {!isCustomComponentsPage ? (
@@ -232,35 +239,34 @@ const Inspector = () => {
                     position: 'top',
                   })
                 }}
-                icon="external-link"
+                icon={<ExternalLinkIcon />}
               />
             ) : null}
 
             <ActionButton
               label="Duplicate"
               onClick={() => dispatch.components.duplicate()}
-              icon="copy"
+              icon={<CopyIcon />}
             />
             <ActionButton
               label="Reset props"
-              icon={IoMdRefresh}
+              icon={<IoMdRefresh />}
               onClick={() => dispatch.components.resetProps(component.id)}
             />
             <ActionButton
               label="Chakra UI Doc"
-              as={Link}
               onClick={() => {
                 window.open(
                   `https://chakra-ui.com/${docType.toLowerCase()}`,
                   '_blank',
                 )
               }}
-              icon={GoRepo}
+              icon={<GoRepo />}
             />
             <ActionButton
               label="Remove"
               onClick={() => dispatch.components.deleteComponent(component.id)}
-              icon={FiTrash2}
+              icon={<FiTrash2 />}
             />
           </Flex>
         )}

@@ -1,17 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import { ChakraProvider, extendTheme } from '@chakra-ui/core'
 import { Provider } from 'react-redux'
 
 import { store } from './core/store'
 // import { ErrorBoundary as BugsnagErrorBoundary } from './utils/bugsnag'
 import AppErrorBoundary from './components/errorBoundaries/AppErrorBoundary'
 
-const customTheme = {
-  ...theme,
+const theme = extendTheme({
   colors: {
-    ...theme.colors,
     primary: {
       100: '#C4C6FF',
       200: '#A2A5FC',
@@ -35,17 +33,16 @@ const customTheme = {
       900: '#102A43',
     },
   },
-}
+})
 ReactDOM.render(
   // <BugsnagErrorBoundary>
-  <ThemeProvider theme={customTheme}>
+  <ChakraProvider resetCSS theme={theme}>
     <AppErrorBoundary>
       <Provider store={store}>
-        <CSSReset />
         <App />
       </Provider>
     </AppErrorBoundary>
-  </ThemeProvider>,
+  </ChakraProvider>,
   // </BugsnagErrorBoundary>,
 
   document.getElementById('root'),
