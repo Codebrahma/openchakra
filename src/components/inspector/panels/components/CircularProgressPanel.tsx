@@ -1,8 +1,8 @@
 import React, { memo } from 'react'
 import ColorsControl from '../../controls/ColorsControl'
-import SwitchControl from '../../controls/SwitchControl'
 import TextControl from '../../controls/TextControl'
 import SliderControl from '../../controls/SliderControl'
+import NumberControl from '../../controls/NumberControl'
 
 const CircularProgressPanel = () => {
   return (
@@ -11,17 +11,9 @@ const CircularProgressPanel = () => {
 
       <TextControl name="size" label="Size" />
 
-      <SliderControl
-        label="Thickness"
-        htmlFor="thickness"
-        min={0.1}
-        max={1}
-        step={0.1}
-      />
+      <NumberControl label="Thickness" name="thickness" />
 
-      <ColorsControl label="Color" name="color" />
-
-      <SwitchControl label="Loading" name="isIndeterminate" />
+      <ColorsControl withFullColor label="Color" name="color" enableHues />
     </>
   )
 }

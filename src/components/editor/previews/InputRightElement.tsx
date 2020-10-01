@@ -37,12 +37,7 @@ export const InputRightElementPreview: React.FC<{
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
 
   return (
-    <InputRightElement
-      top="10px"
-      right="10px"
-      {...propsKeyValue}
-      ref={drop(ref)}
-    >
+    <InputRightElement right="10px" {...propsKeyValue} ref={drop(ref)}>
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}

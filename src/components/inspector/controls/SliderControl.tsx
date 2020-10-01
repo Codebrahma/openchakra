@@ -28,8 +28,9 @@ const SliderControl: React.FC<{
         step={step}
         defaultValue={value}
       >
-        <SliderTrack />
-        <SliderFilledTrack />
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
         <SliderThumb />
       </Slider>
     </FormControl>

@@ -15,6 +15,8 @@ const SelectPanel = () => {
 
   return (
     <>
+      <TextControl label="Placeholder" name="placeholder" />
+
       <FormControl label="Size" htmlFor="size">
         <Select
           name="size"

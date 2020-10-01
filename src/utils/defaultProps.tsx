@@ -162,7 +162,6 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   Checkbox: {
     children: 'Label checkbox',
-    isReadOnly: true,
   },
   AlertTitle: {
     children: 'Alert title',
