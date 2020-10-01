@@ -26,6 +26,7 @@ import MenuPreview, {
 } from './previews/MenuPreview'
 import CustomComponentPreview from './previews/CustomComponentPreview'
 import TextPreview from './previews/TextPreview'
+import NumberInputPreview from './previews/NumberInputPreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
@@ -66,13 +67,20 @@ const ComponentPreview: React.FC<{
     case 'Input':
     case 'Radio':
     case 'ListItem':
-    case 'NumberInput':
     case 'BreadcrumbLink':
     case 'Select':
       return (
         <PreviewContainer
           component={component}
           type={Chakra[type]}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberInput':
+      return (
+        <NumberInputPreview
+          component={component}
           {...forwardedProps}
           customProps={customProps}
         />

@@ -11,7 +11,7 @@ const NumberInputPanel = () => {
   return (
     <>
       <SizeControl label="Size" options={['sm', 'md', 'lg']} value={size} />
-      <TextControl label="Value" name="value" />
+      <TextControl label="Value" name="defaultValue" />
       <NumberControl name="step" label="Step" />
       <NumberControl name="precision" label="Precision" />
 
