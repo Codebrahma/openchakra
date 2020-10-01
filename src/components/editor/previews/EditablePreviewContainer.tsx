@@ -2,11 +2,13 @@ import React, { FunctionComponent, ComponentClass } from 'react'
 import { Box } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
-import { getInputTextFocused } from '../../../core/selectors/app'
+import {
+  getInputTextFocused,
+  getInnerHTMLText,
+} from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
 import { getSelectedComponentId } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
-import { getTextValue } from '../../../core/selectors/text'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 
 const EditablePreviewContainer: React.FC<{
@@ -37,7 +39,7 @@ const EditablePreviewContainer: React.FC<{
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const inputTextFocused = useSelector(getInputTextFocused)
 
-  const textValue = useSelector(getTextValue)
+  const innerHTMLText = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
 
   const blurHandler = (event: any) => {
@@ -55,7 +57,7 @@ const EditablePreviewContainer: React.FC<{
   const doubleClickHandler = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    dispatch.text.setTextValue(elem?.innerHTML || textValue)
+    dispatch.app.setInnerHTMLText(elem?.innerHTML || innerHTMLText)
     dispatch.app.toggleInputText(true)
   }
 
@@ -95,7 +97,7 @@ const EditablePreviewContainer: React.FC<{
       onPaste={pasteHandler}
       onMouseUp={mouseUpHandler}
       onKeyDown={keyDownHandler}
-      dangerouslySetInnerHTML={{ __html: textValue }}
+      dangerouslySetInnerHTML={{ __html: innerHTMLText }}
     />,
   )
 

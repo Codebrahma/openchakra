@@ -2,7 +2,10 @@ import React, { FunctionComponent, ComponentClass } from 'react'
 import { Box } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
-import { getInputTextFocused } from '../../../core/selectors/app'
+import {
+  getInputTextFocused,
+  getInnerHTMLText,
+} from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
 import {
   getCurrentSelectedComponents,
@@ -10,7 +13,6 @@ import {
 } from '../../../core/selectors/components'
 import ComponentPreview from '../ComponentPreview'
 import useDispatch from '../../../hooks/useDispatch'
-import { getTextValue } from '../../../core/selectors/text'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 
 const TextPreview: React.FC<{
@@ -43,7 +45,7 @@ const TextPreview: React.FC<{
   const selectedComponents = useSelector(
     getCurrentSelectedComponents(component.id),
   )
-  const textValue = useSelector(getTextValue)
+  const textValue = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
 
   const componentChildren =
@@ -99,7 +101,7 @@ const TextPreview: React.FC<{
   const doubleClickHandler = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    dispatch.text.setTextValue(elem?.innerHTML || textValue)
+    dispatch.app.setInnerHTMLText(elem?.innerHTML || textValue)
     dispatch.app.toggleInputText(true)
   }
 

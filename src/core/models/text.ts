@@ -12,7 +12,6 @@ export type TextState = {
   selectedTextDetails: SelectedTextDetails
   containsOnlySpan: boolean
   selectionEnabled: boolean
-  textValue: string
 }
 
 const text = createModel({
@@ -25,7 +24,6 @@ const text = createModel({
     },
     containsOnlySpan: false,
     selectionEnabled: false,
-    textValue: 'Text value',
   } as TextState,
   reducers: {
     setSelectionDetails: (state: TextState): TextState => {
@@ -88,12 +86,6 @@ const text = createModel({
         },
         containsOnlySpan: false,
         selectionEnabled: false,
-      }
-    },
-    setTextValue: (state: TextState, value: string) => {
-      return {
-        ...state,
-        textValue: value,
       }
     },
   },
