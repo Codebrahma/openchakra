@@ -97,6 +97,7 @@ const EditablePreviewContainer: React.FC<{
       onPaste={pasteHandler}
       onMouseUp={mouseUpHandler}
       onKeyDown={keyDownHandler}
+      cursor="text"
       dangerouslySetInnerHTML={{ __html: innerHTMLText }}
     />,
   )
