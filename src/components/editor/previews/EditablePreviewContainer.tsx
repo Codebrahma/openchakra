@@ -7,15 +7,11 @@ import {
   getInnerHTMLText,
 } from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
-import {
-  getCurrentSelectedComponents,
-  getSelectedComponentId,
-} from '../../../core/selectors/components'
-import ComponentPreview from '../ComponentPreview'
+import { getSelectedComponentId } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 
-const TextPreview: React.FC<{
+const EditablePreviewContainer: React.FC<{
   component: IComponent
   type: string | FunctionComponent<any> | ComponentClass<any, any>
   customProps: IProp[]
@@ -42,66 +38,26 @@ const TextPreview: React.FC<{
   const dispatch = useDispatch()
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const inputTextFocused = useSelector(getInputTextFocused)
-  const selectedComponents = useSelector(
-    getCurrentSelectedComponents(component.id),
-  )
-  const textValue = useSelector(getInnerHTMLText)
+
+  const innerHTMLText = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
 
-  const componentChildren =
-    propsKeyValue.children && Array.isArray(propsKeyValue.children)
-      ? propsKeyValue.children
-      : [propsKeyValue.children]
-
-  const blurHandler = (event: React.SyntheticEvent<any>) => {
+  const blurHandler = (event: any) => {
     event.preventDefault()
     event.stopPropagation()
     dispatch.text.setSelectionDetails()
-
-    const element = event.currentTarget
-    if (element) {
-      if (element.childNodes.length === 0)
-        dispatch.components.updateTextChildrenProp({
-          id: component.id,
-          value: '',
-        })
-      else {
-        const childrenDetails: Array<{
-          type: string
-          value: string
-          componentId?: string
-        }> = []
-
-        let spanChildrenIndex = 0
-        element.childNodes.forEach((child: Node) => {
-          let value: any = child.nodeValue
-          if (child.nodeName === 'SPAN') {
-            value = child.firstChild?.nodeValue
-            childrenDetails.push({
-              type: child.nodeName,
-              value: value || '',
-              componentId: element.children[spanChildrenIndex].id,
-            })
-            spanChildrenIndex = spanChildrenIndex + 1
-          } else
-            childrenDetails.push({
-              type: child.nodeName,
-              value: value || '',
-            })
-        })
-        dispatch.components.updateTextChildrenProp({
-          id: component.id,
-          value: childrenDetails,
-        })
-      }
-    }
     dispatch.app.toggleInputText(false)
+    dispatch.components.updateProps({
+      id: component.id,
+      name: 'children',
+      value: event.target.textContent || '',
+    })
   }
 
   const doubleClickHandler = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    dispatch.app.setInnerHTMLText(elem?.innerHTML || textValue)
+    dispatch.app.setInnerHTMLText(elem?.innerHTML || innerHTMLText)
     dispatch.app.toggleInputText(true)
   }
 
@@ -122,25 +78,11 @@ const TextPreview: React.FC<{
 
   propsKeyValue['onDoubleClick'] = doubleClickHandler
 
-  const Element = React.createElement(
-    type,
-    {
-      ...propsKeyValue,
-      ...forwardedProps,
-      ref: drop(ref),
-    },
-    componentChildren.map((key: string) => {
-      if (selectedComponents[key])
-        return (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            disableSelection={inputTextFocused ? true : false}
-          />
-        )
-      else return key
-    }),
-  )
+  const Element = React.createElement(type, {
+    ...propsKeyValue,
+    ...forwardedProps,
+    ref: drop(ref),
+  })
 
   const contentEditableElement = React.createElement(
     type,
@@ -155,7 +97,8 @@ const TextPreview: React.FC<{
       onPaste={pasteHandler}
       onMouseUp={mouseUpHandler}
       onKeyDown={keyDownHandler}
-      dangerouslySetInnerHTML={{ __html: textValue }}
+      cursor="text"
+      dangerouslySetInnerHTML={{ __html: innerHTMLText }}
     />,
   )
 
@@ -164,4 +107,4 @@ const TextPreview: React.FC<{
     : Element
 }
 
-export default TextPreview
+export default EditablePreviewContainer

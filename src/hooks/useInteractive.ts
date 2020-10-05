@@ -144,7 +144,6 @@ export const useInteractive = (
         if (currentSelectedId !== component.id) {
           dispatch.components.select(component.id)
           dispatch.text.reset()
-          dispatch.text.setTextValue(ref.current?.innerHTML || '')
         }
       },
       componentId: component.id,

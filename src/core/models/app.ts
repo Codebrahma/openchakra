@@ -10,6 +10,7 @@ export type AppState = {
   showFullScreen: boolean
   customTheme: null | any
   loadedFonts: null | Array<string>
+  selectedElementInnerHTMLText: string
 }
 
 const app = createModel({
@@ -21,7 +22,7 @@ const app = createModel({
     showFullScreen: false,
     customTheme: null,
     loadedFonts: null,
-    selectedTextDetails: undefined,
+    selectedElementInnerHTMLText: '',
   } as AppState,
   reducers: {
     toggleBuilderMode(state: AppState): AppState {
@@ -84,6 +85,12 @@ const app = createModel({
         }
       }
       return state
+    },
+    setInnerHTMLText: (state: AppState, value: string) => {
+      return {
+        ...state,
+        selectedElementInnerHTMLText: value,
+      }
     },
     'components/deleteComponent': (state: AppState): AppState => {
       return {
