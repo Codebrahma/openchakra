@@ -43,13 +43,15 @@ const CustomComponentsPropsPanel = () => {
         </Box>
       ))}
 
-      <Accordion defaultIndex={[0]}>
+      <Accordion defaultIndex={[0, 1]}>
         <AccordionContainer title="Parent">
           <ParentInspector />
         </AccordionContainer>
-        <AccordionContainer title="Children">
-          <ChildrenInspector />
-        </AccordionContainer>
+        {isCustomComponentPage && (
+          <AccordionContainer title="Children">
+            <ChildrenInspector />
+          </AccordionContainer>
+        )}
       </Accordion>
       {isCustomComponentPage ? (
         <Flex

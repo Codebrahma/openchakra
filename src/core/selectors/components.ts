@@ -95,6 +95,13 @@ export const getSelectedComponentChildren = (state: RootState) => {
   const components = isChildrenOfCustomComponent(selectedId)(state)
     ? { ...state.components.present.customComponents }
     : { ...state.components.present.componentsById[componentsId] }
+  const customComponents = state.components.present.customComponents
+
+  if (isInstanceOfCustomComponent(selectedId)(state)) {
+    return customComponents[components[selectedId].type].children.map(
+      child => customComponents[child],
+    )
+  }
   return components[selectedId].children.map(child => components[child])
 }
 
@@ -105,6 +112,7 @@ export const getChildrenBy = (id: IComponent['id']) => (state: RootState) => {
   const components = isChildrenOfCustomComponent(id)(state)
     ? { ...state.components.present.customComponents }
     : { ...state.components.present.componentsById[componentsId] }
+
   return components[id].children
 }
 

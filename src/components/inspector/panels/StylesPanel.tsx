@@ -27,6 +27,7 @@ const StylesPanel: React.FC<Props> = ({
   showChildren,
   parentIsRoot,
 }) => {
+  console.log(showChildren)
   const defaultIndicesArray = []
   for (let i = 0; i < 14; i++) defaultIndicesArray.push(i)
 
