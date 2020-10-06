@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux'
 import { getSelectedComponentId } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
+import { isPropRelatedToIcon } from '../PreviewContainer'
+import stringToIconConvertor from '../../../utils/stringToIconConvertor'
 
 const EditablePreviewContainer: React.FC<{
   component: IComponent
@@ -77,6 +79,12 @@ const EditablePreviewContainer: React.FC<{
   }
 
   propsKeyValue['onDoubleClick'] = doubleClickHandler
+
+  //Converting the icon in string to reactElement
+  Object.keys(propsKeyValue).forEach((key: string) => {
+    if (isPropRelatedToIcon(component.type, key))
+      propsKeyValue[key] = stringToIconConvertor(key, propsKeyValue[key])
+  })
 
   const Element = React.createElement(type, {
     ...propsKeyValue,
