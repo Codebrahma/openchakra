@@ -35,6 +35,10 @@ import {
   BreadcrumbItem,
   EditableProps,
   NumberInputProps,
+  NumberInputFieldProps,
+  NumberInputStepperProps,
+  NumberIncrementStepperProps,
+  NumberDecrementStepperProps,
   RadioProps,
   SelectProps,
   RadioGroupProps,
@@ -111,6 +115,11 @@ type PreviewDefaultProps = {
   MenuItemOption?: any
 
   NumberInput?: NumberInputProps
+  NumberInputField?: NumberInputFieldProps
+  NumberInputStepper?: NumberInputStepperProps
+  NumberIncrementStepper?: NumberIncrementStepperProps
+  NumberDecrementStepper?: NumberDecrementStepperProps
+
   Radio?: RadioProps
   RadioGroup?: RadioGroupProps
   List?: any

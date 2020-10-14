@@ -74,6 +74,10 @@ type ComponentType =
   | 'MenuDivider'
   | 'MenuOptionGroup'
   | 'MenuItemOption'
+  | 'NumberInputField'
+  | 'NumberInputStepper'
+  | 'NumberIncrementStepper'
+  | 'NumberDecrementStepper'
 
 type MetaComponentType =
   | 'FormControlMeta'
@@ -83,6 +87,7 @@ type MetaComponentType =
   | 'InputGroupMeta'
   | 'BreadcrumbMeta'
   | 'MenuMeta'
+  | 'NumberInputMeta'
   | 'Custom'
 
 interface PropRef {

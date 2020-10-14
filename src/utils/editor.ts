@@ -16,6 +16,14 @@ const MENU_COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'MenuItemOption',
 ]
 
+const NUMBER_INPUT_COMPONENTS: (ComponentType | MetaComponentType)[] = [
+  'NumberInput',
+  'NumberInputField',
+  'NumberInputStepper',
+  'NumberIncrementStepper',
+  'NumberDecrementStepper',
+]
+
 export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   ...ALERT_COMPONENTS,
   'Avatar',
@@ -65,7 +73,7 @@ export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'BreadcrumbItem',
   'BreadcrumbLink',
   ...MENU_COMPONENTS,
-  'NumberInput',
+  ...NUMBER_INPUT_COMPONENTS,
   'AccordionItem',
   'AccordionButton',
   'AccordionPanel',
@@ -79,6 +87,7 @@ export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'ListMeta',
   'InputGroupMeta',
   'BreadcrumbMeta',
+  'NumberInputMeta',
   'MenuMeta',
   'Custom',
 ]

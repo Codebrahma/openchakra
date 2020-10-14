@@ -21,13 +21,15 @@ export const updateProps = (
     prop => prop.componentId === id && prop.name === name,
   )
 
+  // If the value is number, convert it to number.
+
   if (existingPropIndex !== -1) {
-    props[existingPropIndex].value = value
+    props[existingPropIndex].value = isNaN(value) ? value : parseInt(value, 10)
   } else
     props.push({
       id: generateId(),
       name: name,
-      value: value,
+      value: isNaN(value) ? value : parseInt(value, 10),
       componentId: id,
       derivedFromPropName: null,
       derivedFromComponentType: null,
