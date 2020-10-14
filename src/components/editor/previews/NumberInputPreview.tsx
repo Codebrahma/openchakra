@@ -64,33 +64,21 @@ export const NumberInputStepperPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
-  const { props: componentProps, ref, boundingPosition } = useInteractive(
-    component,
-    true,
-  )
-  const { drop } = useDropComponent(
-    component.id,
-    undefined,
-    false,
-    boundingPosition,
-  )
-  let boxProps: any = {}
+  const { props: componentProps } = useInteractive(component, false)
 
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   return (
-    <Box ref={drop(ref)} {...boxProps}>
-      <NumberInputStepper {...propsKeyValue}>
-        {componentChildren.map((key: string) => (
-          <ComponentPreview
-            key={key}
-            componentName={key}
-            customProps={customProps}
-          />
-        ))}
-      </NumberInputStepper>
-    </Box>
+    <NumberInputStepper {...propsKeyValue}>
+      {componentChildren.map((key: string) => (
+        <ComponentPreview
+          key={key}
+          componentName={key}
+          customProps={customProps}
+        />
+      ))}
+    </NumberInputStepper>
   )
 }
 
