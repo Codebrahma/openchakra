@@ -8,8 +8,9 @@ export const iconPropsHandler = (payload: {
   componentType: string
   propName: string
   propValue: string
+  oldOperand: string
 }) => {
-  const { componentType, propName, propValue } = payload
+  const { componentType, propName, propValue, oldOperand } = payload
   if (componentType === 'Icon' && propName === 'as') {
     return `={${propValue}}`
   } else if (
@@ -19,7 +20,7 @@ export const iconPropsHandler = (payload: {
   ) {
     return `={<${propValue} />}`
   }
-  return `='${propValue}'`
+  return oldOperand
 }
 
 export const buildBlock = (
@@ -43,7 +44,11 @@ export const buildBlock = (
           const propsValue = prop.value
           const propName = prop.name
           if (propsValue || prop.derivedFromPropName) {
-            let operand = `='${propsValue}'`
+            let operand = `=${
+              isNaN(propsValue)
+                ? "'" + propsValue + "'"
+                : '{' + propsValue + '}'
+            }`
 
             if (propName !== 'children') {
               if (prop.derivedFromPropName) {
@@ -53,6 +58,7 @@ export const buildBlock = (
                   componentType: components[prop.componentId].type,
                   propName,
                   propValue: propsValue,
+                  oldOperand: operand,
                 })
 
                 if (components[propsValue]) {
