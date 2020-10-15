@@ -17,7 +17,6 @@ import {
 
 type MenuItem = {
   children?: MenuItems
-  soon?: boolean
   rootParentType?: ComponentType
 }
 
@@ -112,7 +111,14 @@ export const menuItems: MenuItems = {
       // MenuItemOption: {},
     },
   },
-  NumberInput: {},
+  NumberInput: {
+    children: {
+      NumberInputField: {},
+      NumberInputStepper: {},
+      NumberIncrementStepper: {},
+      NumberDecrementStepper: {},
+    },
+  },
   Progress: {},
   Radio: {},
   RadioGroup: {
@@ -172,7 +178,7 @@ const Menu = () => {
         {(Object.keys(menuItems) as ComponentType[])
           .filter(c => c.toLowerCase().includes(searchTerm.toLowerCase()))
           .map(name => {
-            const { children, soon } = menuItems[name] as MenuItem
+            const { children } = menuItems[name] as MenuItem
 
             if (children) {
               const elements = Object.keys(children).map(childName => (
@@ -191,7 +197,6 @@ const Menu = () => {
               return [
                 <DragItem
                   isMeta
-                  soon={soon}
                   key={`${name}Meta`}
                   label={name}
                   type={`${name}Meta` as any}
@@ -206,7 +211,6 @@ const Menu = () => {
 
             return (
               <DragItem
-                soon={soon}
                 key={name}
                 label={name}
                 type={name as any}

@@ -26,7 +26,13 @@ import MenuPreview, {
 } from './previews/MenuPreview'
 import CustomComponentPreview from './previews/CustomComponentPreview'
 import TextPreview from './previews/TextPreview'
-import NumberInputPreview from './previews/NumberInputPreview'
+import {
+  NumberInputPreview,
+  NumberInputFieldPreview,
+  NumberDecrementStepperPreview,
+  NumberIncrementStepperPreview,
+  NumberInputStepperPreview,
+} from './previews/NumberInputPreview'
 import EditablePreviewContainer from './previews/EditablePreviewContainer'
 
 const ComponentPreview: React.FC<{
@@ -76,6 +82,38 @@ const ComponentPreview: React.FC<{
     case 'NumberInput':
       return (
         <NumberInputPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberInputField':
+      return (
+        <NumberInputFieldPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberInputStepper':
+      return (
+        <NumberInputStepperPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberIncrementStepper':
+      return (
+        <NumberIncrementStepperPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberDecrementStepper':
+      return (
+        <NumberDecrementStepperPreview
           component={component}
           {...forwardedProps}
           customProps={customProps}

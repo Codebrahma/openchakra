@@ -12,7 +12,6 @@ import {
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
-  soon,
   label,
   isMeta,
   isChild,
@@ -39,19 +38,17 @@ const DragItem: React.FC<ComponentItemProps> = ({
     color: 'whiteAlpha.600',
   }
 
-  if (!soon) {
-    boxProps = {
-      ref: drag,
-      color: 'whiteAlpha.800',
-      cursor: 'move',
-      _hover: {
-        ml: -1,
-        mr: 1,
-        bg: 'primary.100',
-        shadow: 'sm',
-        color: 'primary.800',
-      },
-    }
+  boxProps = {
+    ref: drag,
+    color: 'whiteAlpha.800',
+    cursor: 'move',
+    _hover: {
+      ml: -1,
+      mr: 1,
+      bg: 'primary.100',
+      shadow: 'sm',
+      color: 'primary.800',
+    },
   }
 
   if (isChild) {

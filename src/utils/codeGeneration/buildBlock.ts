@@ -8,8 +8,9 @@ export const iconPropsHandler = (payload: {
   componentType: string
   propName: string
   propValue: string
+  oldValue: string
 }) => {
-  const { componentType, propName, propValue } = payload
+  const { componentType, propName, propValue, oldValue } = payload
   if (componentType === 'Icon' && propName === 'as') {
     return `={${propValue}}`
   } else if (
@@ -19,7 +20,7 @@ export const iconPropsHandler = (payload: {
   ) {
     return `={<${propValue} />}`
   }
-  return `='${propValue}'`
+  return oldValue
 }
 
 export const buildBlock = (
@@ -43,20 +44,25 @@ export const buildBlock = (
           const propsValue = prop.value
           const propName = prop.name
           if (propsValue || prop.derivedFromPropName) {
-            let operand = `='${propsValue}'`
+            let value = `=${
+              isNaN(propsValue)
+                ? "'" + propsValue + "'"
+                : '{' + propsValue + '}'
+            }`
 
             if (propName !== 'children') {
               if (prop.derivedFromPropName) {
-                operand = `={${prop.derivedFromPropName}}`
+                value = `={${prop.derivedFromPropName}}`
               } else {
-                operand = iconPropsHandler({
+                value = iconPropsHandler({
                   componentType: components[prop.componentId].type,
                   propName,
                   propValue: propsValue,
+                  oldValue: value,
                 })
 
                 if (components[propsValue]) {
-                  operand = `={<Box>
+                  value = `={<Box>
                        ${buildBlock(
                          components[propsValue].children,
                          components,
@@ -70,10 +76,10 @@ export const buildBlock = (
                   propsValue === 'false' ||
                   isBoolean(propsValue)
                 ) {
-                  operand = ``
+                  value = ``
                 }
               }
-              propsContent += `${propName}${operand} `
+              propsContent += `${propName}${value} `
             }
           }
         })
