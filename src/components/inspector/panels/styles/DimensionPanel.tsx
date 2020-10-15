@@ -3,8 +3,7 @@ import { SimpleGrid, Select } from '@chakra-ui/core'
 import FormControl from '../../controls/FormControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import { useForm } from '../../../../hooks/useForm'
-import { ComboboxOption } from '@reach/combobox'
-import InputSuggestion from '../../inputs/InputSuggestion'
+import ComboBox from '../../inputs/ComboBox'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const DimensionPanel = () => {
@@ -21,68 +20,47 @@ const DimensionPanel = () => {
   return (
     <>
       <FormControl label="Width" htmlFor="width">
-        <InputSuggestion
+        <ComboBox
           value={width}
-          handleChange={setValueFromEvent}
           name="width"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.sizes)}
+        />
       </FormControl>
       <FormControl label="Height" htmlFor="height">
-        <InputSuggestion
+        <ComboBox
           value={height}
-          handleChange={setValueFromEvent}
           name="height"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.sizes)}
+        />
       </FormControl>
       <SimpleGrid columns={2} spacing={1} m="10px 0">
-        <InputSuggestion
+        <ComboBox
           value={minWidth}
-          handleChange={setValueFromEvent}
           name="minWidth"
           placeholder="Min width"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
-        <InputSuggestion
+          options={Object.keys(theme.sizes)}
+        />
+
+        <ComboBox
           value={minHeight}
-          handleChange={setValueFromEvent}
           name="minHeight"
           placeholder="Min Height"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
-        <InputSuggestion
+          options={Object.keys(theme.sizes)}
+        />
+
+        <ComboBox
           value={maxWidth}
-          handleChange={setValueFromEvent}
           name="maxWidth"
           placeholder="Max Width"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
-        <InputSuggestion
+          options={Object.keys(theme.sizes)}
+        />
+
+        <ComboBox
           value={maxHeight}
-          handleChange={setValueFromEvent}
           name="maxHeight"
           placeholder="Max Height"
-        >
-          {Object.keys(theme.sizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.sizes)}
+        />
       </SimpleGrid>
       <FormControl label="Overflow">
         <Select

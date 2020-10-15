@@ -1,9 +1,7 @@
 import React, { memo } from 'react'
 import { FormLabel, SimpleGrid, Box } from '@chakra-ui/core'
-import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
-import { ComboboxOption } from '@reach/combobox'
-import InputSuggestion from '../../inputs/InputSuggestion'
+import ComboBox from '../../inputs/ComboBox'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 type PaddingPanelPropsType = {
@@ -28,8 +26,6 @@ const ATTRIBUTES = {
 }
 
 const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
-  const { setValueFromEvent } = useForm()
-
   const all = usePropsSelector(ATTRIBUTES[type].all)
   const left = usePropsSelector(ATTRIBUTES[type].left)
   const right = usePropsSelector(ATTRIBUTES[type].right)
@@ -43,62 +39,42 @@ const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
         {type}
       </FormLabel>
       <Box mb="5px">
-        <InputSuggestion
+        <ComboBox
           value={all || ''}
-          handleChange={setValueFromEvent}
           name={ATTRIBUTES[type].all}
           placeholder="All"
-        >
-          {Object.keys(theme.space).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.space)}
+        />
       </Box>
 
       <SimpleGrid columns={2} spacing={1}>
-        <InputSuggestion
+        <ComboBox
           value={left || ''}
-          handleChange={setValueFromEvent}
           name={ATTRIBUTES[type].left}
           placeholder="Left"
-        >
-          {Object.keys(theme.space).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.space)}
+        />
 
-        <InputSuggestion
+        <ComboBox
           value={right || ''}
-          handleChange={setValueFromEvent}
           name={ATTRIBUTES[type].right}
           placeholder="Right"
-        >
-          {Object.keys(theme.space).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.space)}
+        />
 
-        <InputSuggestion
+        <ComboBox
           value={top || ''}
-          handleChange={setValueFromEvent}
           name={ATTRIBUTES[type].top}
           placeholder="Top"
-        >
-          {Object.keys(theme.space).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.space)}
+        />
 
-        <InputSuggestion
+        <ComboBox
           value={bottom || ''}
-          handleChange={setValueFromEvent}
           name={ATTRIBUTES[type].bottom}
           placeholder="Bottom"
-        >
-          {Object.keys(theme.space).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.space)}
+        />
       </SimpleGrid>
     </Box>
   )

@@ -8,12 +8,11 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from '@chakra-ui/core'
-import InputSuggestion from '../../inputs/InputSuggestion'
-import { ComboboxOption } from '@reach/combobox'
+import ComboBox from '../../inputs/ComboBox'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const EffectsPanel = () => {
-  const { setValue, setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const opacity = usePropsSelector('opacity')
   const shadow = usePropsSelector('shadow')
   const theme = useCustomTheme()
@@ -37,15 +36,11 @@ const EffectsPanel = () => {
       </FormControl>
 
       <FormControl label="Shadow" htmlFor="shadow">
-        <InputSuggestion
+        <ComboBox
           value={shadow}
-          handleChange={setValueFromEvent}
           name="shadow"
-        >
-          {Object.keys(theme.shadows).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.shadows)}
+        />
       </FormControl>
     </>
   )

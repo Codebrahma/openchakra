@@ -17,8 +17,7 @@ import {
 
 import ColorsControl from '../../controls/ColorsControl'
 import FormControl from '../../controls/FormControl'
-import { ComboboxOption } from '@reach/combobox'
-import InputSuggestion from '../../inputs/InputSuggestion'
+import ComboBox from '../../inputs/ComboBox'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
@@ -26,7 +25,7 @@ import useCustomTheme from '../../../../hooks/useCustomTheme'
 import '@reach/combobox/styles.css'
 
 const TextPanel = () => {
-  const { setValue, setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const theme = useCustomTheme()
 
   const fontWeight = usePropsSelector('fontWeight')
@@ -112,41 +111,29 @@ const TextPanel = () => {
       </FormControl>
 
       <FormControl label="Font size" htmlFor="fontSize">
-        <InputSuggestion
+        <ComboBox
           value={fontSize}
-          handleChange={setValueFromEvent}
           name="fontSize"
-        >
-          {Object.keys(theme.fontSizes).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.fontSizes)}
+        />
       </FormControl>
 
       <ColorsControl withFullColor enableHues name="color" label="Color" />
 
       <FormControl label="Line height" htmlFor="lineHeight">
-        <InputSuggestion
+        <ComboBox
           value={lineHeight}
-          handleChange={setValueFromEvent}
           name="lineHeight"
-        >
-          {Object.keys(theme.lineHeights).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.lineHeights)}
+        />
       </FormControl>
 
       <FormControl label="Letter spacing" htmlFor="letterSpacing">
-        <InputSuggestion
+        <ComboBox
           value={letterSpacing}
-          handleChange={setValueFromEvent}
           name="letterSpacing"
-        >
-          {Object.keys(theme.letterSpacings).map(option => (
-            <ComboboxOption key={option} value={option} />
-          ))}
-        </InputSuggestion>
+          options={Object.keys(theme.letterSpacings)}
+        />
       </FormControl>
     </>
   )
