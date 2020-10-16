@@ -22,9 +22,7 @@ const AlertPanel = () => {
         />
       </FormControl>
 
-      <FormControl label="Variant" htmlFor="variant">
-        <VariantsControl options={variantProps} value={variant || 'subtle'} />
-      </FormControl>
+      <VariantsControl options={variantProps} value={variant || 'subtle'} />
     </>
   )
 }
