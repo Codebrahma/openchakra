@@ -1,34 +1,17 @@
-import React from "react";
-import { Select } from "@chakra-ui/core";
-import ColorsControl from "../../controls/ColorsControl";
-import FormControl from "../../controls/FormControl";
-import { useForm } from "../../../../hooks/useForm";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
+import React from 'react'
+import ColorsControl from '../../controls/ColorsControl'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
+import SizeControl from '../../controls/SizeControl'
 
 const CloseButtonPanel = () => {
-  const { setValueFromEvent } = useForm();
-
-  const size = usePropsSelector("size");
+  const size = usePropsSelector('size')
 
   return (
     <>
-      <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
-          value={size || ""}
-          onChange={setValueFromEvent}
-        >
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-        </Select>
-      </FormControl>
-
+      <SizeControl value={size} options={['sm', 'md', 'lg']} />
       <ColorsControl label="Color" name="color" enableHues />
     </>
-  );
-};
+  )
+}
 
-export default CloseButtonPanel;
+export default CloseButtonPanel

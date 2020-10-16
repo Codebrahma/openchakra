@@ -1,35 +1,20 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import FormControl from './FormControl'
-import { Select } from '@chakra-ui/core'
-import { useForm } from '../../../hooks/useForm'
+import ComboBox from '../inputs/ComboBox'
 
-export type Size = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 type SizeControlPropsType = {
-  name?: string
-  label?: string | ReactNode
   value: string
-  options?: Size[]
+  options: string[]
 }
 
-const options = ['xs', 'sm', 'md', 'lg']
-
 const SizeControl = (props: SizeControlPropsType) => {
-  const { setValueFromEvent } = useForm()
-  const choices = props.options || options
-
   return (
-    <FormControl label={props.label} htmlFor={props.name || 'size'}>
-      <Select
-        size="sm"
-        id={props.name || 'size'}
-        name={props.name || 'size'}
+    <FormControl label="Size" htmlFor="size">
+      <ComboBox
+        options={props.options}
+        name={'size'}
         value={props.value || ''}
-        onChange={setValueFromEvent}
-      >
-        {choices.map(choice => (
-          <option key={choice}>{choice}</option>
-        ))}
-      </Select>
+      />
     </FormControl>
   )
 }

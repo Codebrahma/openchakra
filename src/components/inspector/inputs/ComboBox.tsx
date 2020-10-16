@@ -11,6 +11,7 @@ type FormControlPropType = {
   placeholder?: string
   renderOptions?: (options: string) => ReactNode
   enableAutoComplete?: boolean
+  editable?: boolean
 }
 
 const ComboBoxComponent: React.FC<FormControlPropType> = ({
@@ -20,6 +21,7 @@ const ComboBoxComponent: React.FC<FormControlPropType> = ({
   placeholder,
   enableAutoComplete,
   renderOptions,
+  editable = true,
 }) => {
   const { setValue } = useForm()
 
@@ -36,6 +38,7 @@ const ComboBoxComponent: React.FC<FormControlPropType> = ({
       onBlur={e => setValue(name, e?.target.value)}
       enableAutocomplete={enableAutoComplete}
       inputStyles={{ border: '1px solid #E2E8F0' }}
+      editable={editable}
     />
   )
 }

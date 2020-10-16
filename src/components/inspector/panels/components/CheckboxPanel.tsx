@@ -1,14 +1,12 @@
 import React, { memo } from 'react'
 import ColorsControl from '../../controls/ColorsControl'
 import ChildrenControl from '../../controls/ChildrenControl'
-import { useForm } from '../../../../hooks/useForm'
 import FormControl from '../../controls/FormControl'
-import { Select } from '@chakra-ui/core'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
+import SizeControl from '../../controls/SizeControl'
 
 const CheckboxPanel = () => {
-  const { setValueFromEvent } = useForm()
   const size = usePropsSelector('size')
 
   return (
@@ -17,17 +15,7 @@ const CheckboxPanel = () => {
       <SwitchControl label="Checked" name="defaultIsChecked" />
       <ColorsControl label="Color Scheme" name="colorScheme" />
       <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
-          value={size || 'md'}
-          onChange={setValueFromEvent}
-        >
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-        </Select>
+        <SizeControl value={size} options={['sm', 'md', 'lg']} />
       </FormControl>
     </>
   )

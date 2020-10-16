@@ -1,12 +1,10 @@
 import React, { memo } from 'react'
-import { Select } from '@chakra-ui/core'
+
 import FormControl from '../../controls/FormControl'
-import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
+import ComboBox from '../../inputs/ComboBox'
 
 const DisplayFlexPanel = () => {
-  const { setValueFromEvent } = useForm()
-
   const alignItems = usePropsSelector('alignItems')
   const flexDirection = usePropsSelector('flexDirection')
   const justifyContent = usePropsSelector('justifyContent')
@@ -14,48 +12,43 @@ const DisplayFlexPanel = () => {
   return (
     <>
       <FormControl label="Direction">
-        <Select
+        <ComboBox
+          value={flexDirection || 'row'}
           name="flexDirection"
-          size="sm"
-          value={flexDirection}
-          onChange={setValueFromEvent}
-        >
-          <option>row</option>
-          <option>row-reverse</option>
-          <option>column</option>
-          <option>column-reverse</option>
-        </Select>
+          options={['row', 'row-reverse', 'column', 'column-reverse']}
+          enableAutoComplete
+        />
       </FormControl>
 
       <FormControl label="Justify content">
-        <Select
+        <ComboBox
+          value={justifyContent || 'flex-start'}
           name="justifyContent"
-          size="sm"
-          value={justifyContent}
-          onChange={setValueFromEvent}
-        >
-          <option>flex-start</option>
-          <option>center</option>
-          <option>flex-end</option>
-          <option>space-between</option>
-          <option>space-around</option>
-        </Select>
+          options={[
+            'flex-start',
+            'center',
+            'flex-end',
+            'space-between',
+            'space-around',
+          ]}
+          enableAutoComplete
+        />
       </FormControl>
 
       <FormControl label="Align items">
-        <Select
+        <ComboBox
+          value={alignItems || 'stretch'}
           name="alignItems"
-          size="sm"
-          value={alignItems || ''}
-          onChange={setValueFromEvent}
-        >
-          <option>stretch</option>
-          <option>flex-start</option>
-          <option>center</option>
-          <option>flex-end</option>
-          <option>space-between</option>
-          <option>space-around</option>
-        </Select>
+          options={[
+            'stretch',
+            'flex-start',
+            'center',
+            'flex-end',
+            'space-between',
+            'space-around',
+          ]}
+          enableAutoComplete
+        />
       </FormControl>
     </>
   )

@@ -1,34 +1,19 @@
 import React, { memo } from 'react'
-import { Select } from '@chakra-ui/core'
-import { useForm } from '../../../../hooks/useForm'
 import FormControl from '../../controls/FormControl'
 import ChildrenControl from '../../controls/ChildrenControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
+import SizeControl from '../../controls/SizeControl'
 
 const HeadingPanel = () => {
-  const { setValueFromEvent } = useForm()
-
   const size = usePropsSelector('size')
+  const sizePropValues = ['xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
   return (
     <>
       <ChildrenControl />
       <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
-          value={size}
-          onChange={setValueFromEvent}
-        >
-          <option>xs</option>
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-          <option>xl</option>
-          <option>2xl</option>
-        </Select>
+        <SizeControl options={sizePropValues} value={size} />
       </FormControl>
 
       <SwitchControl label="Truncated" name="isTruncated" />

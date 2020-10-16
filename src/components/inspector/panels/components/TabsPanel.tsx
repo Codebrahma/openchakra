@@ -5,6 +5,8 @@ import { useForm } from '../../../../hooks/useForm'
 import ColorsControl from '../../controls/ColorsControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
+import VariantsControl from '../../controls/VariantsControl'
+import SizeControl from '../../controls/SizeControl'
 
 const TabsPanel = () => {
   const { setValueFromEvent } = useForm()
@@ -13,28 +15,20 @@ const TabsPanel = () => {
   const orientation = usePropsSelector('orientation')
   const size = usePropsSelector('size')
 
+  const variantPropValues = [
+    'line',
+    'enclosed',
+    'enclosed-colored',
+    'soft-rounded',
+    'solid-rounded',
+    'unstyled',
+  ]
+
   return (
     <>
       <SwitchControl label="Manual" name="isManual" />
       <SwitchControl label="Fitted" name="isFitted" />
-
-      <FormControl label="Variant" htmlFor="variant">
-        <Select
-          name="variant"
-          id="variant"
-          size="sm"
-          value={variant || ''}
-          onChange={setValueFromEvent}
-        >
-          <option>line</option>
-          <option>enclosed</option>
-          <option>enclosed-colored</option>
-          <option>soft-rounded</option>
-          <option>solid-rounded</option>
-          <option>unstyled</option>
-        </Select>
-      </FormControl>
-
+      <VariantsControl value={variant} options={variantPropValues} />
       <FormControl label="Orientation" htmlFor="orientation">
         <Select
           name="orientation"
@@ -47,20 +41,7 @@ const TabsPanel = () => {
           <option>vertical</option>
         </Select>
       </FormControl>
-
-      <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
-          value={size || ''}
-          onChange={setValueFromEvent}
-        >
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-        </Select>
-      </FormControl>
+      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
       <ColorsControl label="Color Scheme" name="colorScheme" />
     </>
   )

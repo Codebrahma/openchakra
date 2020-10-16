@@ -6,36 +6,29 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Select,
 } from '@chakra-ui/core'
 import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SliderControl from '../../controls/SliderControl'
+import ComboBox from '../../inputs/ComboBox'
 
 const AvatarGroupPanel = () => {
-  const { setValue, setValueFromEvent } = useForm()
+  const { setValue } = useForm()
 
   const size = usePropsSelector('size')
   const max = usePropsSelector('max')
 
+  const sizesArray = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']
+
   return (
     <>
       <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
+        <ComboBox
+          options={sizesArray}
           value={size || ''}
-          onChange={setValueFromEvent}
-        >
-          <option>2xs</option>
-          <option>xs</option>
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-          <option>xl</option>
-          <option>2xl</option>
-        </Select>
+          name="size"
+          editable={false}
+        />
       </FormControl>
 
       <SliderControl
