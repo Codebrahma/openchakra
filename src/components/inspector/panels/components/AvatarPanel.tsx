@@ -1,33 +1,24 @@
 import React, { memo } from 'react'
-import { Select } from '@chakra-ui/core'
 import FormControl from '../../controls/FormControl'
-import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
 import TextControl from '../../controls/TextControl'
+import ComboBox from '../../inputs/ComboBox'
 
 const AvatarPanel = () => {
-  const { setValueFromEvent } = useForm()
   const size = usePropsSelector('size')
+
+  const sizesArray = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
   return (
     <>
       <FormControl label="Size" htmlFor="size">
-        <Select
-          name="size"
-          id="size"
-          size="sm"
+        <ComboBox
+          options={sizesArray}
           value={size || ''}
-          onChange={setValueFromEvent}
-        >
-          <option>2xs</option>
-          <option>xs</option>
-          <option>sm</option>
-          <option>md</option>
-          <option>lg</option>
-          <option>xl</option>
-          <option>2xl</option>
-        </Select>
+          name="size"
+          editable={false}
+        />
       </FormControl>
 
       <SwitchControl label="Show border" name="showBorder" />

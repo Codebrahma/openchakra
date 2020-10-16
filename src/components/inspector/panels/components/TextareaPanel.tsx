@@ -1,37 +1,35 @@
-import React, { memo } from "react";
-import { Input, Select } from "@chakra-ui/core";
-import FormControl from "../../controls/FormControl";
-import { useForm } from "../../../../hooks/useForm";
-import SizeControl, { Size } from "../../controls/SizeControl";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
-
-const options = ["sm", "md", "lg"] as Size[];
+import React, { memo } from 'react'
+import { Input, Select } from '@chakra-ui/core'
+import FormControl from '../../controls/FormControl'
+import { useForm } from '../../../../hooks/useForm'
+import SizeControl from '../../controls/SizeControl'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const TextareaPanel = () => {
-  const { setValueFromEvent } = useForm();
+  const { setValueFromEvent } = useForm()
 
-  const placeholder = usePropsSelector("placeholder");
-  const size = usePropsSelector("size");
-  const resize = usePropsSelector("resize");
+  const placeholder = usePropsSelector('placeholder')
+  const size = usePropsSelector('size')
+  const resize = usePropsSelector('resize')
 
   return (
     <>
       <FormControl label="Placeholder">
         <Input
           size="sm"
-          value={placeholder || ""}
+          value={placeholder || ''}
           type="text"
           name="placeholder"
           onChange={setValueFromEvent}
         />
       </FormControl>
-      <SizeControl options={options} name="size" label="Size" value={size} />
+      <SizeControl options={['sm', 'md', 'lg']} value={size} />
       <FormControl label="Resize" htmlFor="resize">
         <Select
           name="resize"
           id="size"
           size="sm"
-          value={resize || ""}
+          value={resize || ''}
           onChange={setValueFromEvent}
         >
           <option>horizontal</option>
@@ -40,7 +38,7 @@ const TextareaPanel = () => {
         </Select>
       </FormControl>
     </>
-  );
-};
+  )
+}
 
-export default memo(TextareaPanel);
+export default memo(TextareaPanel)

@@ -1,47 +1,30 @@
-import React, { memo } from "react";
-import { Select } from "@chakra-ui/core";
-import FormControl from "../../controls/FormControl";
-import { useForm } from "../../../../hooks/useForm";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
+import React, { memo } from 'react'
+import FormControl from '../../controls/FormControl'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
+import ComboBox from '../../inputs/ComboBox'
+import VariantsControl from '../../controls/VariantsControl'
 
 const AlertPanel = () => {
-  const { setValueFromEvent } = useForm();
-  const variant = usePropsSelector("variant");
-  const status = usePropsSelector("status");
+  const variant = usePropsSelector('variant')
+  const status = usePropsSelector('status')
+
+  const statusProps = ['error', 'success', 'warning', 'info']
+  const variantProps = ['subtle', 'solid', 'left-accent', 'top-accent']
 
   return (
     <>
       <FormControl label="Status" htmlFor="status">
-        <Select
+        <ComboBox
+          options={statusProps}
+          value={status || 'info'}
           name="status"
-          id="status"
-          size="sm"
-          value={status || "info"}
-          onChange={setValueFromEvent}
-        >
-          <option>error</option>
-          <option>success</option>
-          <option>warning</option>
-          <option>info</option>
-        </Select>
+          editable={false}
+        />
       </FormControl>
 
-      <FormControl label="Variant" htmlFor="variant">
-        <Select
-          name="variant"
-          id="variant"
-          size="sm"
-          value={variant || "subtle"}
-          onChange={setValueFromEvent}
-        >
-          <option>subtle</option>
-          <option>solid</option>
-          <option>left-accent</option>
-          <option>top-accent</option>
-        </Select>
-      </FormControl>
+      <VariantsControl options={variantProps} value={variant || 'subtle'} />
     </>
-  );
-};
+  )
+}
 
-export default memo(AlertPanel);
+export default memo(AlertPanel)

@@ -10,14 +10,23 @@ const IconButtonPanel = () => {
   const size = usePropsSelector('size')
   const variant = usePropsSelector('variant')
 
+  const variantPropValues = [
+    'solid',
+    'outline',
+    'ghost',
+    'link',
+    'unstyled',
+    'subtle',
+  ]
+
   return (
     <>
       <IconControl name="icon" label="Icon" />
-      <SizeControl name="size" label="Size" value={size} />
+      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
       <ColorsControl label="Color" name="Color Scheme" />
       <SwitchControl label="Loading" name="isLoading" />
       <SwitchControl label="Round" name="isRound" />
-      <VariantsControl label="Variant" name="variant" value={variant} />
+      <VariantsControl value={variant} options={variantPropValues} />
     </>
   )
 }

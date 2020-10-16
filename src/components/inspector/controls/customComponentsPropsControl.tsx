@@ -112,17 +112,14 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
         )
           return (
             <SizeControl
-              name={propName}
-              label={propName}
               value={selectedProp?.value}
               options={['xs', 'sm', 'md', 'lg', 'xl', '2xl']}
             />
           )
         return (
           <SizeControl
-            name={propName}
-            label={propName}
             value={selectedProp?.value}
+            options={['xs', 'sm', 'md', 'lg']}
           />
         )
       }

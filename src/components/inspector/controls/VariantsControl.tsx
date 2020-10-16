@@ -1,35 +1,25 @@
-import React, { ReactNode } from "react";
-import { Select } from "@chakra-ui/core";
-import FormControl from "./FormControl";
-import { useForm } from "../../../hooks/useForm";
+import React from 'react'
+import ComboBox from '../inputs/ComboBox'
+import FormControl from './FormControl'
 
 type VariantsControlPropsType = {
-  name: string;
-  label: string | ReactNode;
-  value: string;
-};
+  value: string
+  options: string[]
+}
 
 const VariantsControl = (props: VariantsControlPropsType) => {
-  const { setValueFromEvent } = useForm();
+  const { value, options } = props
 
   return (
-    <FormControl htmlFor={props.name} label={props.label}>
-      <Select
-        id={props.name}
-        onChange={setValueFromEvent}
-        name={props.name}
-        size="sm"
-        value={props.value || ""}
-      >
-        <option>solid</option>
-        <option>outline</option>
-        <option>ghost</option>
-        <option>link</option>
-        <option>unstyled</option>
-        <option>subtle</option>
-      </Select>
+    <FormControl htmlFor="variant" label="Variant">
+      <ComboBox
+        options={options}
+        value={value || 'subtle'}
+        name="variant"
+        editable={false}
+      />
     </FormControl>
-  );
-};
+  )
+}
 
-export default VariantsControl;
+export default VariantsControl
