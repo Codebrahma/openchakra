@@ -3,11 +3,11 @@ import FormControl from '../../controls/FormControl'
 import ChildrenControl from '../../controls/ChildrenControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
-import SizeControl from '../../controls/SizeControl'
+import SizeControl, { Size } from '../../controls/SizeControl'
 
 const HeadingPanel = () => {
   const size = usePropsSelector('size')
-  const sizePropValues = ['xs', 'sm', 'md', 'lg', 'xl', '2xl']
+  const sizePropValues: Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
   return (
     <>

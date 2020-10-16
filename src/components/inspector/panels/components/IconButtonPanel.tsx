@@ -9,7 +9,6 @@ import IconControl from '../../controls/IconControl'
 const IconButtonPanel = () => {
   const size = usePropsSelector('size')
   const variant = usePropsSelector('variant')
-  const sizePropValues = ['sm', 'md', 'lg']
 
   const variantPropValues = [
     'solid',
@@ -23,7 +22,7 @@ const IconButtonPanel = () => {
   return (
     <>
       <IconControl name="icon" label="Icon" />
-      <SizeControl options={sizePropValues} value={size || ''} />
+      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
       <ColorsControl label="Color" name="Color Scheme" />
       <SwitchControl label="Loading" name="isLoading" />
       <SwitchControl label="Round" name="isRound" />

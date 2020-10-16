@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 
 import ColorsControl from '../../controls/ColorsControl'
-import SizeControl from '../../controls/SizeControl'
+import SizeControl, { Size } from '../../controls/SizeControl'
 import ChildrenControl from '../../controls/ChildrenControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import IconControl from '../../controls/IconControl'
@@ -12,7 +12,7 @@ const ButtonPanel = () => {
   const variant = usePropsSelector('variant')
 
   const variantPropValues = ['outline', 'ghost', 'unstyled', 'link', 'solid']
-  const sizePropValues = ['xs', 'sm', 'md', 'lg']
+  const sizePropValues: Size[] = ['xs', 'sm', 'md', 'lg']
 
   return (
     <>

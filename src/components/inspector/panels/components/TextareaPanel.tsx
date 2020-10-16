@@ -5,8 +5,6 @@ import { useForm } from '../../../../hooks/useForm'
 import SizeControl from '../../controls/SizeControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 
-const options = ['sm', 'md', 'lg']
-
 const TextareaPanel = () => {
   const { setValueFromEvent } = useForm()
 
@@ -25,7 +23,7 @@ const TextareaPanel = () => {
           onChange={setValueFromEvent}
         />
       </FormControl>
-      <SizeControl options={options} value={size} />
+      <SizeControl options={['sm', 'md', 'lg']} value={size} />
       <FormControl label="Resize" htmlFor="resize">
         <Select
           name="resize"

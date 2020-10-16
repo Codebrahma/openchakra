@@ -2,11 +2,11 @@ import React, { memo } from 'react'
 import ColorsControl from '../../controls/ColorsControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import TextControl from '../../controls/TextControl'
-import SizeControl from '../../controls/SizeControl'
+import SizeControl, { Size } from '../../controls/SizeControl'
 
 const SpinnerPanel = () => {
   const size = usePropsSelector('size')
-  const sizePropValues = ['xs', 'sm', 'md', 'lg', 'xl']
+  const sizePropValues: Size[] = ['xs', 'sm', 'md', 'lg', 'xl']
 
   return (
     <>
