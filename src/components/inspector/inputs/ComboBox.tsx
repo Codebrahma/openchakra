@@ -10,6 +10,7 @@ type FormControlPropType = {
   name: string
   placeholder?: string
   renderOptions?: (options: string) => ReactNode
+  enableAutoComplete?: boolean
 }
 
 const ComboBoxComponent: React.FC<FormControlPropType> = ({
@@ -17,6 +18,7 @@ const ComboBoxComponent: React.FC<FormControlPropType> = ({
   value,
   name,
   placeholder,
+  enableAutoComplete,
   renderOptions,
 }) => {
   const { setValue } = useForm()
@@ -31,6 +33,9 @@ const ComboBoxComponent: React.FC<FormControlPropType> = ({
       onSelect={option => setValue(name, option)}
       onOptionsChange={option => setValue(name, option)}
       style={{ height: '2rem', width: '100%', fontSize: '14px' }}
+      onBlur={e => setValue(name, e?.target.value)}
+      enableAutocomplete={enableAutoComplete}
+      inputStyles={{ border: '1px solid #E2E8F0' }}
     />
   )
 }

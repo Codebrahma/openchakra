@@ -22,8 +22,6 @@ import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
-import '@reach/combobox/styles.css'
-
 const TextPanel = () => {
   const { setValue } = useForm()
   const theme = useCustomTheme()

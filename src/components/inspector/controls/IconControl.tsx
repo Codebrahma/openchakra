@@ -20,6 +20,7 @@ const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
         options={iconsArray}
         value={value}
         name={name}
+        enableAutoComplete={true}
         renderOptions={option => {
           const iconName = option
           if (iconName && iconName !== 'createIcon') {
