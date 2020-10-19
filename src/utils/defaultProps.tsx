@@ -171,6 +171,10 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   Checkbox: {
     children: 'Label checkbox',
+    isChecked: false,
+  },
+  Switch: {
+    isChecked: false,
   },
   AlertIcon: {
     height: 8,

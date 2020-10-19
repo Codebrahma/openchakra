@@ -11,7 +11,7 @@ const CheckboxPanel = () => {
   return (
     <>
       <ChildrenControl />
-      <SwitchControl label="Checked" name="defaultIsChecked" />
+      <SwitchControl label="Checked" name="isChecked" />
       <ColorsControl label="Color Scheme" name="colorScheme" />
       <SizeControl value={size} options={['sm', 'md', 'lg']} />
     </>
