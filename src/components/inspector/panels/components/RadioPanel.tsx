@@ -3,12 +3,14 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SizeControl from '../../controls/SizeControl'
 import ColorsControl from '../../controls/ColorsControl'
 import SwitchControl from '../../controls/SwitchControl'
+import ChildrenControl from '../../controls/ChildrenControl'
 
 const RadioPanel = () => {
   const size = usePropsSelector('size')
 
   return (
     <>
+      <ChildrenControl />
       <SizeControl options={['sm', 'md', 'lg']} value={size} />
       <ColorsControl name="colorScheme" label="Color Scheme" />
       <SwitchControl label="Checked" name="isChecked" />
