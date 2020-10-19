@@ -12,7 +12,7 @@ type IconControlProps = {
 
 const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
   const value = usePropsSelector(name)
-  const iconsArray = Object.keys(icons)
+  const iconsArray = Object.keys(icons).filter(icon => icon !== 'createIcon')
 
   return (
     <FormControl label={label} htmlFor={name}>
@@ -23,18 +23,16 @@ const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
         enableAutoComplete={true}
         renderOptions={option => {
           const iconName = option
-          if (iconName && iconName !== 'createIcon') {
-            // @ts-ignore
-            const Icon = React.createElement(icons[iconName])
-            return (
-              <Flex key={option}>
-                <Box mr={1}>{Icon}</Box>
-                <Text fontSize="12px" fontWeight="bold">
-                  {iconName}
-                </Text>
-              </Flex>
-            )
-          } else return null
+          // @ts-ignore
+          const Icon = React.createElement(icons[iconName])
+          return (
+            <Flex key={option}>
+              <Box mr={1}>{Icon}</Box>
+              <Text fontSize="12px" fontWeight="bold">
+                {iconName}
+              </Text>
+            </Flex>
+          )
         }}
       />
     </FormControl>
