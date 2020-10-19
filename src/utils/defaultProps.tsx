@@ -172,6 +172,9 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   Checkbox: {
     children: 'Label checkbox',
   },
+  AlertIcon: {
+    height: 8,
+  },
   AlertTitle: {
     children: 'Alert title',
     mr: 1,
