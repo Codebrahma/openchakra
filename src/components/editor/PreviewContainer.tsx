@@ -35,7 +35,6 @@ const PreviewContainer: React.FC<{
     enableVisualHelper,
   )
 
-  console.log(componentProps)
   //Here useDropComponent is used only for re-ordering
   const { drop } = useDropComponent(
     component.id,
