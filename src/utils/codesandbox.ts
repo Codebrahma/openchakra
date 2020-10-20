@@ -59,7 +59,7 @@ ReactDOM.render(<App />, rootElement);
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@chakra-ui/core": "next",
+    "@chakra-ui/core": "^1.0.0-rc.5",
     "@chakra-ui/icons": "^1.0.0-rc.3",
     "react": "16.12.0",
     "react-dom": "16.12.0",

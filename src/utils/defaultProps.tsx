@@ -171,6 +171,17 @@ export const DEFAULT_PROPS: PreviewDefaultProps = {
   },
   Checkbox: {
     children: 'Label checkbox',
+    isChecked: false,
+  },
+  Switch: {
+    isChecked: false,
+  },
+  Progress: {
+    value: 50,
+  },
+  CircularProgress: {
+    value: 50,
+    size: '48px',
   },
   AlertIcon: {
     height: 8,
@@ -237,9 +248,6 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   },
   Grid: {
     display: 'grid',
-  },
-  CircularProgress: {
-    size: '48px',
   },
   Badge: {
     variant: 'subtle',

@@ -12,7 +12,7 @@ const ProgressPanel = () => {
     <>
       <SliderControl label="Value" htmlFor="value" />
       <SwitchControl label="Has stripe" name="hasStripe" />
-      <SwitchControl label="Is animated" name="isIndeterminate" />
+      <SwitchControl label="Loading" name="isIndeterminate" />
       <ColorsControl label="Color Scheme" name="colorScheme" />
       <SizeControl options={['sm', 'md', 'lg']} value={size} />
     </>
