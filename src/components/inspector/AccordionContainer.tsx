@@ -14,7 +14,7 @@ const AccordionContainer: React.FC<{
 } & AccordionItemProps> = ({ title, children }) => {
   return (
     <AccordionItem bg="#F0F4F8">
-      <AccordionButton zIndex={2} px={3} py={2} fontSize="sm">
+      <AccordionButton zIndex={2} px={3} py={2} fontSize="sm" tabIndex={-1}>
         <Box flex="1" textAlign="left">
           {title}
         </Box>
