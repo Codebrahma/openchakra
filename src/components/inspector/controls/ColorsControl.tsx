@@ -18,6 +18,7 @@ import {
   TabPanels,
   TabPanel,
   Input,
+  Tooltip,
 } from '@chakra-ui/core'
 import FormControl from './FormControl'
 import { useForm } from '../../../hooks/useForm'
@@ -60,30 +61,32 @@ const ColorsControl = (props: ColorControlPropsType) => {
           const enableHues =
             props.enableHues && typeof themeColors[colorName] !== 'string'
           return (
-            <Box
-              border="1px solid rgba(0,0,0,0.1)"
-              key={colorName}
-              _hover={{ shadow: 'lg' }}
-              cursor="pointer"
-              bg={
-                enableHues
-                  ? themeColors[colorName][hue]
-                  : typeof themeColors[colorName] !== 'string'
-                  ? themeColors[colorName][hue]
-                  : themeColors[colorName]
-              }
-              onClick={() =>
-                setValue(
-                  props.name,
-                  enableHues ? `${colorName}.${hue}` : colorName,
-                )
-              }
-              m="2px"
-              mt={2}
-              rounded="full"
-              height="30px"
-              width="30px"
-            />
+            <Tooltip label={colorName} zIndex={9999} hasArrow borderRadius="md">
+              <Box
+                border="1px solid rgba(0,0,0,0.1)"
+                key={colorName}
+                _hover={{ shadow: 'lg' }}
+                cursor="pointer"
+                bg={
+                  enableHues
+                    ? themeColors[colorName][hue]
+                    : typeof themeColors[colorName] !== 'string'
+                    ? themeColors[colorName][hue]
+                    : themeColors[colorName]
+                }
+                onClick={() =>
+                  setValue(
+                    props.name,
+                    enableHues ? `${colorName}.${hue}` : colorName,
+                  )
+                }
+                m="2px"
+                mt={2}
+                rounded="full"
+                height="30px"
+                width="30px"
+              />
+            </Tooltip>
           )
         })}
       </Grid>
