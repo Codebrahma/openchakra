@@ -1,4 +1,5 @@
 import React, { memo, FunctionComponent } from 'react'
+import uniq from 'lodash/uniq'
 import {
   Box,
   Button,
@@ -12,6 +13,7 @@ import {
   MenuItemProps,
   MenuButtonProps,
   ButtonProps,
+  useToast,
 } from '@chakra-ui/core'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import useDispatch from '../hooks/useDispatch'
@@ -23,6 +25,8 @@ import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
 import { MdDeleteForever } from 'react-icons/md'
 import { getCustomTheme } from '../core/selectors/app'
+import loadFonts from '../utils/loadFonts'
+import { titleCase } from './inspector/panels/DownloadFontPanel'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -57,6 +61,34 @@ const ExportMenuItem = () => {
 
 const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
+  const toast = useToast()
+  const fontsToBeLoaded: Array<string> = []
+
+  const onActive = () => {
+    const uniqueFonts = uniq(fontsToBeLoaded)
+    uniqueFonts.forEach((font: string) =>
+      dispatch.app.addFonts(titleCase(font)),
+    )
+  }
+
+  const onInActive = () => {
+    toast({
+      title: 'Error while loading fonts',
+      status: 'error',
+      duration: 1000,
+      isClosable: true,
+      position: 'top',
+    })
+  }
+
+  const loadFontsOnImport = (theme: any) => {
+    if (theme.fonts)
+      Object.values(theme.fonts).forEach((font: any) =>
+        fontsToBeLoaded.push(font.toString()),
+      )
+    if (fontsToBeLoaded.length > 0)
+      loadFonts(uniq(fontsToBeLoaded), onActive, onInActive)
+  }
 
   const clearWorkSpaceHandler = () => {
     const confirmClearing = window.confirm(
@@ -65,6 +97,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
     if (confirmClearing) {
       dispatch.components.resetAll()
       dispatch.app.resetCustomTheme()
+      dispatch.app.removeAllFonts()
     }
   }
 
@@ -86,6 +119,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
               const workspace = await loadFromJSON()
               dispatch.components.resetAll(workspace.components)
               dispatch.app.setCustomTheme(workspace.theme)
+              workspace.theme && loadFontsOnImport(workspace.theme)
             }}
           >
             <Box mr={2} as={FiUpload} />

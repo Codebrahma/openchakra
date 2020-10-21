@@ -86,6 +86,12 @@ const app = createModel({
       }
       return state
     },
+    removeAllFonts: (state: AppState) => {
+      return {
+        ...state,
+        loadedFonts: null,
+      }
+    },
     setInnerHTMLText: (state: AppState, value: string) => {
       return {
         ...state,
