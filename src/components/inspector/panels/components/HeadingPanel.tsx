@@ -1,5 +1,4 @@
 import React, { memo } from 'react'
-import FormControl from '../../controls/FormControl'
 import ChildrenControl from '../../controls/ChildrenControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
@@ -12,10 +11,7 @@ const HeadingPanel = () => {
   return (
     <>
       <ChildrenControl />
-      <FormControl label="Size" htmlFor="size">
-        <SizeControl options={sizePropValues} value={size} />
-      </FormControl>
-
+      <SizeControl options={sizePropValues} value={size} />
       <SwitchControl label="Truncated" name="isTruncated" />
     </>
   )
