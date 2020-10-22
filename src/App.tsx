@@ -27,7 +27,7 @@ const App = () => {
   const showCode = useSelector(getShowCode)
 
   const loadedFonts = useSelector(getLoadedFonts)
-  loadedFonts && loadFonts(loadedFonts)
+  loadedFonts.length > 0 && loadFonts(loadedFonts)
 
   useShortCutKeys()
 

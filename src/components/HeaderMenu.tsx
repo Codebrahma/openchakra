@@ -1,5 +1,4 @@
 import React, { memo, FunctionComponent } from 'react'
-import uniq from 'lodash/uniq'
 import {
   Box,
   Button,
@@ -24,9 +23,8 @@ import { FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
 import { MdDeleteForever } from 'react-icons/md'
-import { getCustomTheme } from '../core/selectors/app'
+import { getCustomTheme, getLoadedFonts } from '../core/selectors/app'
 import loadFonts from '../utils/loadFonts'
-import { titleCase } from './inspector/panels/DownloadFontPanel'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -50,9 +48,14 @@ const CustomMenuButton: React.FC<
 const ExportMenuItem = () => {
   const componentsState = useSelector(getState)
   const theme = useSelector(getCustomTheme)
+  const googleFonts = useSelector(getLoadedFonts)
 
   return (
-    <MenuItem onClick={() => saveAsJSON(componentsState, theme)}>
+    <MenuItem
+      onClick={() =>
+        saveAsJSON({ components: componentsState, theme, googleFonts })
+      }
+    >
       <Box mr={2} as={FaSave} />
       Save workspace
     </MenuItem>
@@ -62,32 +65,23 @@ const ExportMenuItem = () => {
 const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
   const toast = useToast()
-  const fontsToBeLoaded: Array<string> = []
 
-  const onActive = () => {
-    const uniqueFonts = uniq(fontsToBeLoaded)
-    uniqueFonts.forEach((font: string) =>
-      dispatch.app.addFonts(titleCase(font)),
-    )
-  }
+  const loadFontsOnImport = (fonts: string[]) => {
+    const onActive = () => {
+      dispatch.app.setFonts(fonts)
+    }
+    const onInActive = () => {
+      toast({
+        title: 'Error while loading fonts',
+        status: 'error',
+        duration: 1000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
 
-  const onInActive = () => {
-    toast({
-      title: 'Error while loading fonts',
-      status: 'error',
-      duration: 1000,
-      isClosable: true,
-      position: 'top',
-    })
-  }
-
-  const loadFontsOnImport = (theme: any) => {
-    if (theme.fonts)
-      Object.values(theme.fonts).forEach((font: any) =>
-        fontsToBeLoaded.push(font.toString()),
-      )
-    if (fontsToBeLoaded.length > 0)
-      loadFonts(uniq(fontsToBeLoaded), onActive, onInActive)
+    if (fonts.length > 0) loadFonts(fonts, onActive, onInActive)
+    else dispatch.app.setFonts([])
   }
 
   const clearWorkSpaceHandler = () => {
@@ -119,7 +113,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
               const workspace = await loadFromJSON()
               dispatch.components.resetAll(workspace.components)
               dispatch.app.setCustomTheme(workspace.theme)
-              workspace.theme && loadFontsOnImport(workspace.theme)
+              loadFontsOnImport(workspace.fonts)
             }}
           >
             <Box mr={2} as={FiUpload} />
