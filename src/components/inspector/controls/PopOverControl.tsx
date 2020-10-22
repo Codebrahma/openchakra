@@ -86,13 +86,8 @@ const PopOverControl: React.FC<FormControlPropType> = ({
               </Tooltip>
             </FormLabel>
           </PopoverTrigger>
-          <PopoverContent
-            zIndex={100}
-            width="150px"
-            backgroundColor="rgba(26, 32, 44,0.85)"
-          >
+          <PopoverContent zIndex={100} width="150px" boxShadow="lg">
             <PopoverHeader
-              color="yellow.100"
               textDecoration="underline"
               fontWeight="bold"
               fontSize="14px"
@@ -120,6 +115,8 @@ const PopOverControl: React.FC<FormControlPropType> = ({
                 p="0 10px"
                 fontSize="14px"
                 backgroundColor="white"
+                color="primary.500"
+                border="1px solid #5D55FA"
                 onClick={() => {
                   savePropClickHandler()
                   if (onClose) onClose()
