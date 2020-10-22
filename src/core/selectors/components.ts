@@ -284,3 +284,23 @@ export const checkIsChildrenOfWrapperComponent = (id: string) => (
     return isChildrenPropPresent
   } else return false
 }
+
+export const checkIsContainerComponent = (id: string) => (state: RootState) => {
+  const isChildOfCustomComponent = isChildrenOfCustomComponent(id)(state)
+  const componentsId =
+    state.components.present.pages[state.components.present.selectedPage]
+      .componentsId
+
+  const components = isChildOfCustomComponent
+    ? state.components.present.customComponents
+    : state.components.present.componentsById[componentsId]
+
+  const component = components[id]
+
+  if (
+    state.components.present.customComponents[component.type] !== undefined &&
+    component.children.length > 0
+  )
+    return true
+  else return false
+}

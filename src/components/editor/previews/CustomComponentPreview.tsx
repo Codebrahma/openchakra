@@ -3,7 +3,11 @@ import { Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import ComponentPreview from '../ComponentPreview'
 import { useInteractive } from '../../../hooks/useInteractive'
-import { getChildrenBy, getPropsBy } from '../../../core/selectors/components'
+import {
+  getChildrenBy,
+  getPropsBy,
+  checkIsContainerComponent,
+} from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 import { generateId } from '../../../utils/generateId'
 import { useDropComponent } from '../../../hooks/useDropComponent'
@@ -65,6 +69,10 @@ const CustomComponentPreview: React.FC<{
     customProps,
   )
 
+  const isContainerComponent = useSelector(
+    checkIsContainerComponent(component.id),
+  )
+
   return (
     <Box
       {...interactionProps}
@@ -75,10 +83,14 @@ const CustomComponentPreview: React.FC<{
         <ComponentPreview
           key={key}
           componentName={key}
-          customProps={propsKeyValue}
+          customProps={
+            isContainerComponent
+              ? { ...propsKeyValue, ...customProps }
+              : propsKeyValue
+          }
           customRootParentId={component.id}
           rootComponentChildren={
-            component.children.length > 0 ? component.children : null
+            isContainerComponent ? component.children : null
           }
         />
       ))}
