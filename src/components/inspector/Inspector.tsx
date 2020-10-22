@@ -26,6 +26,7 @@ import {
   getCustomComponents,
   getCustomComponentsProps,
   isSelectedRangeContainsTwoSpan,
+  checkIsContainerComponent,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/codeGeneration/code'
@@ -108,9 +109,20 @@ const Inspector = () => {
     }),
   )
   const isSelectionEnabled = useSelector(getIsSelectionEnabled)
+  const isContainerComponent = useSelector(checkIsContainerComponent(id))
 
-  const enableSaveIcon =
-    isCustomComponentsPage && !isCustomComponentChild && !isCustomComponent
+  const checkOnCustomComponent = () => {
+    if (isCustomComponent && isContainerComponent) return true
+    else if (!isCustomComponent) return true
+    return false
+  }
+
+  const enableSaveIcon = () => {
+    if (isCustomComponentsPage && !isCustomComponentChild) {
+      if (checkOnCustomComponent()) return true
+    }
+    return false
+  }
 
   const isRoot = id === 'root'
   const parentIsRoot = component.parent === 'root'
@@ -168,7 +180,7 @@ const Inspector = () => {
             justify="flex-end"
           >
             <CodeActionButton />
-            {enableSaveIcon ? (
+            {enableSaveIcon() ? (
               <ActionButton
                 label="Save component"
                 onClick={() => {

@@ -285,21 +285,19 @@ export const checkIsChildrenOfWrapperComponent = (id: string) => (
   } else return false
 }
 
+// If the custom component has the children prop, then it is a container component.
 export const checkIsContainerComponent = (id: string) => (state: RootState) => {
-  const isChildOfCustomComponent = isChildrenOfCustomComponent(id)(state)
-  const componentsId =
-    state.components.present.pages[state.components.present.selectedPage]
-      .componentsId
+  const components = getCurrentSelectedComponents(id)(state)
+  const componentProps = getPropsBy(id)(state)
 
-  const components = isChildOfCustomComponent
-    ? state.components.present.customComponents
-    : state.components.present.componentsById[componentsId]
+  const isChildrenPropPresent =
+    componentProps.findIndex(prop => prop.name === 'children') !== -1
 
   const component = components[id]
 
   if (
     state.components.present.customComponents[component.type] !== undefined &&
-    component.children.length > 0
+    isChildrenPropPresent
   )
     return true
   else return false
