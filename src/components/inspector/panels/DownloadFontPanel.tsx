@@ -16,14 +16,14 @@ const titleCase = (str: string) => {
 }
 
 const DownloadFontPanel = () => {
-  const [font, setFonts] = useState('')
+  const [font, setFont] = useState('')
   const [message, setMessage] = useState('')
   const [isError, toggleIsError] = useState(false)
   const [isLoading, setLoading] = useState(false)
   const loadedFonts = useSelector(getLoadedFonts)
   const dispatch = useDispatch()
 
-  const fontsChangeHandler = (e: any) => setFonts(e.target.value)
+  const fontsChangeHandler = (e: any) => setFont(e.target.value)
   const messageChangeHandler = (message: string) => setMessage(message)
 
   const onActive = () => {
@@ -31,6 +31,7 @@ const DownloadFontPanel = () => {
     messageChangeHandler('Loaded successfully')
     toggleIsError(false)
     dispatch.app.addFonts(titleCase(font))
+    setFont('')
   }
   const onInActive = () => {
     setLoading(false)
