@@ -17,6 +17,9 @@ import SwitchControl from './SwitchControl'
 import VariantPanel from '../panels/styles/VariantPanel'
 import SliderControl from './SliderControl'
 import { findControl } from '../../../utils/recursive'
+import getRequiredThemeOptions from '../../../utils/getRequiredThemeOptions'
+import useCustomTheme from '../../../hooks/useCustomTheme'
+import ComboBox from '../inputs/ComboBox'
 
 export type optionsType = {
   [name: string]: Array<string>
@@ -30,6 +33,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 }) => {
   const selectedComponent = useSelector(getSelectedComponent)
   const { setValueFromEvent } = useForm()
+  const theme = useCustomTheme()
 
   //Why both the instance of custom component and also the original custom component.
   //Because derivedFromComponentType only points to original custom component.
@@ -60,22 +64,6 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
       ? customComponents[controlProp?.componentId || 'root'].type
       : 'root'
 
-    const defaultControl = (
-      <FormControl label={propName} htmlFor={propName}>
-        {!isKeyForComponent ? (
-          <Input
-            value={selectedProp?.value}
-            size="sm"
-            name={propName}
-            onChange={setValueFromEvent}
-          />
-        ) : (
-          <Text fontSize="10px" color="blackAlpha.700">
-            Component as prop
-          </Text>
-        )}
-      </FormControl>
-    )
     switch (controlProp?.name) {
       case 'color':
         if (
@@ -97,7 +85,17 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
       case 'name': {
         if (controlPropComponentType === 'Icon')
           return <IconControl label={propName} name={propName} />
-        else return defaultControl
+        else
+          return (
+            <FormControl label={propName} htmlFor={propName}>
+              <Input
+                name={propName}
+                value={selectedProp?.value}
+                size="sm"
+                onChange={setValueFromEvent}
+              />
+            </FormControl>
+          )
       }
       case 'icon':
         return <IconControl label={propName} name={propName} />
@@ -186,8 +184,27 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           />
         )
 
-      default:
-        return defaultControl
+      default: {
+        const options = getRequiredThemeOptions(controlProp?.name, theme)
+
+        if (!isKeyForComponent) {
+          return (
+            <FormControl label={propName} htmlFor={propName}>
+              <ComboBox
+                value={selectedProp?.value}
+                name={propName}
+                options={options}
+              />
+            </FormControl>
+          )
+        } else {
+          return (
+            <Text fontSize="10px" color="blackAlpha.700">
+              Component as prop
+            </Text>
+          )
+        }
+      }
     }
   } else return null
 }
