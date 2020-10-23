@@ -147,7 +147,7 @@ export const fetchAndUpdateExposedProps = (
             name: prop.derivedFromPropName || '',
             value:
               prop.name === 'children' &&
-              (component.type === 'Box' || component.type === 'Flex')
+              (comp.type === 'Box' || comp.type === 'Flex')
                 ? 'RootCbComposer'
                 : prop.value,
             componentId: rootParentId,
