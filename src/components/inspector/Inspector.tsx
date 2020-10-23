@@ -111,15 +111,16 @@ const Inspector = () => {
   const isSelectionEnabled = useSelector(getIsSelectionEnabled)
   const isContainerComponent = useSelector(checkIsContainerComponent(id))
 
-  const checkOnCustomComponent = () => {
-    if (isCustomComponent && isContainerComponent) return true
-    else if (!isCustomComponent) return true
-    return false
+  // check if its a normal component or a container component
+  const isNormalOrContainer = () => {
+    if (!isCustomComponent) return true
+    else if (isContainerComponent) return true
+    else return false
   }
 
   const enableSaveIcon = () => {
     if (isCustomComponentsPage && !isCustomComponentChild) {
-      if (checkOnCustomComponent()) return true
+      if (isNormalOrContainer()) return true
     }
     return false
   }
