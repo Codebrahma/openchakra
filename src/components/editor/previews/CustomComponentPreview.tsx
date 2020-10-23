@@ -22,23 +22,25 @@ const CustomComponentPreview: React.FC<{
     boundingPosition,
   } = useInteractive(component, true, false, true)
 
-  const { drop, isOver } = useDropComponent(
-    component.id,
-    undefined,
-    undefined,
-    boundingPosition,
-  )
-
   const { props: componentProps } = useInteractive(component, true)
 
-  const isWrapperComponent =
+  const isContainerComponent =
     componentProps.findIndex(
       prop => prop.componentId === component.id && prop.name === 'children',
     ) !== -1
 
   const boxProps = []
 
-  if (isOver && isWrapperComponent) {
+  // If it is a container component, it should be droppable
+  // or else it should not be droppable
+  const { drop, isOver } = useDropComponent(
+    component.id,
+    undefined,
+    isContainerComponent ? true : false,
+    boundingPosition,
+  )
+
+  if (isOver && isContainerComponent) {
     boxProps.push({
       id: generateId(),
       name: 'bg',
@@ -74,11 +76,7 @@ const CustomComponentPreview: React.FC<{
   )
 
   return (
-    <Box
-      {...interactionProps}
-      ref={isWrapperComponent ? drop(ref) : ref}
-      width={width}
-    >
+    <Box {...interactionProps} ref={drop(ref)} width={width}>
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}
