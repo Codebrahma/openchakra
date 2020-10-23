@@ -66,23 +66,19 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
   const toast = useToast()
 
-  const loadFontsOnImport = (fonts: string[]) => {
-    const onActive = () => {
-      dispatch.app.setFonts(fonts)
-    }
-    const onInActive = () => {
-      toast({
-        title: 'Error while loading fonts',
-        status: 'error',
-        duration: 1000,
-        isClosable: true,
-        position: 'top',
-      })
-    }
+  const onActive = (fonts: string[]) => dispatch.app.setFonts(fonts)
 
-    if (fonts.length > 0) loadFonts(fonts, onActive, onInActive)
-    else dispatch.app.setFonts([])
-  }
+  const onInActive = () =>
+    toast({
+      title: 'Error while loading fonts',
+      status: 'error',
+      duration: 1000,
+      isClosable: true,
+      position: 'top',
+    })
+
+  const loadFontsOnImport = (fonts: string[]) =>
+    loadFonts(fonts, () => onActive(fonts), onInActive)
 
   const clearWorkSpaceHandler = () => {
     const confirmClearing = window.confirm(
@@ -111,9 +107,11 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
           <MenuItem
             onClick={async () => {
               const workspace = await loadFromJSON()
+              //reset the existing fonts
+              dispatch.app.setFonts([])
               dispatch.components.resetAll(workspace.components)
               dispatch.app.setCustomTheme(workspace.theme)
-              loadFontsOnImport(workspace.fonts)
+              workspace.fonts.length > 0 && loadFontsOnImport(workspace.fonts)
             }}
           >
             <Box mr={2} as={FiUpload} />
