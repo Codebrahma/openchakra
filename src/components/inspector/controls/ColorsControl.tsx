@@ -61,10 +61,15 @@ const ColorsControl = (props: ColorControlPropsType) => {
           const enableHues =
             props.enableHues && typeof themeColors[colorName] !== 'string'
           return (
-            <Tooltip label={colorName} zIndex={9999} hasArrow borderRadius="md">
+            <Tooltip
+              label={colorName}
+              zIndex={9999}
+              hasArrow
+              borderRadius="md"
+              key={colorName}
+            >
               <Box
                 border="1px solid rgba(0,0,0,0.1)"
-                key={colorName}
                 _hover={{ shadow: 'lg' }}
                 cursor="pointer"
                 bg={
