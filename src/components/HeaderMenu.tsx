@@ -111,7 +111,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
               dispatch.app.setFonts([])
               dispatch.components.resetAll(workspace.components)
               dispatch.app.setCustomTheme(workspace.theme)
-              workspace.fonts.length > 0 && loadFontsOnImport(workspace.fonts)
+              workspace.googleFonts && loadFontsOnImport(workspace.googleFonts)
             }}
           >
             <Box mr={2} as={FiUpload} />

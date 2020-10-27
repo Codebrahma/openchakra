@@ -23,11 +23,11 @@ export async function loadFromJSON() {
     return {
       components: workspace.components,
       theme: workspace.theme,
-      fonts: workspace.googleFonts,
+      googleFonts: workspace.googleFonts,
     }
   } catch (error) {}
 
-  return { components: INITIAL_COMPONENTS, theme: {}, fonts: [] }
+  return { components: INITIAL_COMPONENTS, theme: {}, googleFonts: [] }
 }
 
 export async function saveAsJSON(payload: {
