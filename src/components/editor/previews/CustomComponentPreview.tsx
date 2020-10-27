@@ -24,11 +24,9 @@ const CustomComponentPreview: React.FC<{
 
   const { props: componentProps } = useInteractive(component, true)
 
-  const isContainerComponent =
-    componentProps.findIndex(
-      prop => prop.componentId === component.id && prop.name === 'children',
-    ) !== -1
-
+  const isContainerComponent = useSelector(
+    checkIsContainerComponent(component.id),
+  )
   const boxProps = []
 
   // If it is a container component, it should be droppable
@@ -69,10 +67,6 @@ const CustomComponentPreview: React.FC<{
   const interactionProps = generatePropsKeyValue(
     [...visualInteractionProps, ...boxProps],
     customProps,
-  )
-
-  const isContainerComponent = useSelector(
-    checkIsContainerComponent(component.id),
   )
 
   return (
