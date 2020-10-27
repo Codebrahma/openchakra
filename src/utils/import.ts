@@ -20,14 +20,23 @@ export async function loadFromJSON() {
 
   try {
     const workspace = JSON.parse(contents)
-    return { components: workspace.components, theme: workspace.theme }
+    return {
+      components: workspace.components,
+      theme: workspace.theme,
+      googleFonts: workspace.googleFonts,
+    }
   } catch (error) {}
 
-  return { components: INITIAL_COMPONENTS, theme: {} }
+  return { components: INITIAL_COMPONENTS, theme: {}, googleFonts: [] }
 }
 
-export async function saveAsJSON(components: ComponentsState, theme: any) {
-  const serialized = JSON.stringify({ components, theme })
+export async function saveAsJSON(payload: {
+  components: ComponentsState
+  theme: any
+  googleFonts: string[]
+}) {
+  const { components, theme, googleFonts } = payload
+  const serialized = JSON.stringify({ components, theme, googleFonts })
   const name = `workspace.json`
 
   await fileSave(

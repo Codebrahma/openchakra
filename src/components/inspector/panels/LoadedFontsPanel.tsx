@@ -14,7 +14,7 @@ const LoadedFontsPanel = () => {
 
   return (
     <Flex direction="column">
-      {loadedFonts ? (
+      {loadedFonts.length > 0 ? (
         loadedFonts.map(font => (
           <Box
             display="flex"

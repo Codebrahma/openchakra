@@ -9,7 +9,7 @@ export type AppState = {
   overlay: undefined | Overlay
   showFullScreen: boolean
   customTheme: null | any
-  loadedFonts: null | Array<string>
+  loadedFonts: string[]
   selectedElementInnerHTMLText: string
 }
 
@@ -21,7 +21,7 @@ const app = createModel({
     overlay: undefined,
     showFullScreen: false,
     customTheme: null,
-    loadedFonts: null,
+    loadedFonts: [],
     selectedElementInnerHTMLText: '',
   } as AppState,
   reducers: {
@@ -73,6 +73,12 @@ const app = createModel({
         loadedFonts: state.loadedFonts ? [...state.loadedFonts, font] : [font],
       }
     },
+    setFonts: (state: AppState, fonts: string[]): AppState => {
+      return {
+        ...state,
+        loadedFonts: fonts,
+      }
+    },
     removeFont: (state: AppState, fontToBeRemoved: string): AppState => {
       if (state.loadedFonts) {
         const newLoadedFonts = state.loadedFonts.filter(font => {
@@ -81,10 +87,16 @@ const app = createModel({
         })
         return {
           ...state,
-          loadedFonts: newLoadedFonts.length === 0 ? null : newLoadedFonts,
+          loadedFonts: newLoadedFonts.length === 0 ? [] : newLoadedFonts,
         }
       }
       return state
+    },
+    removeAllFonts: (state: AppState) => {
+      return {
+        ...state,
+        loadedFonts: [],
+      }
     },
     setInnerHTMLText: (state: AppState, value: string) => {
       return {

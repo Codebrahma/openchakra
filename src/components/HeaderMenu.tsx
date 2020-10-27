@@ -12,6 +12,7 @@ import {
   MenuItemProps,
   MenuButtonProps,
   ButtonProps,
+  useToast,
 } from '@chakra-ui/core'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import useDispatch from '../hooks/useDispatch'
@@ -22,7 +23,8 @@ import { FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { FiUpload } from 'react-icons/fi'
 import { MdDeleteForever } from 'react-icons/md'
-import { getCustomTheme } from '../core/selectors/app'
+import { getCustomTheme, getLoadedFonts } from '../core/selectors/app'
+import loadFonts from '../utils/loadFonts'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -46,9 +48,14 @@ const CustomMenuButton: React.FC<
 const ExportMenuItem = () => {
   const componentsState = useSelector(getState)
   const theme = useSelector(getCustomTheme)
+  const googleFonts = useSelector(getLoadedFonts)
 
   return (
-    <MenuItem onClick={() => saveAsJSON(componentsState, theme)}>
+    <MenuItem
+      onClick={() =>
+        saveAsJSON({ components: componentsState, theme, googleFonts })
+      }
+    >
       <Box mr={2} as={FaSave} />
       Save workspace
     </MenuItem>
@@ -57,6 +64,21 @@ const ExportMenuItem = () => {
 
 const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
+  const toast = useToast()
+
+  const onActive = (fonts: string[]) => dispatch.app.setFonts(fonts)
+
+  const onInActive = () =>
+    toast({
+      title: 'Error while loading fonts',
+      status: 'error',
+      duration: 1000,
+      isClosable: true,
+      position: 'top',
+    })
+
+  const loadFontsOnImport = (fonts: string[]) =>
+    loadFonts(fonts, () => onActive(fonts), onInActive)
 
   const clearWorkSpaceHandler = () => {
     const confirmClearing = window.confirm(
@@ -65,6 +87,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
     if (confirmClearing) {
       dispatch.components.resetAll()
       dispatch.app.resetCustomTheme()
+      dispatch.app.removeAllFonts()
     }
   }
 
@@ -84,8 +107,11 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
           <MenuItem
             onClick={async () => {
               const workspace = await loadFromJSON()
+              //reset the existing fonts
+              dispatch.app.setFonts([])
               dispatch.components.resetAll(workspace.components)
               dispatch.app.setCustomTheme(workspace.theme)
+              workspace.googleFonts && loadFontsOnImport(workspace.googleFonts)
             }}
           >
             <Box mr={2} as={FiUpload} />
