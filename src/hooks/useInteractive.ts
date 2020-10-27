@@ -42,6 +42,13 @@ export const useInteractive = (
   const componentProps = isInstanceOfCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
 
+  //Finds whether the component is span or not.
+  const isSpanElement =
+    component.type === 'Box' &&
+    fetchedProps.findIndex(
+      prop => prop.name === 'as' && prop.value === 'span',
+    ) !== -1
+
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
     item: {
@@ -110,7 +117,7 @@ export const useInteractive = (
       {
         id: generateId(),
         name: 'padding',
-        value: '1rem',
+        value: isSpanElement ? '0.3rem' : '1rem', //1rem padding will be very big for the span. So for span elements, the padding is reduced to 0.3rem
         componentId: component.id,
         derivedFromComponentType: null,
         derivedFromPropName: null,
