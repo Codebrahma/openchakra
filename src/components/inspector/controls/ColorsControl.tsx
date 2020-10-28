@@ -42,16 +42,12 @@ const ColorsControl = (props: ColorControlPropsType) => {
   const theme = useCustomTheme()
 
   const themeColors: any = omit(theme.colors, ['transparent', 'current'])
-  const colourValue = value.split('.')
 
-  const propsIconButton: any =
+  const IconButtonProps: any =
     props.name === 'colorScheme'
       ? { colorScheme: value }
       : {
-          bg:
-            colourValue && colourValue.length > 2
-              ? themeColors[colourValue[0]][colourValue[1]]
-              : themeColors[colourValue[0]],
+          bg: value,
         }
 
   const huesPicker = (
@@ -131,7 +127,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
             isRound
             aria-label="Color"
             size="xs"
-            {...propsIconButton}
+            {...IconButtonProps}
           >
             {props.label}
           </IconButton>
