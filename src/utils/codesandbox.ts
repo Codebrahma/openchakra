@@ -61,6 +61,7 @@ ReactDOM.render(<App />, rootElement);
   "dependencies": {
     "@chakra-ui/core": "^1.0.0-rc.5",
     "@chakra-ui/icons": "^1.0.0-rc.3",
+    "react-icons": "^3.9.0",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-scripts": "3.0.1"
