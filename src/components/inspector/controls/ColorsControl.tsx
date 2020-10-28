@@ -38,6 +38,7 @@ type ColorControlPropsType = {
 const ColorsControl = (props: ColorControlPropsType) => {
   const { setValue, setValueFromEvent } = useForm()
   const [hue, setHue] = useState(500)
+  const [color, setColor] = useState('')
   const value = usePropsSelector(props.name)
   const theme = useCustomTheme()
 
@@ -75,12 +76,13 @@ const ColorsControl = (props: ColorControlPropsType) => {
                     ? themeColors[colorName][hue]
                     : themeColors[colorName]
                 }
-                onClick={() =>
+                onClick={() => {
+                  setColor(colorName)
                   setValue(
                     props.name,
                     enableHues ? `${colorName}.${hue}` : colorName,
                   )
-                }
+                }}
                 m="2px"
                 mt={2}
                 rounded="full"
@@ -97,6 +99,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
           onChange={value => {
             value = value === 0 ? 50 : value
             setHue(value)
+            if (color.length > 0) setValue(props.name, `${color}.${value}`)
           }}
           min={0}
           max={900}
