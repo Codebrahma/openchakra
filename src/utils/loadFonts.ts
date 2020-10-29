@@ -11,6 +11,7 @@ const loadFonts = (fonts: Array<string>, onActive?: any, onInActive?: any) => {
     active: () => {
       onActive && onActive()
     },
+    timeout: 2000,
   })
 }
 
