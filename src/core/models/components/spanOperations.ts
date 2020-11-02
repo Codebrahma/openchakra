@@ -19,7 +19,9 @@ export const addSpanComponent = (
 ) => {
   const { props, components, selectedId: id } = loadRequired(draftState)
 
-  const childrenPropIndex = props[id].findIndex(
+  const selectedComponentProps = props[id]
+
+  const childrenPropIndex = selectedComponentProps.findIndex(
     prop => prop.name === 'children' && prop.componentId === id,
   )
   const newId = generateId()
@@ -54,31 +56,36 @@ export const addSpanComponent = (
       derivedFromPropName: null,
     })
 
-    croppedValue = props[id][childrenPropIndex].value[
+    croppedValue = selectedComponentProps[childrenPropIndex].value[
       startNodePosition
     ].substring(start, end)
 
-    props[id][childrenPropIndex].value[startNodePosition] = splitArray({
-      stringValue: props[id][childrenPropIndex].value[startNodePosition],
+    selectedComponentProps[childrenPropIndex].value[
+      startNodePosition
+    ] = splitArray({
+      stringValue:
+        selectedComponentProps[childrenPropIndex].value[startNodePosition],
       start,
       end,
       id: newId,
     })
 
-    props[id][childrenPropIndex].value = _.flatten(
-      props[id][childrenPropIndex].value,
+    selectedComponentProps[childrenPropIndex].value = _.flatten(
+      selectedComponentProps[childrenPropIndex].value,
     )
   }
   //Combination of text node and span node.
   else {
-    addSpanForSelection(childrenPropIndex, props[id], components, {
+    addSpanForSelection(childrenPropIndex, selectedComponentProps, components, {
       start,
       end,
       endNodePosition,
       startNodePosition,
     })
   }
-  props[id][childrenPropIndex].value.filter((val: string) => val.length !== 0)
+  selectedComponentProps[childrenPropIndex].value.filter(
+    (val: string) => val.length !== 0,
+  )
 
   props[newId].push({
     id: generateId(),
@@ -105,6 +112,8 @@ export const removeSpanComponent = (
     ? draftState.customComponentsProps
     : draftState.propsById[propsId]
 
+  let selectedComponentProps = props[id]
+
   const { startIndex, endIndex, startNodePosition, endNodePosition } = payload
 
   let start = startIndex
@@ -116,13 +125,13 @@ export const removeSpanComponent = (
     end = startIndex
   }
 
-  const childrenPropIndex = props[id].findIndex(
+  const childrenPropIndex = selectedComponentProps.findIndex(
     prop => prop.name === 'children',
   )
 
-  props[id] = removeSpanForSelection(
+  selectedComponentProps = removeSpanForSelection(
     childrenPropIndex,
-    props[id],
+    selectedComponentProps,
     components,
     id,
     {
@@ -133,17 +142,17 @@ export const removeSpanComponent = (
     },
   )
 
-  props[id][childrenPropIndex].value = _.flatten(
-    props[id][childrenPropIndex].value,
+  selectedComponentProps[childrenPropIndex].value = _.flatten(
+    selectedComponentProps[childrenPropIndex].value,
   )
 
   //join if there are adjacent text nodes.
   const propValue = joinAdjacentTextNodes(
     childrenPropIndex,
     components,
-    props[id],
+    selectedComponentProps,
   )
-  props[id][childrenPropIndex].value = propValue
+  selectedComponentProps[childrenPropIndex].value = propValue
 
   if (isCustomComponentChild) draftState.customComponentsProps = props
   else draftState.propsById[propsId] = props
@@ -161,10 +170,12 @@ export const clearFormatting = (draftState: ComponentsState) => {
     ? draftState.customComponentsProps
     : draftState.propsById[propsId]
 
-  const childrenPropIndex = props[id].findIndex(
+  const selectedComponentProps = props[id]
+
+  const childrenPropIndex = selectedComponentProps.findIndex(
     prop => prop.name === 'children',
   )
-  const childrenProp = props[id][childrenPropIndex]
+  const childrenProp = selectedComponentProps[childrenPropIndex]
   let newValue = ''
 
   if (Array.isArray(childrenProp.value)) {
@@ -182,7 +193,7 @@ export const clearFormatting = (draftState: ComponentsState) => {
     })
   } else newValue = childrenProp.value
 
-  props[id][childrenPropIndex].value = [newValue]
+  selectedComponentProps[childrenPropIndex].value = [newValue]
 
   if (isCustomComponentChild) draftState.customComponentsProps = { ...props }
   else draftState.propsById[propsId] = { ...props }

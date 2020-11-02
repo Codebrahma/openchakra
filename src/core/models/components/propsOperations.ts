@@ -45,11 +45,11 @@ export const deleteProps = (
 ) => {
   const { id, name } = payload
   const { props } = loadRequired(draftState, id)
-  const selectedComponentProsp = props[id]
-  const index = selectedComponentProsp.findIndex(
+  const selectedComponentProps = props[id]
+  const index = selectedComponentProps.findIndex(
     prop => prop.componentId === id && prop.name === name,
   )
-  selectedComponentProsp.splice(index, 1)
+  selectedComponentProps.splice(index, 1)
 }
 
 export const deleteCustomProp = (
@@ -132,12 +132,12 @@ export const updateChildrenPropForText = (
 
   const { id, value } = payload
 
-  const componentProps = props[id]
+  const selectedComponentProps = props[id]
 
-  const childrenPropIndex = componentProps.findIndex(
+  const childrenPropIndex = selectedComponentProps.findIndex(
     prop => prop.name === 'children',
   )
-  const childrenProp = componentProps[childrenPropIndex]
+  const childrenProp = selectedComponentProps[childrenPropIndex]
 
   const nodeValue = Array.isArray(value)
     ? value.map((val: any) => val.value)
@@ -190,17 +190,19 @@ export const updateChildrenPropForText = (
         }
       },
     )
-    componentProps[childrenPropIndex].value = propArray
+    selectedComponentProps[childrenPropIndex].value = propArray
     components[id].children = children
   } else {
-    componentProps[childrenPropIndex].value = value
+    selectedComponentProps[childrenPropIndex].value = value
   }
 
-  let filteredProps: IProp[] = componentProps
+  let filteredProps: IProp[] = selectedComponentProps
 
   //Remove the un-necessary components.
   spanComponentsToBeDeleted.forEach((val: string) => {
-    filteredProps = componentProps.filter(prop => prop.componentId !== val)
+    filteredProps = selectedComponentProps.filter(
+      prop => prop.componentId !== val,
+    )
     delete components[val]
   })
 

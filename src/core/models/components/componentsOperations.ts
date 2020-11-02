@@ -235,15 +235,15 @@ export const duplicateComponent = (
     components,
     props,
   )
-  const childrenPropIndex = props[selectedComponent.parent]
-    ? props[selectedComponent.parent].findIndex(
-        prop => prop.name === 'children',
-      )
+  const parentComponentProps = props[selectedComponent.parent]
+
+  const childrenPropIndex = parentComponentProps
+    ? parentComponentProps.findIndex(prop => prop.name === 'children')
     : -1
   components[selectedComponent.parent].children.push(newId)
 
   components[selectedComponent.parent].type === 'Text' &&
-    props[selectedComponent.parent][childrenPropIndex].value.push(newId)
+    parentComponentProps[childrenPropIndex].value.push(newId)
 
   if (isCustomComponentChild) {
     draftState.customComponents = {
