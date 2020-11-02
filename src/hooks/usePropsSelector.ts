@@ -21,22 +21,21 @@ const usePropsSelector = (propsName: string) => {
       state.components.present.pages[state.components.present.selectedPage]
         .propsId
     let component: IComponent
-    let props: IProp[]
+    let componentProps: IProp[]
 
     if (state.components.present.customComponents[selectedId]) {
       component = state.components.present.customComponents[selectedId]
-      props = state.components.present.customComponentsProps.filter(
-        prop => prop.componentId === selectedId,
-      )
+      componentProps =
+        state.components.present.customComponentsProps[selectedId]
     } else {
       component =
         state.components.present.componentsById[componentsId][selectedId]
-      props = state.components.present.propsById[propsId].filter(
-        prop => prop.componentId === selectedId,
-      )
+      componentProps = state.components.present.propsById[propsId][selectedId]
     }
 
-    let propsValue = props.find(prop => prop.name === propsName)?.value
+    let propsValue = componentProps
+      ? componentProps.find(prop => prop.name === propsName)?.value
+      : undefined
 
     if (propsValue !== undefined) {
       return propsValue

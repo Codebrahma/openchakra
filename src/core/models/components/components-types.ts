@@ -42,8 +42,8 @@ export const INITIAL_COMPONENTS: IComponentsById = {
   },
 }
 export const INITIAL_PROPS: IPropsById = {
-  1: [],
-  2: [],
+  1: {},
+  2: {},
 }
 
 export const INITIAL_PAGES: IPages = {

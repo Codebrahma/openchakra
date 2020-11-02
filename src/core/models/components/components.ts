@@ -48,7 +48,7 @@ export type ComponentsState = {
   componentsById: IComponentsById
   propsById: IPropsById
   customComponents: IComponents
-  customComponentsProps: IProp[]
+  customComponentsProps: IPropsByComponentId
   selectedPage: string
   selectedId: IComponent['id']
   hoveredId?: string
@@ -61,7 +61,7 @@ const components = createModel({
     propsById: INITIAL_PROPS,
     selectedPage: DEFAULT_PAGE,
     customComponents: {},
-    customComponentsProps: [],
+    customComponentsProps: {},
     selectedId: DEFAULT_ID,
   } as ComponentsState,
   reducers: {
@@ -79,7 +79,7 @@ const components = createModel({
             children: [],
           },
         }
-        draftState.propsById[propsId] = []
+        draftState.propsById[propsId] = {}
         draftState.selectedId = DEFAULT_ID
       })
     },
@@ -96,7 +96,7 @@ const components = createModel({
           propsById: INITIAL_PROPS,
           selectedPage: DEFAULT_PAGE,
           customComponents: {},
-          customComponentsProps: [],
+          customComponentsProps: {},
           selectedId: DEFAULT_ID,
         }
       }
@@ -107,9 +107,7 @@ const components = createModel({
     resetProps(state: ComponentsState, componentId: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const propsId = draftState.pages[draftState.selectedPage].propsId
-        draftState.propsById[propsId].filter(
-          prop => prop.componentId !== componentId,
-        )
+        delete draftState.propsById[propsId][componentId]
       })
     },
     updateProps(
@@ -169,7 +167,9 @@ const components = createModel({
           componentId,
         )
         const oldParentId = components[componentId].parent
-        const asPropIndex = props.findIndex(
+
+        const selectedComponentProps = props[componentId]
+        const asPropIndex = selectedComponentProps.findIndex(
           (prop: IProp) =>
             prop.componentId === componentId && prop.name === 'as',
         )
@@ -351,10 +351,10 @@ const components = createModel({
           ...draftState.componentsById['2'],
           ...clonedComponents,
         }
-        draftState.propsById['2'] = [
+        draftState.propsById['2'] = {
           ...draftState.propsById['2'],
           ...clonedProps,
-        ]
+        }
         draftState.componentsById['2'][newId].parent = 'root'
         draftState.componentsById['2']['root'].children.push(newId)
       })
@@ -432,13 +432,13 @@ const components = createModel({
             propsId: string,
           ) => {
             if (updateInCustomComponent)
-              draftState.customComponentsProps.push({
+              draftState.customComponentsProps[component.id].push({
                 ...childrenProp,
                 id: generateId(),
                 componentId: component.id,
               })
             else
-              draftState.propsById[propsId].push({
+              draftState.propsById[propsId][component.id].push({
                 ...childrenProp,
                 id: generateId(),
                 componentId: component.id,

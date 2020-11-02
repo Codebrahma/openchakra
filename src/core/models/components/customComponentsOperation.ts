@@ -18,12 +18,9 @@ export const addCustomComponent = (
     parentId,
   )
 
-  const customComponentsProps = [...draftState.customComponentsProps]
+  const customComponentsProps = { ...draftState.customComponentsProps }
 
-  const duplicatedProps = duplicateProps(
-    customComponentsProps.filter(prop => prop.componentId === type),
-    id,
-  )
+  const duplicatedProps = duplicateProps(customComponentsProps[type], id)
 
   const heightProp = {
     id: generateId(),
@@ -52,7 +49,7 @@ export const addCustomComponent = (
         parent: 'Prop',
         children: [],
       }
-      props.push({
+      props[id].push({
         ...heightProp,
         componentId: id,
       })
@@ -60,8 +57,8 @@ export const addCustomComponent = (
     }
   })
   if (isCustomComponentChild)
-    draftState.customComponentsProps = [...props, ...duplicatedProps]
-  else draftState.propsById[propsId] = [...props, ...duplicatedProps]
+    draftState.customComponentsProps = { ...props, [id]: [...duplicatedProps] }
+  else draftState.propsById[propsId] = { ...props, [id]: [...duplicatedProps] }
 }
 
 export const saveComponent = (
@@ -129,7 +126,7 @@ export const saveComponent = (
     name,
     draftState.customComponents[componentId],
     draftState.customComponents,
-    [...draftState.customComponentsProps, ...movedProps],
+    { ...draftState.customComponentsProps, ...movedProps },
   )
   //make a duplicate props for the instance of the custom component.
   const duplicatedProps = duplicateProps(rootParentProps, newId)
@@ -162,8 +159,14 @@ export const saveComponent = (
       duplicatedProps[index].value = id
     }
   })
-  draftState.propsById[propsId] = [...updatedProps, ...duplicatedProps]
-  draftState.customComponentsProps = [...customProps, ...rootParentProps]
+  draftState.propsById[propsId] = {
+    ...updatedProps,
+    [newId]: [...duplicatedProps],
+  }
+  draftState.customComponentsProps = {
+    ...customProps,
+    [newId]: [...rootParentProps],
+  }
 }
 
 export const deleteCustomComponent = (
@@ -176,18 +179,20 @@ export const deleteCustomComponent = (
     draftState.customComponentsProps,
   )
   draftState.customComponents = { ...updatedComponents }
-  draftState.customComponentsProps = [...updatedProps]
+  draftState.customComponentsProps = { ...updatedProps }
 
   //Exposed children of the box/flex
-  deletedProps
-    .filter(prop => draftState.customComponents[prop.value])
-    .forEach(prop => {
-      const { updatedComponents, updatedProps } = deleteComp(
-        draftState.customComponents[prop.value],
-        draftState.customComponents,
-        draftState.customComponentsProps,
-      )
-      draftState.customComponentsProps = [...updatedProps]
-      draftState.customComponents = { ...updatedComponents }
-    })
+  Object.keys(deletedProps).forEach(componentId => {
+    deletedProps[componentId]
+      .filter(prop => draftState.customComponents[prop.value])
+      .forEach(prop => {
+        const { updatedComponents, updatedProps } = deleteComp(
+          draftState.customComponents[prop.value],
+          draftState.customComponents,
+          draftState.customComponentsProps,
+        )
+        draftState.customComponentsProps = { ...updatedProps }
+        draftState.customComponents = { ...updatedComponents }
+      })
+  })
 }

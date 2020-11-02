@@ -99,13 +99,11 @@ export const deleteCustomPropUtility = (
   component: IComponent,
   propName: string,
   components: IComponents,
-  props: IProp[],
+  props: IPropsByComponentId,
 ) => {
-  const index = props.findIndex(
-    prop => prop.name === propName && prop.componentId === component.id,
-  )
-  const customProp = props[index]
-  props.splice(index, 1)
+  const index = props[component.id].findIndex(prop => prop.name === propName)
+  const customProp = props[component.id][index]
+  props[component.id].splice(index, 1)
 
   if (component.id !== component.type) {
     // Wrapper-components
@@ -230,16 +228,16 @@ export const addCustomPropsInAllComponentInstances = (payload: {
   }
 
   if (updateInCustomComponent) {
-    draftState.customComponentsProps.push(prop)
+    draftState.customComponentsProps[component.id].push(prop)
     if (isBoxChildrenExposed) {
       draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps.push(heightProp)
+      draftState.customComponentsProps[component.id].push(heightProp)
     }
   } else {
-    draftState.propsById[propsId].push(prop)
+    draftState.propsById[propsId][component.id].push(prop)
     if (isBoxChildrenExposed) {
       draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId].push(heightProp)
+      draftState.propsById[propsId][component.id].push(heightProp)
     }
   }
 }
