@@ -104,9 +104,7 @@ export const deleteComp = (
     if (updatedProps[component.id].length > 0) {
       deletedProps = {
         ...deletedProps,
-        [component.id]: {
-          ...updatedProps[component.id],
-        },
+        [component.id]: [...updatedProps[component.id]],
       }
       updatedProps = omit(updatedProps, component.id)
     }
