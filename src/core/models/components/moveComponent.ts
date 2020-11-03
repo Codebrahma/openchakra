@@ -112,7 +112,7 @@ export const moveComponent = (
                       customPropName: exposedProp.derivedFromPropName || '',
                     },
                     exposedPropComponentType:
-                      draftState.customComponents[exposedProp.componentId].type,
+                      draftState.customComponents[componentId].type,
                     component,
                     componentsId,
                     propsId,
@@ -273,7 +273,7 @@ export const moveComponent = (
                       customPropName: exposedProp.derivedFromPropName || '',
                     },
                     exposedPropComponentType:
-                      draftState.customComponents[exposedProp.componentId].type,
+                      draftState.customComponents[componentId].type,
                     component,
                     componentsId,
                     propsId,

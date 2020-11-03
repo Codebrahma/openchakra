@@ -34,7 +34,6 @@ export const addComponent = (
         id: generateId(),
         name: propName,
         value: DEFAULT_PROPS[type][propName],
-        componentId: id,
         derivedFromPropName: null,
         derivedFromComponentType: null,
       })
@@ -81,7 +80,6 @@ export const addMetaComponent = (
               id: generateId(),
               name: propName,
               value: DEFAULT_PROPS[component.type as ComponentType][propName],
-              componentId: component.id,
               derivedFromPropName: null,
               derivedFromComponentType: null,
             })
@@ -91,7 +89,6 @@ export const addMetaComponent = (
                 id: generateId(),
                 name: propName,
                 value: DEFAULT_PROPS[component.type as ComponentType][propName],
-                componentId: component.id,
                 derivedFromPropName: null,
                 derivedFromComponentType: null,
               },

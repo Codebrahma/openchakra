@@ -17,7 +17,6 @@ export const duplicateProps = (props: IProp[], componentId: string) => {
     duplicatedProps.push({
       ...prop,
       id: generateId(),
-      componentId,
     })
   })
   return duplicatedProps

@@ -48,10 +48,13 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
 
-  const isKeyForComponent = useSelector(checkIsKeyForComponent(selectedProp))
+  const isKeyForComponent = useSelector(
+    checkIsKeyForComponent(selectedProp, selectedComponent.id),
+  )
 
   if (selectedProp && selectedCustomComponentProp) {
-    const controlProp = findControl(
+    const { controlProp, controlPropComponentId } = findControl(
+      selectedComponent.id,
       selectedCustomComponentProp,
       props,
       customComponents,
@@ -59,9 +62,9 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
     //Find the type of the control component.
     const controlPropComponentType = customComponents[
-      controlProp?.componentId || 'root'
+      controlPropComponentId || 'root'
     ]
-      ? customComponents[controlProp?.componentId || 'root'].type
+      ? customComponents[controlPropComponentId || 'root'].type
       : 'root'
 
     switch (controlProp?.name) {

@@ -170,8 +170,7 @@ const components = createModel({
 
         const selectedComponentProps = props[componentId]
         const asPropIndex = selectedComponentProps.findIndex(
-          (prop: IProp) =>
-            prop.componentId === componentId && prop.name === 'as',
+          (prop: IProp) => prop.name === 'as',
         )
 
         //It should not be moved if it is a span element
@@ -435,13 +434,11 @@ const components = createModel({
               draftState.customComponentsProps[component.id].push({
                 ...childrenProp,
                 id: generateId(),
-                componentId: component.id,
               })
             else
               draftState.propsById[propsId][component.id].push({
                 ...childrenProp,
                 id: generateId(),
-                componentId: component.id,
               })
           },
         )

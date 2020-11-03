@@ -22,7 +22,7 @@ export const addSpanComponent = (
   const selectedComponentProps = props[id]
 
   const childrenPropIndex = selectedComponentProps.findIndex(
-    prop => prop.name === 'children' && prop.componentId === id,
+    prop => prop.name === 'children',
   )
   const newId = generateId()
   const { startIndex, endIndex, startNodePosition, endNodePosition } = payload
@@ -30,6 +30,7 @@ export const addSpanComponent = (
   let end = endIndex
 
   let croppedValue = ''
+  props[newId] = []
 
   //Only text node.
   if (startNodePosition === endNodePosition) {
@@ -49,7 +50,6 @@ export const addSpanComponent = (
 
     props[newId].push({
       id: generateId(),
-      componentId: newId,
       value: 'span',
       name: 'as',
       derivedFromComponentType: null,
@@ -76,7 +76,7 @@ export const addSpanComponent = (
   }
   //Combination of text node and span node.
   else {
-    addSpanForSelection(childrenPropIndex, selectedComponentProps, components, {
+    addSpanForSelection(childrenPropIndex, props, id, components, {
       start,
       end,
       endNodePosition,
@@ -89,7 +89,6 @@ export const addSpanComponent = (
 
   props[newId].push({
     id: generateId(),
-    componentId: newId,
     value: croppedValue,
     name: 'children',
     derivedFromComponentType: null,
@@ -129,18 +128,12 @@ export const removeSpanComponent = (
     prop => prop.name === 'children',
   )
 
-  selectedComponentProps = removeSpanForSelection(
-    childrenPropIndex,
-    selectedComponentProps,
-    components,
-    id,
-    {
-      start,
-      end,
-      startNodePosition,
-      endNodePosition,
-    },
-  )
+  props = removeSpanForSelection(childrenPropIndex, props, components, id, {
+    start,
+    end,
+    startNodePosition,
+    endNodePosition,
+  })
 
   selectedComponentProps[childrenPropIndex].value = _.flatten(
     selectedComponentProps[childrenPropIndex].value,

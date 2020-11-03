@@ -247,16 +247,16 @@ export const isSelectedRangeContainsTwoSpan = (range: {
   return spanElementCount > 1 ? true : false
 }
 
-export const checkIsKeyForComponent = (prop: IProp | undefined) => (
-  state: RootState,
-) => {
+export const checkIsKeyForComponent = (
+  prop: IProp | undefined,
+  componentId: string,
+) => (state: RootState) => {
   if (prop === undefined) return false
 
-  const id = prop.componentId
   const componentsId =
     state.components.present.pages[state.components.present.selectedPage]
       .componentsId
-  const components = isChildrenOfCustomComponent(id)(state)
+  const components = isChildrenOfCustomComponent(componentId)(state)
     ? state.components.present.customComponents
     : state.components.present.componentsById[componentsId]
   if (components[prop.value]) return true

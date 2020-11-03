@@ -51,7 +51,6 @@ export const addCustomComponent = (
       }
       props[id].push({
         ...heightProp,
-        componentId: id,
       })
       duplicatedProps[index].value = id
     }

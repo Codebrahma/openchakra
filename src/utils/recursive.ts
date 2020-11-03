@@ -40,7 +40,6 @@ export const duplicateComp = (
         clonedProps[newId].push({
           ...prop,
           id: generateId(),
-          componentId: newId,
           value: propValue,
         })
       } else {
@@ -48,7 +47,6 @@ export const duplicateComp = (
           {
             ...prop,
             id: generateId(),
-            componentId: newId,
             value: propValue,
           },
         ]
@@ -152,7 +150,6 @@ export const fetchAndUpdateExposedProps = (
               (comp.type === 'Box' || comp.type === 'Flex')
                 ? 'RootCbComposer'
                 : prop.value,
-            componentId: rootParentId,
             derivedFromPropName: null,
             derivedFromComponentType: null,
           })
@@ -223,30 +220,42 @@ export const searchRootCustomComponent = (
 
 //Finds the control for the custom props.
 export const findControl = (
+  componentId: string,
   selectedProp: IProp,
   props: IPropsByComponentId,
   components: IComponents,
 ) => {
   let finalControlProp = { ...selectedProp }
-  const findControlRecursive = (controlProp: IProp) => {
+  let finalControlPropComponentId = componentId
+  const findControlRecursive = (
+    controlProp: IProp,
+    controlPropComponentId: string,
+  ) => {
     let newControlProp = undefined
+    let newControlPropComponentId = undefined
     Object.keys(props).forEach(componentId => {
       props[componentId].forEach(prop => {
         if (
           prop.derivedFromPropName === controlProp.name &&
           prop.derivedFromComponentType ===
-            components[controlProp.componentId].type
-        )
+            components[controlPropComponentId].type
+        ) {
           newControlProp = prop
+          newControlPropComponentId = componentId
+        }
       })
     })
-    if (newControlProp) {
+    if (newControlProp && newControlPropComponentId) {
       finalControlProp = newControlProp
-      findControlRecursive(newControlProp)
+      finalControlPropComponentId = newControlPropComponentId
+      findControlRecursive(newControlProp, newControlPropComponentId)
     }
   }
-  findControlRecursive(selectedProp)
-  return finalControlProp
+  findControlRecursive(selectedProp, componentId)
+  return {
+    controlProp: finalControlProp,
+    controlPropComponentId: finalControlPropComponentId,
+  }
 }
 
 export const deleteCustomPropInRootComponent = (
@@ -292,9 +301,7 @@ export const deleteCustomPropInRootComponent = (
         ) => {
           if (updateInCustomComponent) {
             const index = updatedCustomComponentProps[component.id].findIndex(
-              prop =>
-                prop.name === derivedFromPropName &&
-                prop.componentId === component.id,
+              prop => prop.name === derivedFromPropName,
             )
             const customProp = updatedCustomComponentProps[component.id][index]
 
@@ -316,9 +323,7 @@ export const deleteCustomPropInRootComponent = (
               deleteCustomPropRecursive(customProp)
           } else {
             const index = updatedPropsById[propsId][component.id].findIndex(
-              prop =>
-                prop.name === derivedFromPropName &&
-                prop.componentId === component.id,
+              prop => prop.name === derivedFromPropName,
             )
 
             const customProp = updatedPropsById[propsId][component.id][index]

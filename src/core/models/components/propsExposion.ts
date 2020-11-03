@@ -73,7 +73,6 @@ export const exposeProp = (
         id: generateId(),
         name: targetedProp,
         value: propValue,
-        componentId,
         derivedFromPropName: name,
         derivedFromComponentType:
           draftState.customComponents[rootCustomParent].type,
@@ -124,7 +123,6 @@ export const exposeProp = (
         id: generateId(),
         name: targetedProp,
         value: '',
-        componentId,
         derivedFromPropName: name,
         derivedFromComponentType: null,
       })

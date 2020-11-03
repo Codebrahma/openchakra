@@ -51,7 +51,7 @@ export const buildBlock = (
               value = `={${prop.derivedFromPropName}}`
             } else {
               value = iconPropsHandler({
-                componentType: components[prop.componentId].type,
+                componentType: components[childComponent.id].type,
                 propName,
                 propValue: propsValue,
                 oldValue: value,

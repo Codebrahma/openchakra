@@ -152,7 +152,6 @@ interface IProp {
   id: string
   name: string
   value: string | any
-  componentId: string
   derivedFromPropName: string | null
   derivedFromComponentType: string | null
 }

@@ -20,7 +20,7 @@ export const updateProps = (
 
   //If the prop is already found, update the prop value or else add the prop.
   const existingPropIndex = targetedComponentProps.findIndex(
-    prop => prop.componentId === id && prop.name === name,
+    prop => prop.name === name,
   )
 
   // If the value is number, convert it to number.
@@ -33,7 +33,6 @@ export const updateProps = (
       id: generateId(),
       name: name,
       value: value.length > 0 && !isNaN(value) ? parseInt(value, 10) : value,
-      componentId: id,
       derivedFromPropName: null,
       derivedFromComponentType: null,
     })
@@ -46,9 +45,7 @@ export const deleteProps = (
   const { id, name } = payload
   const { props } = loadRequired(draftState, id)
   const selectedComponentProps = props[id]
-  const index = selectedComponentProps.findIndex(
-    prop => prop.componentId === id && prop.name === name,
-  )
+  const index = selectedComponentProps.findIndex(prop => prop.name === name)
   selectedComponentProps.splice(index, 1)
 }
 
@@ -196,17 +193,16 @@ export const updateChildrenPropForText = (
     selectedComponentProps[childrenPropIndex].value = value
   }
 
-  let filteredProps: IProp[] = selectedComponentProps
+  let filteredProps: IPropsByComponentId = props
 
   //Remove the un-necessary components.
   spanComponentsToBeDeleted.forEach((val: string) => {
-    filteredProps = selectedComponentProps.filter(
-      prop => prop.componentId !== val,
-    )
+    Object.keys(filteredProps).forEach(componentId => {
+      if (componentId !== val) delete filteredProps[componentId]
+    })
     delete components[val]
   })
 
-  if (isCustomComponentChild)
-    draftState.customComponentsProps[id] = filteredProps
-  else draftState.propsById[propsId][id] = filteredProps
+  if (isCustomComponentChild) draftState.customComponentsProps = filteredProps
+  else draftState.propsById[propsId] = filteredProps
 }
