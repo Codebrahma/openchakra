@@ -109,7 +109,7 @@ export const exposeProp = (
         },
       )
   } else {
-    const propIndex = draftState.propsById[componentId][propsId].findIndex(
+    const propIndex = draftState.propsById[propsId][componentId].findIndex(
       prop => prop.name === targetedProp,
     )
 

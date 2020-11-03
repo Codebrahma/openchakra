@@ -54,7 +54,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
   if (selectedProp && selectedCustomComponentProp) {
     const { controlProp, controlPropComponentId } = findControl(
-      selectedComponent.id,
+      selectedComponent.type,
       selectedCustomComponentProp,
       props,
       customComponents,

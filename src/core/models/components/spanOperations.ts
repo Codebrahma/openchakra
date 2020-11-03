@@ -30,7 +30,6 @@ export const addSpanComponent = (
   let end = endIndex
 
   let croppedValue = ''
-  props[newId] = []
 
   //Only text node.
   if (startNodePosition === endNodePosition) {
@@ -45,6 +44,7 @@ export const addSpanComponent = (
       children: [],
       parent: id,
     }
+    props[newId] = []
 
     components[id].children.push(newId)
 
@@ -73,6 +73,13 @@ export const addSpanComponent = (
     selectedComponentProps[childrenPropIndex].value = _.flatten(
       selectedComponentProps[childrenPropIndex].value,
     )
+    props[newId].push({
+      id: generateId(),
+      value: croppedValue,
+      name: 'children',
+      derivedFromComponentType: null,
+      derivedFromPropName: null,
+    })
   }
   //Combination of text node and span node.
   else {
@@ -86,14 +93,6 @@ export const addSpanComponent = (
   selectedComponentProps[childrenPropIndex].value.filter(
     (val: string) => val.length !== 0,
   )
-
-  props[newId].push({
-    id: generateId(),
-    value: croppedValue,
-    name: 'children',
-    derivedFromComponentType: null,
-    derivedFromPropName: null,
-  })
 }
 
 export const removeSpanComponent = (

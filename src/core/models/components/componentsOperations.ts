@@ -72,28 +72,17 @@ export const addMetaComponent = (
 
   //Add the default props for the components
   Object.values(metaComponents).forEach(component => {
+    metaComponentsDefaultProps[component.id] = []
     DEFAULT_PROPS[component.type as ComponentType] &&
       Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
         (propName: string) => {
-          if (metaComponentsDefaultProps[component.id]) {
-            metaComponentsDefaultProps[component.id].push({
-              id: generateId(),
-              name: propName,
-              value: DEFAULT_PROPS[component.type as ComponentType][propName],
-              derivedFromPropName: null,
-              derivedFromComponentType: null,
-            })
-          } else {
-            metaComponentsDefaultProps[component.id] = [
-              {
-                id: generateId(),
-                name: propName,
-                value: DEFAULT_PROPS[component.type as ComponentType][propName],
-                derivedFromPropName: null,
-                derivedFromComponentType: null,
-              },
-            ]
-          }
+          metaComponentsDefaultProps[component.id].push({
+            id: generateId(),
+            name: propName,
+            value: DEFAULT_PROPS[component.type as ComponentType][propName],
+            derivedFromPropName: null,
+            derivedFromComponentType: null,
+          })
         },
       )
   })
@@ -197,7 +186,6 @@ export const deleteComponent = (
     draftState.propsById[propsId] = { ...updatedProps }
     draftState.componentsById[componentsId] = { ...updatedComponents }
     Object.keys(deletedProps).forEach(componentId => {
-      console.log(componentId)
       deletedProps[componentId]
         .filter(prop =>
           draftState.componentsById[componentsId][prop.value] ? true : false,

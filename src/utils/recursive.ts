@@ -122,6 +122,7 @@ export const fetchAndUpdateExposedProps = (
   props: IPropsByComponentId,
 ) => {
   let rootParentProps: IProp[] = []
+  console.log(props)
   let updatedProps = { ...props }
   const fetchAndUpdateExposedPropsRecursive = (comp: IComponent) => {
     comp.children.forEach(child =>
@@ -179,9 +180,7 @@ export const moveComp = (
     )
     movedProps = {
       ...movedProps,
-      [compId]: {
-        ...sourceProps[compId],
-      },
+      [compId]: [...sourceProps[compId]],
     }
     updatedSourceProps = omit(updatedSourceProps, compId)
     movedComponents = {

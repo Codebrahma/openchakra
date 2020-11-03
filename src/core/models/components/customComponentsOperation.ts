@@ -49,9 +49,11 @@ export const addCustomComponent = (
         parent: 'Prop',
         children: [],
       }
-      props[id].push({
-        ...heightProp,
-      })
+      props[id] = [
+        {
+          ...heightProp,
+        },
+      ]
       duplicatedProps[index].value = id
     }
   })
@@ -164,7 +166,7 @@ export const saveComponent = (
   }
   draftState.customComponentsProps = {
     ...customProps,
-    [newId]: [...rootParentProps],
+    [name]: [...rootParentProps],
   }
 }
 

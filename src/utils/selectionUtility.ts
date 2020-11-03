@@ -35,22 +35,20 @@ const addSpanForSelection = (
       endValue = endValue.substring(end, endValue.length)
 
       props[spanComponentId][spanChildrenPropIndex].value = startValue
-      props[spanComponentId][childrenPropIndex].value[
-        endNodePosition
-      ] = endValue
+      props[componentId][childrenPropIndex].value[endNodePosition] = endValue
     } else if (
       isKeyForComponent(childrenProp.value[endNodePosition], components)
     ) {
+      const spanComponentId = endValue
       const spanChildrenPropIndex = props[endValue].findIndex(
         prop => prop.name === 'children',
       )
-      const spanComponentId = endValue
 
       endValue = props[spanComponentId][spanChildrenPropIndex].value
       endValue = startValue.substring(start, startValue.length) + endValue
       startValue = startValue.substring(0, start)
 
-      props[spanComponentId][childrenPropIndex].value[
+      props[componentId][childrenPropIndex].value[
         startNodePosition
       ] = startValue
       props[spanComponentId][spanChildrenPropIndex].value = endValue
@@ -71,12 +69,10 @@ const addSpanForSelection = (
       startValue = startValue.substring(0, start)
       endValue = endValue.substring(end, endValue.length)
 
-      props[spanComponentId][childrenPropIndex].value[
+      props[componentId][childrenPropIndex].value[
         startNodePosition
       ] = startValue
-      props[spanComponentId][childrenPropIndex].value[
-        endNodePosition
-      ] = endValue
+      props[componentId][childrenPropIndex].value[endNodePosition] = endValue
       props[spanComponentId][spanChildrenPropIndex].value = middleValue
     }
   }
@@ -93,9 +89,7 @@ const addSpanForSelection = (
       endValue = endValue.substring(0, end)
 
       props[spanComponentId][spanChildrenPropIndex].value = startValue
-      props[spanComponentId][childrenPropIndex].value[
-        endNodePosition
-      ] = endValue
+      props[componentId][childrenPropIndex].value[endNodePosition] = endValue
     } else if (
       isKeyForComponent(childrenProp.value[endNodePosition], components)
     ) {
@@ -107,7 +101,7 @@ const addSpanForSelection = (
       endValue = endValue + startValue.substring(0, start)
       startValue = startValue.substring(start, startValue.length)
 
-      props[spanComponentId][childrenPropIndex].value[
+      props[componentId][childrenPropIndex].value[
         startNodePosition
       ] = startValue
       props[spanComponentId][spanChildrenPropIndex].value = endValue
@@ -128,12 +122,10 @@ const addSpanForSelection = (
       startValue = startValue.substring(start, startValue.length)
       endValue = endValue.substring(0, end)
 
-      props[spanComponentId][childrenPropIndex].value[
+      props[componentId][childrenPropIndex].value[
         startNodePosition
       ] = startValue
-      props[spanComponentId][childrenPropIndex].value[
-        endNodePosition
-      ] = endValue
+      props[componentId][childrenPropIndex].value[endNodePosition] = endValue
       props[spanComponentId][spanChildrenPropIndex].value = middleValue
     }
   }
@@ -178,7 +170,7 @@ const removeSpanForSelection = (
       spanChildrenPropValue.substring(start, end),
       props[selectedComponentId][childrenPropIndex].value[startNodePosition],
     ]
-    props[selectedComponentId][
+    props[spanId][
       spanChildrenPropIndex
     ].value = spanChildrenPropValue.substring(end, spanChildrenPropValue.length)
   }
@@ -188,7 +180,7 @@ const removeSpanForSelection = (
       props[selectedComponentId][childrenPropIndex].value[startNodePosition],
       spanChildrenPropValue.substring(start, end),
     ]
-    props[selectedComponentId][
+    props[spanId][
       spanChildrenPropIndex
     ].value = spanChildrenPropValue.substring(0, start)
   }

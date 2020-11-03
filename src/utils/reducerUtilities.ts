@@ -212,7 +212,6 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     id: generateId(),
     name: 'height',
     value: '100%',
-    componentId: boxId,
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
@@ -230,13 +229,13 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     draftState.customComponentsProps[component.id].push(prop)
     if (isBoxChildrenExposed) {
       draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps[component.id].push(heightProp)
+      draftState.customComponentsProps[boxId] = [{ ...heightProp }]
     }
   } else {
     draftState.propsById[propsId][component.id].push(prop)
     if (isBoxChildrenExposed) {
       draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId][component.id].push(heightProp)
+      draftState.propsById[propsId][boxId] = [{ ...heightProp }]
     }
   }
 }
