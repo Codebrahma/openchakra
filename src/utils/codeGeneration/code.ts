@@ -1,7 +1,7 @@
 import uniq from 'lodash/uniq'
 import { buildBlock, capitalize } from './buildBlock'
 import formatCode from './formatCode'
-import { isPropRelatedToIcon } from '../../components/editor/PreviewContainer'
+import getImportFormatForIcons from './getImportFormatForIcons'
 
 export const generateComponentCode = async (
   component: IComponent,
@@ -137,21 +137,12 @@ export const generateCode = async (
   //remove duplicates from the componentsImports array.
   componentsImports = uniq(componentsImports)
 
-  //find the name of the icons to import from the @chakra-ui/icons
-  let chakraIconsUsed = props
-    .filter(prop =>
-      isPropRelatedToIcon(components[prop.componentId].type, prop.name),
-    )
-    .map(prop => prop.value)
-
-  chakraIconsUsed = uniq(chakraIconsUsed)
-
-  const chakraIconImport =
-    chakraIconsUsed.length > 0
-      ? `import {
-    ${chakraIconsUsed.join(',')}
-  } from "@chakra-ui/icons";`
-      : ''
+  const {
+    chakraIconsImport,
+    fontAwesomeIconsImport,
+    materialIconsImport,
+    antIconsImport,
+  } = getImportFormatForIcons(components, props)
 
   code = `import React from 'react';
   import {
@@ -160,7 +151,10 @@ export const generateCode = async (
     ${componentsImports.join(',')}
   } from "@chakra-ui/core";
 
-  ${chakraIconImport}
+  ${chakraIconsImport}
+  ${fontAwesomeIconsImport}
+  ${materialIconsImport}
+  ${antIconsImport}
   
   ${customComponentCode && customComponentCode.join('')}
   const App = () => {
