@@ -15,7 +15,7 @@ const getRequiredIconsToImport = (
   Object.keys(props).forEach(componentId => {
     props[componentId]
       .filter(prop =>
-        isPropRelatedToIcon(components[prop.componentId].type, prop.name),
+        isPropRelatedToIcon(components[componentId].type, prop.name),
       )
       .forEach(prop => {
         const propValue = prop.value
