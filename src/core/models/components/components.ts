@@ -46,9 +46,9 @@ import {
 export type ComponentsState = {
   pages: IPages
   componentsById: IComponentsById
-  propsById: IPropsById
+  propsById: IPropsByPageId
   customComponents: IComponents
-  customComponentsProps: IPropsByComponentId
+  customComponentsProps: IProps
   selectedPage: string
   selectedId: IComponent['id']
   hoveredId?: string
@@ -61,7 +61,10 @@ const components = createModel({
     propsById: INITIAL_PROPS,
     selectedPage: DEFAULT_PAGE,
     customComponents: {},
-    customComponentsProps: {},
+    customComponentsProps: {
+      byId: {},
+      byComponentId: {},
+    },
     selectedId: DEFAULT_ID,
   } as ComponentsState,
   reducers: {
@@ -79,7 +82,10 @@ const components = createModel({
             children: [],
           },
         }
-        draftState.propsById[propsId] = {}
+        draftState.propsById[propsId] = {
+          byId: {},
+          byComponentId: {},
+        }
         draftState.selectedId = DEFAULT_ID
       })
     },
@@ -96,7 +102,10 @@ const components = createModel({
           propsById: INITIAL_PROPS,
           selectedPage: DEFAULT_PAGE,
           customComponents: {},
-          customComponentsProps: {},
+          customComponentsProps: {
+            byId: {},
+            byComponentId: {},
+          },
           selectedId: DEFAULT_ID,
         }
       }
@@ -107,12 +116,16 @@ const components = createModel({
     resetProps(state: ComponentsState, componentId: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const propsId = draftState.pages[draftState.selectedPage].propsId
-        delete draftState.propsById[propsId][componentId]
+        const propIds = draftState.propsById[propsId].byComponentId[componentId]
+
+        propIds.forEach(id => {
+          delete draftState.propsById[propsId].byId[id]
+        })
       })
     },
     updateProps(
       state: ComponentsState,
-      payload: { id: string; name: string; value: any },
+      payload: { componentId: string; id: string; name: string; value: any },
     ) {
       return produce(state, (draftState: ComponentsState) => {
         updateProps(draftState, { ...payload })
@@ -126,7 +139,10 @@ const components = createModel({
         exposeProp(draftState, { ...payload })
       })
     },
-    deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
+    deleteProps(
+      state: ComponentsState,
+      payload: { componentId: string; propId: string },
+    ) {
       return produce(state, (draftState: ComponentsState) => {
         deleteProps(draftState, { ...payload })
       })
@@ -168,9 +184,10 @@ const components = createModel({
         )
         const oldParentId = components[componentId].parent
 
-        const selectedComponentProps = props[componentId]
-        const asPropIndex = selectedComponentProps.findIndex(
-          (prop: IProp) => prop.name === 'as',
+        const selectedComponentPropIds = props.byComponentId[componentId]
+
+        const asPropIndex = selectedComponentPropIds.findIndex(
+          (id: string) => props.byId[id].name === 'span',
         )
 
         //It should not be moved if it is a span element
@@ -430,16 +447,25 @@ const components = createModel({
             updateInCustomComponent: Boolean,
             propsId: string,
           ) => {
-            if (updateInCustomComponent)
-              draftState.customComponentsProps[component.id].push({
+            if (updateInCustomComponent) {
+              const id = generateId()
+              draftState.customComponentsProps.byComponentId[
+                customComponentType
+              ].push(id)
+              draftState.customComponentsProps.byId[id] = {
                 ...childrenProp,
                 id: generateId(),
-              })
-            else
-              draftState.propsById[propsId][component.id].push({
+              }
+            } else {
+              const id = generateId()
+              draftState.propsById[propsId].byComponentId[
+                customComponentType
+              ].push(id)
+              draftState.propsById[propsId].byId[id] = {
                 ...childrenProp,
                 id: generateId(),
-              })
+              }
+            }
           },
         )
       })

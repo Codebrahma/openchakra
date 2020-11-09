@@ -31,9 +31,12 @@ export const exposeProp = (
 
     //Check for existing custom prop in root parent.
     const isCustomPropPresent =
-      draftState.customComponentsProps[rootCustomParent].findIndex(
-        prop => prop.name === name,
+      draftState.customComponentsProps.byComponentId[
+        rootCustomParent
+      ].findIndex(
+        propId => draftState.customComponentsProps.byId[propId].name === name,
       ) !== -1
+
     let samePropName = ''
 
     if (isCustomPropPresent && name !== 'children') {
@@ -52,31 +55,34 @@ export const exposeProp = (
     let propValue = ''
 
     //expose it when the prop is already added or else add the prop and then expose
-    const propIndex = draftState.customComponentsProps[componentId].findIndex(
-      prop => prop.name === targetedProp,
+    const propId = draftState.customComponentsProps.byComponentId[
+      componentId
+    ].find(
+      propId =>
+        draftState.customComponentsProps.byId[propId].name === targetedProp,
     )
 
-    if (propIndex !== -1) {
-      propValue = draftState.customComponentsProps[componentId][propIndex].value
+    if (propId) {
+      propValue = draftState.customComponentsProps.byId[propId].value
 
-      draftState.customComponentsProps[componentId][
-        propIndex
-      ].derivedFromComponentType =
+      draftState.customComponentsProps.byId[propId].derivedFromComponentType =
         draftState.customComponents[rootCustomParent].type
 
-      draftState.customComponentsProps[componentId][
-        propIndex
-      ].derivedFromPropName = name
+      draftState.customComponentsProps.byId[propId].derivedFromPropName = name
     } else {
       //Add the exposed prop in the custom props
-      draftState.customComponentsProps[componentId].push({
-        id: generateId(),
+      const newPropId = generateId()
+      draftState.customComponentsProps.byComponentId[componentId].push(
+        newPropId,
+      )
+      draftState.customComponentsProps.byId[newPropId] = {
+        id: newPropId,
         name: targetedProp,
         value: propValue,
         derivedFromPropName: name,
         derivedFromComponentType:
           draftState.customComponents[rootCustomParent].type,
-      })
+      }
     }
 
     //Add props for all the instances of the custom components only when there is no similar prop present or there is change in prop-name
@@ -109,23 +115,28 @@ export const exposeProp = (
         },
       )
   } else {
-    const propIndex = draftState.propsById[propsId][componentId].findIndex(
-      prop => prop.name === targetedProp,
+    const propId = draftState.propsById[propsId].byComponentId[
+      componentId
+    ].findIndex(
+      propId =>
+        draftState.propsById[propsId].byId[propId].name === targetedProp,
     )
 
     //expose it when the prop is already added or else add the prop and then expose
-    if (propIndex !== -1)
-      draftState.propsById[propsId][componentId][
-        propIndex
-      ].derivedFromPropName = name
+    if (propId)
+      draftState.propsById[propsId].byId[propId].derivedFromPropName = name
     else {
-      draftState.propsById[propsId][componentId].push({
-        id: generateId(),
+      const newPropId = generateId()
+      draftState.customComponentsProps.byComponentId[componentId].push(
+        newPropId,
+      )
+      draftState.customComponentsProps.byId[newPropId] = {
+        id: newPropId,
         name: targetedProp,
         value: '',
         derivedFromPropName: name,
         derivedFromComponentType: null,
-      })
+      }
     }
   }
 }
@@ -135,44 +146,43 @@ export const unExposeProp = (
   targetedProp: string,
 ) => {
   const {
-    propsId,
     selectedId: componentId,
     isCustomComponentChild,
+    props,
   } = loadRequired(draftState)
   const propName = targetedProp
 
-  if (isCustomComponentChild) {
-    const exposedPropIndex = draftState.customComponentsProps[
-      componentId
-    ].findIndex(prop => prop.name === propName)
+  const exposedPropId =
+    props.byComponentId[componentId].find(
+      propId => props.byId[propId].name === propName,
+    ) || ''
 
-    const customProp = {
-      ...draftState.customComponentsProps[componentId][exposedPropIndex],
-    }
+  const exposedProp = {
+    ...props.byId[exposedPropId],
+  }
 
-    //If the value is empty, delete the prop.
-    //else old value before exposing will be retained.
-    if (
-      draftState.customComponentsProps[componentId][exposedPropIndex].value
-        .length === 0
+  //If the value is empty, delete the prop.
+  //else old value before exposing will be retained.
+  if (props.byId[exposedPropId].value.length === 0) {
+    const propIndex = props.byComponentId[componentId].findIndex(
+      propId => propId === exposedPropId,
     )
-      draftState.customComponentsProps[componentId].splice(exposedPropIndex, 1)
-    else {
-      draftState.customComponentsProps[componentId][
-        exposedPropIndex
-      ].derivedFromPropName = null
-      draftState.customComponentsProps[componentId][
-        exposedPropIndex
-      ].derivedFromComponentType = null
-    }
+    props.byComponentId[componentId].splice(propIndex, 1)
+    delete props.byId[exposedPropId]
+  } else {
+    props.byId[exposedPropId].derivedFromPropName = null
 
+    props.byId[exposedPropId].derivedFromComponentType = null
+  }
+
+  if (isCustomComponentChild) {
     const {
       updatedCustomComponentProps,
       updatedPropsById,
       updatedCustomComponents,
       updatedComponentsById,
     } = deleteCustomPropInRootComponent(
-      customProp,
+      exposedProp,
       draftState.pages,
       draftState.componentsById,
       draftState.customComponents,
@@ -184,22 +194,5 @@ export const unExposeProp = (
     draftState.propsById = { ...updatedPropsById }
     draftState.componentsById = { ...updatedComponentsById }
     draftState.customComponents = { ...updatedCustomComponents }
-  } else {
-    //update only the derivedFromPropName of the exposed prop if it is not a child of custom component
-    const exposedPropIndex = draftState.propsById[propsId][
-      componentId
-    ].findIndex(prop => prop.name === propName)
-
-    //If the value is empty, delete the prop.
-    //else old value before exposing will be retained.
-    if (
-      draftState.propsById[propsId][componentId][exposedPropIndex].value
-        .length === 0
-    )
-      draftState.propsById[propsId][componentId].splice(exposedPropIndex, 1)
-    else
-      draftState.propsById[propsId][componentId][
-        exposedPropIndex
-      ].derivedFromPropName = null
   }
 }

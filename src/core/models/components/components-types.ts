@@ -41,9 +41,15 @@ export const INITIAL_COMPONENTS: IComponentsById = {
     },
   },
 }
-export const INITIAL_PROPS: IPropsById = {
-  1: {},
-  2: {},
+export const INITIAL_PROPS: IPropsByPageId = {
+  '1': {
+    byId: {},
+    byComponentId: {},
+  },
+  '2': {
+    byId: {},
+    byComponentId: {},
+  },
 }
 
 export const INITIAL_PAGES: IPages = {
