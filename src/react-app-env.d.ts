@@ -156,10 +156,19 @@ interface IProp {
   derivedFromComponentType: string | null
 }
 
-interface IPropsByComponentId {
-  [componentId: string]: IProp[]
+interface IPropsById {
+  [propId: string]: IProp
 }
 
-interface IPropsById {
-  [name: string]: IPropsByComponentId
+interface IPropsByComponentId {
+  [componentId: string]: string[]
+}
+
+interface IProps {
+  byId: IPropsById
+  byComponentId: IPropsByComponentId
+}
+
+interface IPropsByPageId {
+  [id: string]: IProps
 }
