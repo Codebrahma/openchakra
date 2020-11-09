@@ -1,5 +1,5 @@
 import { isKeyForComponent } from './reducerUtilities'
-import { generateId } from './generateId'
+import { generatePropId, generateComponentId } from './generateId'
 
 const addSpanForSelection = (
   childrenPropId: string,
@@ -193,8 +193,8 @@ const removeSpanForSelection = (
   }
   //Selected in the middle of the span
   else {
-    const spanComponentId1 = generateId()
-    const spanComponentId2 = generateId()
+    const spanComponentId1 = generateComponentId()
+    const spanComponentId2 = generateComponentId()
 
     props.byId[childrenPropId].value[startNodePosition] = [
       spanComponentId1,
@@ -221,8 +221,8 @@ const removeSpanForSelection = (
 
     props.byComponentId[spanComponentId].forEach(propId => {
       const prop = props.byId[propId]
-      const newPropId1 = generateId()
-      const newPropId2 = generateId()
+      const newPropId1 = generatePropId()
+      const newPropId2 = generatePropId()
 
       props.byComponentId[spanComponentId1].push(newPropId1)
       props.byComponentId[spanComponentId2].push(newPropId2)

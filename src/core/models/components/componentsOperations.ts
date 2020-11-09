@@ -1,5 +1,5 @@
 import { DEFAULT_ID } from './components-types'
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
@@ -17,7 +17,7 @@ export const addComponent = (
   draftState: ComponentsState,
   payload: { parentId: string; type: ComponentType },
 ) => {
-  const id = generateId()
+  const id = generateComponentId()
   const { parentId, type } = payload
   const { components, props } = loadRequired(draftState, parentId)
   const defaultProps: IPropsById = {}
@@ -26,7 +26,7 @@ export const addComponent = (
   //Add the default props for the component.
   DEFAULT_PROPS[type] &&
     Object.keys(DEFAULT_PROPS[type]).forEach((propName: string) => {
-      const propId = generateId()
+      const propId = generatePropId()
       defaultProps[propId] = {
         id: propId,
         name: propName,
@@ -68,7 +68,7 @@ export const addMetaComponent = (
     DEFAULT_PROPS[component.type as ComponentType] &&
       Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
         (propName: string) => {
-          const propId = generateId()
+          const propId = generatePropId()
           props.byComponentId[component.id].push(propId)
           props.byId[propId] = {
             id: propId,

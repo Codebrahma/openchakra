@@ -1,6 +1,6 @@
 import { createModel } from '@rematch/core'
 import produce from 'immer'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import {
   searchRootCustomComponent,
   duplicateComp,
@@ -448,22 +448,22 @@ const components = createModel({
             propsId: string,
           ) => {
             if (updateInCustomComponent) {
-              const id = generateId()
+              const id = generatePropId()
               draftState.customComponentsProps.byComponentId[
                 customComponentType
               ].push(id)
               draftState.customComponentsProps.byId[id] = {
                 ...childrenProp,
-                id: generateId(),
+                id: generatePropId(),
               }
             } else {
-              const id = generateId()
+              const id = generatePropId()
               draftState.propsById[propsId].byComponentId[
                 customComponentType
               ].push(id)
               draftState.propsById[propsId].byId[id] = {
                 ...childrenProp,
-                id: generateId(),
+                id: generatePropId(),
               }
             }
           },

@@ -5,7 +5,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const InputGroupPreview: React.FC<{
@@ -29,7 +29,7 @@ const InputGroupPreview: React.FC<{
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

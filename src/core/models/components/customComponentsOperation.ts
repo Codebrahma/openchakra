@@ -1,5 +1,5 @@
 import { ComponentsState } from './components'
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import { loadRequired, duplicateProps } from '../../../utils/reducerUtilities'
 import {
   moveComp,
@@ -11,7 +11,7 @@ export const addCustomComponent = (
   draftState: ComponentsState,
   payload: { parentId: string; type: string },
 ) => {
-  const componentId = generateId()
+  const componentId = generateComponentId()
   const { type, parentId } = payload
   const { components, props } = loadRequired(draftState, parentId)
 
@@ -26,7 +26,7 @@ export const addCustomComponent = (
   const duplicatedProps = duplicateProps(customComponentProps)
 
   const heightProp = {
-    id: generateId(),
+    id: generatePropId(),
     name: 'height',
     value: '100%',
     derivedFromPropName: null,
@@ -46,7 +46,7 @@ export const addCustomComponent = (
   Object.values(duplicatedProps).forEach(prop => {
     //If the children of the container is exposed
     if (draftState.customComponents[prop.value]) {
-      const boxId = generateId()
+      const boxId = generateComponentId()
       components[boxId] = {
         id: boxId,
         type: 'Box',
@@ -71,7 +71,7 @@ export const saveComponent = (
 ) => {
   const { propsId, componentsId } = loadRequired(draftState)
   const { name, componentId, parentId } = payload
-  const newId = generateId()
+  const newId = generateComponentId()
 
   //move the component & props from the components data to custom components data
   const {
@@ -154,7 +154,7 @@ export const saveComponent = (
 
   Object.values(rootParentProps).forEach(prop => {
     if (prop.value === 'RootCbComposer') {
-      const id = generateId()
+      const id = generateComponentId()
       draftState.customComponents[id] = {
         id,
         type: 'Box',
@@ -168,7 +168,7 @@ export const saveComponent = (
 
   Object.values(duplicatedProps).forEach(prop => {
     if (prop.value === 'RootCbComposer') {
-      const id = generateId()
+      const id = generateComponentId()
       draftState.componentsById[componentsId][id] = {
         id,
         type: 'Box',

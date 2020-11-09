@@ -5,7 +5,7 @@ import {
   deleteCustomPropUtility,
   isKeyForComponent,
 } from '../../../utils/reducerUtilities'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import { ComponentsState } from './components'
 
 export const updateProps = (
@@ -32,7 +32,7 @@ export const updateProps = (
     }
     props.byId[id].value = propValue
   } else {
-    const newPropId = generateId()
+    const newPropId = generatePropId()
     props.byComponentId[componentId].push(newPropId)
     props.byId[newPropId] = {
       id: newPropId,

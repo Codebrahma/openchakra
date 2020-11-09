@@ -13,7 +13,7 @@ import ComponentPreview from '../ComponentPreview'
 import { MenuWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const acceptedTypes = ['MenuButton', 'MenuList'] as ComponentType[]
@@ -34,7 +34,7 @@ const MenuPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -76,7 +76,7 @@ export const MenuListPreview = ({ component, customProps }: IPreviewProps) => {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -122,7 +122,7 @@ export const MenuButtonPreview = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -163,7 +163,7 @@ export const MenuItemPreview = ({ component, customProps }: IPreviewProps) => {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -206,7 +206,7 @@ export const MenuGroupPreview = ({ component, customProps }: IPreviewProps) => {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

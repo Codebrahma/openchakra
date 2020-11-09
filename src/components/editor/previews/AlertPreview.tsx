@@ -5,7 +5,7 @@ import ComponentPreview from '../ComponentPreview'
 import { Alert, Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
@@ -29,7 +29,7 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

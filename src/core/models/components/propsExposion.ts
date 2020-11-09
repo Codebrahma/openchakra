@@ -6,7 +6,7 @@ import {
   deleteCustomPropUtility,
 } from '../../../utils/reducerUtilities'
 import { searchRootCustomComponent } from '../../../utils/recursive'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 
 export const exposeProp = (
   draftState: ComponentsState,
@@ -34,7 +34,7 @@ export const exposeProp = (
 
     propValue = props.byId[propId].value
   } else {
-    const newPropId = generateId()
+    const newPropId = generatePropId()
     props.byComponentId[componentId].push(newPropId)
     props.byId[newPropId] = {
       id: newPropId,

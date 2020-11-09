@@ -12,7 +12,7 @@ import {
   getSelectedComponentId,
 } from '../core/selectors/components'
 import { getShowLayout } from '../core/selectors/app'
-import { generateId } from '../utils/generateId'
+import { generatePropId } from '../utils/generateId'
 import useCustomTheme from './useCustomTheme'
 
 export const useInteractive = (
@@ -69,7 +69,7 @@ export const useInteractive = (
   let props = enableInteractive
     ? [
         {
-          id: generateId(),
+          id: generatePropId(),
           name: 'onMouseOver',
           value: (event: MouseEvent) => {
             event.stopPropagation()
@@ -80,7 +80,7 @@ export const useInteractive = (
           derivedFromPropName: null,
         },
         {
-          id: generateId(),
+          id: generatePropId(),
           name: 'onMouseOut',
           value: () => {
             setIsHovered(false)
@@ -90,7 +90,7 @@ export const useInteractive = (
           derivedFromPropName: null,
         },
         {
-          id: generateId(),
+          id: generatePropId(),
           name: 'fontFamily',
           value:
             component.type === 'Heading'
@@ -107,7 +107,7 @@ export const useInteractive = (
   if (showLayout && enableVisualHelper) {
     props = [
       {
-        id: generateId(),
+        id: generatePropId(),
         name: 'border',
         value: `1px dashed #718096`,
         componentId: component.id,
@@ -115,7 +115,7 @@ export const useInteractive = (
         derivedFromPropName: null,
       },
       {
-        id: generateId(),
+        id: generatePropId(),
         name: 'padding',
         value: isSpanElement ? '0.3rem' : '1rem', //1rem padding will be very big for the span. So for span elements, the padding is reduced to 0.3rem
         componentId: component.id,
@@ -131,7 +131,7 @@ export const useInteractive = (
     props = [
       ...props,
       {
-        id: generateId(),
+        id: generatePropId(),
         name: 'width',
         value: '100%',
         componentId: component.id,
@@ -143,7 +143,7 @@ export const useInteractive = (
 
   if (enableInteractive) {
     props.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'onClick',
       value: (event: MouseEvent) => {
         event.preventDefault()
@@ -160,7 +160,7 @@ export const useInteractive = (
 
     if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
       props.push({
-        id: generateId(),
+        id: generatePropId(),
         name: 'boxShadow',
         value: `#0C008C 0px 0px 0px 2px inset`,
         componentId: component.id,

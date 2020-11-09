@@ -91,7 +91,6 @@ const EditablePreviewContainer: React.FC<{
       propsKeyValue[key] = stringToIconConvertor(key, propsKeyValue[key])
   })
 
-  console.log(propsKeyValue)
   const Element = React.createElement(type, {
     ...propsKeyValue,
     ...forwardedProps,

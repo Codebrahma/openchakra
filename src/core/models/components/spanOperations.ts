@@ -5,7 +5,7 @@ import {
   splitArray,
   joinAdjacentTextNodes,
 } from '../../../utils/reducerUtilities'
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import {
   addSpanForSelection,
   removeSpanForSelection,
@@ -24,7 +24,7 @@ export const addSpanComponent = (
       propId => props.byId[propId].name === 'children',
     ) || ''
 
-  const newId = generateId()
+  const newId = generateComponentId()
   const { startIndex, endIndex, startNodePosition, endNodePosition } = payload
   let start = startIndex
   let end = endIndex
@@ -48,10 +48,10 @@ export const addSpanComponent = (
     props.byComponentId[newId] = []
     components[id].children.push(newId)
 
-    const spanId = generateId()
-    props.byComponentId[newId].push(spanId)
-    props.byId[spanId] = {
-      id: spanId,
+    const asPropId = generatePropId()
+    props.byComponentId[newId].push(asPropId)
+    props.byId[asPropId] = {
+      id: asPropId,
       value: 'span',
       name: 'as',
       derivedFromComponentType: null,
@@ -73,7 +73,7 @@ export const addSpanComponent = (
       props.byId[childrenPropId].value,
     )
 
-    const spanChildrenId = generateId()
+    const spanChildrenId = generatePropId()
 
     props.byComponentId[newId].push(spanChildrenId)
     props.byId[spanChildrenId] = {

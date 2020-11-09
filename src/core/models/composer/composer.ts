@@ -1,4 +1,4 @@
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId } from '../../../utils/generateId'
 
 type AddNode = {
   type: ComponentType
@@ -19,7 +19,7 @@ class Composer {
   }
 
   addNode = ({ type, parent = 'root' }: AddNode): string => {
-    const id = generateId()
+    const id = generateComponentId()
 
     if (parent === 'root' && !this.rootComponentType) {
       this.rootComponentType = type

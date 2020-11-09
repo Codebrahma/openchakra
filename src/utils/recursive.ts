@@ -1,4 +1,4 @@
-import { generateId } from './generateId'
+import { generatePropId, generateComponentId } from './generateId'
 import { updateInAllInstances } from './reducerUtilities'
 
 export const duplicateComp = (
@@ -13,7 +13,7 @@ export const duplicateComp = (
   }
 
   const cloneComponent = (component: IComponent) => {
-    const newId = generateId()
+    const newId = generateComponentId()
     const children = component.children.map(child => {
       return cloneComponent(sourceComponents[child])
     })
@@ -48,7 +48,7 @@ export const duplicateComp = (
           },
         }
       }
-      const newPropId = generateId()
+      const newPropId = generateComponentId()
 
       if (clonedProps.byComponentId[newId]) {
         clonedProps.byComponentId[newId].push(newPropId)
@@ -161,7 +161,7 @@ export const fetchAndUpdateExposedProps = (
             rootProp => rootProp.name === prop.derivedFromPropName,
           ) === -1
         ) {
-          const newPropId = generateId()
+          const newPropId = generatePropId()
           rootParentProps[newPropId] = {
             id: newPropId,
             name: prop.derivedFromPropName || '',

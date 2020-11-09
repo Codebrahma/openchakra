@@ -1,5 +1,5 @@
 import { deleteComp } from './recursive'
-import { generateId } from './generateId'
+import { generatePropId, generateComponentId } from './generateId'
 import { ComponentsState } from '../core/models/components/components'
 
 export function checkIsChildOfCustomComponent(
@@ -14,7 +14,7 @@ export const duplicateProps = (props: IPropsById) => {
   const duplicatedProps: IPropsById = {}
 
   Object.values(props).forEach(prop => {
-    const newPropId = generateId()
+    const newPropId = generatePropId()
     duplicatedProps[newPropId] = {
       ...prop,
       id: newPropId,
@@ -202,7 +202,7 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     updateInCustomComponent,
   } = payload
 
-  const boxId = generateId()
+  const boxId = generateComponentId()
 
   const boxComponent = {
     id: boxId,
@@ -216,14 +216,14 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     exposedPropComponentType,
   )
   const heightProp = {
-    id: generateId(),
+    id: generatePropId(),
     name: 'height',
     value: '100%',
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
 
-  const propId = generateId()
+  const propId = generatePropId()
   const prop = {
     id: propId,
     name: exposedProp.customPropName || '',
