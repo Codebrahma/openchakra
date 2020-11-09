@@ -19,23 +19,23 @@ const TextControl: React.FC<TextControlPropsType> = ({
   hasColumn = false,
   placeholder = '',
 }) => {
-  const { setValueFromEvent } = useForm()
-  const value = usePropsSelector(name)
+  const { setValue } = useForm()
+  const { propId, propValue } = usePropsSelector(name)
 
   return (
     <FormControl hasColumn={hasColumn} htmlFor={name} label={label}>
       <Input
         rounded="md"
         autoComplete="off"
-        id={name}
+        id={propId}
         name={name}
         autoFocus={autoFocus}
         size="sm"
-        value={value || ''}
+        value={propValue || ''}
         type="text"
         width={hasColumn ? '3rem' : '100%'}
         placeholder={placeholder}
-        onChange={setValueFromEvent}
+        onChange={e => setValue(propId, name, e.target.value)}
       />
     </FormControl>
   )

@@ -5,28 +5,25 @@ import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const MenuOptionGroupPanel = () => {
-  const { setValueFromEvent } = useForm()
-  const title = usePropsSelector('title')
-  const type = usePropsSelector('type')
+  const { setValue } = useForm()
+  const { propId: titleId, propValue: titleValue } = usePropsSelector('title')
+  const { propId: typeId, propValue: typeValue } = usePropsSelector('type')
 
   return (
     <>
       <FormControl label="Title">
         <Input
           size="sm"
-          value={title || 'Title'}
+          value={titleValue || 'Title'}
           type="text"
-          name="title"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(titleId, 'title', e.target.value)}
         />
       </FormControl>
       <FormControl label="Type" htmlFor="type">
         <Select
-          name="type"
-          id="type"
           size="sm"
-          value={type || 'type'}
-          onChange={setValueFromEvent}
+          value={typeValue || 'type'}
+          onChange={e => setValue(typeId, 'type', e.target.value)}
         >
           <option>radio</option>
           <option>checkbox</option>

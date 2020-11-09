@@ -11,14 +11,15 @@ type IconControlProps = {
 }
 
 const IconControl: React.FC<IconControlProps> = ({ name, label }) => {
-  const value = usePropsSelector(name)
+  const { propId, propValue } = usePropsSelector(name)
   const iconsArray = Object.keys(icons).filter(icon => icon !== 'createIcon')
 
   return (
     <FormControl label={label} htmlFor={name}>
       <ComboBox
+        id={propId}
         options={iconsArray}
-        value={value}
+        value={propValue}
         name={name}
         enableAutoComplete={true}
         renderOptions={option => {

@@ -3,8 +3,10 @@ import FormControl from '../../controls/FormControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import ComboBox from '../../inputs/ComboBox'
 
-const CodePanel = () => {
-  const styleType = usePropsSelector('styleType')
+const ListPanel = () => {
+  const { propId: styleTypeId, propValue: styleTypeValue } = usePropsSelector(
+    'styleType',
+  )
 
   const styleTypePropValues = [
     'none',
@@ -21,7 +23,8 @@ const CodePanel = () => {
     <>
       <FormControl label="Style type" htmlFor="styleType">
         <ComboBox
-          value={styleType || 'md'}
+          id={styleTypeId}
+          value={styleTypeValue || 'md'}
           name="styleType"
           options={styleTypePropValues}
         />
@@ -30,4 +33,4 @@ const CodePanel = () => {
   )
 }
 
-export default memo(CodePanel)
+export default memo(ListPanel)

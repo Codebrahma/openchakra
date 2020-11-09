@@ -32,7 +32,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   propName,
 }) => {
   const selectedComponent = useSelector(getSelectedComponent)
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const theme = useCustomTheme()
 
   //Why both the instance of custom component and also the original custom component.
@@ -95,7 +95,9 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
                 name={propName}
                 value={selectedProp?.value}
                 size="sm"
-                onChange={setValueFromEvent}
+                onChange={e =>
+                  setValue(selectedProp?.id, propName, e.target.value)
+                }
               />
             </FormControl>
           )
@@ -113,12 +115,14 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
         )
           return (
             <SizeControl
+              id={selectedProp?.id}
               value={selectedProp?.value}
               options={['xs', 'sm', 'md', 'lg', 'xl', '2xl']}
             />
           )
         return (
           <SizeControl
+            id={selectedProp?.id}
             value={selectedProp?.value}
             options={['xs', 'sm', 'md', 'lg']}
           />
@@ -145,8 +149,10 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           <FormControl label={propName}>
             <Select
               size="sm"
-              value={propName || ''}
-              onChange={setValueFromEvent}
+              value={selectedProp?.value || ''}
+              onChange={e =>
+                setValue(selectedProp?.value, propName, e.target.value)
+              }
               name={propName}
             >
               {propOptions[propName].map((propOption: string) => (
@@ -194,6 +200,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           return (
             <FormControl label={propName} htmlFor={propName}>
               <ComboBox
+                id={selectedProp?.id}
                 value={selectedProp?.value}
                 name={propName}
                 options={options}

@@ -36,19 +36,19 @@ type ColorControlPropsType = {
 }
 
 const ColorsControl = (props: ColorControlPropsType) => {
-  const { setValue, setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const [hue, setHue] = useState(500)
   const [color, setColor] = useState('')
-  const value = usePropsSelector(props.name)
+  const { propId, propValue } = usePropsSelector(props.name)
   const theme = useCustomTheme()
 
   const themeColors: any = omit(theme.colors, ['transparent', 'current'])
 
   const IconButtonProps: any =
     props.name === 'colorScheme'
-      ? { colorScheme: value }
+      ? { colorScheme: propValue }
       : {
-          bg: value,
+          bg: propValue,
         }
 
   const huesPicker = (
@@ -79,6 +79,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
                 onClick={() => {
                   setColor(colorName)
                   setValue(
+                    propId,
                     props.name,
                     enableHues ? `${colorName}.${hue}` : colorName,
                   )
@@ -99,7 +100,8 @@ const ColorsControl = (props: ColorControlPropsType) => {
           onChange={value => {
             value = value === 0 ? 50 : value
             setHue(value)
-            if (color.length > 0) setValue(props.name, `${color}.${value}`)
+            if (color.length > 0)
+              setValue(propId, props.name, `${color}.${value}`)
           }}
           min={0}
           max={900}
@@ -126,7 +128,7 @@ const ColorsControl = (props: ColorControlPropsType) => {
           <IconButton
             mr={2}
             shadow="md"
-            border={value ? 'none' : '2px solid grey'}
+            border={propValue ? 'none' : '2px solid grey'}
             isRound
             aria-label="Color"
             size="xs"
@@ -150,9 +152,9 @@ const ColorsControl = (props: ColorControlPropsType) => {
                   <TabPanel p={0}>
                     <Box position="relative" height="150px">
                       <ColorPicker
-                        color={value}
+                        color={propValue}
                         onChange={(color: any) => {
-                          setValue(props.name, `#${color.hex}`)
+                          setValue(propId, props.name, `#${color.hex}`)
                         }}
                       />
                       );
@@ -170,8 +172,9 @@ const ColorsControl = (props: ColorControlPropsType) => {
         width="100px"
         size="sm"
         name={props.name}
-        onChange={setValueFromEvent}
-        value={value}
+        id={propId}
+        onChange={e => setValue(propId, props.name, e.target.value)}
+        value={propValue}
       />
     </FormControl>
   )

@@ -7,8 +7,10 @@ import SwitchControl from '../../controls/SwitchControl'
 import IconControl from '../../controls/IconControl'
 
 const IconButtonPanel = () => {
-  const size = usePropsSelector('size')
-  const variant = usePropsSelector('variant')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
 
   const variantPropValues = [
     'solid',
@@ -22,11 +24,19 @@ const IconButtonPanel = () => {
   return (
     <>
       <IconControl name="icon" label="Icon" />
-      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
+      <SizeControl
+        id={sizeId}
+        options={['sm', 'md', 'lg']}
+        value={sizeValue || ''}
+      />
       <ColorsControl label="Color Scheme" name="colorScheme" />
       <SwitchControl label="Loading" name="isLoading" />
       <SwitchControl label="Round" name="isRound" />
-      <VariantsControl value={variant} options={variantPropValues} />
+      <VariantsControl
+        id={variantId}
+        value={variantValue}
+        options={variantPropValues}
+      />
     </>
   )
 }

@@ -6,7 +6,7 @@ import TextControl from '../../controls/TextControl'
 import ComboBox from '../../inputs/ComboBox'
 
 const AvatarPanel = () => {
-  const size = usePropsSelector('size')
+  const { propValue: sizeValue, propId: sizeId } = usePropsSelector('size')
 
   const sizesArray = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
@@ -14,8 +14,9 @@ const AvatarPanel = () => {
     <>
       <FormControl label="Size" htmlFor="size">
         <ComboBox
+          id={sizeId}
           options={sizesArray}
-          value={size || ''}
+          value={sizeValue || ''}
           name="size"
           editable={false}
         />

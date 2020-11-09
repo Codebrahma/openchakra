@@ -5,15 +5,24 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import ComboBox from '../../inputs/ComboBox'
 
 const DisplayFlexPanel = () => {
-  const alignItems = usePropsSelector('alignItems')
-  const flexDirection = usePropsSelector('flexDirection')
-  const justifyContent = usePropsSelector('justifyContent')
+  const { propId: alignItemsId, propValue: alignItemsValue } = usePropsSelector(
+    'alignItems',
+  )
+  const {
+    propId: flexDirectionId,
+    propValue: flexDirectionValue,
+  } = usePropsSelector('flexDirection')
+  const {
+    propId: justifyContentId,
+    propValue: justifyContentValue,
+  } = usePropsSelector('justifyContent')
 
   return (
     <>
       <FormControl label="Direction">
         <ComboBox
-          value={flexDirection || 'row'}
+          id={flexDirectionId}
+          value={flexDirectionValue || 'row'}
           name="flexDirection"
           options={['row', 'row-reverse', 'column', 'column-reverse']}
           enableAutoComplete
@@ -22,7 +31,8 @@ const DisplayFlexPanel = () => {
 
       <FormControl label="Justify content">
         <ComboBox
-          value={justifyContent || 'flex-start'}
+          id={justifyContentId}
+          value={justifyContentValue || 'flex-start'}
           name="justifyContent"
           options={[
             'flex-start',
@@ -37,7 +47,8 @@ const DisplayFlexPanel = () => {
 
       <FormControl label="Align items">
         <ComboBox
-          value={alignItems || 'stretch'}
+          id={alignItemsId}
+          value={alignItemsValue || 'stretch'}
           name="alignItems"
           options={[
             'stretch',

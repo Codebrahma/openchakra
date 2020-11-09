@@ -36,9 +36,11 @@ const AdditionalPropsPanel = () => {
   const [hasError, setError] = useState(false)
 
   const onDelete = (propsName: string) => {
+    const propId = props.find(prop => prop.name === propsName)?.id || ''
+
     dispatch.components.deleteProps({
-      id,
-      name: propsName,
+      componentId: id,
+      propId,
     })
   }
 
@@ -55,7 +57,7 @@ const AdditionalPropsPanel = () => {
           const value = quickProps.slice(num + 1)
 
           if (name && value) {
-            setValue(name, value)
+            setValue(name, name, value)
             setQuickProps('')
             setError(false)
           } else {

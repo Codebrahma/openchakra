@@ -7,56 +7,74 @@ import ComboBox from '../../inputs/ComboBox'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const DimensionPanel = () => {
-  const { setValueFromEvent } = useForm()
-  const overflow = usePropsSelector('overflow')
-  const width = usePropsSelector('width')
-  const height = usePropsSelector('height')
-  const minWidth = usePropsSelector('minWidth')
-  const minHeight = usePropsSelector('minHeight')
-  const maxWidth = usePropsSelector('maxWidth')
-  const maxHeight = usePropsSelector('maxHeight')
+  const { setValue } = useForm()
+  const { propId: overflowId, propValue: overflowValue } = usePropsSelector(
+    'overflow',
+  )
+  const { propId: widthId, propValue: widthValue } = usePropsSelector('width')
+  const { propId: heightId, propValue: heightValue } = usePropsSelector(
+    'height',
+  )
+  const { propId: minWidthId, propValue: minWidthValue } = usePropsSelector(
+    'minWidth',
+  )
+  const { propId: minHeightId, propValue: minHeightValue } = usePropsSelector(
+    'minHeight',
+  )
+  const { propId: maxWidthId, propValue: maxWidthValue } = usePropsSelector(
+    'maxWidth',
+  )
+  const { propId: maxHeightId, propValue: maxHeightValue } = usePropsSelector(
+    'maxHeight',
+  )
   const theme = useCustomTheme()
 
   return (
     <>
       <FormControl label="Width" htmlFor="width">
         <ComboBox
-          value={width}
+          id={widthId}
+          value={widthValue}
           name="width"
           options={Object.keys(theme.sizes)}
         />
       </FormControl>
       <FormControl label="Height" htmlFor="height">
         <ComboBox
-          value={height}
+          id={heightId}
+          value={heightValue}
           name="height"
           options={Object.keys(theme.sizes)}
         />
       </FormControl>
       <SimpleGrid columns={2} spacing={1} m="10px 0">
         <ComboBox
-          value={minWidth}
+          id={minWidthId}
+          value={minWidthValue}
           name="minWidth"
           placeholder="Min width"
           options={Object.keys(theme.sizes)}
         />
 
         <ComboBox
-          value={minHeight}
+          id={minHeightId}
+          value={minHeightValue}
           name="minHeight"
           placeholder="Min Height"
           options={Object.keys(theme.sizes)}
         />
 
         <ComboBox
-          value={maxWidth}
+          id={maxWidthId}
+          value={maxWidthValue}
           name="maxWidth"
           placeholder="Max Width"
           options={Object.keys(theme.sizes)}
         />
 
         <ComboBox
-          value={maxHeight}
+          id={maxHeightId}
+          value={maxHeightValue}
           name="maxHeight"
           placeholder="Max Height"
           options={Object.keys(theme.sizes)}
@@ -65,9 +83,8 @@ const DimensionPanel = () => {
       <FormControl label="Overflow">
         <Select
           size="sm"
-          value={overflow || ''}
-          onChange={setValueFromEvent}
-          name="overflow"
+          value={overflowValue || ''}
+          onChange={e => setValue(overflowId, 'overflow', e.target.value)}
         >
           <option>visible</option>
           <option>hidden</option>

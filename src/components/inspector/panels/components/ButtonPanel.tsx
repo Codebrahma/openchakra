@@ -12,21 +12,27 @@ import SwitchControl from '../../controls/SwitchControl'
 import { useForm } from '../../../../hooks/useForm'
 
 const ButtonPanel = () => {
-  const size = usePropsSelector('size')
-  const variant = usePropsSelector('variant')
-  const loadingText = usePropsSelector('loadingText')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
+  const {
+    propId: loadingTextId,
+    propValue: loadingTextValue,
+  } = usePropsSelector('loadingText')
 
   const variantPropValues = ['outline', 'ghost', 'unstyled', 'link', 'solid']
   const sizePropValues: Size[] = ['xs', 'sm', 'md', 'lg']
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
 
   return (
     <>
       <ChildrenControl />
-      <SizeControl options={sizePropValues} value={size} />
+      <SizeControl options={sizePropValues} value={sizeValue} id={sizeId} />
       <VariantsControl
         options={variantPropValues}
-        value={variant || 'subtle'}
+        value={variantValue || 'subtle'}
+        id={variantId}
       />
       <ColorsControl label="Color Scheme" name="colorScheme" />
       <IconControl label="Left icon" name="leftIcon" />
@@ -34,12 +40,12 @@ const ButtonPanel = () => {
       <SwitchControl label="Loading" name="isLoading" />
       <FormControl htmlFor="loadingText" label="loading text">
         <Input
-          id="loadingText"
+          id={loadingTextId}
           name="loadingText"
           size="sm"
-          value={loadingText}
+          value={loadingTextValue}
           type="text"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(loadingTextId, 'loadingText', e.target.value)}
         />
       </FormControl>
     </>

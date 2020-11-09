@@ -7,18 +7,28 @@ import VariantsControl from '../../controls/VariantsControl'
 import SizeControl from '../../controls/SizeControl'
 
 const SelectPanel = () => {
-  const size = usePropsSelector('size')
-  const variant = usePropsSelector('variant')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
 
   const variantPropValues = ['outline', 'unstyled', 'flushed', 'filled']
 
   return (
     <>
       <TextControl label="Placeholder" name="placeholder" />
-      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
+      <SizeControl
+        id={sizeId}
+        options={['sm', 'md', 'lg']}
+        value={sizeValue || ''}
+      />
       <IconControl label="Icon" name="icon" />
       <TextControl label="Icon size" name="iconSize" />
-      <VariantsControl value={variant} options={variantPropValues} />
+      <VariantsControl
+        id={variantId}
+        value={variantValue}
+        options={variantPropValues}
+      />
       <SwitchControl label="Invalid" name="isInvalid" />
       <SwitchControl label="Read Only" name="isReadOnly" />
     </>

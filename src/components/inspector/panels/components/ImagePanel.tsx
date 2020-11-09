@@ -1,68 +1,70 @@
-import React from "react";
-import { Input } from "@chakra-ui/core";
-import FormControl from "../../controls/FormControl";
-import { useForm } from "../../../../hooks/useForm";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
+import React from 'react'
+import { Input } from '@chakra-ui/core'
+import FormControl from '../../controls/FormControl'
+import { useForm } from '../../../../hooks/useForm'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const ImagePanel = () => {
-  const { setValueFromEvent } = useForm();
+  const { setValue } = useForm()
 
-  const src = usePropsSelector("src");
-  const fallbackSrc = usePropsSelector("fallbackSrc");
-  const alt = usePropsSelector("alt");
-  const htmlHeight = usePropsSelector("htmlHeight");
-  const htmlWidth = usePropsSelector("htmlWidth");
+  const { propId: srcId, propValue: srcValue } = usePropsSelector('src')
+  const {
+    propId: fallbackSrcId,
+    propValue: fallbackSrcValue,
+  } = usePropsSelector('fallbackSrc')
+  const { propId: altId, propValue: altValue } = usePropsSelector('alt')
+  const { propId: htmlHeightId, propValue: htmlHeightValue } = usePropsSelector(
+    'htmlHeight',
+  )
+  const { propId: htmlWidthId, propValue: htmlWidthValue } = usePropsSelector(
+    'htmlWidth',
+  )
 
   return (
     <>
       <FormControl label="Source" htmlFor="src">
         <Input
           placeholder="Image URL"
-          value={src || ""}
+          value={srcValue || ''}
           size="sm"
-          name="src"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(srcId, 'src', e.target.value)}
         />
       </FormControl>
 
       <FormControl label="Fallback Src" htmlFor="fallbackSrc">
         <Input
           placeholder="Image URL"
-          value={fallbackSrc || ""}
+          value={fallbackSrcValue || ''}
           size="sm"
-          name="fallbackSrc"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(fallbackSrcId, 'fallbackSrc', e.target.value)}
         />
       </FormControl>
 
       <FormControl label="Alt" htmlFor="alt">
         <Input
-          value={alt || ""}
+          value={altValue || ''}
           size="sm"
-          name="alt"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(altId, 'alt', e.target.value)}
         />
       </FormControl>
 
       <FormControl label="Html height" htmlFor="htmlHeight">
         <Input
-          value={htmlHeight || ""}
+          value={htmlHeightValue || ''}
           size="sm"
-          name="htmlHeight"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(htmlHeightId, 'htmlHeight', e.target.value)}
         />
       </FormControl>
 
       <FormControl label="Html width" htmlFor="htmlWidth">
         <Input
-          value={htmlWidth || ""}
+          value={htmlWidthValue || ''}
           size="sm"
-          name="htmlWidth"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(htmlWidthId, 'htmlWidth', e.target.value)}
         />
       </FormControl>
     </>
-  );
-};
+  )
+}
 
-export default ImagePanel;
+export default ImagePanel

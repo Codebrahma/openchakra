@@ -4,11 +4,11 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SizeControl from '../../controls/SizeControl'
 
 const CloseButtonPanel = () => {
-  const size = usePropsSelector('size')
+  const { propValue: sizeValue, propId: sizeId } = usePropsSelector('size')
 
   return (
     <>
-      <SizeControl value={size} options={['sm', 'md', 'lg']} />
+      <SizeControl id={sizeId} value={sizeValue} options={['sm', 'md', 'lg']} />
       <ColorsControl label="Color" name="color" enableHues />
     </>
   )

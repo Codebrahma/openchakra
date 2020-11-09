@@ -20,23 +20,30 @@ import ComboBox from '../../inputs/ComboBox'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const PositionPanel = () => {
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const theme = useCustomTheme()
-  const position = usePropsSelector('position')
-  const left = usePropsSelector('left')
-  const right = usePropsSelector('right')
-  const bottom = usePropsSelector('bottom')
-  const top = usePropsSelector('top')
-  const zIndex = usePropsSelector('zIndex')
+  const { propId: positionId, propValue: positionValue } = usePropsSelector(
+    'position',
+  )
+  const { propId: leftId, propValue: leftValue } = usePropsSelector('left')
+  const { propId: rightId, propValue: rightValue } = usePropsSelector('right')
+  const { propId: bottomId, propValue: bottomValue } = usePropsSelector(
+    'bottom',
+  )
+  const { propId: topId, propValue: topValue } = usePropsSelector('top')
+  const { propId: zIndexId, propValue: zIndexValue } = usePropsSelector(
+    'zIndex',
+  )
 
   return (
     <>
       <FormControl label="Position">
         <Select
+          id={positionId}
           name="position"
           size="sm"
-          value={position}
-          onChange={setValueFromEvent}
+          value={positionValue}
+          onChange={e => setValue(positionId, 'position', e.target.value)}
         >
           <option>static</option>
           <option>relative</option>
@@ -48,7 +55,8 @@ const PositionPanel = () => {
 
       <FormControl label="z-index" htmlFor="zIndex">
         <ComboBox
-          value={zIndex}
+          id={zIndexId}
+          value={zIndexValue}
           name="zIndex"
           options={Object.keys(theme.zIndices)}
         />
@@ -64,8 +72,9 @@ const PositionPanel = () => {
             size="sm"
             type="text"
             name="left"
-            value={left || ''}
-            onChange={setValueFromEvent}
+            id={leftId}
+            value={leftValue || ''}
+            onChange={e => setValue(leftId, 'left', e.target.value)}
             autoComplete="off"
           />
         </InputGroup>
@@ -78,9 +87,10 @@ const PositionPanel = () => {
             placeholder="right"
             size="sm"
             type="text"
-            value={right || ''}
+            id={rightId}
+            value={rightValue || ''}
             name="right"
-            onChange={setValueFromEvent}
+            onChange={e => setValue(rightId, 'right', e.target.value)}
             autoComplete="off"
           />
         </InputGroup>
@@ -93,9 +103,10 @@ const PositionPanel = () => {
             placeholder="top"
             size="sm"
             type="text"
-            value={top || ''}
+            id={topId}
+            value={topValue || ''}
             name="top"
-            onChange={setValueFromEvent}
+            onChange={e => setValue(topId, 'top', e.target.value)}
             autoComplete="off"
           />
         </InputGroup>
@@ -108,9 +119,10 @@ const PositionPanel = () => {
             placeholder="bottom"
             size="sm"
             type="text"
-            value={bottom || ''}
+            id={bottomId}
+            value={bottomValue || ''}
             name="bottom"
-            onChange={setValueFromEvent}
+            onChange={e => setValue(bottomId, 'bottom', e.target.value)}
             autoComplete="off"
           />
         </InputGroup>

@@ -7,7 +7,9 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import IconControl from '../../controls/IconControl'
 
 const IconPanel = () => {
-  const fontSize = usePropsSelector('fontSize')
+  const { propId: fontSizeId, propValue: fontSizeValue } = usePropsSelector(
+    'fontSize',
+  )
 
   return (
     <>
@@ -15,8 +17,9 @@ const IconPanel = () => {
 
       <FormControl label="Font size" htmlFor="fontSize">
         <ComboBox
+          id={fontSizeId}
           options={Object.keys(theme.fontSizes)}
-          value={fontSize}
+          value={fontSizeValue}
           name="fontSize"
         />
       </FormControl>

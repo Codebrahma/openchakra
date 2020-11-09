@@ -26,11 +26,21 @@ const ATTRIBUTES = {
 }
 
 const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
-  const all = usePropsSelector(ATTRIBUTES[type].all)
-  const left = usePropsSelector(ATTRIBUTES[type].left)
-  const right = usePropsSelector(ATTRIBUTES[type].right)
-  const bottom = usePropsSelector(ATTRIBUTES[type].bottom)
-  const top = usePropsSelector(ATTRIBUTES[type].top)
+  const { propId: allId, propValue: allValue } = usePropsSelector(
+    ATTRIBUTES[type].all,
+  )
+  const { propId: leftId, propValue: leftValue } = usePropsSelector(
+    ATTRIBUTES[type].left,
+  )
+  const { propId: rightId, propValue: rightValue } = usePropsSelector(
+    ATTRIBUTES[type].right,
+  )
+  const { propId: bottomId, propValue: bottomValue } = usePropsSelector(
+    ATTRIBUTES[type].bottom,
+  )
+  const { propId: topId, propValue: topValue } = usePropsSelector(
+    ATTRIBUTES[type].top,
+  )
   const theme = useCustomTheme()
 
   return (
@@ -40,7 +50,8 @@ const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
       </FormLabel>
       <Box mb="5px">
         <ComboBox
-          value={all || ''}
+          id={allId}
+          value={allValue || ''}
           name={ATTRIBUTES[type].all}
           placeholder="All"
           options={Object.keys(theme.space)}
@@ -49,28 +60,32 @@ const PaddingPanel = ({ type }: PaddingPanelPropsType) => {
 
       <SimpleGrid columns={2} spacing={1}>
         <ComboBox
-          value={left || ''}
+          id={leftId}
+          value={leftValue || ''}
           name={ATTRIBUTES[type].left}
           placeholder="Left"
           options={Object.keys(theme.space)}
         />
 
         <ComboBox
-          value={right || ''}
+          id={rightId}
+          value={rightValue || ''}
           name={ATTRIBUTES[type].right}
           placeholder="Right"
           options={Object.keys(theme.space)}
         />
 
         <ComboBox
-          value={top || ''}
+          id={topId}
+          value={topValue || ''}
           name={ATTRIBUTES[type].top}
           placeholder="Top"
           options={Object.keys(theme.space)}
         />
 
         <ComboBox
-          value={bottom || ''}
+          id={bottomId}
+          value={bottomValue || ''}
           name={ATTRIBUTES[type].bottom}
           placeholder="Bottom"
           options={Object.keys(theme.space)}

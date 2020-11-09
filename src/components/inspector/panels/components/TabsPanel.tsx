@@ -9,11 +9,16 @@ import VariantsControl from '../../controls/VariantsControl'
 import SizeControl from '../../controls/SizeControl'
 
 const TabsPanel = () => {
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
 
-  const variant = usePropsSelector('variant')
-  const orientation = usePropsSelector('orientation')
-  const size = usePropsSelector('size')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
+  const {
+    propId: orientationId,
+    propValue: orientationValue,
+  } = usePropsSelector('orientation')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
 
   const variantPropValues = [
     'line',
@@ -28,20 +33,26 @@ const TabsPanel = () => {
     <>
       <SwitchControl label="Manual" name="isManual" />
       <SwitchControl label="Fitted" name="isFitted" />
-      <VariantsControl value={variant} options={variantPropValues} />
+      <VariantsControl
+        id={variantId}
+        value={variantValue}
+        options={variantPropValues}
+      />
       <FormControl label="Orientation" htmlFor="orientation">
         <Select
-          name="orientation"
-          id="orientation"
           size="sm"
-          value={orientation || ''}
-          onChange={setValueFromEvent}
+          value={orientationValue || ''}
+          onChange={e => setValue(orientationId, 'orientation', e.target.value)}
         >
           <option>horizontal</option>
           <option>vertical</option>
         </Select>
       </FormControl>
-      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
+      <SizeControl
+        id={sizeId}
+        options={['sm', 'md', 'lg']}
+        value={sizeValue || ''}
+      />
       <ColorsControl label="Color Scheme" name="colorScheme" />
     </>
   )

@@ -7,15 +7,18 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import SwitchControl from '../../controls/SwitchControl'
 
 const TagPanel = () => {
-  const size = usePropsSelector('size')
-  const variant = usePropsSelector('variant')
+  const { propValue: sizeValue, propId: sizeId } = usePropsSelector('size')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
 
   return (
     <>
       <ChildrenControl />
-      <SizeControl options={['sm', 'md', 'lg']} value={size} />
+      <SizeControl id={sizeId} options={['sm', 'md', 'lg']} value={sizeValue} />
       <VariantsControl
-        value={variant}
+        id={variantId}
+        value={variantValue}
         options={['solid', 'outline', 'subtle']}
       />
       <ColorsControl label="Color Scheme" name="colorScheme" />

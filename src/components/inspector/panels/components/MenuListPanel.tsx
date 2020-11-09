@@ -5,18 +5,18 @@ import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const MenuListPanel = () => {
-  const { setValueFromEvent } = useForm()
-  const placement = usePropsSelector('placement')
+  const { setValue } = useForm()
+  const { propId: placementId, propValue: placementValue } = usePropsSelector(
+    'placement',
+  )
 
   return (
     <>
       <FormControl label="Placement" htmlFor="placement">
         <Select
-          name="placement"
-          id="placement"
           size="sm"
-          value={placement || 'placement'}
-          onChange={setValueFromEvent}
+          value={placementValue || 'placement'}
+          onChange={e => setValue(placementId, 'placement', e.target.value)}
         >
           <option>auto</option>
           <option>top</option>
