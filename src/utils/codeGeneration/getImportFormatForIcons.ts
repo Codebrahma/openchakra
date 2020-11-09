@@ -3,22 +3,22 @@ import { isPropRelatedToIcon } from '../../components/editor/PreviewContainer'
 import { getFirstTwoCharacters } from '../stringToIconConvertor'
 
 // This function is used to get icons from each different icon type
-const getRequiredIconsToImport = (
-  components: IComponents,
-  props: IPropsByComponentId,
-) => {
+const getRequiredIconsToImport = (components: IComponents, props: IProps) => {
   const chakraIcons: string[] = []
   const fontAwesomeIcons: string[] = []
   const materialIcons: string[] = []
   const antIcons: string[] = []
 
-  Object.keys(props).forEach(componentId => {
-    props[componentId]
-      .filter(prop =>
-        isPropRelatedToIcon(components[componentId].type, prop.name),
+  Object.keys(props.byComponentId).forEach(componentId => {
+    props.byComponentId[componentId]
+      .filter(propId =>
+        isPropRelatedToIcon(
+          components[componentId].type,
+          props.byId[propId].name,
+        ),
       )
-      .forEach(prop => {
-        const propValue = prop.value
+      .forEach(propId => {
+        const propValue = props.byId[propId].value
         const subValue = getFirstTwoCharacters(propValue)
 
         switch (subValue) {
@@ -51,10 +51,7 @@ const getRequiredIconsToImport = (
 }
 
 // This function will get the import format for all icons
-const getImportFormatForIcons = (
-  components: IComponents,
-  props: IPropsByComponentId,
-) => {
+const getImportFormatForIcons = (components: IComponents, props: IProps) => {
   const {
     chakraIcons,
     fontAwesomeIcons,

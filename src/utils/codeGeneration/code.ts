@@ -6,7 +6,7 @@ import getImportFormatForIcons from './getImportFormatForIcons'
 export const generateComponentCode = async (
   component: IComponent,
   components: IComponents,
-  props: IPropsByComponentId,
+  props: IProps,
 ) => {
   let code = buildBlock(component.children, components, props)
 
@@ -32,8 +32,8 @@ export const generateCode = async (
   components: IComponents,
   customComponents: IComponents,
   customComponentsList: string[],
-  props: IPropsByComponentId,
-  customComponentsProps: IPropsByComponentId,
+  props: IProps,
+  customComponentsProps: IProps,
   customTheme: any,
 ) => {
   const checkInstanceInComponents = (componentType: string) => {
@@ -102,9 +102,12 @@ export const generateCode = async (
       //Display custom component only if the custom component instance is present
       const customComponentInstance = checkInstanceInComponents(componentName)
       if (customComponentInstance) {
-        const customComponentProps = customComponentsProps[componentName].map(
-          prop => `${prop.name}`,
-        )
+        const customComponentProps: string[] = []
+
+        customComponentsProps.byComponentId[componentName].forEach(propId => {
+          const propName = customComponentsProps.byId[propId]
+          customComponentProps.push(`${propName}`)
+        })
 
         const componentCode = buildBlock(
           customComponents[componentName].children,

@@ -10,14 +10,15 @@ export function checkIsChildOfCustomComponent(
   return false
 }
 
-export const duplicateProps = (props: IProp[], componentId: string) => {
-  const duplicatedProps: IProp[] = []
+export const duplicateProps = (props: IPropsById) => {
+  const duplicatedProps: IPropsById = {}
 
-  props.forEach(prop => {
-    duplicatedProps.push({
+  Object.values(props).forEach(prop => {
+    const newPropId = generateId()
+    duplicatedProps[newPropId] = {
       ...prop,
-      id: generateId(),
-    })
+      id: newPropId,
+    }
   })
   return duplicatedProps
 }
@@ -74,13 +75,12 @@ export const updateInAllInstances = (
 
 // joining the adjacent text in the array
 export const joinAdjacentTextNodes = (
-  childrenPropIndex: number,
+  childrenProp: IProp,
   components: IComponents,
-  props: IProp[],
 ) => {
   const propValue: string[] = []
 
-  props[childrenPropIndex].value.forEach((val: string) => {
+  childrenProp.value.forEach((val: string) => {
     if (propValue.length === 0 || isKeyForComponent(val, components)) {
       propValue.push(val)
     } else {
@@ -98,40 +98,47 @@ export const deleteCustomPropUtility = (
   component: IComponent,
   propName: string,
   components: IComponents,
-  props: IPropsByComponentId,
+  props: IProps,
 ) => {
-  const index = props[component.id].findIndex(prop => prop.name === propName)
-  const customProp = props[component.id][index]
-  props[component.id].splice(index, 1)
+  const customPropId = props.byComponentId[component.id].find(
+    id => props.byId[id].name === propName,
+  )
 
-  if (component.id !== component.type) {
-    // Wrapper-components
-    if (customProp.name === 'children') {
-      components[component.id].children.length > 0 &&
-        components[component.id].children.forEach(child => {
-          const { updatedComponents, updatedProps } = deleteComp(
-            components[child],
-            components,
-            props,
-          )
-          return {
-            props: updatedProps,
-            components: updatedComponents,
-          }
-        })
-      components[component.id].children = []
-    }
-    // Layout-components
-    if (components[customProp.value]) {
-      const { updatedComponents, updatedProps } = deleteComp(
-        components[customProp.value],
-        components,
-        props,
-      )
+  if (customPropId) {
+    const customProp = props.byId[customPropId]
 
-      return {
-        props: updatedProps,
-        components: updatedComponents,
+    delete props.byComponentId[component.id]
+    delete props.byId[customPropId]
+
+    if (customPropId && component.id !== component.type) {
+      // Wrapper-components
+      if (customProp.name === 'children') {
+        components[component.id].children.length > 0 &&
+          components[component.id].children.forEach(child => {
+            const { updatedComponents, updatedProps } = deleteComp(
+              components[child],
+              components,
+              props,
+            )
+            return {
+              props: updatedProps,
+              components: updatedComponents,
+            }
+          })
+        components[component.id].children = []
+      }
+      // Layout-components
+      if (components[customProp.value]) {
+        const { updatedComponents, updatedProps } = deleteComp(
+          components[customProp.value],
+          components,
+          props,
+        )
+
+        return {
+          props: updatedProps,
+          components: updatedComponents,
+        }
       }
     }
   }
@@ -216,26 +223,32 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     derivedFromComponentType: null,
   }
 
+  const propId = generateId()
   const prop = {
-    id: generateId(),
+    id: propId,
     name: exposedProp.customPropName || '',
     value: isBoxChildrenExposed ? boxId : exposedProp.value,
-    componentId: component.id,
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
 
   if (updateInCustomComponent) {
-    draftState.customComponentsProps[component.id].push(prop)
+    draftState.customComponentsProps.byComponentId[component.id].push(propId)
+    draftState.customComponentsProps.byId[propId] = { ...prop }
+
     if (isBoxChildrenExposed) {
       draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps[boxId] = [{ ...heightProp }]
+      draftState.customComponentsProps.byComponentId[boxId].push(heightProp.id)
+      draftState.customComponentsProps.byId[heightProp.id] = { ...heightProp }
     }
   } else {
-    draftState.propsById[propsId][component.id].push(prop)
+    draftState.propsById[propsId].byComponentId[component.id].push(propId)
+    draftState.propsById[propsId].byId[propId] = { ...prop }
+
     if (isBoxChildrenExposed) {
       draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId][boxId] = [{ ...heightProp }]
+      draftState.propsById[propsId].byComponentId[boxId].push(heightProp.id)
+      draftState.propsById[propsId].byId[heightProp.id] = { ...heightProp }
     }
   }
 }

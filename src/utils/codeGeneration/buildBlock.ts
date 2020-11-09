@@ -26,7 +26,7 @@ export const iconPropsHandler = (payload: {
 export const buildBlock = (
   children: string[],
   components: IComponents,
-  props: IPropsByComponentId,
+  props: IProps,
 ) => {
   let content = ''
 
@@ -38,7 +38,8 @@ export const buildBlock = (
       const componentName = capitalize(childComponent.type)
       let propsContent = ''
 
-      props[childComponent.id].forEach((prop: IProp) => {
+      props.byComponentId[childComponent.id].forEach(propId => {
+        const prop = props.byId[propId]
         const propsValue = prop.value
         const propName = prop.name
         if (propsValue || prop.derivedFromPropName) {
@@ -79,9 +80,13 @@ export const buildBlock = (
           }
         }
       })
-      const childrenProp = props[childComponent.id].find(
-        prop => prop.name === 'children',
-      )
+
+      const childrenPropId =
+        props.byComponentId[childComponent.id].find(
+          propId => props.byId[propId].name === 'children',
+        ) || ''
+
+      const childrenProp = props.byId[childrenPropId]
       const children = childComponent.children
 
       //For components like text,badge
