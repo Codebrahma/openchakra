@@ -61,9 +61,10 @@ export const getPropsForSelectedComponent = (state: RootState) => {
 
   const selectedComponentProps: IProp[] = []
 
-  props.byComponentId[selectedId].forEach(propId =>
-    selectedComponentProps.push(props.byId[propId]),
-  )
+  if (props.byComponentId[selectedId] !== undefined)
+    props.byComponentId[selectedId].forEach(propId =>
+      selectedComponentProps.push(props.byId[propId]),
+    )
 
   return selectedComponentProps
 }
@@ -296,7 +297,7 @@ export const checkIsChildrenOfWrapperComponent = (id: string) => (
 
     const propId = state.components.present.customComponentsProps.byComponentId[
       rootParentComponentId
-    ].find(
+    ]?.find(
       propId =>
         state.components.present.customComponentsProps.byId[propId].name ===
         'children',

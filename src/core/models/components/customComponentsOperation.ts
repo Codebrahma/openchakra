@@ -117,7 +117,19 @@ export const saveComponent = (
       children: [componentId],
     },
   }
-  draftState.customComponentsProps.byComponentId[newId] = []
+
+  draftState.customComponentsProps = {
+    byId: {
+      ...draftState.customComponentsProps.byId,
+      ...movedProps.byId,
+    },
+    byComponentId: {
+      ...draftState.customComponentsProps.byComponentId,
+      ...movedProps.byComponentId,
+    },
+  }
+
+  draftState.propsById[propsId].byComponentId[newId] = []
   draftState.customComponentsProps.byComponentId[name] = []
 
   //change the parent of the child
@@ -132,7 +144,7 @@ export const saveComponent = (
     name,
     draftState.customComponents[componentId],
     draftState.customComponents,
-    { ...draftState.customComponentsProps, ...movedProps },
+    draftState.customComponentsProps,
   )
   //make a duplicate props for the instance of the custom component.
   const duplicatedProps = duplicateProps(rootParentProps)
@@ -165,7 +177,7 @@ export const saveComponent = (
       }
       duplicatedProps[prop.id].value = id
     }
-    draftState.customComponentsProps.byComponentId[newId].push(prop.id)
+    draftState.propsById[propsId].byComponentId[newId].push(prop.id)
   })
 
   draftState.customComponentsProps = {

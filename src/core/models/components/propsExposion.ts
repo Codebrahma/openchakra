@@ -3,11 +3,9 @@ import {
   loadRequired,
   updateInAllInstances,
   addCustomPropsInAllComponentInstances,
+  deleteCustomPropUtility,
 } from '../../../utils/reducerUtilities'
-import {
-  searchRootCustomComponent,
-  deleteCustomPropInRootComponent,
-} from '../../../utils/recursive'
+import { searchRootCustomComponent } from '../../../utils/recursive'
 import { generateId } from '../../../utils/generateId'
 
 export const exposeProp = (
@@ -16,11 +14,36 @@ export const exposeProp = (
 ) => {
   const {
     selectedId: componentId,
-    propsId,
     isCustomComponentChild,
+    props,
   } = loadRequired(draftState)
   let { name } = payload
   const { targetedProp } = payload
+
+  const propId = props.byComponentId[componentId].find(
+    propId => props.byId[propId].name === targetedProp,
+  )
+
+  let propValue = ''
+
+  //expose it when the prop is already added or else add the prop and then expose
+  if (propId) {
+    props.byId[propId].derivedFromPropName = name
+    if (isCustomComponentChild)
+      props.byId[propId].derivedFromComponentType = componentId
+
+    propValue = props.byId[propId].value
+  } else {
+    const newPropId = generateId()
+    props.byComponentId[componentId].push(newPropId)
+    props.byId[newPropId] = {
+      id: newPropId,
+      name: targetedProp,
+      value: '',
+      derivedFromPropName: name,
+      derivedFromComponentType: isCustomComponentChild ? componentId : null,
+    }
+  }
 
   if (isCustomComponentChild) {
     //root parent element of the custom component
@@ -30,11 +53,13 @@ export const exposeProp = (
     )
 
     //Check for existing custom prop in root parent.
+
+    const rootCustomParentPropsId = props.byComponentId[rootCustomParent]
+
     const isCustomPropPresent =
-      draftState.customComponentsProps.byComponentId[
-        rootCustomParent
-      ].findIndex(
-        propId => draftState.customComponentsProps.byId[propId].name === name,
+      rootCustomParentPropsId &&
+      rootCustomParentPropsId.findIndex(
+        propId => props.byId[propId].name === name,
       ) !== -1
 
     let samePropName = ''
@@ -49,39 +74,6 @@ export const exposeProp = (
       if (samePropName === 'no') {
         name =
           window.prompt('Enter the new prop name for the exposed prop') || name
-      }
-    }
-
-    let propValue = ''
-
-    //expose it when the prop is already added or else add the prop and then expose
-    const propId = draftState.customComponentsProps.byComponentId[
-      componentId
-    ].find(
-      propId =>
-        draftState.customComponentsProps.byId[propId].name === targetedProp,
-    )
-
-    if (propId) {
-      propValue = draftState.customComponentsProps.byId[propId].value
-
-      draftState.customComponentsProps.byId[propId].derivedFromComponentType =
-        draftState.customComponents[rootCustomParent].type
-
-      draftState.customComponentsProps.byId[propId].derivedFromPropName = name
-    } else {
-      //Add the exposed prop in the custom props
-      const newPropId = generateId()
-      draftState.customComponentsProps.byComponentId[componentId].push(
-        newPropId,
-      )
-      draftState.customComponentsProps.byId[newPropId] = {
-        id: newPropId,
-        name: targetedProp,
-        value: propValue,
-        derivedFromPropName: name,
-        derivedFromComponentType:
-          draftState.customComponents[rootCustomParent].type,
       }
     }
 
@@ -114,30 +106,6 @@ export const exposeProp = (
           })
         },
       )
-  } else {
-    const propId = draftState.propsById[propsId].byComponentId[
-      componentId
-    ].findIndex(
-      propId =>
-        draftState.propsById[propsId].byId[propId].name === targetedProp,
-    )
-
-    //expose it when the prop is already added or else add the prop and then expose
-    if (propId)
-      draftState.propsById[propsId].byId[propId].derivedFromPropName = name
-    else {
-      const newPropId = generateId()
-      draftState.customComponentsProps.byComponentId[componentId].push(
-        newPropId,
-      )
-      draftState.customComponentsProps.byId[newPropId] = {
-        id: newPropId,
-        name: targetedProp,
-        value: '',
-        derivedFromPropName: name,
-        derivedFromComponentType: null,
-      }
-    }
   }
 }
 
@@ -149,6 +117,7 @@ export const unExposeProp = (
     selectedId: componentId,
     isCustomComponentChild,
     props,
+    components,
   } = loadRequired(draftState)
   const propName = targetedProp
 
@@ -157,9 +126,7 @@ export const unExposeProp = (
       propId => props.byId[propId].name === propName,
     ) || ''
 
-  const exposedProp = {
-    ...props.byId[exposedPropId],
-  }
+  const customPropName = props.byId[exposedPropId].derivedFromPropName
 
   //If the value is empty, delete the prop.
   //else old value before exposing will be retained.
@@ -175,24 +142,43 @@ export const unExposeProp = (
     props.byId[exposedPropId].derivedFromComponentType = null
   }
 
-  if (isCustomComponentChild) {
-    const {
-      updatedCustomComponentProps,
-      updatedPropsById,
-      updatedCustomComponents,
-      updatedComponentsById,
-    } = deleteCustomPropInRootComponent(
-      exposedProp,
+  if (isCustomComponentChild && customPropName) {
+    const rootCustomParent = searchRootCustomComponent(
+      components[componentId],
+      components,
+    )
+
+    updateInAllInstances(
       draftState.pages,
       draftState.componentsById,
       draftState.customComponents,
-      draftState.propsById,
-      draftState.customComponentsProps,
+      rootCustomParent,
+      (
+        component: IComponent,
+        updateInCustomComponent: Boolean,
+        propsId: string,
+        componentsId: string,
+      ) => {
+        if (updateInCustomComponent) {
+          const { props, components } = deleteCustomPropUtility(
+            component,
+            customPropName,
+            draftState.customComponents,
+            draftState.customComponentsProps,
+          )
+          draftState.customComponents = { ...components }
+          draftState.customComponentsProps = { ...props }
+        } else {
+          const { props, components } = deleteCustomPropUtility(
+            component,
+            customPropName,
+            draftState.componentsById[componentsId],
+            draftState.propsById[propsId],
+          )
+          draftState.componentsById[componentsId] = { ...components }
+          draftState.propsById[propsId] = { ...props }
+        }
+      },
     )
-
-    draftState.customComponentsProps = { ...updatedCustomComponentProps }
-    draftState.propsById = { ...updatedPropsById }
-    draftState.componentsById = { ...updatedComponentsById }
-    draftState.customComponents = { ...updatedCustomComponents }
   }
 }

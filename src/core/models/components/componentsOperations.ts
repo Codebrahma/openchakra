@@ -123,7 +123,7 @@ export const deleteComponent = (
     parentId
   ].children.filter(child => child !== componentId)
 
-  const childrenPropId = updatedProps.byComponentId[parentId].find(
+  const childrenPropId = updatedProps.byComponentId[parentId]?.find(
     propId => updatedProps.byId[propId].name === 'children',
   )
 
@@ -175,7 +175,7 @@ export const deleteComponent = (
       deletedProps.byComponentId[componentId]
         .filter(propId => {
           const prop = deletedProps.byId[propId]
-          return draftState.componentsById[componentsId][prop.value]
+          return draftState.componentsById[componentsId][prop?.value]
             ? true
             : false
         })
@@ -210,28 +210,34 @@ export const duplicateComponent = (
     components,
     props,
   )
-  const parentComponentProps = props.byComponentId[selectedComponent.parent]
-
-  const childrenPropId = parentComponentProps.find(
-    id => props.byId[id].name === 'children',
-  )
 
   components[selectedComponent.parent].children.push(newId)
 
-  if (components[selectedComponent.parent].type === 'Text' && childrenPropId)
+  if (components[selectedComponent.parent].type === 'Text') {
+    const parentComponentProps = props.byComponentId[selectedComponent.parent]
+
+    const childrenPropId =
+      parentComponentProps.find(id => props.byId[id].name === 'children') || ''
     props.byId[childrenPropId].value.push(newId)
+  }
 
   if (isCustomComponentChild) {
     draftState.customComponents = {
       ...components,
       ...clonedComponents,
     }
-    draftState.customComponentsProps = { ...props, ...clonedProps }
+    draftState.customComponentsProps = {
+      byId: { ...props.byId, ...clonedProps.byId },
+      byComponentId: { ...props.byComponentId, ...clonedProps.byComponentId },
+    }
   } else {
     draftState.componentsById[componentsId] = {
       ...components,
       ...clonedComponents,
     }
-    draftState.propsById[propsId] = { ...props, ...clonedProps }
+    draftState.propsById[propsId] = {
+      byId: { ...props.byId, ...clonedProps.byId },
+      byComponentId: { ...props.byComponentId, ...clonedProps.byComponentId },
+    }
   }
 }

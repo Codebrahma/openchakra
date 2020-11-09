@@ -233,21 +233,21 @@ export const addCustomPropsInAllComponentInstances = (payload: {
   }
 
   if (updateInCustomComponent) {
-    draftState.customComponentsProps.byComponentId[component.id].push(propId)
+    draftState.customComponentsProps.byComponentId[component.id]?.push(propId)
     draftState.customComponentsProps.byId[propId] = { ...prop }
 
     if (isBoxChildrenExposed) {
       draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps.byComponentId[boxId].push(heightProp.id)
+      draftState.customComponentsProps.byComponentId[boxId]?.push(heightProp.id)
       draftState.customComponentsProps.byId[heightProp.id] = { ...heightProp }
     }
   } else {
-    draftState.propsById[propsId].byComponentId[component.id].push(propId)
+    draftState.propsById[propsId].byComponentId[component.id]?.push(propId)
     draftState.propsById[propsId].byId[propId] = { ...prop }
 
     if (isBoxChildrenExposed) {
       draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId].byComponentId[boxId].push(heightProp.id)
+      draftState.propsById[propsId].byComponentId[boxId]?.push(heightProp.id)
       draftState.propsById[propsId].byId[heightProp.id] = { ...heightProp }
     }
   }

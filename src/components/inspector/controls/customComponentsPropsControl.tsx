@@ -41,6 +41,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const selectedProp = useSelector(getPropsBy(selectedComponent.id)).find(
     prop => prop.name === propName,
   )
+
   const selectedCustomComponentProp = useSelector(
     getPropsBy(selectedComponent.type),
   ).find(prop => prop.name === propName)
