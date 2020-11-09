@@ -55,10 +55,17 @@ export const getPropsForSelectedComponent = (state: RootState) => {
       .propsId
   const selectedId = state.components.present.selectedId
 
-  if (isChildrenOfCustomComponent(selectedId)(state))
-    return state.components.present.customComponentsProps[selectedId] || []
+  const props = isChildrenOfCustomComponent(selectedId)(state)
+    ? state.components.present.customComponentsProps
+    : state.components.present.propsById[propsId]
 
-  return state.components.present.propsById[propsId][selectedId] || []
+  const selectedComponentProps: IProp[] = []
+
+  props.byComponentId[selectedId].forEach(propId =>
+    selectedComponentProps.push(props.byId[propId]),
+  )
+
+  return selectedComponentProps
 }
 
 export const getPropsBy = (componentId: IComponent['id']) => (
@@ -67,10 +74,19 @@ export const getPropsBy = (componentId: IComponent['id']) => (
   const propsId =
     state.components.present.pages[state.components.present.selectedPage]
       .propsId
-  if (isChildrenOfCustomComponent(componentId)(state))
-    return state.components.present.customComponentsProps[componentId] || []
 
-  return state.components.present.propsById[propsId][componentId] || []
+  const props = isChildrenOfCustomComponent(componentId)(state)
+    ? state.components.present.customComponentsProps
+    : state.components.present.propsById[propsId]
+
+  const selectedComponentProps: IProp[] = []
+
+  if (props.byComponentId[componentId] !== undefined)
+    props.byComponentId[componentId].forEach(propId =>
+      selectedComponentProps.push(props.byId[propId]),
+    )
+
+  return selectedComponentProps
 }
 
 export const getSelectedComponentId = (state: RootState) =>
@@ -192,9 +208,15 @@ export const getPropByName = (propName: string) => (state: RootState) => {
     ? state.components.present.customComponentsProps
     : state.components.present.propsById[propsId]
 
-  return props[componentId]
-    ? props[componentId].find(prop => prop.name === propName)
-    : undefined
+  if (props.byComponentId[componentId]) {
+    const propId =
+      props.byComponentId[componentId].find(
+        propId => props.byId[propId].name === propName,
+      ) || ''
+    return props.byId[propId]
+  }
+
+  return props.byId['']
 }
 
 export const isKeyForComponent = (
@@ -271,12 +293,16 @@ export const checkIsChildrenOfWrapperComponent = (id: string) => (
       state.components.present.customComponents[id],
       state.components.present.customComponents,
     )
-    const isChildrenPropPresent =
-      state.components.present.customComponentsProps[
-        rootParentComponentId
-      ].findIndex(prop => prop.name === 'children') !== -1
 
-    return isChildrenPropPresent
+    const propId = state.components.present.customComponentsProps.byComponentId[
+      rootParentComponentId
+    ].find(
+      propId =>
+        state.components.present.customComponentsProps.byId[propId].name ===
+        'children',
+    )
+
+    return propId ? true : false
   } else return false
 }
 
@@ -297,4 +323,26 @@ export const checkIsContainerComponent = (id: string) => (state: RootState) => {
   )
     return true
   else return false
+}
+
+export const getPropIdByName = (propName: string, componentId?: string) => (
+  state: RootState,
+) => {
+  const propsId =
+    state.components.present.pages[state.components.present.selectedPage]
+      .propsId
+  const selectedId = componentId || state.components.present.selectedId
+
+  const props = isChildrenOfCustomComponent(selectedId)(state)
+    ? state.components.present.customComponentsProps
+    : state.components.present.propsById[propsId]
+
+  if (props.byComponentId[selectedId]) {
+    const propId =
+      props.byComponentId[selectedId].find(
+        propId => props.byId[propId].name === propName,
+      ) || ''
+    return propId
+  }
+  return ''
 }
