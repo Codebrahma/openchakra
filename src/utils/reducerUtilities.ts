@@ -10,6 +10,39 @@ export function checkIsChildOfCustomComponent(
   return false
 }
 
+export const deletePropById = (
+  propId: string,
+  componentId: string,
+  props: IProps,
+) => {
+  const propIdIndex = props.byComponentId[componentId]?.findIndex(
+    id => id === propId,
+  )
+  props.byComponentId[componentId]?.splice(propIdIndex, 1)
+  delete props.byId[propId]
+}
+
+export const mergeProps = (originalCopyProps: IProps, propsToMerge: IProps) => {
+  originalCopyProps.byId = {
+    ...originalCopyProps.byId,
+    ...propsToMerge.byId,
+  }
+  originalCopyProps.byComponentId = {
+    ...originalCopyProps.byComponentId,
+    ...propsToMerge.byComponentId,
+  }
+}
+
+export const deletePropsByComponentId = (
+  componentId: string,
+  props: IProps,
+) => {
+  props.byComponentId[componentId]?.forEach(propId => {
+    delete props.byId[propId]
+  })
+  delete props.byComponentId[componentId]
+}
+
 export const duplicateProps = (props: IPropsById) => {
   const duplicatedProps: IPropsById = {}
 
@@ -111,7 +144,7 @@ export const deleteCustomPropUtility = (
     delete props.byId[customPropId]
 
     if (customPropId && component.id !== component.type) {
-      // Wrapper-components
+      // Container component (the children from the instance of root component used by any of its custom components children)
       if (customProp.name === 'children') {
         components[component.id].children.length > 0 &&
           components[component.id].children.forEach(child => {

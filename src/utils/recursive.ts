@@ -1,5 +1,10 @@
 import { generatePropId, generateComponentId } from './generateId'
-import { updateInAllInstances } from './reducerUtilities'
+import {
+  updateInAllInstances,
+  deletePropsByComponentId,
+  deletePropById,
+  mergeProps,
+} from './reducerUtilities'
 
 export const duplicateComp = (
   componentToClone: IComponent,
@@ -37,16 +42,8 @@ export const duplicateComp = (
           ...clonedComponents,
           ...duplicatedComponents,
         }
-        clonedProps = {
-          byId: {
-            ...clonedProps.byId,
-            ...duplicatedProps.byId,
-          },
-          byComponentId: {
-            ...clonedProps.byComponentId,
-            ...clonedProps.byComponentId,
-          },
-        }
+
+        mergeProps(clonedProps, duplicatedProps)
       }
       const newPropId = generateComponentId()
 
@@ -114,6 +111,7 @@ export const deleteComp = (
     component.children.forEach(child => deleteRecursive(components[child]))
     delete updatedComponents[component.id]
     if (updatedProps.byComponentId[component.id].length > 0) {
+      // store the props that are deleted
       deletedProps.byComponentId[component.id] = [
         ...updatedProps.byComponentId[component.id],
       ]
@@ -121,9 +119,10 @@ export const deleteComp = (
         deletedProps.byId[propId] = {
           ...updatedProps.byId[propId],
         }
-        delete updatedProps.byId[propId]
       })
-      delete updatedProps.byComponentId[component.id]
+
+      // After storing the deleted props, delete the props of that component
+      deletePropsByComponentId(component.id, updatedProps)
     }
   }
 
@@ -186,10 +185,10 @@ export const moveComp = (
   sourceComponents: IComponents,
   sourceProps: IProps,
 ) => {
-  let updatedSourceComponents = { ...sourceComponents }
+  const updatedSourceComponents = { ...sourceComponents }
   let movedComponents: IComponents = {}
-  let updatedSourceProps = { ...sourceProps }
-  let movedProps: IProps = {
+  const updatedSourceProps = { ...sourceProps }
+  const movedProps: IProps = {
     byComponentId: {},
     byId: {},
   }
@@ -197,17 +196,18 @@ export const moveComp = (
   function moveRecursive(compId: string) {
     //find the children of the component
     //the components whose parent is the component(to move) are the children components
-
     updatedSourceComponents[compId].children.forEach(child =>
       moveRecursive(child),
     )
 
+    // The moved props should be stored in separate variable
     movedProps.byComponentId[compId] = [...sourceProps.byComponentId[compId]]
     sourceProps.byComponentId[compId].forEach(propId => {
       movedProps.byId[propId] = { ...sourceProps.byId[propId] }
-      delete sourceProps.byId[propId]
     })
-    delete sourceProps.byComponentId[compId]
+
+    // After moving the props, delete the props of the component
+    deletePropsByComponentId(compId, sourceProps)
 
     movedComponents = {
       ...movedComponents,
@@ -344,13 +344,8 @@ export const deleteCustomPropInRootComponent = (
           const customProp = props.byId[propId]
 
           // we must not delete the custom prop if it uses the children of the instance of custom component(wrapper component)
-          if (customProp.name !== 'children') {
-            const index = props.byComponentId[component.id].findIndex(
-              id => id === propId,
-            )
-            props.byComponentId[component.id].splice(index, 1)
-            delete props.byId[propId]
-          }
+          if (customProp.name !== 'children')
+            deletePropById(propId, component.id, props)
 
           //Delete the component if the prop is custom children prop(derived prop of exposed children)
           if (components[customProp.value]) {

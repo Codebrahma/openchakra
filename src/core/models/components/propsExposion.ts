@@ -4,6 +4,7 @@ import {
   updateInAllInstances,
   addCustomPropsInAllComponentInstances,
   deleteCustomPropUtility,
+  deletePropById,
 } from '../../../utils/reducerUtilities'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 import { generatePropId } from '../../../utils/generateId'
@@ -130,13 +131,9 @@ export const unExposeProp = (
 
   //If the value is empty, delete the prop.
   //else old value before exposing will be retained.
-  if (props.byId[exposedPropId].value.length === 0) {
-    const propIndex = props.byComponentId[componentId].findIndex(
-      propId => propId === exposedPropId,
-    )
-    props.byComponentId[componentId].splice(propIndex, 1)
-    delete props.byId[exposedPropId]
-  } else {
+  if (props.byId[exposedPropId].value.length === 0)
+    deletePropById(exposedPropId, componentId, props)
+  else {
     props.byId[exposedPropId].derivedFromPropName = null
 
     props.byId[exposedPropId].derivedFromComponentType = null

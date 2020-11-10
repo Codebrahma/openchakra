@@ -4,6 +4,7 @@ import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
   joinAdjacentTextNodes,
+  mergeProps,
 } from '../../../utils/reducerUtilities'
 import {
   deleteCustomPropInRootComponent,
@@ -62,7 +63,7 @@ export const addMetaComponent = (
     parent,
   )
 
-  //Add the default props for the components
+  //Add the default props for the meta components
   Object.values(metaComponents).forEach(component => {
     props.byComponentId[component.id] = []
     DEFAULT_PROPS[component.type as ComponentType] &&
@@ -114,11 +115,14 @@ export const deleteComponent = (
   } = loadRequired(draftState)
   const { componentId, parentId } = payload
 
+  // Deletes the components and its children components along with its respective props
   const { updatedComponents, updatedProps, deletedProps } = deleteComp(
     components[componentId],
     components,
     props,
   )
+
+  // Update the children of the deleted component's parent
   updatedComponents[parentId].children = updatedComponents[
     parentId
   ].children.filter(child => child !== componentId)
@@ -127,6 +131,7 @@ export const deleteComponent = (
     propId => updatedProps.byId[propId].name === 'children',
   )
 
+  // If the deleted component is span
   if (updatedComponents[parentId].type === 'Text' && childrenPropId) {
     updatedProps.byId[childrenPropId].value = updatedProps.byId[
       childrenPropId
@@ -171,25 +176,6 @@ export const deleteComponent = (
   } else {
     draftState.propsById[propsId] = { ...updatedProps }
     draftState.componentsById[componentsId] = { ...updatedComponents }
-    Object.keys(deletedProps.byComponentId).forEach(componentId => {
-      deletedProps.byComponentId[componentId]
-        .filter(propId => {
-          const prop = deletedProps.byId[propId]
-          return draftState.componentsById[componentsId][prop?.value]
-            ? true
-            : false
-        })
-        .forEach(propId => {
-          const prop = deletedProps.byId[propId]
-          const { updatedComponents, updatedProps } = deleteComp(
-            draftState.componentsById[componentsId][prop.value],
-            draftState.componentsById[componentsId],
-            draftState.propsById[propsId],
-          )
-          draftState.propsById[propsId] = { ...updatedProps }
-          draftState.componentsById[componentsId] = { ...updatedComponents }
-        })
-    })
   }
 }
 
@@ -199,20 +185,23 @@ export const duplicateComponent = (
 ) => {
   const {
     isCustomComponentChild,
-    propsId,
     componentsId,
     components,
     props,
   } = loadRequired(draftState)
 
+  // This function will duplicate the component and also its children
+  // And gives a copy of components and respective props
   const { newId, clonedComponents, clonedProps } = duplicateComp(
     selectedComponent,
     components,
     props,
   )
 
+  // Add the duplicated component id in the children of the parent component
   components[selectedComponent.parent].children.push(newId)
 
+  // If the duplicated component is span
   if (components[selectedComponent.parent].type === 'Text') {
     const parentComponentProps = props.byComponentId[selectedComponent.parent]
 
@@ -226,18 +215,12 @@ export const duplicateComponent = (
       ...components,
       ...clonedComponents,
     }
-    draftState.customComponentsProps = {
-      byId: { ...props.byId, ...clonedProps.byId },
-      byComponentId: { ...props.byComponentId, ...clonedProps.byComponentId },
-    }
+    mergeProps(props, clonedProps)
   } else {
     draftState.componentsById[componentsId] = {
       ...components,
       ...clonedComponents,
     }
-    draftState.propsById[propsId] = {
-      byId: { ...props.byId, ...clonedProps.byId },
-      byComponentId: { ...props.byComponentId, ...clonedProps.byComponentId },
-    }
+    mergeProps(props, clonedProps)
   }
 }

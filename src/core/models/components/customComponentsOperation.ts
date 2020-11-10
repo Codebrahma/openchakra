@@ -1,6 +1,10 @@
 import { ComponentsState } from './components'
 import { generateComponentId, generatePropId } from '../../../utils/generateId'
-import { loadRequired, duplicateProps } from '../../../utils/reducerUtilities'
+import {
+  loadRequired,
+  duplicateProps,
+  mergeProps,
+} from '../../../utils/reducerUtilities'
 import {
   moveComp,
   fetchAndUpdateExposedProps,
@@ -118,16 +122,7 @@ export const saveComponent = (
     },
   }
 
-  draftState.customComponentsProps = {
-    byId: {
-      ...draftState.customComponentsProps.byId,
-      ...movedProps.byId,
-    },
-    byComponentId: {
-      ...draftState.customComponentsProps.byComponentId,
-      ...movedProps.byComponentId,
-    },
-  }
+  mergeProps(draftState.customComponentsProps, movedProps)
 
   draftState.propsById[propsId].byComponentId[newId] = []
   draftState.customComponentsProps.byComponentId[name] = []

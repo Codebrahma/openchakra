@@ -4,6 +4,8 @@ import {
   updateInAllInstances,
   deleteCustomPropUtility,
   isKeyForComponent,
+  deletePropById,
+  deletePropsByComponentId,
 } from '../../../utils/reducerUtilities'
 import { generatePropId } from '../../../utils/generateId'
 import { ComponentsState } from './components'
@@ -13,7 +15,6 @@ export const updateProps = (
   payload: { componentId: string; id: string; name: string; value: any },
 ) => {
   const { componentId, id, name, value } = payload
-
   const { props } = loadRequired(draftState)
 
   // If the value is number, convert it to number.
@@ -23,14 +24,9 @@ export const updateProps = (
   // If the instance of prop-id is already present, just update the value using the prop-id
   // Or else generate new id for the prop.
   if (props.byId[id] !== undefined) {
-    if (propValue.length === 0) {
-      const propIdIndex = props.byComponentId[componentId].findIndex(
-        propId => propId === id,
-      )
-      props.byComponentId[componentId].splice(propIdIndex, 1)
-      delete props.byId[id]
-    }
-    props.byId[id].value = propValue
+    // iF the prop-value is empty, remove the prop
+    if (propValue.length === 0) deletePropById(id, componentId, props)
+    else props.byId[id].value = propValue
   } else {
     const newPropId = generatePropId()
     props.byComponentId[componentId].push(newPropId)
@@ -50,13 +46,7 @@ export const deleteProps = (
 ) => {
   const { componentId, propId } = payload
   const { props } = loadRequired(draftState, componentId)
-
-  const propIdIndex = props.byComponentId[componentId].findIndex(
-    id => id === propId,
-  )
-
-  delete props.byComponentId[propIdIndex]
-  delete props.byId[propId]
+  deletePropById(propId, componentId, props)
 }
 
 export const deleteCustomProp = (
@@ -158,6 +148,7 @@ export const updateChildrenPropForText = (
     ? value.map((val: any) => val.value)
     : value
 
+  // Get the old value for the children prop
   const oldPropValue = Array.isArray(childrenProp.value)
     ? childrenProp.value.map((val: string) => {
         if (isKeyForComponent(val, components)) {
@@ -177,6 +168,7 @@ export const updateChildrenPropForText = (
     ? childrenProp.value.filter(val => isKeyForComponent(val, components))
     : []
 
+  // If the value is an array, find whether the value in each index is an span element or string value
   if (Array.isArray(value)) {
     const propArray: string[] = []
     const children: string[] = []
@@ -216,12 +208,7 @@ export const updateChildrenPropForText = (
 
   spanComponentsToBeDeleted.forEach((val: string) => {
     Object.keys(props.byComponentId).forEach(componentId => {
-      if (componentId !== val) {
-        props.byComponentId[componentId].forEach(propId => {
-          delete props.byId[propId]
-        })
-        delete props.byComponentId[componentId]
-      }
+      if (componentId !== val) deletePropsByComponentId(componentId, props)
     })
 
     delete components[val]

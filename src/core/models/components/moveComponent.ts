@@ -4,6 +4,7 @@ import {
   updateInAllInstances,
   loadRequired,
   addCustomPropsInAllComponentInstances,
+  mergeProps,
 } from '../../../utils/reducerUtilities'
 import {
   moveComp,
@@ -247,16 +248,7 @@ export const moveComponent = (
         })
       })
 
-      draftState.customComponentsProps = {
-        byId: {
-          ...draftState.customComponentsProps.byId,
-          ...movedProps.byId,
-        },
-        byComponentId: {
-          ...draftState.customComponentsProps.byComponentId,
-          ...movedProps.byComponentId,
-        },
-      }
+      mergeProps(draftState.customComponentsProps, movedProps)
 
       //Add custom props for all the instances of the custom components only when there is no similar prop present
       //Also add the box if the children for the box component is exposed.

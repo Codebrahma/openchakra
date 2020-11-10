@@ -1,4 +1,4 @@
-import { isKeyForComponent } from './reducerUtilities'
+import { isKeyForComponent, deletePropsByComponentId } from './reducerUtilities'
 import { generatePropId, generateComponentId } from './generateId'
 
 const addSpanForSelection = (
@@ -155,10 +155,8 @@ const removeSpanForSelection = (
 
   //Selected from beginning of the span to end of the span
   if (start === 0 && end === spanChildrenPropValue.length) {
-    props.byComponentId[spanComponentId].forEach(propId => {
-      delete props.byId[propId]
-    })
-    delete props.byComponentId[spanComponentId]
+    deletePropsByComponentId(spanComponentId, props)
+
     delete components[spanComponentId]
     components[selectedComponentId].children = components[
       selectedComponentId
@@ -246,12 +244,9 @@ const removeSpanForSelection = (
       }
     })
 
-    //delete the original component
+    //delete the original component and its props
     delete components[spanComponentId]
-    props.byComponentId[spanComponentId].forEach(propId => {
-      delete props.byId[propId]
-    })
-    delete props.byComponentId[spanComponentId]
+    deletePropsByComponentId(spanComponentId, props)
   }
   return props
 }

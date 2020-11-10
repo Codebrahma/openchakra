@@ -4,6 +4,7 @@ import {
   loadRequired,
   splitArray,
   joinAdjacentTextNodes,
+  deletePropsByComponentId,
 } from '../../../utils/reducerUtilities'
 import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import {
@@ -178,10 +179,8 @@ export const clearFormatting = (draftState: ComponentsState) => {
 
         newValue = newValue + props.byId[spanChildrenPropId].value
         delete components[val]
-        props.byComponentId[val].forEach(propId => {
-          delete props.byId[propId]
-        })
-        delete props.byComponentId[val]
+
+        deletePropsByComponentId(val, props)
       } else {
         newValue = newValue + val
       }
