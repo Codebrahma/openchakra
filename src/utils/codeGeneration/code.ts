@@ -105,7 +105,7 @@ export const generateCode = async (
         const customComponentProps: string[] = []
 
         customComponentsProps.byComponentId[componentName].forEach(propId => {
-          const propName = customComponentsProps.byId[propId]
+          const propName = customComponentsProps.byId[propId].name
           customComponentProps.push(`${propName}`)
         })
 
