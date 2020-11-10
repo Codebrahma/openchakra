@@ -450,17 +450,17 @@ const components = createModel({
             if (updateInCustomComponent) {
               const id = generatePropId()
               draftState.customComponentsProps.byComponentId[
-                customComponentType
-              ].push(id)
+                component.id
+              ]?.push(id)
               draftState.customComponentsProps.byId[id] = {
                 ...childrenProp,
                 id: generatePropId(),
               }
             } else {
               const id = generatePropId()
-              draftState.propsById[propsId].byComponentId[
-                customComponentType
-              ].push(id)
+              draftState.propsById[propsId].byComponentId[component.id]?.push(
+                id,
+              )
               draftState.propsById[propsId].byId[id] = {
                 ...childrenProp,
                 id: generatePropId(),

@@ -110,7 +110,7 @@ export const deleteComp = (
   function deleteRecursive(component: IComponent) {
     component.children.forEach(child => deleteRecursive(components[child]))
     delete updatedComponents[component.id]
-    if (updatedProps.byComponentId[component.id].length > 0) {
+    if (updatedProps.byComponentId[component.id]?.length > 0) {
       // store the props that are deleted
       deletedProps.byComponentId[component.id] = [
         ...updatedProps.byComponentId[component.id],
@@ -308,14 +308,17 @@ export const deleteCustomPropInRootComponent = (
     let checkExposedPropInstance = false
     Object.keys(updatedCustomComponentProps.byComponentId).forEach(
       componentId => {
-        checkExposedPropInstance =
-          updatedCustomComponentProps.byComponentId[componentId].findIndex(
-            propId =>
+        updatedCustomComponentProps.byComponentId[componentId].forEach(
+          propId => {
+            if (
               updatedCustomComponentProps.byId[propId]
                 .derivedFromComponentType === customComponentType &&
               updatedCustomComponentProps.byId[propId].derivedFromPropName ===
-                derivedFromPropName,
-          ) !== -1
+                derivedFromPropName
+            )
+              checkExposedPropInstance = true
+          },
+        )
       },
     )
     if (!checkExposedPropInstance && customComponentType) {
@@ -338,7 +341,7 @@ export const deleteCustomPropInRootComponent = (
             : updatedPropsById[propsId]
 
           const propId =
-            props.byComponentId[component.id].find(
+            props.byComponentId[component.id]?.find(
               propId => props.byId[propId].name === derivedFromPropName,
             ) || ''
           const customProp = props.byId[propId]

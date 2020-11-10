@@ -3,10 +3,12 @@ import {
   loadRequired,
   updateInAllInstances,
   addCustomPropsInAllComponentInstances,
-  deleteCustomPropUtility,
   deletePropById,
 } from '../../../utils/reducerUtilities'
-import { searchRootCustomComponent } from '../../../utils/recursive'
+import {
+  searchRootCustomComponent,
+  deleteCustomPropInRootComponent,
+} from '../../../utils/recursive'
 import { generatePropId } from '../../../utils/generateId'
 
 export const exposeProp = (
@@ -26,35 +28,36 @@ export const exposeProp = (
   )
 
   let propValue = ''
+  const newPropId = generatePropId()
+
+  //root parent element of the custom component
+  const rootCustomParent = isCustomComponentChild
+    ? searchRootCustomComponent(
+        draftState.customComponents[componentId],
+        draftState.customComponents,
+      )
+    : null
 
   //expose it when the prop is already added or else add the prop and then expose
   if (propId) {
     props.byId[propId].derivedFromPropName = name
     if (isCustomComponentChild)
-      props.byId[propId].derivedFromComponentType = componentId
+      props.byId[propId].derivedFromComponentType = rootCustomParent
 
     propValue = props.byId[propId].value
   } else {
-    const newPropId = generatePropId()
     props.byComponentId[componentId].push(newPropId)
     props.byId[newPropId] = {
       id: newPropId,
       name: targetedProp,
       value: '',
       derivedFromPropName: name,
-      derivedFromComponentType: isCustomComponentChild ? componentId : null,
+      derivedFromComponentType: rootCustomParent,
     }
   }
 
-  if (isCustomComponentChild) {
-    //root parent element of the custom component
-    const rootCustomParent = searchRootCustomComponent(
-      draftState.customComponents[componentId],
-      draftState.customComponents,
-    )
-
+  if (isCustomComponentChild && rootCustomParent) {
     //Check for existing custom prop in root parent.
-
     const rootCustomParentPropsId = props.byComponentId[rootCustomParent]
 
     const isCustomPropPresent =
@@ -118,7 +121,6 @@ export const unExposeProp = (
     selectedId: componentId,
     isCustomComponentChild,
     props,
-    components,
   } = loadRequired(draftState)
   const propName = targetedProp
 
@@ -127,7 +129,7 @@ export const unExposeProp = (
       propId => props.byId[propId].name === propName,
     ) || ''
 
-  const customPropName = props.byId[exposedPropId].derivedFromPropName
+  const exposedProp = { ...props.byId[exposedPropId] }
 
   //If the value is empty, delete the prop.
   //else old value before exposing will be retained.
@@ -139,43 +141,24 @@ export const unExposeProp = (
     props.byId[exposedPropId].derivedFromComponentType = null
   }
 
-  if (isCustomComponentChild && customPropName) {
-    const rootCustomParent = searchRootCustomComponent(
-      components[componentId],
-      components,
-    )
-
-    updateInAllInstances(
+  if (isCustomComponentChild && exposedProp) {
+    const {
+      updatedCustomComponentProps,
+      updatedPropsById,
+      updatedCustomComponents,
+      updatedComponentsById,
+    } = deleteCustomPropInRootComponent(
+      exposedProp,
       draftState.pages,
       draftState.componentsById,
       draftState.customComponents,
-      rootCustomParent,
-      (
-        component: IComponent,
-        updateInCustomComponent: Boolean,
-        propsId: string,
-        componentsId: string,
-      ) => {
-        if (updateInCustomComponent) {
-          const { props, components } = deleteCustomPropUtility(
-            component,
-            customPropName,
-            draftState.customComponents,
-            draftState.customComponentsProps,
-          )
-          draftState.customComponents = { ...components }
-          draftState.customComponentsProps = { ...props }
-        } else {
-          const { props, components } = deleteCustomPropUtility(
-            component,
-            customPropName,
-            draftState.componentsById[componentsId],
-            draftState.propsById[propsId],
-          )
-          draftState.componentsById[componentsId] = { ...components }
-          draftState.propsById[propsId] = { ...props }
-        }
-      },
+      draftState.propsById,
+      props,
     )
+
+    draftState.customComponentsProps = updatedCustomComponentProps
+    draftState.propsById = updatedPropsById
+    draftState.componentsById = { ...updatedComponentsById }
+    draftState.customComponents = { ...updatedCustomComponents }
   }
 }
