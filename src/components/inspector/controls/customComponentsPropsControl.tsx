@@ -10,7 +10,7 @@ import {
   checkIsKeyForComponent,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
-import { Input, Select, Text } from '@chakra-ui/core'
+import { Input, Select, Text, Flex } from '@chakra-ui/core'
 import IconControl from './IconControl'
 import SizeControl from './SizeControl'
 import SwitchControl from './SwitchControl'
@@ -210,9 +210,14 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           )
         } else {
           return (
-            <Text fontSize="10px" color="blackAlpha.700">
-              Component as prop
-            </Text>
+            <Flex fontSize="10px" justifyContent="space-between">
+              <Text color="#718096" fontSize="12px">
+                {propName}
+              </Text>
+              <Text color="blackAlpha.700" marginRight={5}>
+                Component as prop
+              </Text>
+            </Flex>
           )
         }
       }
