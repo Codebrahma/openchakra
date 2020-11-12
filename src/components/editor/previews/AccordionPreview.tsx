@@ -13,7 +13,7 @@ import { AccordionWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 
 const acceptedTypes: ComponentType[] = ['AccordionItem']
 
@@ -35,7 +35,7 @@ const AccordionPreview: React.FC<IPreviewProps> = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -80,7 +80,7 @@ export const AccordionButtonPreview = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -124,7 +124,7 @@ export const AccordionItemPreview = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -170,7 +170,7 @@ export const AccordionPanelPreview = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

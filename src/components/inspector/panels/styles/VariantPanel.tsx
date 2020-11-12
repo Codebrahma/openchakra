@@ -21,7 +21,7 @@ const options: optionsType = {
 }
 
 const VariantPanel = (props: variantControlPropsType) => {
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const choices = options[props.type] || options['IconButton']
 
   return (
@@ -31,7 +31,7 @@ const VariantPanel = (props: variantControlPropsType) => {
         id={props.name || 'size'}
         name={props.name || 'size'}
         value={props.value || ''}
-        onChange={setValueFromEvent}
+        onChange={e => setValue(props.name, props.name, e.target.value)}
       >
         {choices.map((choice: string) => (
           <option key={choice}>{choice}</option>

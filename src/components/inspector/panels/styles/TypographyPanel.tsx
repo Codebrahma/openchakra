@@ -26,12 +26,25 @@ const TextPanel = () => {
   const { setValue } = useForm()
   const theme = useCustomTheme()
 
-  const fontWeight = usePropsSelector('fontWeight')
-  const fontStyle = usePropsSelector('fontStyle')
-  const textAlign = usePropsSelector('textAlign')
-  const fontSize = usePropsSelector('fontSize')
-  const letterSpacing = usePropsSelector('letterSpacing')
-  const lineHeight = usePropsSelector('lineHeight')
+  const { propId: fontWeightId, propValue: fontWeightValue } = usePropsSelector(
+    'fontWeight',
+  )
+  const { propId: fontStyleId, propValue: fontStyleValue } = usePropsSelector(
+    'fontStyle',
+  )
+  const { propId: textAlignId, propValue: textAlignValue } = usePropsSelector(
+    'textAlign',
+  )
+  const { propId: fontSizeId, propValue: fontSizeValue } = usePropsSelector(
+    'fontSize',
+  )
+  const {
+    propId: letterSpacingId,
+    propValue: letterSpacingValue,
+  } = usePropsSelector('letterSpacing')
+  const { propId: lineHeightId, propValue: lineHeightValue } = usePropsSelector(
+    'lineHeight',
+  )
 
   return (
     <>
@@ -40,11 +53,15 @@ const TextPanel = () => {
           aria-label="italic"
           icon={<GoItalic />}
           onClick={() => {
-            setValue('fontStyle', fontStyle === 'italic' ? null : 'italic')
+            setValue(
+              fontStyleId,
+              'fontStyle',
+              fontStyleValue === 'italic' ? null : 'italic',
+            )
           }}
           size="xs"
-          colorScheme={fontStyle === 'italic' ? 'whatsapp' : 'gray'}
-          variant={fontStyle === 'italic' ? 'solid' : 'outline'}
+          colorScheme={fontStyleValue === 'italic' ? 'whatsapp' : 'gray'}
+          variant={fontStyleValue === 'italic' ? 'solid' : 'outline'}
         >
           Italic
         </IconButton>
@@ -54,8 +71,8 @@ const TextPanel = () => {
           min={100}
           max={900}
           step={100}
-          onChange={value => setValue('fontWeight', value)}
-          value={fontWeight ? fontWeight : 100}
+          onChange={value => setValue(fontWeightId, 'fontWeight', value)}
+          value={fontWeightValue ? fontWeightValue : 100}
         >
           <SliderTrack>
             <SliderFilledTrack />
@@ -70,47 +87,48 @@ const TextPanel = () => {
             aria-label="bold"
             icon={<MdFormatAlignLeft />}
             onClick={() => {
-              setValue('textAlign', 'left')
+              setValue(textAlignId, 'textAlign', 'left')
             }}
-            colorScheme={textAlign === 'left' ? 'whatsapp' : 'gray'}
-            variant={textAlign === 'left' ? 'solid' : 'outline'}
+            colorScheme={textAlignValue === 'left' ? 'whatsapp' : 'gray'}
+            variant={textAlignValue === 'left' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
             icon={<MdFormatAlignCenter />}
             onClick={() => {
-              setValue('textAlign', 'center')
+              setValue(textAlignId, 'textAlign', 'center')
             }}
-            colorScheme={textAlign === 'center' ? 'whatsapp' : 'gray'}
-            variant={textAlign === 'center' ? 'solid' : 'outline'}
+            colorScheme={textAlignValue === 'center' ? 'whatsapp' : 'gray'}
+            variant={textAlignValue === 'center' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
             icon={<MdFormatAlignRight />}
             onClick={() => {
-              setValue('textAlign', 'right')
+              setValue(textAlignId, 'textAlign', 'right')
             }}
-            colorScheme={textAlign === 'right' ? 'whatsapp' : 'gray'}
-            variant={textAlign === 'right' ? 'solid' : 'outline'}
+            colorScheme={textAlignValue === 'right' ? 'whatsapp' : 'gray'}
+            variant={textAlignValue === 'right' ? 'solid' : 'outline'}
           />
 
           <IconButton
             aria-label="italic"
             icon={<MdFormatAlignJustify />}
             onClick={() => {
-              setValue('textAlign', 'justify')
+              setValue(textAlignId, 'textAlign', 'justify')
             }}
-            colorScheme={textAlign === 'justify' ? 'whatsapp' : 'gray'}
-            variant={textAlign === 'justify' ? 'solid' : 'outline'}
+            colorScheme={textAlignValue === 'justify' ? 'whatsapp' : 'gray'}
+            variant={textAlignValue === 'justify' ? 'solid' : 'outline'}
           />
         </ButtonGroup>
       </FormControl>
 
       <FormControl label="Font size" htmlFor="fontSize">
         <ComboBox
-          value={fontSize}
+          id={fontSizeId}
+          value={fontSizeValue}
           name="fontSize"
           options={Object.keys(theme.fontSizes)}
         />
@@ -120,7 +138,8 @@ const TextPanel = () => {
 
       <FormControl label="Line height" htmlFor="lineHeight">
         <ComboBox
-          value={lineHeight}
+          id={lineHeightId}
+          value={lineHeightValue}
           name="lineHeight"
           options={Object.keys(theme.lineHeights)}
         />
@@ -128,7 +147,8 @@ const TextPanel = () => {
 
       <FormControl label="Letter spacing" htmlFor="letterSpacing">
         <ComboBox
-          value={letterSpacing}
+          id={letterSpacingId}
+          value={letterSpacingValue}
           name="letterSpacing"
           options={Object.keys(theme.letterSpacings)}
         />

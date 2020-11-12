@@ -7,21 +7,28 @@ import useCustomTheme from '../../../../hooks/useCustomTheme'
 const BorderPanel = () => {
   const theme = useCustomTheme()
 
-  const border = usePropsSelector('border')
-  const borderRadius = usePropsSelector('borderRadius')
+  const { propId: borderId, propValue: borderValue } = usePropsSelector(
+    'border',
+  )
+  const {
+    propId: borderRadiusId,
+    propValue: borderRadiusValue,
+  } = usePropsSelector('borderRadius')
 
   return (
     <>
       <FormControl label="Border" htmlFor="border">
         <ComboBox
+          id={borderId}
           options={Object.keys(theme.borders)}
-          value={border}
+          value={borderValue}
           name="border"
         />
       </FormControl>
       <FormControl label="Border Radius" htmlFor="borderRadius">
         <ComboBox
-          value={borderRadius}
+          id={borderRadiusId}
+          value={borderRadiusValue}
           name="borderRadius"
           options={Object.keys(theme.radii)}
         />

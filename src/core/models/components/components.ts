@@ -1,6 +1,6 @@
 import { createModel } from '@rematch/core'
 import produce from 'immer'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import {
   searchRootCustomComponent,
   duplicateComp,
@@ -41,29 +41,22 @@ import {
   DEFAULT_ID,
   DEFAULT_PAGE,
   ChildrenPropDetails,
+  INITIAL_STATE,
 } from './components-types'
 
 export type ComponentsState = {
   pages: IPages
   componentsById: IComponentsById
-  propsById: IPropsById
+  propsById: IPropsByPageId
   customComponents: IComponents
-  customComponentsProps: IProp[]
+  customComponentsProps: IProps
   selectedPage: string
   selectedId: IComponent['id']
   hoveredId?: string
 }
 
 const components = createModel({
-  state: {
-    pages: INITIAL_PAGES,
-    componentsById: INITIAL_COMPONENTS,
-    propsById: INITIAL_PROPS,
-    selectedPage: DEFAULT_PAGE,
-    customComponents: {},
-    customComponentsProps: [],
-    selectedId: DEFAULT_ID,
-  } as ComponentsState,
+  state: INITIAL_STATE as ComponentsState,
   reducers: {
     resetComponents(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
@@ -79,7 +72,10 @@ const components = createModel({
             children: [],
           },
         }
-        draftState.propsById[propsId] = []
+        draftState.propsById[propsId] = {
+          byId: {},
+          byComponentId: {},
+        }
         draftState.selectedId = DEFAULT_ID
       })
     },
@@ -96,7 +92,10 @@ const components = createModel({
           propsById: INITIAL_PROPS,
           selectedPage: DEFAULT_PAGE,
           customComponents: {},
-          customComponentsProps: [],
+          customComponentsProps: {
+            byId: {},
+            byComponentId: {},
+          },
           selectedId: DEFAULT_ID,
         }
       }
@@ -107,14 +106,16 @@ const components = createModel({
     resetProps(state: ComponentsState, componentId: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const propsId = draftState.pages[draftState.selectedPage].propsId
-        draftState.propsById[propsId].filter(
-          prop => prop.componentId !== componentId,
-        )
+        const propIds = draftState.propsById[propsId].byComponentId[componentId]
+
+        propIds.forEach(id => {
+          delete draftState.propsById[propsId].byId[id]
+        })
       })
     },
     updateProps(
       state: ComponentsState,
-      payload: { id: string; name: string; value: any },
+      payload: { componentId: string; id: string; name: string; value: any },
     ) {
       return produce(state, (draftState: ComponentsState) => {
         updateProps(draftState, { ...payload })
@@ -128,7 +129,10 @@ const components = createModel({
         exposeProp(draftState, { ...payload })
       })
     },
-    deleteProps(state: ComponentsState, payload: { id: string; name: string }) {
+    deleteProps(
+      state: ComponentsState,
+      payload: { componentId: string; propId: string },
+    ) {
       return produce(state, (draftState: ComponentsState) => {
         deleteProps(draftState, { ...payload })
       })
@@ -169,9 +173,11 @@ const components = createModel({
           componentId,
         )
         const oldParentId = components[componentId].parent
-        const asPropIndex = props.findIndex(
-          (prop: IProp) =>
-            prop.componentId === componentId && prop.name === 'as',
+
+        const selectedComponentPropIds = props.byComponentId[componentId]
+
+        const asPropIndex = selectedComponentPropIds.findIndex(
+          (id: string) => props.byId[id].name === 'span',
         )
 
         //It should not be moved if it is a span element
@@ -250,7 +256,8 @@ const components = createModel({
       payload: { components: IComponents; root: string; parent: string },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        addMetaComponent(draftState, { ...payload })
+        const { components, root, parent } = payload
+        addMetaComponent(draftState, { components, root, parentId: parent })
       })
     },
     select(
@@ -351,10 +358,10 @@ const components = createModel({
           ...draftState.componentsById['2'],
           ...clonedComponents,
         }
-        draftState.propsById['2'] = [
+        draftState.propsById['2'] = {
           ...draftState.propsById['2'],
           ...clonedProps,
-        ]
+        }
         draftState.componentsById['2'][newId].parent = 'root'
         draftState.componentsById['2']['root'].children.push(newId)
       })
@@ -431,18 +438,25 @@ const components = createModel({
             updateInCustomComponent: Boolean,
             propsId: string,
           ) => {
-            if (updateInCustomComponent)
-              draftState.customComponentsProps.push({
+            if (updateInCustomComponent) {
+              const id = generatePropId()
+              draftState.customComponentsProps.byComponentId[
+                component.id
+              ]?.push(id)
+              draftState.customComponentsProps.byId[id] = {
                 ...childrenProp,
-                id: generateId(),
-                componentId: component.id,
-              })
-            else
-              draftState.propsById[propsId].push({
+                id: generatePropId(),
+              }
+            } else {
+              const id = generatePropId()
+              draftState.propsById[propsId].byComponentId[component.id]?.push(
+                id,
+              )
+              draftState.propsById[propsId].byId[id] = {
                 ...childrenProp,
-                id: generateId(),
-                componentId: component.id,
-              })
+                id: generatePropId(),
+              }
+            }
           },
         )
       })

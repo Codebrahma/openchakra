@@ -5,12 +5,16 @@ import SwitchControl from '../../controls/SwitchControl'
 import SizeControl from '../../controls/SizeControl'
 
 const SwitchPanel = () => {
-  const size = usePropsSelector('size')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
 
   return (
     <>
       <SwitchControl label="Checked" name="isChecked" />
-      <SizeControl options={['sm', 'md', 'lg']} value={size || ''} />
+      <SizeControl
+        id={sizeId}
+        options={['sm', 'md', 'lg']}
+        value={sizeValue || ''}
+      />
       <ColorsControl label="Color Scheme" name="colorScheme" />
     </>
   )

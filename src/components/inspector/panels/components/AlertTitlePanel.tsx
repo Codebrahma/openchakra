@@ -5,15 +5,18 @@ import ComboBox from '../../inputs/ComboBox'
 import FormControl from '../../controls/FormControl'
 
 const AlertTitlePanel = () => {
-  const fontSize = usePropsSelector('fontSize')
+  const { propId: fontSizeId, propValue: fontSizeValue } = usePropsSelector(
+    'fontSize',
+  )
 
   return (
     <>
       <ChildrenControl />
       <FormControl label="Size" htmlFor="size">
         <ComboBox
+          id={fontSizeId}
           name="fontSize"
-          value={fontSize}
+          value={fontSizeValue}
           options={['xs', 'sm', 'md', 'lg']}
         />
       </FormControl>

@@ -22,18 +22,18 @@ const NumberControl: React.FC<NumberControlPropsType> = ({
   ...props
 }) => {
   const { setValue } = useForm()
-  const value = usePropsSelector(name)
+  const { propId, propValue } = usePropsSelector(name)
 
   const onChange = useCallback(
     (val: React.ReactText) => {
-      setValue(name, val)
+      setValue(propId, name, val)
     },
-    [name, setValue],
+    [name, propId, setValue],
   )
 
   return (
     <FormControl htmlFor={name} label={label}>
-      <NumberInput size="sm" value={value} onChange={onChange} {...props}>
+      <NumberInput size="sm" value={propValue} onChange={onChange} {...props}>
         <NumberInputField />
         <NumberInputStepper>
           <NumberIncrementStepper />

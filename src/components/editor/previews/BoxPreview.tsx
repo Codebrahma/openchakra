@@ -5,7 +5,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const BoxPreview: React.FC<{ component: IComponent; customProps: any }> = ({
@@ -27,7 +27,7 @@ const BoxPreview: React.FC<{ component: IComponent; customProps: any }> = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

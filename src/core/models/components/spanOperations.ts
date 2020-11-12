@@ -2,10 +2,11 @@ import _ from 'lodash'
 
 import {
   loadRequired,
-  splitArray,
-  joinAdjacentTextNodes,
+  splitsValueToArray,
+  joinAdjacentTextValues,
+  deletePropsByComponentId,
 } from '../../../utils/reducerUtilities'
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import {
   addSpanForSelection,
   removeSpanForSelection,
@@ -13,16 +14,34 @@ import {
 import { ComponentsState } from './components'
 import { ISelectedTextDetails } from './components-types'
 
+/**
+ * @typedef {Object} selectedTextDetails
+ * @property {number} startIndex The starting index in the value where the user had began to highlight the text.
+ * @property {number} endIndex   The end index in the value where the user had completed the highlighting.
+ * @property {number} startNodePosition This represents the start index in the array
+ * @property {number} endNodePosition This represents the end index in the array.
+ */
+
+/**
+ * @method
+ * @name addSpanComponent
+ * @description This function will add the span component in between the text value.
+ * @param {ComponentsState} draftState workspace state
+ * @param {selectedTextDetails} payload
+ */
+
 export const addSpanComponent = (
   draftState: ComponentsState,
   payload: ISelectedTextDetails,
 ) => {
   const { props, components, selectedId: id } = loadRequired(draftState)
 
-  const childrenPropIndex = props.findIndex(
-    prop => prop.name === 'children' && prop.componentId === id,
-  )
-  const newId = generateId()
+  const childrenPropId =
+    props.byComponentId[id].find(
+      propId => props.byId[propId].name === 'children',
+    ) || ''
+
+  const newId = generateComponentId()
   const { startIndex, endIndex, startNodePosition, endNodePosition } = payload
   let start = startIndex
   let end = endIndex
@@ -43,51 +62,64 @@ export const addSpanComponent = (
       parent: id,
     }
 
+    props.byComponentId[newId] = []
     components[id].children.push(newId)
 
-    props.push({
-      id: generateId(),
-      componentId: newId,
+    const asPropId = generatePropId()
+    props.byComponentId[newId].push(asPropId)
+    props.byId[asPropId] = {
+      id: asPropId,
       value: 'span',
       name: 'as',
       derivedFromComponentType: null,
       derivedFromPropName: null,
-    })
+    }
 
-    croppedValue = props[childrenPropIndex].value[startNodePosition].substring(
+    croppedValue = props.byId[childrenPropId].value[
+      startNodePosition
+    ].substring(start, end)
+
+    props.byId[childrenPropId].value[startNodePosition] = splitsValueToArray({
+      propValue: props.byId[childrenPropId].value[startNodePosition],
       start,
       end,
+      spanId: newId,
+    })
+
+    props.byId[childrenPropId].value = _.flatten(
+      props.byId[childrenPropId].value,
     )
 
-    props[childrenPropIndex].value[startNodePosition] = splitArray({
-      stringValue: props[childrenPropIndex].value[startNodePosition],
-      start,
-      end,
-      id: newId,
-    })
+    const spanChildrenId = generatePropId()
 
-    props[childrenPropIndex].value = _.flatten(props[childrenPropIndex].value)
+    props.byComponentId[newId].push(spanChildrenId)
+    props.byId[spanChildrenId] = {
+      id: spanChildrenId,
+      value: croppedValue,
+      name: 'children',
+      derivedFromComponentType: null,
+      derivedFromPropName: null,
+    }
   }
   //Combination of text node and span node.
   else {
-    addSpanForSelection(childrenPropIndex, props, components, {
+    addSpanForSelection(childrenPropId, props, components, {
       start,
       end,
       endNodePosition,
       startNodePosition,
     })
   }
-  props[childrenPropIndex].value.filter((val: string) => val.length !== 0)
-
-  props.push({
-    id: generateId(),
-    componentId: newId,
-    value: croppedValue,
-    name: 'children',
-    derivedFromComponentType: null,
-    derivedFromPropName: null,
-  })
+  props.byId[childrenPropId].value.filter((val: string) => val.length !== 0)
 }
+
+/**
+ * @method
+ * @name removeSpanComponent
+ * @description This function will remove the span component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {selectedTextDetails} payload
+ */
 
 export const removeSpanComponent = (
   draftState: ComponentsState,
@@ -115,27 +147,37 @@ export const removeSpanComponent = (
     end = startIndex
   }
 
-  const childrenPropIndex = props.findIndex(
-    prop => prop.name === 'children' && prop.componentId === id,
-  )
+  const childrenPropId =
+    props.byComponentId[id].find(
+      propId => props.byId[propId].name === 'children',
+    ) || ''
 
-  props = removeSpanForSelection(childrenPropIndex, props, components, id, {
+  props = removeSpanForSelection(childrenPropId, props, components, id, {
     start,
     end,
     startNodePosition,
     endNodePosition,
   })
 
-  props[childrenPropIndex].value = _.flatten(props[childrenPropIndex].value)
+  props.byId[childrenPropId].value = _.flatten(props.byId[childrenPropId].value)
 
   //join if there are adjacent text nodes.
-  const propValue = joinAdjacentTextNodes(childrenPropIndex, components, props)
-  props[childrenPropIndex].value = propValue
+  const propValue = joinAdjacentTextValues(
+    props.byId[childrenPropId],
+    components,
+  )
+  props.byId[childrenPropId].value = propValue
 
   if (isCustomComponentChild) draftState.customComponentsProps = props
   else draftState.propsById[propsId] = props
 }
 
+/**
+ * @method
+ * @name clearFormatting
+ * @description This function will clears all span components from the selected text component.
+ * @param {ComponentsState} draftState workspace state
+ */
 export const clearFormatting = (draftState: ComponentsState) => {
   const {
     components,
@@ -148,31 +190,35 @@ export const clearFormatting = (draftState: ComponentsState) => {
     ? draftState.customComponentsProps
     : draftState.propsById[propsId]
 
-  const childrenPropIndex = props.findIndex(
-    prop => prop.name === 'children' && prop.componentId === id,
-  )
-  const childrenProp = props[childrenPropIndex]
+  const childrenPropId =
+    props.byComponentId[id].find(
+      propId => props.byId[propId].name === 'children',
+    ) || ''
+
+  const childrenProp = props.byId[childrenPropId]
   let newValue = ''
 
   if (Array.isArray(childrenProp.value)) {
     childrenProp.value.forEach((val: string) => {
       //if the value is the key for the components, then delete the component and replace it with value
       if (components[val]) {
-        const spanChildrenValue =
-          props.find(
-            prop => prop.componentId === val && prop.name === 'children',
-          )?.value || ''
-        newValue = newValue + spanChildrenValue
+        const spanChildrenPropId =
+          props.byComponentId[val].find(
+            propId => props.byId[propId].name === 'children',
+          ) || ''
+
+        newValue = newValue + props.byId[spanChildrenPropId].value
         delete components[val]
-        props = props.filter(prop => prop.componentId !== val)
+
+        deletePropsByComponentId(val, props)
       } else {
         newValue = newValue + val
       }
     })
   } else newValue = childrenProp.value
 
-  props[childrenPropIndex].value = [newValue]
+  props.byId[childrenPropId].value = [newValue]
 
-  if (isCustomComponentChild) draftState.customComponentsProps = [...props]
-  else draftState.propsById[propsId] = [...props]
+  if (isCustomComponentChild) draftState.customComponentsProps = { ...props }
+  else draftState.propsById[propsId] = { ...props }
 }

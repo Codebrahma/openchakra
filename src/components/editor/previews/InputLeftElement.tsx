@@ -6,7 +6,7 @@ import { InputLeftElement } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 
 export const InputLeftElementPreview: React.FC<{
   component: IComponent
@@ -27,7 +27,7 @@ export const InputLeftElementPreview: React.FC<{
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

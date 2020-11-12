@@ -152,11 +152,23 @@ interface IProp {
   id: string
   name: string
   value: string | any
-  componentId: string
   derivedFromPropName: string | null
   derivedFromComponentType: string | null
 }
 
 interface IPropsById {
-  [name: string]: IProp[]
+  [propId: string]: IProp
+}
+
+interface IPropsByComponentId {
+  [componentId: string]: string[]
+}
+
+interface IProps {
+  byId: IPropsById
+  byComponentId: IPropsByComponentId
+}
+
+interface IPropsByPageId {
+  [id: string]: IProps
 }

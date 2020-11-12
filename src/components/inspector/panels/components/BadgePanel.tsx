@@ -6,15 +6,18 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import VariantsControl from '../../controls/VariantsControl'
 
 const BadgePanel = () => {
-  const variant = usePropsSelector('variant')
+  const { propId: variantId, propValue: variantValue } = usePropsSelector(
+    'variant',
+  )
 
   return (
     <>
       <ChildrenControl />
 
       <VariantsControl
+        id={variantId}
         options={['solid', 'outline', 'subtle']}
-        value={variant || 'subtle'}
+        value={variantValue || 'subtle'}
       />
 
       <ColorsControl label="Color Scheme" name="colorScheme" />

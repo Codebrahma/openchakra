@@ -5,18 +5,16 @@ import { useForm } from '../../../../hooks/useForm'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const MenuItemPanel = () => {
-  const { setValueFromEvent } = useForm()
-  const role = usePropsSelector('role')
+  const { setValue } = useForm()
+  const { propId: roleId, propValue: roleValue } = usePropsSelector('role')
 
   return (
     <>
       <FormControl label="Role" htmlFor="role">
         <Select
-          name="role"
-          id="role"
           size="sm"
-          value={role || 'role'}
-          onChange={setValueFromEvent}
+          value={roleValue || 'role'}
+          onChange={e => setValue(roleId, 'role', e.target.value)}
         >
           <option>menuitem</option>
           <option>menuitemradio</option>

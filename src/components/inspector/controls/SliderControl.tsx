@@ -17,16 +17,16 @@ const SliderControl: React.FC<{
   step?: number
 }> = ({ label, htmlFor, min = 0, max = 100, step = 1 }) => {
   const { setValue } = useForm()
-  const value = usePropsSelector(htmlFor)
+  const { propId, propValue } = usePropsSelector(htmlFor)
 
   return (
     <FormControl label={label} htmlFor={htmlFor}>
       <Slider
-        onChange={value => setValue(htmlFor, value)}
+        onChange={value => setValue(propId, htmlFor, propValue)}
         min={min}
         max={max}
         step={step}
-        defaultValue={value}
+        defaultValue={propValue}
       >
         <SliderTrack>
           <SliderFilledTrack />

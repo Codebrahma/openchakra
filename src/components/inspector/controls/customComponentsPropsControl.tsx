@@ -10,7 +10,7 @@ import {
   checkIsKeyForComponent,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
-import { Input, Select, Text } from '@chakra-ui/core'
+import { Input, Select, Text, Flex } from '@chakra-ui/core'
 import IconControl from './IconControl'
 import SizeControl from './SizeControl'
 import SwitchControl from './SwitchControl'
@@ -32,7 +32,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   propName,
 }) => {
   const selectedComponent = useSelector(getSelectedComponent)
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
   const theme = useCustomTheme()
 
   //Why both the instance of custom component and also the original custom component.
@@ -41,6 +41,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const selectedProp = useSelector(getPropsBy(selectedComponent.id)).find(
     prop => prop.name === propName,
   )
+
   const selectedCustomComponentProp = useSelector(
     getPropsBy(selectedComponent.type),
   ).find(prop => prop.name === propName)
@@ -48,10 +49,13 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
 
-  const isKeyForComponent = useSelector(checkIsKeyForComponent(selectedProp))
+  const isKeyForComponent = useSelector(
+    checkIsKeyForComponent(selectedProp, selectedComponent.id),
+  )
 
   if (selectedProp && selectedCustomComponentProp) {
-    const controlProp = findControl(
+    const { controlProp, controlPropComponentId } = findControl(
+      selectedComponent.type,
       selectedCustomComponentProp,
       props,
       customComponents,
@@ -59,9 +63,9 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
 
     //Find the type of the control component.
     const controlPropComponentType = customComponents[
-      controlProp?.componentId || 'root'
+      controlPropComponentId || 'root'
     ]
-      ? customComponents[controlProp?.componentId || 'root'].type
+      ? customComponents[controlPropComponentId || 'root'].type
       : 'root'
 
     switch (controlProp?.name) {
@@ -92,7 +96,9 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
                 name={propName}
                 value={selectedProp?.value}
                 size="sm"
-                onChange={setValueFromEvent}
+                onChange={e =>
+                  setValue(selectedProp?.id, propName, e.target.value)
+                }
               />
             </FormControl>
           )
@@ -110,12 +116,14 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
         )
           return (
             <SizeControl
+              id={selectedProp?.id}
               value={selectedProp?.value}
               options={['xs', 'sm', 'md', 'lg', 'xl', '2xl']}
             />
           )
         return (
           <SizeControl
+            id={selectedProp?.id}
             value={selectedProp?.value}
             options={['xs', 'sm', 'md', 'lg']}
           />
@@ -142,8 +150,10 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           <FormControl label={propName}>
             <Select
               size="sm"
-              value={propName || ''}
-              onChange={setValueFromEvent}
+              value={selectedProp?.value || ''}
+              onChange={e =>
+                setValue(selectedProp?.value, propName, e.target.value)
+              }
               name={propName}
             >
               {propOptions[propName].map((propOption: string) => (
@@ -191,6 +201,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           return (
             <FormControl label={propName} htmlFor={propName}>
               <ComboBox
+                id={selectedProp?.id}
                 value={selectedProp?.value}
                 name={propName}
                 options={options}
@@ -199,9 +210,14 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
           )
         } else {
           return (
-            <Text fontSize="10px" color="blackAlpha.700">
-              Component as prop
-            </Text>
+            <Flex fontSize="10px" justifyContent="space-between">
+              <Text color="#718096" fontSize="12px">
+                {propName}
+              </Text>
+              <Text color="blackAlpha.700" marginRight={5}>
+                Component as prop
+              </Text>
+            </Flex>
           )
         }
       }

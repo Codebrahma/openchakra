@@ -15,8 +15,8 @@ import ComboBox from '../../inputs/ComboBox'
 const AvatarGroupPanel = () => {
   const { setValue } = useForm()
 
-  const size = usePropsSelector('size')
-  const max = usePropsSelector('max')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
+  const { propId: maxId, propValue: maxValue } = usePropsSelector('max')
 
   const sizesArray = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
@@ -24,8 +24,9 @@ const AvatarGroupPanel = () => {
     <>
       <FormControl label="Size" htmlFor="size">
         <ComboBox
+          id={sizeId}
           options={sizesArray}
-          value={size || ''}
+          value={sizeValue || ''}
           name="size"
           editable={false}
         />
@@ -41,9 +42,10 @@ const AvatarGroupPanel = () => {
 
       <FormControl label="max">
         <NumberInput
+          id={maxId}
           size="sm"
-          onChange={value => setValue('max', value)}
-          value={max}
+          onChange={value => setValue(maxId, 'max', value)}
+          value={maxValue}
           min={1}
         >
           <NumberInputField />

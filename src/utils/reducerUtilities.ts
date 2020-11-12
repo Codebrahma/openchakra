@@ -1,53 +1,142 @@
 import { deleteComp } from './recursive'
-import { generateId } from './generateId'
+import { generatePropId, generateComponentId } from './generateId'
 import { ComponentsState } from '../core/models/components/components'
 
+/**
+ * Checks whether the component is the children of custom component
+ * @param   {string} componentId  Id of the component
+ * @param   {IComponents} customComponents custom components data
+ * @return  {boolean}
+ */
 export function checkIsChildOfCustomComponent(
   componentId: string,
   customComponents: IComponents,
-) {
+): boolean {
   if (customComponents[componentId]) return true
   return false
 }
 
-export const duplicateProps = (props: IProp[], componentId: string) => {
-  const duplicatedProps: IProp[] = []
+/**
+ * @method
+ * @name deletePropsById
+ * @description Deletes the prop based on the prop-id
+ * @param   {string} propId  Id of the props
+ * @param   {string} componentId Id of the component
+ * @param   {IProps} props props data
+ */
+export const deletePropById = (
+  propId: string,
+  componentId: string,
+  props: IProps,
+) => {
+  const propIdIndex = props.byComponentId[componentId]?.findIndex(
+    id => id === propId,
+  )
+  props.byComponentId[componentId]?.splice(propIdIndex, 1)
+  delete props.byId[propId]
+}
 
-  props.forEach(prop => {
-    duplicatedProps.push({
+/**
+ * @method
+ * @name mergeProps
+ * @description Merges the existing props with the new props data
+ * @param   {IProps} originalCopyProps  Original props data
+ * @param   {IProps} propsToMerge props that are to be merged with the original props data
+ */
+export const mergeProps = (originalCopyProps: IProps, propsToMerge: IProps) => {
+  originalCopyProps.byId = {
+    ...originalCopyProps.byId,
+    ...propsToMerge.byId,
+  }
+  originalCopyProps.byComponentId = {
+    ...originalCopyProps.byComponentId,
+    ...propsToMerge.byComponentId,
+  }
+}
+
+/**
+ * @method
+ * @name deletePropsByComponentId
+ * @description Deletes all the props based on the component-id
+ * @param   {string} componentId Id of the component
+ * @param   {IProps} props props data
+ */
+export const deletePropsByComponentId = (
+  componentId: string,
+  props: IProps,
+) => {
+  props.byComponentId[componentId]?.forEach(propId => {
+    delete props.byId[propId]
+  })
+  delete props.byComponentId[componentId]
+}
+
+/**
+ * @method
+ * @name duplicateProps
+ * @description duplicates the props
+ * @param   {IPropsById} propsById All the props with id as its key
+ * @return  {IPropsById} duplicated props
+ */
+export const duplicateProps = (propsById: IPropsById): IPropsById => {
+  const duplicatedProps: IPropsById = {}
+
+  Object.values(propsById).forEach(prop => {
+    const newPropId = generatePropId()
+    duplicatedProps[newPropId] = {
       ...prop,
-      id: generateId(),
-      componentId,
-    })
+      id: newPropId,
+    }
   })
   return duplicatedProps
 }
 
-export const isKeyForComponent = (value: string, components: IComponents) => {
+/**
+ * @method
+ * @name isKeyForComponent
+ * @description Checks wether the value of a prop is the key of another component.
+ * @param   {string} value Prop value
+ * @param   {IComponents} components  components data
+ * @return  {boolean} duplicated props
+ */
+export const isKeyForComponent = (
+  value: string,
+  components: IComponents,
+): boolean => {
   if (components[value]) return true
   return false
 }
 
-export const splitArray = (payload: {
-  stringValue: string
+/**
+ * @method
+ * @name splitsValueToArray
+ * @description Splits the value into array of values based on the start and end index.
+ * @param   {string} propValue Prop value.
+ * @param   {number} start  Start index to split the value.
+ * @param   {number} end  end index to split the value.
+ * @param   {string} spanId  Id of the span component.
+ * @return  {string[]} duplicated props
+ */
+export const splitsValueToArray = (payload: {
+  propValue: string
   start: number
   end: number
-  id: string
-}) => {
-  let splittedArray = []
+  spanId: string
+}): string[] => {
+  let splittedArray: string[] = []
 
-  const { start, stringValue, end, id } = payload
+  const { start, propValue, end, spanId } = payload
 
-  if (start === 0 && end === stringValue.length) splittedArray = [id]
-  else if (start === 0 && end !== stringValue.length)
-    splittedArray = [id, stringValue.substring(end, stringValue.length)]
-  else if (end === stringValue.length && start !== 0)
-    splittedArray = [stringValue.substring(0, start), id]
+  if (start === 0 && end === propValue.length) splittedArray = [spanId]
+  else if (start === 0 && end !== propValue.length)
+    splittedArray = [spanId, propValue.substring(end, propValue.length)]
+  else if (end === propValue.length && start !== 0)
+    splittedArray = [propValue.substring(0, start), spanId]
   else
     splittedArray = [
-      stringValue.substring(0, start),
-      id,
-      stringValue.substring(end, stringValue.length),
+      propValue.substring(0, start),
+      spanId,
+      propValue.substring(end, propValue.length),
     ]
 
   return splittedArray
@@ -73,15 +162,21 @@ export const updateInAllInstances = (
     .forEach(component => updateCallBack(component, true))
 }
 
-// joining the adjacent text in the array
-export const joinAdjacentTextNodes = (
-  childrenPropIndex: number,
+/**
+ * @method
+ * @name joinAdjacentTextValues
+ * @description This function will join the adjacent text values in the array.
+ * @param   {IProp} value Prop value
+ * @param   {IComponents} components  components data
+ * @return  {string[]} Array of prop values
+ */
+export const joinAdjacentTextValues = (
+  childrenProp: IProp,
   components: IComponents,
-  props: IProp[],
-) => {
+): string[] => {
   const propValue: string[] = []
 
-  props[childrenPropIndex].value.forEach((val: string) => {
+  childrenProp.value.forEach((val: string) => {
     if (propValue.length === 0 || isKeyForComponent(val, components)) {
       propValue.push(val)
     } else {
@@ -99,42 +194,47 @@ export const deleteCustomPropUtility = (
   component: IComponent,
   propName: string,
   components: IComponents,
-  props: IProp[],
+  props: IProps,
 ) => {
-  const index = props.findIndex(
-    prop => prop.name === propName && prop.componentId === component.id,
+  const customPropId = props.byComponentId[component.id].find(
+    id => props.byId[id].name === propName,
   )
-  const customProp = props[index]
-  props.splice(index, 1)
 
-  if (component.id !== component.type) {
-    // Wrapper-components
-    if (customProp.name === 'children') {
-      components[component.id].children.length > 0 &&
-        components[component.id].children.forEach(child => {
-          const { updatedComponents, updatedProps } = deleteComp(
-            components[child],
-            components,
-            props,
-          )
-          return {
-            props: updatedProps,
-            components: updatedComponents,
-          }
-        })
-      components[component.id].children = []
-    }
-    // Layout-components
-    if (components[customProp.value]) {
-      const { updatedComponents, updatedProps } = deleteComp(
-        components[customProp.value],
-        components,
-        props,
-      )
+  if (customPropId) {
+    const customProp = props.byId[customPropId]
 
-      return {
-        props: updatedProps,
-        components: updatedComponents,
+    delete props.byComponentId[component.id]
+    delete props.byId[customPropId]
+
+    if (customPropId && component.id !== component.type) {
+      // Container component (the children from the instance of root component used by any of its custom components children)
+      if (customProp.name === 'children') {
+        components[component.id].children.length > 0 &&
+          components[component.id].children.forEach(child => {
+            const { updatedComponents, updatedProps } = deleteComp(
+              components[child],
+              components,
+              props,
+            )
+            return {
+              props: updatedProps,
+              components: updatedComponents,
+            }
+          })
+        components[component.id].children = []
+      }
+      // Layout-components
+      if (components[customProp.value]) {
+        const { updatedComponents, updatedProps } = deleteComp(
+          components[customProp.value],
+          components,
+          props,
+        )
+
+        return {
+          props: updatedProps,
+          components: updatedComponents,
+        }
       }
     }
   }
@@ -198,7 +298,7 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     updateInCustomComponent,
   } = payload
 
-  const boxId = generateId()
+  const boxId = generateComponentId()
 
   const boxComponent = {
     id: boxId,
@@ -212,34 +312,39 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     exposedPropComponentType,
   )
   const heightProp = {
-    id: generateId(),
+    id: generatePropId(),
     name: 'height',
     value: '100%',
-    componentId: boxId,
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
 
+  const propId = generatePropId()
   const prop = {
-    id: generateId(),
+    id: propId,
     name: exposedProp.customPropName || '',
     value: isBoxChildrenExposed ? boxId : exposedProp.value,
-    componentId: component.id,
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
 
   if (updateInCustomComponent) {
-    draftState.customComponentsProps.push(prop)
+    draftState.customComponentsProps.byComponentId[component.id]?.push(propId)
+    draftState.customComponentsProps.byId[propId] = { ...prop }
+
     if (isBoxChildrenExposed) {
       draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps.push(heightProp)
+      draftState.customComponentsProps.byComponentId[boxId]?.push(heightProp.id)
+      draftState.customComponentsProps.byId[heightProp.id] = { ...heightProp }
     }
   } else {
-    draftState.propsById[propsId].push(prop)
+    draftState.propsById[propsId].byComponentId[component.id]?.push(propId)
+    draftState.propsById[propsId].byId[propId] = { ...prop }
+
     if (isBoxChildrenExposed) {
       draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId].push(heightProp)
+      draftState.propsById[propsId].byComponentId[boxId]?.push(heightProp.id)
+      draftState.propsById[propsId].byId[heightProp.id] = { ...heightProp }
     }
   }
 }

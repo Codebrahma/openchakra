@@ -6,8 +6,8 @@ import usePropsSelector from '../../../hooks/usePropsSelector'
 
 const ChildrenControl: React.FC = () => {
   const textInput = useRef<HTMLInputElement>(null)
-  const { setValueFromEvent } = useForm()
-  const children = usePropsSelector('children')
+  const { setValue } = useForm()
+  const { propId, propValue } = usePropsSelector('children')
   const onKeyUp = (event: KeyboardEvent) => {
     if (event.keyCode === 13 && textInput.current) {
       textInput.current.blur()
@@ -17,12 +17,12 @@ const ChildrenControl: React.FC = () => {
   return (
     <FormControl htmlFor="children" label="Text">
       <Input
-        id="children"
+        id={propId}
         name="children"
         size="sm"
-        value={children}
+        value={propValue}
         type="text"
-        onChange={setValueFromEvent}
+        onChange={e => setValue(propId, 'children', e.target.value)}
         ref={textInput}
         onKeyUp={onKeyUp}
       />

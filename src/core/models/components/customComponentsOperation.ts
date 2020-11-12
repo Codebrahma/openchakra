@@ -1,76 +1,103 @@
 import { ComponentsState } from './components'
-import { generateId } from '../../../utils/generateId'
-import { loadRequired, duplicateProps } from '../../../utils/reducerUtilities'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
+import {
+  loadRequired,
+  duplicateProps,
+  mergeProps,
+} from '../../../utils/reducerUtilities'
 import {
   moveComp,
   fetchAndUpdateExposedProps,
   deleteComp,
 } from '../../../utils/recursive'
 
+/**
+ * @method
+ * @name addCustomComponent
+ * @description This function will add the custom component and its respective props.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddComponentPayload} payload
+ */
+
 export const addCustomComponent = (
   draftState: ComponentsState,
   payload: { parentId: string; type: string },
 ) => {
-  const id = generateId()
+  const componentId = generateComponentId()
   const { type, parentId } = payload
-  const { isCustomComponentChild, propsId, components, props } = loadRequired(
-    draftState,
-    parentId,
-  )
+  const { components, props } = loadRequired(draftState, parentId)
 
-  const customComponentsProps = [...draftState.customComponentsProps]
+  const customComponentProps: IPropsById = {}
 
-  const duplicatedProps = duplicateProps(
-    customComponentsProps.filter(prop => prop.componentId === type),
-    id,
-  )
+  draftState.customComponentsProps.byComponentId[type].forEach(propId => {
+    customComponentProps[propId] = {
+      ...draftState.customComponentsProps.byId[propId],
+    }
+  })
+
+  const duplicatedProps = duplicateProps(customComponentProps)
 
   const heightProp = {
-    id: generateId(),
+    id: generatePropId(),
     name: 'height',
     value: '100%',
-    componentId: '',
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
 
-  components[id] = {
-    id,
+  components[componentId] = {
+    id: componentId,
     type: payload.type,
     parent: parentId,
     children: [],
   }
-  components[parentId].children.push(id)
+  components[parentId].children.push(componentId)
 
-  duplicatedProps.forEach((prop, index) => {
+  props.byComponentId[componentId] = []
+
+  Object.values(duplicatedProps).forEach(prop => {
     //If the children of the container is exposed
     if (draftState.customComponents[prop.value]) {
-      const id = generateId()
-      components[id] = {
-        id,
+      const boxId = generateComponentId()
+      components[boxId] = {
+        id: boxId,
         type: 'Box',
         parent: 'Prop',
         children: [],
       }
-      props.push({
+      props.byComponentId[boxId] = []
+      props.byId[heightProp.id] = {
         ...heightProp,
-        componentId: id,
-      })
-      duplicatedProps[index].value = id
+      }
+
+      prop.value = boxId
     }
+    props.byComponentId[componentId].push(prop.id)
+    props.byId[prop.id] = { ...prop }
   })
-  if (isCustomComponentChild)
-    draftState.customComponentsProps = [...props, ...duplicatedProps]
-  else draftState.propsById[propsId] = [...props, ...duplicatedProps]
 }
 
+/**
+ * @typedef {Object} saveComponentPayload
+ * @property {string} name - The name of the custom component.
+ * @property {string} componentId - The id of the component to be saved.
+ * @property {string} parentId - The parent id of the component to be saved.
+ */
+
+/**
+ * @method
+ * @name saveComponent
+ * @description This function is used to save the component as custom component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddComponentPayload} payload
+ */
 export const saveComponent = (
   draftState: ComponentsState,
   payload: { name: string; componentId: string; parentId: string },
 ) => {
   const { propsId, componentsId } = loadRequired(draftState)
   const { name, componentId, parentId } = payload
-  const newId = generateId()
+  const newId = generateComponentId()
 
   //move the component & props from the components data to custom components data
   const {
@@ -117,6 +144,11 @@ export const saveComponent = (
     },
   }
 
+  mergeProps(draftState.customComponentsProps, movedProps)
+
+  draftState.propsById[propsId].byComponentId[newId] = []
+  draftState.customComponentsProps.byComponentId[name] = []
+
   //change the parent of the child
   draftState.customComponents[componentId].parent = name
 
@@ -129,43 +161,66 @@ export const saveComponent = (
     name,
     draftState.customComponents[componentId],
     draftState.customComponents,
-    [...draftState.customComponentsProps, ...movedProps],
+    draftState.customComponentsProps,
   )
   //make a duplicate props for the instance of the custom component.
-  const duplicatedProps = duplicateProps(rootParentProps, newId)
+  const duplicatedProps = duplicateProps(rootParentProps)
 
   //Add the box component if any value is the key for the components(custom children prop)
   //If the
 
-  rootParentProps.forEach((prop, index) => {
+  Object.values(rootParentProps).forEach(prop => {
     if (prop.value === 'RootCbComposer') {
-      const id = generateId()
+      const id = generateComponentId()
       draftState.customComponents[id] = {
         id,
         type: 'Box',
         parent: 'Prop',
         children: [],
       }
-      rootParentProps[index].value = id
+      rootParentProps[prop.id].value = id
     }
+    draftState.customComponentsProps.byComponentId[name].push(prop.id)
   })
 
-  duplicatedProps.forEach((prop, index) => {
+  Object.values(duplicatedProps).forEach(prop => {
     if (prop.value === 'RootCbComposer') {
-      const id = generateId()
+      const id = generateComponentId()
       draftState.componentsById[componentsId][id] = {
         id,
         type: 'Box',
         parent: 'Prop',
         children: [],
       }
-      duplicatedProps[index].value = id
+      duplicatedProps[prop.id].value = id
     }
+    draftState.propsById[propsId].byComponentId[newId].push(prop.id)
   })
-  draftState.propsById[propsId] = [...updatedProps, ...duplicatedProps]
-  draftState.customComponentsProps = [...customProps, ...rootParentProps]
+
+  draftState.customComponentsProps = {
+    byId: {
+      ...customProps.byId,
+      ...rootParentProps,
+    },
+    byComponentId: { ...customProps.byComponentId },
+  }
+
+  draftState.propsById[propsId] = {
+    byId: {
+      ...updatedProps.byId,
+      ...duplicatedProps,
+    },
+    byComponentId: { ...updatedProps.byComponentId },
+  }
 }
 
+/**
+ * @method
+ * @name deleteCustomComponent
+ * @description This function will delete the custom component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {string} type Name or Type of the custom component to be deleted.
+ */
 export const deleteCustomComponent = (
   draftState: ComponentsState,
   type: string,
@@ -176,18 +231,29 @@ export const deleteCustomComponent = (
     draftState.customComponentsProps,
   )
   draftState.customComponents = { ...updatedComponents }
-  draftState.customComponentsProps = [...updatedProps]
+  draftState.customComponentsProps = { ...updatedProps }
 
   //Exposed children of the box/flex
-  deletedProps
-    .filter(prop => draftState.customComponents[prop.value])
-    .forEach(prop => {
-      const { updatedComponents, updatedProps } = deleteComp(
-        draftState.customComponents[prop.value],
-        draftState.customComponents,
-        draftState.customComponentsProps,
-      )
-      draftState.customComponentsProps = [...updatedProps]
-      draftState.customComponents = { ...updatedComponents }
-    })
+  Object.keys(deletedProps.byComponentId).forEach(componentId => {
+    deletedProps.byComponentId[componentId]
+      .filter(propId => {
+        // Check whether the prop value is the key of the component
+        const prop = deletedProps.byId[propId]
+        if (draftState.customComponents[prop.value]) {
+          return true
+        }
+        return false
+      })
+      .forEach(propId => {
+        const prop = deletedProps.byId[propId]
+
+        const { updatedComponents, updatedProps } = deleteComp(
+          draftState.customComponents[prop.value],
+          draftState.customComponents,
+          draftState.customComponentsProps,
+        )
+        draftState.customComponentsProps = { ...updatedProps }
+        draftState.customComponents = { ...updatedComponents }
+      })
+  })
 }

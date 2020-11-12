@@ -9,7 +9,7 @@ import {
   checkIsContainerComponent,
 } from '../../../core/selectors/components'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 
 const CustomComponentPreview: React.FC<{
@@ -40,7 +40,7 @@ const CustomComponentPreview: React.FC<{
 
   if (isOver && isContainerComponent) {
     boxProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

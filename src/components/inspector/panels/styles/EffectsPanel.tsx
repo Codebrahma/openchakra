@@ -13,20 +13,24 @@ import useCustomTheme from '../../../../hooks/useCustomTheme'
 
 const EffectsPanel = () => {
   const { setValue } = useForm()
-  const opacity = usePropsSelector('opacity')
-  const shadow = usePropsSelector('shadow')
+  const { propId: opacityId, propValue: opacityValue } = usePropsSelector(
+    'opacity',
+  )
+  const { propId: shadowId, propValue: shadowValue } = usePropsSelector(
+    'shadow',
+  )
   const theme = useCustomTheme()
 
   const normalizedOpacity = useMemo(() => {
-    return opacity * 100 || 100
-  }, [opacity])
+    return opacityValue * 100 || 100
+  }, [opacityValue])
 
   return (
     <>
       <FormControl label="Opacity">
         <Slider
           min={1}
-          onChange={value => setValue('opacity', value / 100)}
+          onChange={value => setValue(opacityId, 'opacity', value / 100)}
           value={normalizedOpacity}
         >
           <SliderTrack />
@@ -37,7 +41,8 @@ const EffectsPanel = () => {
 
       <FormControl label="Shadow" htmlFor="shadow">
         <ComboBox
-          value={shadow}
+          id={shadowId}
+          value={shadowValue}
           name="shadow"
           options={Object.keys(theme.shadows)}
         />

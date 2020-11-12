@@ -6,7 +6,7 @@ import SwitchControl from '../../controls/SwitchControl'
 import SliderControl from '../../controls/SliderControl'
 
 const ProgressPanel = () => {
-  const size = usePropsSelector('size')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
 
   return (
     <>
@@ -14,7 +14,7 @@ const ProgressPanel = () => {
       <SwitchControl label="Has stripe" name="hasStripe" />
       <SwitchControl label="Loading" name="isIndeterminate" />
       <ColorsControl label="Color Scheme" name="colorScheme" />
-      <SizeControl options={['sm', 'md', 'lg']} value={size} />
+      <SizeControl id={sizeId} options={['sm', 'md', 'lg']} value={sizeValue} />
     </>
   )
 }

@@ -6,9 +6,16 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import ComboBox from '../../inputs/ComboBox'
 
 const StackPanel = () => {
-  const alignItems = usePropsSelector('alignItems')
-  const justifyContent = usePropsSelector('justifyContent')
-  const direction = usePropsSelector('direction')
+  const { propId: alignItemsId, propValue: alignItemsValue } = usePropsSelector(
+    'alignItems',
+  )
+  const {
+    propId: justifyContentId,
+    propValue: justifyContentValue,
+  } = usePropsSelector('justifyContent')
+  const { propId: directionId, propValue: directionValue } = usePropsSelector(
+    'direction',
+  )
 
   return (
     <>
@@ -17,7 +24,8 @@ const StackPanel = () => {
       <TextControl name="spacing" label="Spacing" />
       <FormControl label="Direction">
         <ComboBox
-          value={direction || 'row'}
+          id={directionId}
+          value={directionValue || 'row'}
           name="flexDirection"
           options={['row', 'row-reverse', 'column', 'column-reverse']}
           editable={false}
@@ -26,7 +34,8 @@ const StackPanel = () => {
 
       <FormControl label="Justify content">
         <ComboBox
-          value={justifyContent || 'flex-start'}
+          id={justifyContentId}
+          value={justifyContentValue || 'flex-start'}
           name="justifyContent"
           options={[
             'flex-start',
@@ -41,7 +50,8 @@ const StackPanel = () => {
 
       <FormControl label="Align items">
         <ComboBox
-          value={alignItems || 'stretch'}
+          id={alignItemsId}
+          value={alignItemsValue || 'stretch'}
           name="alignItems"
           options={[
             'stretch',

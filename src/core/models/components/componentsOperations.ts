@@ -1,9 +1,10 @@
 import { DEFAULT_ID } from './components-types'
-import { generateId } from '../../../utils/generateId'
+import { generateComponentId, generatePropId } from '../../../utils/generateId'
 import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
-  joinAdjacentTextNodes,
+  joinAdjacentTextValues,
+  mergeProps,
 } from '../../../utils/reducerUtilities'
 import {
   deleteCustomPropInRootComponent,
@@ -12,31 +13,41 @@ import {
 } from '../../../utils/recursive'
 import { ComponentsState } from './components'
 
+/**
+ * @typedef {Object} AddComponentPayload
+ * @property {string} parentId - Id of the parent component where the component is added.
+ * @property {ComponentType} type - Type of the added component.
+ */
+
+/**
+ * @method
+ * @name addComponent
+ * @description This function will add the component and its respective props.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddComponentPayload} payload
+ */
 export const addComponent = (
   draftState: ComponentsState,
   payload: { parentId: string; type: ComponentType },
 ) => {
-  const id = generateId()
+  const id = generateComponentId()
   const { parentId, type } = payload
-  const {
-    isCustomComponentChild,
-    propsId,
-    components,
-    componentsId,
-  } = loadRequired(draftState, parentId)
-  const defaultProps: IProp[] = []
+  const { components, props } = loadRequired(draftState, parentId)
+  const defaultProps: IPropsById = {}
+  const defaultPropsIds: string[] = []
 
   //Add the default props for the component.
   DEFAULT_PROPS[type] &&
     Object.keys(DEFAULT_PROPS[type]).forEach((propName: string) => {
-      defaultProps.push({
-        id: generateId(),
+      const propId = generatePropId()
+      defaultProps[propId] = {
+        id: propId,
         name: propName,
         value: DEFAULT_PROPS[type][propName],
-        componentId: id,
         derivedFromPropName: null,
         derivedFromComponentType: null,
-      })
+      }
+      defaultPropsIds.push(propId)
     })
   components[id] = {
     id,
@@ -44,45 +55,56 @@ export const addComponent = (
     parent: parentId,
     children: [],
   }
-  if (isCustomComponentChild) {
-    draftState.customComponentsProps = [
-      ...draftState.customComponentsProps,
-      ...defaultProps,
-    ]
-    draftState.customComponents[parentId].children.push(id)
-  } else {
-    draftState.propsById[propsId] = [
-      ...draftState.propsById[propsId],
-      ...defaultProps,
-    ]
-    draftState.componentsById[componentsId][parentId].children.push(id)
+  props.byComponentId[id] = []
+  props.byId = {
+    ...props.byId,
+    ...defaultProps,
   }
+  props.byComponentId[id] = [...props.byComponentId[id], ...defaultPropsIds]
+
+  components[parentId].children.push(id)
 }
+
+/**
+ * @typedef {Object} AddMetaComponentPayload
+ * @property {IComponents} components - Id of the parent component where the component is added.
+ * @property {string} root - Root Parent component id of the meta components.
+ * @property {string} parentId - Id of the parent component where the meta component is added.
+ */
+
+/**
+ * @method
+ * @name addMetaComponent
+ * @description This function will add the meta components and its respective props.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddMetaComponentPayload} payload
+ */
 
 export const addMetaComponent = (
   draftState: ComponentsState,
-  payload: { components: IComponents; root: string; parent: string },
+  payload: { components: IComponents; root: string; parentId: string },
 ) => {
-  const { components: metaComponents, root, parent } = payload
-  const { isCustomComponentChild, propsId, componentsId } = loadRequired(
+  const { components: metaComponents, root, parentId } = payload
+  const { isCustomComponentChild, componentsId, props } = loadRequired(
     draftState,
-    parent,
+    parentId,
   )
-  const metaComponentsDefaultProps: IProp[] = []
 
-  //Add the default props for the components
+  //Add the default props for the meta components
   Object.values(metaComponents).forEach(component => {
+    props.byComponentId[component.id] = []
     DEFAULT_PROPS[component.type as ComponentType] &&
       Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
         (propName: string) => {
-          metaComponentsDefaultProps.push({
-            id: generateId(),
+          const propId = generatePropId()
+          props.byComponentId[component.id].push(propId)
+          props.byId[propId] = {
+            id: propId,
             name: propName,
             value: DEFAULT_PROPS[component.type as ComponentType][propName],
-            componentId: component.id,
             derivedFromPropName: null,
             derivedFromComponentType: null,
-          })
+          }
         },
       )
   })
@@ -92,26 +114,31 @@ export const addMetaComponent = (
       ...draftState.customComponents,
       ...metaComponents,
     }
-    draftState.customComponentsProps = [
-      ...draftState.customComponentsProps,
-      ...metaComponentsDefaultProps,
-    ]
-    draftState.customComponents[root].parent = parent
-    draftState.customComponents[parent].children.push(root)
+    draftState.customComponents[root].parent = parentId
+    draftState.customComponents[parentId].children.push(root)
   } else {
     draftState.componentsById[componentsId] = {
       ...draftState.componentsById[componentsId],
       ...metaComponents,
     }
-    draftState.propsById[propsId] = [
-      ...draftState.propsById[propsId],
-      ...metaComponentsDefaultProps,
-    ]
-    draftState.componentsById[componentsId][root].parent = parent
-    draftState.componentsById[componentsId][parent].children.push(root)
+    draftState.componentsById[componentsId][root].parent = parentId
+    draftState.componentsById[componentsId][parentId].children.push(root)
   }
 }
 
+/**
+ * @typedef {Object} deleteComponentPayload
+ * @property {string} componentId - Id of the component to be deleted.
+ * @property {string} parentId - Parent id of the component to be deleted.
+ */
+
+/**
+ * @method
+ * @name deleteComponent
+ * @description This function will delete the component along with its children and also its respective props.
+ * @param {ComponentsState} draftState workspace state
+ * @param {deleteComponentPayload} payload
+ */
 export const deleteComponent = (
   draftState: ComponentsState,
   payload: {
@@ -128,29 +155,33 @@ export const deleteComponent = (
   } = loadRequired(draftState)
   const { componentId, parentId } = payload
 
+  // Deletes the components and its children components along with its respective props
   const { updatedComponents, updatedProps, deletedProps } = deleteComp(
     components[componentId],
     components,
     props,
   )
+
+  // Update the children of the deleted component's parent
   updatedComponents[parentId].children = updatedComponents[
     parentId
   ].children.filter(child => child !== componentId)
 
-  if (updatedComponents[parentId].type === 'Text') {
-    const childrenPropIndex = updatedProps.findIndex(
-      prop => prop.componentId === parentId && prop.name === 'children',
-    )
-    updatedProps[childrenPropIndex].value = updatedProps[
-      childrenPropIndex
+  const childrenPropId = updatedProps.byComponentId[parentId]?.find(
+    propId => updatedProps.byId[propId].name === 'children',
+  )
+
+  // If the deleted component is span
+  if (updatedComponents[parentId].type === 'Text' && childrenPropId) {
+    updatedProps.byId[childrenPropId].value = updatedProps.byId[
+      childrenPropId
     ].value.filter((val: string) => val !== componentId)
 
-    const propValue = joinAdjacentTextNodes(
-      childrenPropIndex,
+    const propValue = joinAdjacentTextValues(
+      updatedProps.byId[childrenPropId],
       components,
-      props,
     )
-    updatedProps[childrenPropIndex].value = propValue
+    updatedProps.byId[childrenPropId].value = propValue
   }
 
   draftState.selectedId = DEFAULT_ID
@@ -159,82 +190,84 @@ export const deleteComponent = (
     draftState.customComponentsProps = updatedProps
 
     //deletion of custom props for the exposed props that are deleted
-    deletedProps
-      .filter(prop => prop.derivedFromPropName)
-      .forEach(customProp => {
-        const {
-          updatedCustomComponentProps,
-          updatedPropsById,
-          updatedComponentsById,
-          updatedCustomComponents,
-        } = deleteCustomPropInRootComponent(
-          customProp,
-          draftState.pages,
-          draftState.componentsById,
-          draftState.customComponents,
-          draftState.propsById,
-          draftState.customComponentsProps,
-        )
-        draftState.propsById = { ...updatedPropsById }
-        draftState.customComponentsProps = [...updatedCustomComponentProps]
-        draftState.componentsById = { ...updatedComponentsById }
-        draftState.customComponents = { ...updatedCustomComponents }
-      })
+    Object.keys(deletedProps.byComponentId).forEach(componentId => {
+      deletedProps.byComponentId[componentId]
+        .filter(propId => deletedProps.byId[propId].derivedFromPropName)
+        .forEach(customPropId => {
+          const {
+            updatedCustomComponentProps,
+            updatedPropsById,
+            updatedComponentsById,
+            updatedCustomComponents,
+          } = deleteCustomPropInRootComponent(
+            deletedProps.byId[customPropId],
+            draftState.pages,
+            draftState.componentsById,
+            draftState.customComponents,
+            draftState.propsById,
+            draftState.customComponentsProps,
+          )
+          draftState.propsById = { ...updatedPropsById }
+          draftState.customComponentsProps = { ...updatedCustomComponentProps }
+          draftState.componentsById = { ...updatedComponentsById }
+          draftState.customComponents = { ...updatedCustomComponents }
+        })
+    })
   } else {
-    draftState.propsById[propsId] = [...updatedProps]
+    draftState.propsById[propsId] = { ...updatedProps }
     draftState.componentsById[componentsId] = { ...updatedComponents }
-
-    deletedProps
-      .filter(prop => draftState.componentsById[componentsId][prop.value])
-      .forEach(prop => {
-        const { updatedComponents, updatedProps } = deleteComp(
-          draftState.componentsById[componentsId][prop.value],
-          draftState.componentsById[componentsId],
-          draftState.propsById[propsId],
-        )
-        draftState.propsById[propsId] = [...updatedProps]
-        draftState.componentsById[componentsId] = { ...updatedComponents }
-      })
   }
 }
 
+/**
+ * @method
+ * @name duplicateComponent
+ * @description This function will duplicate the component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {deleteComponentPayload} selectedComponent component to duplicate
+ */
 export const duplicateComponent = (
   draftState: ComponentsState,
   selectedComponent: IComponent,
 ) => {
   const {
     isCustomComponentChild,
-    propsId,
     componentsId,
     components,
     props,
   } = loadRequired(draftState)
 
+  // This function will duplicate the component and also its children
+  // And gives a copy of components and respective props
   const { newId, clonedComponents, clonedProps } = duplicateComp(
     selectedComponent,
     components,
     props,
   )
-  const childrenPropIndex = props.findIndex(
-    prop =>
-      prop.componentId === selectedComponent.parent && prop.name === 'children',
-  )
+
+  // Add the duplicated component id in the children of the parent component
   components[selectedComponent.parent].children.push(newId)
 
-  components[selectedComponent.parent].type === 'Text' &&
-    props[childrenPropIndex].value.push(newId)
+  // If the duplicated component is span
+  if (components[selectedComponent.parent].type === 'Text') {
+    const parentComponentProps = props.byComponentId[selectedComponent.parent]
+
+    const childrenPropId =
+      parentComponentProps.find(id => props.byId[id].name === 'children') || ''
+    props.byId[childrenPropId].value.push(newId)
+  }
 
   if (isCustomComponentChild) {
     draftState.customComponents = {
       ...components,
       ...clonedComponents,
     }
-    draftState.customComponentsProps = [...props, ...clonedProps]
+    mergeProps(props, clonedProps)
   } else {
     draftState.componentsById[componentsId] = {
       ...components,
       ...clonedComponents,
     }
-    draftState.propsById[propsId] = [...props, ...clonedProps]
+    mergeProps(props, clonedProps)
   }
 }

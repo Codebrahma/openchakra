@@ -1,27 +1,28 @@
-import React, { memo } from "react";
-import usePropsSelector from "../../../../hooks/usePropsSelector";
-import SwitchControl from "../../controls/SwitchControl";
-import { Input } from "@chakra-ui/core";
-import { useForm } from "../../../../hooks/useForm";
-import FormControl from "../../controls/FormControl";
+import React, { memo } from 'react'
+import usePropsSelector from '../../../../hooks/usePropsSelector'
+import SwitchControl from '../../controls/SwitchControl'
+import { Input } from '@chakra-ui/core'
+import { useForm } from '../../../../hooks/useForm'
+import FormControl from '../../controls/FormControl'
 
 const RadioGroupPanel = () => {
-  const { setValueFromEvent } = useForm();
-  const spacing = usePropsSelector("spacing");
+  const { setValue } = useForm()
+  const { propId: spacingId, propValue: spacingValue } = usePropsSelector(
+    'spacing',
+  )
 
   return (
     <>
       <FormControl label="Spacing">
         <Input
-          size="sm"
-          value={spacing || ""}
+          value={spacingValue || ''}
           name="spacing"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(spacingId, 'spacing', e.target.value)}
         />
       </FormControl>
       <SwitchControl label="Inline" name="isInline" />
     </>
-  );
-};
+  )
+}
 
-export default memo(RadioGroupPanel);
+export default memo(RadioGroupPanel)

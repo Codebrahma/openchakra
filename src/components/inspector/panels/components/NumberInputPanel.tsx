@@ -6,11 +6,11 @@ import TextControl from '../../controls/TextControl'
 import NumberControl from '../../controls/NumberControl'
 
 const NumberInputPanel = () => {
-  const size = usePropsSelector('size')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
 
   return (
     <>
-      <SizeControl options={['sm', 'md', 'lg']} value={size} />
+      <SizeControl id={sizeId} options={['sm', 'md', 'lg']} value={sizeValue} />
       <TextControl label="Value" name="defaultValue" />
       <NumberControl name="step" label="Step" />
       <NumberControl name="precision" label="Precision" />

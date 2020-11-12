@@ -26,7 +26,7 @@ export const iconPropsHandler = (payload: {
 export const buildBlock = (
   children: string[],
   components: IComponents,
-  props: IProp[],
+  props: IProps,
 ) => {
   let content = ''
 
@@ -38,55 +38,55 @@ export const buildBlock = (
       const componentName = capitalize(childComponent.type)
       let propsContent = ''
 
-      props
-        .filter(prop => prop.componentId === childComponent.id)
-        .forEach((prop: IProp) => {
-          const propsValue = prop.value
-          const propName = prop.name
-          if (propsValue || prop.derivedFromPropName) {
-            let value = `=${
-              isNaN(propsValue)
-                ? "'" + propsValue + "'"
-                : '{' + propsValue + '}'
-            }`
+      props.byComponentId[childComponent.id].forEach(propId => {
+        const prop = props.byId[propId]
+        const propsValue = prop.value
+        const propName = prop.name
+        if (propsValue || prop.derivedFromPropName) {
+          let value = `=${
+            isNaN(propsValue) ? "'" + propsValue + "'" : '{' + propsValue + '}'
+          }`
 
-            if (propName !== 'children') {
-              if (prop.derivedFromPropName) {
-                value = `={${prop.derivedFromPropName}}`
-              } else {
-                value = iconPropsHandler({
-                  componentType: components[prop.componentId].type,
-                  propName,
-                  propValue: propsValue,
-                  oldValue: value,
-                })
+          if (propName !== 'children') {
+            if (prop.derivedFromPropName) {
+              value = `={${prop.derivedFromPropName}}`
+            } else {
+              value = iconPropsHandler({
+                componentType: components[childComponent.id].type,
+                propName,
+                propValue: propsValue,
+                oldValue: value,
+              })
 
-                if (components[propsValue]) {
-                  value = `={<Box>
+              if (components[propsValue]) {
+                value = `={<Box>
                        ${buildBlock(
                          components[propsValue].children,
                          components,
                          props,
                        )} 
                     </Box>}`
-                }
-                if (
-                  propsValue === true ||
-                  propsValue === 'true' ||
-                  propsValue === 'false' ||
-                  isBoolean(propsValue)
-                ) {
-                  value = ``
-                }
               }
-              propsContent += `${propName}${value} `
+              if (
+                propsValue === true ||
+                propsValue === 'true' ||
+                propsValue === 'false' ||
+                isBoolean(propsValue)
+              ) {
+                value = ``
+              }
             }
+            propsContent += `${propName}${value} `
           }
-        })
-      const childrenProp = props.find(
-        prop =>
-          prop.componentId === childComponent.id && prop.name === 'children',
-      )
+        }
+      })
+
+      const childrenPropId =
+        props.byComponentId[childComponent.id].find(
+          propId => props.byId[propId].name === 'children',
+        ) || ''
+
+      const childrenProp = props.byId[childrenPropId]
       const children = childComponent.children
 
       //For components like text,badge

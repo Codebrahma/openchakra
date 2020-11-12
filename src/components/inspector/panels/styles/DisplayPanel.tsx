@@ -6,16 +6,19 @@ import usePropsSelector from '../../../../hooks/usePropsSelector'
 import DisplayFlexPanel from './DisplayFlexPanel'
 
 const DisplayPanel = () => {
-  const { setValueFromEvent } = useForm()
-  const display = usePropsSelector('display')
+  const { setValue } = useForm()
+  const { propId: displayId, propValue: displayValue } = usePropsSelector(
+    'display',
+  )
 
   return (
     <>
       <FormControl label="Display">
         <Select
+          id={displayId}
           size="sm"
-          value={display || ''}
-          onChange={setValueFromEvent}
+          value={displayValue || ''}
+          onChange={e => setValue(displayId, 'display', e.target.value)}
           name="display"
         >
           <option>block</option>
@@ -26,7 +29,7 @@ const DisplayPanel = () => {
         </Select>
       </FormControl>
 
-      {display === 'flex' && <DisplayFlexPanel />}
+      {displayValue === 'flex' && <DisplayFlexPanel />}
     </>
   )
 }

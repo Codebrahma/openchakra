@@ -5,13 +5,13 @@ import SwitchControl from '../../controls/SwitchControl'
 import SizeControl, { Size } from '../../controls/SizeControl'
 
 const HeadingPanel = () => {
-  const size = usePropsSelector('size')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
   const sizePropValues: Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl']
 
   return (
     <>
       <ChildrenControl />
-      <SizeControl options={sizePropValues} value={size} />
+      <SizeControl id={sizeId} options={sizePropValues} value={sizeValue} />
       <SwitchControl label="Truncated" name="isTruncated" />
     </>
   )

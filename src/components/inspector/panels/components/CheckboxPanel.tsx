@@ -6,14 +6,14 @@ import SwitchControl from '../../controls/SwitchControl'
 import SizeControl from '../../controls/SizeControl'
 
 const CheckboxPanel = () => {
-  const size = usePropsSelector('size')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
 
   return (
     <>
       <ChildrenControl />
       <SwitchControl label="Checked" name="isChecked" />
       <ColorsControl label="Color Scheme" name="colorScheme" />
-      <SizeControl value={size} options={['sm', 'md', 'lg']} />
+      <SizeControl id={sizeId} value={sizeValue} options={['sm', 'md', 'lg']} />
     </>
   )
 }

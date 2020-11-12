@@ -7,7 +7,10 @@ import {
   getInnerHTMLText,
 } from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
-import { getSelectedComponentId } from '../../../core/selectors/components'
+import {
+  getSelectedComponentId,
+  getPropIdByName,
+} from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { isPropRelatedToIcon } from '../PreviewContainer'
@@ -43,6 +46,7 @@ const EditablePreviewContainer: React.FC<{
 
   const innerHTMLText = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
+  const propId = useSelector(getPropIdByName('children'))
 
   const blurHandler = (event: any) => {
     event.preventDefault()
@@ -50,7 +54,8 @@ const EditablePreviewContainer: React.FC<{
     dispatch.text.setSelectionDetails()
     dispatch.app.toggleInputText(false)
     dispatch.components.updateProps({
-      id: component.id,
+      componentId: component.id,
+      id: propId,
       name: 'children',
       value: event.target.textContent || '',
     })

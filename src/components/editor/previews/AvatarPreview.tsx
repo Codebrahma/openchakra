@@ -16,7 +16,7 @@ import {
   isChildrenOfCustomComponent,
   getChildrenBy,
 } from '../../../core/selectors/components'
-import { generateId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const AvatarPreview: React.FC<IPreviewProps & {
@@ -42,7 +42,7 @@ const AvatarPreview: React.FC<IPreviewProps & {
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,
@@ -83,7 +83,7 @@ export const AvatarGroupPreview = ({
 
   if (isOver)
     componentProps.push({
-      id: generateId(),
+      id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
       componentId: component.id,

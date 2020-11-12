@@ -6,31 +6,37 @@ import SizeControl from '../../controls/SizeControl'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 
 const TextareaPanel = () => {
-  const { setValueFromEvent } = useForm()
+  const { setValue } = useForm()
 
-  const placeholder = usePropsSelector('placeholder')
-  const size = usePropsSelector('size')
-  const resize = usePropsSelector('resize')
+  const {
+    propId: placeholderId,
+    propValue: placeholderValue,
+  } = usePropsSelector('placeholder')
+  const { propId: sizeId, propValue: sizeValue } = usePropsSelector('size')
+  const { propId: reSizeId, propValue: reSizeValue } = usePropsSelector(
+    'resize',
+  )
 
   return (
     <>
       <FormControl label="Placeholder">
         <Input
+          id={placeholderId}
           size="sm"
-          value={placeholder || ''}
+          value={placeholderValue || ''}
           type="text"
           name="placeholder"
-          onChange={setValueFromEvent}
+          onChange={e => setValue(placeholderId, 'placeholder', e.target.value)}
         />
       </FormControl>
-      <SizeControl options={['sm', 'md', 'lg']} value={size} />
+      <SizeControl id={sizeId} options={['sm', 'md', 'lg']} value={sizeValue} />
       <FormControl label="Resize" htmlFor="resize">
         <Select
           name="resize"
-          id="size"
+          id={reSizeId}
           size="sm"
-          value={resize || ''}
-          onChange={setValueFromEvent}
+          value={reSizeValue || ''}
+          onChange={e => setValue(reSizeId, 'resize', e.target.value)}
         >
           <option>horizontal</option>
           <option>vertical</option>
