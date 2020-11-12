@@ -2,14 +2,28 @@ import { deleteComp } from './recursive'
 import { generatePropId, generateComponentId } from './generateId'
 import { ComponentsState } from '../core/models/components/components'
 
+/**
+ * Checks whether the component is the children of custom component
+ * @param   {string} componentId  Id of the component
+ * @param   {IComponents} customComponents custom components data
+ * @return  {boolean}
+ */
 export function checkIsChildOfCustomComponent(
   componentId: string,
   customComponents: IComponents,
-) {
+): boolean {
   if (customComponents[componentId]) return true
   return false
 }
 
+/**
+ * @method
+ * @name deletePropsById
+ * @description Deletes the prop based on the prop-id
+ * @param   {string} propId  Id of the props
+ * @param   {string} componentId Id of the component
+ * @param   {IProps} props props data
+ */
 export const deletePropById = (
   propId: string,
   componentId: string,
@@ -22,6 +36,13 @@ export const deletePropById = (
   delete props.byId[propId]
 }
 
+/**
+ * @method
+ * @name mergeProps
+ * @description Merges the existing props with the new props data
+ * @param   {IProps} originalCopyProps  Original props data
+ * @param   {IProps} propsToMerge props that are to be merged with the original props data
+ */
 export const mergeProps = (originalCopyProps: IProps, propsToMerge: IProps) => {
   originalCopyProps.byId = {
     ...originalCopyProps.byId,
@@ -33,6 +54,13 @@ export const mergeProps = (originalCopyProps: IProps, propsToMerge: IProps) => {
   }
 }
 
+/**
+ * @method
+ * @name deletePropsByComponentId
+ * @description Deletes all the props based on the component-id
+ * @param   {string} componentId Id of the component
+ * @param   {IProps} props props data
+ */
 export const deletePropsByComponentId = (
   componentId: string,
   props: IProps,
@@ -43,10 +71,17 @@ export const deletePropsByComponentId = (
   delete props.byComponentId[componentId]
 }
 
-export const duplicateProps = (props: IPropsById) => {
+/**
+ * @method
+ * @name duplicateProps
+ * @description duplicates the props
+ * @param   {IPropsById} propsById All the props with id as its key
+ * @return  {IPropsById} duplicated props
+ */
+export const duplicateProps = (propsById: IPropsById): IPropsById => {
   const duplicatedProps: IPropsById = {}
 
-  Object.values(props).forEach(prop => {
+  Object.values(propsById).forEach(prop => {
     const newPropId = generatePropId()
     duplicatedProps[newPropId] = {
       ...prop,
@@ -56,31 +91,52 @@ export const duplicateProps = (props: IPropsById) => {
   return duplicatedProps
 }
 
-export const isKeyForComponent = (value: string, components: IComponents) => {
+/**
+ * @method
+ * @name isKeyForComponent
+ * @description Checks wether the value of a prop is the key of another component.
+ * @param   {string} value Prop value
+ * @param   {IComponents} components  components data
+ * @return  {boolean} duplicated props
+ */
+export const isKeyForComponent = (
+  value: string,
+  components: IComponents,
+): boolean => {
   if (components[value]) return true
   return false
 }
 
-export const splitArray = (payload: {
-  stringValue: string
+/**
+ * @method
+ * @name splitsValueToArray
+ * @description Splits the value into array of values based on the start and end index.
+ * @param   {string} propValue Prop value.
+ * @param   {number} start  Start index to split the value.
+ * @param   {number} end  end index to split the value.
+ * @param   {string} spanId  Id of the span component.
+ * @return  {string[]} duplicated props
+ */
+export const splitsValueToArray = (payload: {
+  propValue: string
   start: number
   end: number
-  id: string
-}) => {
-  let splittedArray = []
+  spanId: string
+}): string[] => {
+  let splittedArray: string[] = []
 
-  const { start, stringValue, end, id } = payload
+  const { start, propValue, end, spanId } = payload
 
-  if (start === 0 && end === stringValue.length) splittedArray = [id]
-  else if (start === 0 && end !== stringValue.length)
-    splittedArray = [id, stringValue.substring(end, stringValue.length)]
-  else if (end === stringValue.length && start !== 0)
-    splittedArray = [stringValue.substring(0, start), id]
+  if (start === 0 && end === propValue.length) splittedArray = [spanId]
+  else if (start === 0 && end !== propValue.length)
+    splittedArray = [spanId, propValue.substring(end, propValue.length)]
+  else if (end === propValue.length && start !== 0)
+    splittedArray = [propValue.substring(0, start), spanId]
   else
     splittedArray = [
-      stringValue.substring(0, start),
-      id,
-      stringValue.substring(end, stringValue.length),
+      propValue.substring(0, start),
+      spanId,
+      propValue.substring(end, propValue.length),
     ]
 
   return splittedArray
@@ -106,11 +162,18 @@ export const updateInAllInstances = (
     .forEach(component => updateCallBack(component, true))
 }
 
-// joining the adjacent text in the array
-export const joinAdjacentTextNodes = (
+/**
+ * @method
+ * @name joinAdjacentTextValues
+ * @description This function will join the adjacent text values in the array.
+ * @param   {IProp} value Prop value
+ * @param   {IComponents} components  components data
+ * @return  {string[]} Array of prop values
+ */
+export const joinAdjacentTextValues = (
   childrenProp: IProp,
   components: IComponents,
-) => {
+): string[] => {
   const propValue: string[] = []
 
   childrenProp.value.forEach((val: string) => {

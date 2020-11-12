@@ -4,6 +4,20 @@ import { RootState } from '../core/store'
 import { useInspectorUpdate } from '../contexts/inspector-context'
 import { useEffect } from 'react'
 
+/**
+ * @typedef {Object} Prop
+ * @property {string} propId - Prop id
+ * @property {string} propValue - Prop value
+ */
+
+/**
+ * @method
+ * @name usePropsSelector
+ * @description This use hook function will return the id and value of the selected component with the help of name
+ * @param   {string} propsName  Prop name
+ * @return   {Prop}
+ */
+
 const usePropsSelector = (propsName: string) => {
   const { addActiveProps } = useInspectorUpdate()
 
@@ -12,7 +26,7 @@ const usePropsSelector = (propsName: string) => {
     addActiveProps(propsName)
   }, [addActiveProps, propsName])
 
-  const value = useSelector((state: RootState) => {
+  const prop = useSelector((state: RootState) => {
     const selectedId = state.components.present.selectedId
 
     const propsId =
@@ -41,7 +55,7 @@ const usePropsSelector = (propsName: string) => {
     return { propId: propsName, propValue: '' }
   })
 
-  return value
+  return prop
 }
 
 export default usePropsSelector

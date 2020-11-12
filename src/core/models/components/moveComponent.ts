@@ -12,6 +12,21 @@ import {
   deleteCustomPropInRootComponent,
 } from '../../../utils/recursive'
 
+/**
+ * @typedef {Object} moveComponentPayload
+ * @property {string} componentId Id of the component to be moved
+ * @property {string} newParentId Id of the parent to which the component to moved
+ * @property {string} oldParentId Id of the old parent from which the component is present before moved
+ */
+
+/**
+ * @method
+ * @name moveComponent
+ * @description This function will handle the moving of selected component from one parent to another parent.
+ * @param {ComponentsState} draftState workspace state
+ * @param {moveComponentPayload} payload
+ */
+
 export const moveComponent = (
   draftState: ComponentsState,
   payload: {

@@ -66,3 +66,16 @@ export const INITIAL_PAGES: IPages = {
     propsId: '2',
   },
 }
+
+export const INITIAL_STATE: ComponentsState = {
+  pages: INITIAL_PAGES,
+  componentsById: INITIAL_COMPONENTS,
+  propsById: INITIAL_PROPS,
+  selectedPage: DEFAULT_PAGE,
+  customComponents: {},
+  customComponentsProps: {
+    byId: {},
+    byComponentId: {},
+  },
+  selectedId: DEFAULT_ID,
+}

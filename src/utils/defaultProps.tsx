@@ -136,6 +136,11 @@ type PreviewDefaultProps = {
   Custom?: any
 }
 
+/**
+ * @member
+ * @name DEFAULT_PROPS
+ * @description This will Provide default props for each and every component.
+ */
 export const DEFAULT_PROPS: PreviewDefaultProps = {
   Badge: {
     children: 'Badge name',

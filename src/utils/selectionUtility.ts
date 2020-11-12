@@ -1,6 +1,15 @@
 import { isKeyForComponent, deletePropsByComponentId } from './reducerUtilities'
 import { generatePropId, generateComponentId } from './generateId'
 
+/**
+ * @method
+ * @name addSpanForSelection
+ * @description This function will add the span component based on the selected part in the text component.
+ * @param {string} childrenPropId Id of the children prop
+ * @param {IProps} props Props data
+ * @param {IComponents} components Components data
+ * @param {selectedTextDetails} payload
+ */
 const addSpanForSelection = (
   childrenPropId: string,
   props: IProps,
@@ -131,6 +140,15 @@ const addSpanForSelection = (
   }
 }
 
+/**
+ * @method
+ * @name removeSpanForSelection
+ * @description This function will remove the span component and convert to normal text value based on the selected part in the text component.
+ * @param {string} childrenPropId Id of the children prop
+ * @param {IProps} props Props data
+ * @param {IComponents} components Components data
+ * @param {selectedTextDetails} payload
+ */
 const removeSpanForSelection = (
   childrenPropId: string,
   props: IProps,
