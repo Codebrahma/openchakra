@@ -1,6 +1,11 @@
 import useDispatch from './useDispatch'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
 
+/**
+ * @member
+ * @name keyMap
+ * @description This member includes all the keyboard shortcuts
+ */
 export const keyMap = {
   DELETE_NODE_DEL: 'del',
   DELETE_NODE_BACKSPACE: 'backspace',

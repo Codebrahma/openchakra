@@ -11,6 +11,14 @@ import {
   deleteComp,
 } from '../../../utils/recursive'
 
+/**
+ * @method
+ * @name addCustomComponent
+ * @description This function will add the custom component and its respective props.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddComponentPayload} payload
+ */
+
 export const addCustomComponent = (
   draftState: ComponentsState,
   payload: { parentId: string; type: string },
@@ -69,6 +77,20 @@ export const addCustomComponent = (
   })
 }
 
+/**
+ * @typedef {Object} saveComponentPayload
+ * @property {string} name - The name of the custom component.
+ * @property {string} componentId - The id of the component to be saved.
+ * @property {string} parentId - The parent id of the component to be saved.
+ */
+
+/**
+ * @method
+ * @name saveComponent
+ * @description This function is used to save the component as custom component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {AddComponentPayload} payload
+ */
 export const saveComponent = (
   draftState: ComponentsState,
   payload: { name: string; componentId: string; parentId: string },
@@ -192,6 +214,13 @@ export const saveComponent = (
   }
 }
 
+/**
+ * @method
+ * @name deleteCustomComponent
+ * @description This function will delete the custom component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {string} type Name or Type of the custom component to be deleted.
+ */
 export const deleteCustomComponent = (
   draftState: ComponentsState,
   type: string,

@@ -11,6 +11,19 @@ import {
 } from '../../../utils/recursive'
 import { generatePropId } from '../../../utils/generateId'
 
+/**
+ * @typedef {Object} exposePropPayload
+ * @property {string} name - The custom prop name given to the exposed prop
+ * @property {string} targetedProp - The name of the prop that is exposed
+ */
+
+/**
+ * @method
+ * @name exposeProp
+ * @description This function is used to expose the prop. The value of the exposed prop will be fetched from the custom prop in the root custom component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {exposePropPayload} payload
+ */
 export const exposeProp = (
   draftState: ComponentsState,
   payload: { name: string; targetedProp: string },
@@ -113,6 +126,13 @@ export const exposeProp = (
   }
 }
 
+/**
+ * @method
+ * @name unExposeProp
+ * @description This function is used to unExpose the selected prop.
+ * @param {ComponentsState} draftState workspace state
+ * @param {string} targetedProp The name of the prop that is to be unExposed.
+ */
 export const unExposeProp = (
   draftState: ComponentsState,
   targetedProp: string,

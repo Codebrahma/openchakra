@@ -41,6 +41,7 @@ import {
   DEFAULT_ID,
   DEFAULT_PAGE,
   ChildrenPropDetails,
+  INITIAL_STATE,
 } from './components-types'
 
 export type ComponentsState = {
@@ -55,18 +56,7 @@ export type ComponentsState = {
 }
 
 const components = createModel({
-  state: {
-    pages: INITIAL_PAGES,
-    componentsById: INITIAL_COMPONENTS,
-    propsById: INITIAL_PROPS,
-    selectedPage: DEFAULT_PAGE,
-    customComponents: {},
-    customComponentsProps: {
-      byId: {},
-      byComponentId: {},
-    },
-    selectedId: DEFAULT_ID,
-  } as ComponentsState,
+  state: INITIAL_STATE as ComponentsState,
   reducers: {
     resetComponents(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
@@ -266,7 +256,8 @@ const components = createModel({
       payload: { components: IComponents; root: string; parent: string },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        addMetaComponent(draftState, { ...payload })
+        const { components, root, parent } = payload
+        addMetaComponent(draftState, { components, root, parentId: parent })
       })
     },
     select(

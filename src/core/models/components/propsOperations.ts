@@ -10,6 +10,21 @@ import {
 import { generatePropId } from '../../../utils/generateId'
 import { ComponentsState } from './components'
 
+/**
+ * @typedef {Object} updatePropsPayload
+ * @property {string} componentId - component id where the props should be updated.
+ * @property {ComponentType} id - Prop id
+ * @property {string} name - Prop name
+ * @property {any} value - Prop value
+ */
+
+/**
+ * @method
+ * @name updateProps
+ * @description This function will update the props on the selected component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {updatePropsPayload} payload
+ */
 export const updateProps = (
   draftState: ComponentsState,
   payload: { componentId: string; id: string; name: string; value: any },
@@ -40,6 +55,20 @@ export const updateProps = (
   }
 }
 
+/**
+ * @typedef {Object} deletePropsPayload
+ * @property {string} componentId - component id where the props should be updated.
+ * @property {ComponentType} propId - Prop id to be deleted
+ */
+
+/**
+ * @method
+ * @name deleteProps
+ * @description This function will delete the selected prop.
+ * @param {ComponentsState} draftState workspace state
+ * @param {deletePropsPayload} payload
+ */
+
 export const deleteProps = (
   draftState: ComponentsState,
   payload: { componentId: string; propId: string },
@@ -48,6 +77,14 @@ export const deleteProps = (
   const { props } = loadRequired(draftState, componentId)
   deletePropById(propId, componentId, props)
 }
+
+/**
+ * @method
+ * @name deleteCustomProp
+ * @description This function will delete the selected custom prop.
+ * @param {ComponentsState} draftState workspace state
+ * @param {string} propName
+ */
 
 export const deleteCustomProp = (
   draftState: ComponentsState,
@@ -125,6 +162,20 @@ export const deleteCustomProp = (
     },
   )
 }
+
+/**
+ * @typedef {Object} updateChildrenPropPayload
+ * @property {string} id - component id of the text component
+ * @property {string} value - prop value to be updated
+ */
+
+/**
+ * @method
+ * @name updateChildrenPropForText
+ * @description This function will update the value of children prop in the text component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {updateChildrenPropPayload} payload
+ */
 
 export const updateChildrenPropForText = (
   draftState: ComponentsState,

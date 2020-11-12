@@ -2,8 +2,8 @@ import _ from 'lodash'
 
 import {
   loadRequired,
-  splitArray,
-  joinAdjacentTextNodes,
+  splitsValueToArray,
+  joinAdjacentTextValues,
   deletePropsByComponentId,
 } from '../../../utils/reducerUtilities'
 import { generateComponentId, generatePropId } from '../../../utils/generateId'
@@ -13,6 +13,22 @@ import {
 } from '../../../utils/selectionUtility'
 import { ComponentsState } from './components'
 import { ISelectedTextDetails } from './components-types'
+
+/**
+ * @typedef {Object} selectedTextDetails
+ * @property {number} startIndex The starting index in the value where the user had began to highlight the text.
+ * @property {number} endIndex   The end index in the value where the user had completed the highlighting.
+ * @property {number} startNodePosition This represents the start index in the array
+ * @property {number} endNodePosition This represents the end index in the array.
+ */
+
+/**
+ * @method
+ * @name addSpanComponent
+ * @description This function will add the span component in between the text value.
+ * @param {ComponentsState} draftState workspace state
+ * @param {selectedTextDetails} payload
+ */
 
 export const addSpanComponent = (
   draftState: ComponentsState,
@@ -63,11 +79,11 @@ export const addSpanComponent = (
       startNodePosition
     ].substring(start, end)
 
-    props.byId[childrenPropId].value[startNodePosition] = splitArray({
-      stringValue: props.byId[childrenPropId].value[startNodePosition],
+    props.byId[childrenPropId].value[startNodePosition] = splitsValueToArray({
+      propValue: props.byId[childrenPropId].value[startNodePosition],
       start,
       end,
-      id: newId,
+      spanId: newId,
     })
 
     props.byId[childrenPropId].value = _.flatten(
@@ -96,6 +112,14 @@ export const addSpanComponent = (
   }
   props.byId[childrenPropId].value.filter((val: string) => val.length !== 0)
 }
+
+/**
+ * @method
+ * @name removeSpanComponent
+ * @description This function will remove the span component.
+ * @param {ComponentsState} draftState workspace state
+ * @param {selectedTextDetails} payload
+ */
 
 export const removeSpanComponent = (
   draftState: ComponentsState,
@@ -138,7 +162,7 @@ export const removeSpanComponent = (
   props.byId[childrenPropId].value = _.flatten(props.byId[childrenPropId].value)
 
   //join if there are adjacent text nodes.
-  const propValue = joinAdjacentTextNodes(
+  const propValue = joinAdjacentTextValues(
     props.byId[childrenPropId],
     components,
   )
@@ -148,6 +172,12 @@ export const removeSpanComponent = (
   else draftState.propsById[propsId] = props
 }
 
+/**
+ * @method
+ * @name clearFormatting
+ * @description This function will clears all span components from the selected text component.
+ * @param {ComponentsState} draftState workspace state
+ */
 export const clearFormatting = (draftState: ComponentsState) => {
   const {
     components,
