@@ -92,9 +92,12 @@ export const moveComponent = (
               draftState.customComponentsProps,
             )
             draftState.propsById = { ...updatedPropsById }
-            draftState.customComponentsProps = {
-              ...updatedCustomComponentProps,
-            }
+
+            mergeProps(
+              draftState.customComponentsProps,
+              updatedCustomComponentProps,
+            )
+
             draftState.componentsById = { ...updatedComponentsById }
             draftState.customComponents = { ...updatedCustomComponents }
 
@@ -150,20 +153,7 @@ export const moveComponent = (
         componentId,
       )
 
-      //update the derivedFromComponentType to null for the moved props.
-      movedProps.byComponentId[componentId].forEach(propId => {
-        const prop = movedProps.byId[propId]
-        if (prop.derivedFromPropName && prop.derivedFromComponentType) {
-          movedProps.byId[propId].derivedFromComponentType = null
-        }
-      })
-
-      draftState.propsById[propsId] = {
-        ...draftState.propsById[propsId],
-        ...movedProps,
-      }
-
-      draftState.customComponentsProps = { ...updatedCustomComponentProps }
+      mergeProps(draftState.customComponentsProps, updatedCustomComponentProps)
 
       //deletion of custom props for all the exposed props.
       Object.keys(movedProps.byComponentId).forEach(componentId => {
@@ -184,13 +174,23 @@ export const moveComponent = (
               draftState.customComponentsProps,
             )
             draftState.propsById = { ...updatedPropsById }
-            draftState.customComponentsProps = {
-              ...updatedCustomComponentProps,
-            }
+            mergeProps(
+              draftState.customComponentsProps,
+              updatedCustomComponentProps,
+            )
             draftState.componentsById = { ...updatedComponentsById }
             draftState.customComponents = { ...updatedCustomComponents }
           })
       })
+      //update the derivedFromComponentType to null for the moved props.
+      movedProps.byComponentId[componentId].forEach(propId => {
+        const prop = movedProps.byId[propId]
+        if (prop.derivedFromPropName && prop.derivedFromComponentType) {
+          movedProps.byId[propId].derivedFromComponentType = null
+        }
+      })
+
+      mergeProps(draftState.propsById[propsId], movedProps)
     }
   } else {
     const isCustomComponentChild = checkIsChildOfCustomComponent(
