@@ -8,6 +8,7 @@ import {
 import {
   updateInAllInstances,
   loadRequired,
+  mergeProps,
 } from '../../../utils/reducerUtilities'
 import {
   addComponent,
@@ -358,10 +359,8 @@ const components = createModel({
           ...draftState.componentsById['2'],
           ...clonedComponents,
         }
-        draftState.propsById['2'] = {
-          ...draftState.propsById['2'],
-          ...clonedProps,
-        }
+
+        mergeProps(draftState.propsById['2'], clonedProps)
         draftState.componentsById['2'][newId].parent = 'root'
         draftState.componentsById['2']['root'].children.push(newId)
       })

@@ -28,36 +28,42 @@ export const duplicateComp = (
       id: newId,
       children,
     }
-    props.byComponentId[component.id]?.forEach(propId => {
-      const prop = props.byId[propId]
-      let propValue = prop.value
-      if (sourceComponents[prop.value]) {
-        const {
-          newId,
-          clonedComponents: duplicatedComponents,
-          clonedProps: duplicatedProps,
-        } = duplicateComp(sourceComponents[prop.value], sourceComponents, props)
-        propValue = newId
-        clonedComponents = {
-          ...clonedComponents,
-          ...duplicatedComponents,
+
+    if (props.byComponentId[component.id].length === 0) {
+      clonedProps.byComponentId[newId] = []
+    } else {
+      props.byComponentId[component.id]?.forEach(propId => {
+        const prop = props.byId[propId]
+        let propValue = prop.value
+        if (sourceComponents[prop.value]) {
+          const {
+            newId,
+            clonedComponents: duplicatedComponents,
+            clonedProps: duplicatedProps,
+          } = duplicateComp(
+            sourceComponents[prop.value],
+            sourceComponents,
+            props,
+          )
+          propValue = newId
+          clonedComponents = {
+            ...clonedComponents,
+            ...duplicatedComponents,
+          }
+
+          mergeProps(clonedProps, duplicatedProps)
         }
+        const newPropId = generatePropId()
+        clonedProps.byComponentId[newId] = []
 
-        mergeProps(clonedProps, duplicatedProps)
-      }
-      const newPropId = generateComponentId()
-
-      if (clonedProps.byComponentId[newId]) {
         clonedProps.byComponentId[newId].push(newPropId)
-      } else {
-        clonedProps.byComponentId[newId] = [newPropId]
-      }
-      clonedProps.byId[newPropId] = {
-        ...prop,
-        id: newPropId,
-        value: propValue,
-      }
-    })
+        clonedProps.byId[newPropId] = {
+          ...prop,
+          id: newPropId,
+          value: propValue,
+        }
+      })
+    }
 
     //Updating the value of the children prop in text component
     if (component.type === 'Text') {
@@ -201,7 +207,9 @@ export const moveComp = (
     )
 
     // The moved props should be stored in separate variable
-    movedProps.byComponentId[compId] = [...sourceProps.byComponentId[compId]]
+    movedProps.byComponentId[compId] = sourceProps.byComponentId[compId]
+      ? [...sourceProps.byComponentId[compId]]
+      : []
     sourceProps.byComponentId[compId].forEach(propId => {
       movedProps.byId[propId] = { ...sourceProps.byId[propId] }
     })
