@@ -44,11 +44,15 @@ export const INITIAL_COMPONENTS: IComponentsById = {
 export const INITIAL_PROPS: IPropsByPageId = {
   '1': {
     byId: {},
-    byComponentId: {},
+    byComponentId: {
+      root: [],
+    },
   },
   '2': {
     byId: {},
-    byComponentId: {},
+    byComponentId: {
+      root: [],
+    },
   },
 }
 
