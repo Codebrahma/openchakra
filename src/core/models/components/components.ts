@@ -44,6 +44,7 @@ import {
   ChildrenPropDetails,
   INITIAL_STATE,
 } from './components-types'
+import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 
 export type ComponentsState = {
   pages: IPages
@@ -106,12 +107,21 @@ const components = createModel({
     },
     resetProps(state: ComponentsState, componentId: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const propsId = draftState.pages[draftState.selectedPage].propsId
-        const propIds = draftState.propsById[propsId].byComponentId[componentId]
+        const { components, props } = loadRequired(draftState)
+        const defaultProps =
+          DEFAULT_PROPS[components[componentId].type as ComponentType]
+        const PropIdsToRetain: IProp['id'][] = []
 
-        propIds.forEach(id => {
-          delete draftState.propsById[propsId].byId[id]
+        // If the component has a default value for a prop, retain that prop and substitute the prop with default value.
+        // If the component does not have a default value, delete that prop.
+        props.byComponentId[componentId].forEach(propId => {
+          const defaultPropValue = defaultProps[props.byId[propId].name]
+          if (defaultPropValue !== undefined) {
+            props.byId[propId].value = defaultPropValue
+            PropIdsToRetain.push(propId)
+          } else delete props.byId[propId]
         })
+        props.byComponentId[componentId] = PropIdsToRetain
       })
     },
     updateProps(
