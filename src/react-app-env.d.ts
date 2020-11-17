@@ -161,7 +161,7 @@ interface IPropsById {
 }
 
 interface IPropsByComponentId {
-  [componentId: string]: string[]
+  [componentId: string]: IProp['id'][]
 }
 
 interface IProps {
