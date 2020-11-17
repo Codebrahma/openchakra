@@ -20,6 +20,7 @@ import { findControl } from '../../../utils/recursive'
 import getRequiredThemeOptions from '../../../utils/getRequiredThemeOptions'
 import useCustomTheme from '../../../hooks/useCustomTheme'
 import ComboBox from '../inputs/ComboBox'
+import { RootState } from '../../../core/store'
 
 export type optionsType = {
   [name: string]: Array<string>
@@ -49,9 +50,10 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
 
-  const isKeyForComponent = useSelector(
-    checkIsKeyForComponent(selectedProp, selectedComponent.id),
-  )
+  const isKeyForComponent = useSelector((state: RootState) => {
+    if (selectedProp)
+      return checkIsKeyForComponent(selectedProp, selectedComponent.id)(state)
+  })
 
   if (selectedProp && selectedCustomComponentProp) {
     const { controlProp, controlPropComponentId } = findControl(

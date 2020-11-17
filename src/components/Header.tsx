@@ -12,12 +12,12 @@ import { buildParameters } from '../utils/codesandbox'
 import { generateCode } from '../utils/codeGeneration/code'
 import useDispatch from '../hooks/useDispatch'
 import {
-  getComponents,
   getCustomComponents,
   getCustomComponentsList,
   getShowCustomComponentPage,
-  getProps,
+  getSelectedPageProps,
   getCustomComponentsProps,
+  getSelectedPageComponents,
 } from '../core/selectors/components'
 import {
   getShowLayout,
@@ -32,10 +32,10 @@ import ActionButton from './inspector/ActionButton'
 import composerIcon from '../composer-icon.png'
 
 const CodeSandboxButton = () => {
-  const components = useSelector(getComponents)
+  const components = useSelector(getSelectedPageComponents)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsList = useSelector(getCustomComponentsList)
-  const props = useSelector(getProps)
+  const props = useSelector(getSelectedPageProps)
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
   const customTheme = useSelector(getCustomTheme)

@@ -12,8 +12,6 @@ import ComponentPreview from '../ComponentPreview'
 import { useSelector } from 'react-redux'
 import {
   getComponents,
-  getCustomComponents,
-  isChildrenOfCustomComponent,
   getChildrenBy,
 } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
@@ -73,12 +71,8 @@ export const AvatarGroupPreview = ({
 }: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component, true)
   const { drop, isOver } = useDropComponent(component.id, ['Avatar'])
-  const isCustomComponentsChild = useSelector(
-    isChildrenOfCustomComponent(component.id),
-  )
-  const components = useSelector(
-    isCustomComponentsChild ? getCustomComponents : getComponents,
-  )
+
+  const components = useSelector(getComponents(component.id))
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   if (isOver)
@@ -86,7 +80,6 @@ export const AvatarGroupPreview = ({
       id: generatePropId(),
       name: 'bg',
       value: 'teal.50',
-      componentId: component.id,
       derivedFromPropName: null,
       derivedFromComponentType: null,
     })
