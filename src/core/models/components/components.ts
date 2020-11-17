@@ -17,10 +17,11 @@ import {
   duplicateComponent,
 } from './componentsOperations'
 import {
-  updateProps,
+  updateProp,
   deleteProps,
   deleteCustomProp,
   updateChildrenPropForText,
+  addProps,
 } from './propsOperations'
 import { exposeProp, unExposeProp } from './propsExposion'
 import {
@@ -124,12 +125,17 @@ const components = createModel({
         props.byComponentId[componentId] = PropIdsToRetain
       })
     },
-    updateProps(
+    updateProp(
       state: ComponentsState,
       payload: { componentId: string; id: string; name: string; value: any },
     ) {
       return produce(state, (draftState: ComponentsState) => {
-        updateProps(draftState, { ...payload })
+        updateProp(draftState, { ...payload })
+      })
+    },
+    addProps(state: ComponentsState, propsObjectToAdd: any) {
+      return produce(state, (draftState: ComponentsState) => {
+        addProps(draftState, propsObjectToAdd)
       })
     },
     exposeProp(

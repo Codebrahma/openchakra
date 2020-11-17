@@ -4,7 +4,7 @@ export default function filterActions(action: Action) {
   if (
     [
       'components/resetProps',
-      'components/updateProps',
+      'components/updateProp',
       'components/addComponent',
       'components/deleteComponent',
       'components/moveComponent',

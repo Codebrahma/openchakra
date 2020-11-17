@@ -9,7 +9,7 @@ export const useForm = () => {
 
   const setValue = useCallback(
     (id: string, name: string, value: any) => {
-      dispatch.components.updateProps({
+      dispatch.components.updateProp({
         componentId,
         id,
         name,

@@ -4952,6 +4952,14 @@ css-select@^2.0.0:
     domutils "^1.7.0"
     nth-check "^1.0.2"
 
+css-to-object@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/css-to-object/-/css-to-object-1.1.0.tgz#a1d82b0288b4fc16ac7d8bb54280c70f5b7f05d8"
+  integrity sha512-GUKxbpivbuE+AV9IIDYXMWONUgm6O89TUIGBpeHYrLNrGRV9qLbSjmr4/qqM3TL3FTfzsQQpq0XWdbVjFAwBOA==
+  dependencies:
+    css "^2.2.1"
+    stylis "^2.0.4"
+
 css-tree@1.0.0-alpha.37:
   version "1.0.0-alpha.37"
   resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha.37.tgz#98bebd62c4c1d9f960ec340cf9f7522e30709a22"
@@ -4983,7 +4991,7 @@ css.escape@^1.5.1:
   resolved "https://registry.yarnpkg.com/css.escape/-/css.escape-1.5.1.tgz#42e27d4fa04ae32f931a4b4d4191fa9cddee97cb"
   integrity sha1-QuJ9T6BK4y+TGktNQZH6nN3ul8s=
 
-css@^2.0.0:
+css@^2.0.0, css@^2.2.1:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/css/-/css-2.2.4.tgz#c646755c73971f2bba6a601e2cf2fd71b1298929"
   integrity sha512-oUnjmWpy0niI3x/mPL8dVEI1l7MnG3+HHyRPHf+YFSbK+svOhXpmSOcDURUh2aOCgl2grzrOPt1nHLuCVFULLw==
@@ -13358,6 +13366,11 @@ stylehacks@^4.0.0:
     browserslist "^4.0.0"
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
+
+stylis@^2.0.4:
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/stylis/-/stylis-2.0.12.tgz#547253055d170f2a7ac2f6d09365d70635f2bec6"
+  integrity sha1-VHJTBV0XDyp6wvbQk2XXBjXyvsY=
 
 supports-color@^2.0.0:
   version "2.0.0"

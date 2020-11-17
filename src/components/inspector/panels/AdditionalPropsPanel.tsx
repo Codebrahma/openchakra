@@ -99,7 +99,7 @@ const AdditionalPropsPanel = () => {
             <ButtonGroup display="flex" size="xs" isAttached>
               <IconButton
                 onClick={() => {
-                  setQuickProps(`${prop.name}=`)
+                  setQuickProps(`${prop.name}=${prop.value}`)
                   if (inputRef.current) {
                     inputRef.current.focus()
                   }

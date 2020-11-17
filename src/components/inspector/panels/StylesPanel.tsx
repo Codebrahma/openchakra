@@ -15,6 +15,7 @@ import ParentInspector from '../ParentInspector'
 import AdditionalPropsPanel from './AdditionalPropsPanel'
 import DownloadFontPanel from './DownloadFontPanel'
 import LoadedFontsPanel from './LoadedFontsPanel'
+import CssStylesPanel from './CssStylesPanel'
 
 interface Props {
   isRoot: boolean
@@ -33,9 +34,14 @@ const StylesPanel: React.FC<Props> = ({
   return (
     <Accordion defaultIndex={defaultIndicesArray} allowMultiple>
       {!isRoot && (
-        <AccordionContainer title="Additional props">
-          <AdditionalPropsPanel />
-        </AccordionContainer>
+        <>
+          <AccordionContainer title="Additional props">
+            <AdditionalPropsPanel />
+          </AccordionContainer>
+          <AccordionContainer title="Css Styles to Props">
+            <CssStylesPanel />
+          </AccordionContainer>
+        </>
       )}
 
       {!isRoot && (

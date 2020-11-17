@@ -18,6 +18,7 @@
     "codesandbox": "^2.1.11",
     "coloreact": "^0.3.1",
     "copy-to-clipboard": "^3.2.1",
+    "css-to-object": "^1.1.0",
     "jsdoc": "^3.6.6",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",

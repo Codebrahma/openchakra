@@ -69,7 +69,7 @@ describe('Components model', () => {
   })
 
   it('should update props', async () => {
-    const nextState = components.reducers.updateProps(STATE, {
+    const nextState = components.reducers.updateProp(STATE, {
       id: 'button-testid',
       name: 'colorScheme',
       value: 'teal.300',
