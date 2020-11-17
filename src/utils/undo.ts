@@ -20,6 +20,8 @@ export default function filterActions(action: Action) {
       'components/updateTextChildrenProp',
       'components/addSpan',
       'components/removeSpan',
+      'components/deleteProps',
+      'components/addProps',
     ].includes(action.type)
   ) {
     return true
