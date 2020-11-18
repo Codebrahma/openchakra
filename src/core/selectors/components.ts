@@ -84,17 +84,9 @@ export const getPropsBy = (componentId?: IComponent['id']) =>
   )
 
 export const getPropByName = (propName: string) =>
-  createSelector(
-    getSelectedComponentId,
-    getProps(),
-    (selectedComponentId, props): IProp => {
-      const propId =
-        props.byComponentId[selectedComponentId]?.find(
-          propId => props.byId[propId].name === propName,
-        ) || ''
-      return props.byId[propId]
-    },
-  )
+  createSelector(getPropsBy(), (selectedComponentProps): IProp | undefined => {
+    return selectedComponentProps.find(prop => prop.name === propName)
+  })
 
 export const getIsSelectedComponent = (componentId: IComponent['id']) => (
   state: RootState,

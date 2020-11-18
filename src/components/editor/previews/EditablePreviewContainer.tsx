@@ -53,12 +53,13 @@ const EditablePreviewContainer: React.FC<{
     event.stopPropagation()
     dispatch.text.setSelectionDetails()
     dispatch.app.toggleInputText(false)
-    dispatch.components.updateProps({
-      componentId: component.id,
-      id: propId,
-      name: 'children',
-      value: event.target.textContent || '',
-    })
+    if (propId)
+      dispatch.components.updateProps({
+        componentId: component.id,
+        id: propId,
+        name: 'children',
+        value: event.target.textContent || '',
+      })
   }
 
   const doubleClickHandler = (event: MouseEvent) => {
