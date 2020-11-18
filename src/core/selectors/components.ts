@@ -180,40 +180,36 @@ export const isImmediateChildOfCustomComponent = (component: IComponent) => (
 export const isSelectedRangeContainsTwoSpan = (range: {
   start: number
   end: number
-}) => (state: RootState) => {
-  const childrenProp = getPropByName('children')(state)
-  let spanElementCount = 0
-  const selectedComponentId = state.components.present.selectedId
+}) =>
+  createSelector(
+    [getComponents(), getPropByName('children')],
+    (components, childrenProp) => {
+      let spanElementCount = 0
+      const { start, end } = range
+      let startIndex = 0
+      let endIndex = 0
 
-  const { start, end } = range
-  let startIndex = 0
-  let endIndex = 0
+      if (start === end) return false
+      //left to right
+      else if (start < end) {
+        startIndex = start
+        endIndex = end
+      }
+      //right to left
+      else {
+        startIndex = end
+        endIndex = start
+      }
 
-  if (start === end) return false
-  //left to right
-  else if (start < end) {
-    startIndex = start
-    endIndex = end
-  }
-  //right to left
-  else {
-    startIndex = end
-    endIndex = start
-  }
-
-  if (childrenProp && Array.isArray(childrenProp.value)) {
-    for (let i = startIndex; i <= endIndex; i++) {
-      if (
-        checkIsKeyForComponent(
-          childrenProp.value[i],
-          selectedComponentId,
-        )(state)
-      )
-        spanElementCount = spanElementCount + 1
-    }
-  }
-  return spanElementCount > 1 ? true : false
-}
+      if (childrenProp && Array.isArray(childrenProp.value)) {
+        for (let i = startIndex; i <= endIndex; i++) {
+          if (components[childrenProp.value[i]])
+            spanElementCount = spanElementCount + 1
+        }
+      }
+      return spanElementCount > 1 ? true : false
+    },
+  )
 
 // Check the prop value is the key of another component.
 export const checkIsKeyForComponent = (prop: IProp, componentId: string) =>
