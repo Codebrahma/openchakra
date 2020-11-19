@@ -12,7 +12,7 @@ import {
 import useDispatch from '../../../../hooks/useDispatch'
 import { useSelector } from 'react-redux'
 import {
-  getPropsBy,
+  getPropsOfSelectedComp,
   getShowCustomComponentPage,
   getChildrenBy,
   getSelectedComponent,
@@ -24,7 +24,7 @@ const FlexPanel = () => {
   const dispatch = useDispatch()
   const toast = useToast()
   const component = useSelector(getSelectedComponent)
-  const props = useSelector(getPropsBy(component.id))
+  const props = useSelector(getPropsOfSelectedComp)
   const childrenProp = props.find(prop => prop.name === 'children')
   const [name, setName] = useState('')
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)

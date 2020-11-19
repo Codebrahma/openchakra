@@ -8,6 +8,7 @@ import {
   getPropsBy,
   getCustomComponentsProps,
   checkIsKeyForComponent,
+  getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
 import { Input, Select, Text, Flex } from '@chakra-ui/core'
@@ -39,7 +40,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   //Why both the instance of custom component and also the original custom component.
   //Because derivedFromComponentType only points to original custom component.
   //instance of custom component is used to get value for the prop.
-  const selectedProp = useSelector(getPropsBy(selectedComponent.id)).find(
+  const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === propName,
   )
 

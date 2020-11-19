@@ -35,8 +35,10 @@ export const getCustomComponentsList = (state: RootState): string[] => {
   return customComponentsList
 }
 
-export const getComponentBy = (id: IComponent['id']) =>
-  createSelector(getComponents(id), (components): IComponent => components[id])
+export const getComponentBy = (id: IComponent['id']) => (state: RootState) => {
+  const components = getComponents(id)(state)
+  return components[id]
+}
 
 export const getSelectedComponent = createSelector(
   getComponents(),
@@ -66,27 +68,45 @@ export const getProps = (componentId?: IComponent['id']) => (
 }
 
 // Gets all the props either from page props or custom props based on the component-id
-export const getPropsBy = (componentId?: IComponent['id']) =>
-  createSelector(
-    getSelectedComponentId,
-    getProps(componentId),
-    (selectedComponentId, props): IProp[] => {
-      const selectedComponentProps: IProp[] = []
-      const selectedCompId = componentId || selectedComponentId
+export const getPropsBy = (componentId: IComponent['id']) => (
+  state: RootState,
+) => {
+  const props = getProps(componentId)(state)
+  const selectedComponentProps: IProp[] = []
 
-      if (props.byComponentId[selectedCompId] !== undefined)
-        props.byComponentId[selectedCompId].forEach(propId =>
-          selectedComponentProps.push(props.byId[propId]),
-        )
+  if (props.byComponentId[componentId] !== undefined)
+    props.byComponentId[componentId].forEach(propId =>
+      selectedComponentProps.push(props.byId[propId]),
+    )
 
-      return selectedComponentProps
-    },
-  )
+  return selectedComponentProps
+}
 
-export const getPropByName = (propName: string) =>
-  createSelector(getPropsBy(), (selectedComponentProps): IProp | undefined => {
-    return selectedComponentProps.find(prop => prop.name === propName)
-  })
+export const getPropsOfSelectedComp = createSelector(
+  [getSelectedComponentId, getProps()],
+  (selectedComponentId, props): IProp[] => {
+    const selectedComponentProps: IProp[] = []
+
+    if (props.byComponentId[selectedComponentId] !== undefined)
+      props.byComponentId[selectedComponentId].forEach(propId =>
+        selectedComponentProps.push(props.byId[propId]),
+      )
+
+    return selectedComponentProps
+  },
+)
+
+export const getPropByName = (propName: string) => (state: RootState) => {
+  const selectedComponentProps = getPropsOfSelectedComp(state)
+  return selectedComponentProps.find(prop => prop.name === propName)
+}
+
+export const getChildrenPropOfSelectedComp = createSelector(
+  getPropsOfSelectedComp,
+  (selectedComponentProps): IProp | undefined => {
+    return selectedComponentProps.find(prop => prop.name === 'children')
+  },
+)
 
 export const getIsSelectedComponent = (componentId: IComponent['id']) => (
   state: RootState,
@@ -172,36 +192,39 @@ export const isImmediateChildOfCustomComponent = (component: IComponent) => (
 export const isSelectedRangeContainsTwoSpan = (range: {
   start: number
   end: number
-}) =>
-  createSelector(
-    [getComponents(), getPropByName('children')],
-    (components, childrenProp) => {
-      let spanElementCount = 0
-      const { start, end } = range
-      let startIndex = 0
-      let endIndex = 0
+}) => (state: RootState) => {
+  let spanElementCount = 0
 
-      if (start === end) return false
-      //left to right
-      else if (start < end) {
-        startIndex = start
-        endIndex = end
-      }
-      //right to left
-      else {
-        startIndex = end
-        endIndex = start
-      }
+  const { start, end } = range
+  let startIndex = 0
+  let endIndex = 0
 
-      if (childrenProp && Array.isArray(childrenProp.value)) {
-        for (let i = startIndex; i <= endIndex; i++) {
-          if (components[childrenProp.value[i]])
-            spanElementCount = spanElementCount + 1
-        }
-      }
-      return spanElementCount > 1 ? true : false
-    },
-  )
+  if (start === end) return false
+  //left to right
+  else if (start < end) {
+    startIndex = start
+    endIndex = end
+  }
+  //right to left
+  else {
+    startIndex = end
+    endIndex = start
+  }
+  const childrenProp = getChildrenPropOfSelectedComp(state)
+
+  if (childrenProp && Array.isArray(childrenProp.value)) {
+    for (let i = startIndex; i <= endIndex; i++) {
+      if (
+        checkIsKeyForComponent(
+          childrenProp.value[i],
+          getSelectedComponentId(state),
+        )(state)
+      )
+        spanElementCount = spanElementCount + 1
+    }
+  }
+  return spanElementCount > 1 ? true : false
+}
 
 // Check the prop value is the key of another component.
 export const checkIsKeyForComponent = (prop: IProp, componentId: string) =>

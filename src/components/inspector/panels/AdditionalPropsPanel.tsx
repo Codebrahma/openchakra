@@ -2,7 +2,7 @@ import React, { memo, useState, FormEvent, ChangeEvent, useRef } from 'react'
 import { useInspectorState } from '../../../contexts/inspector-context'
 import {
   getSelectedComponent,
-  getPropsBy,
+  getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import { useSelector } from 'react-redux'
 import { IoIosFlash } from 'react-icons/io'
@@ -29,7 +29,7 @@ const AdditionalPropsPanel = () => {
 
   const activePropsRef = useInspectorState()
   const { id } = useSelector(getSelectedComponent)
-  const props = useSelector(getPropsBy(id))
+  const props = useSelector(getPropsOfSelectedComp)
   const { setValue } = useForm()
 
   const [quickProps, setQuickProps] = useState('')

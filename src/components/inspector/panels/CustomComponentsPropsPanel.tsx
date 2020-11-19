@@ -2,9 +2,9 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Box, Accordion, Switch, Flex, Text } from '@chakra-ui/core'
 import {
-  getPropsBy,
   getShowCustomComponentPage,
   getSelectedComponent,
+  getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import CustomComponentsPropsControl from '../controls/customComponentsPropsControl'
 import ParentInspector from '../ParentInspector'
@@ -14,14 +14,13 @@ import useDispatch from '../../../hooks/useDispatch'
 
 const CustomComponentsPropsPanel = () => {
   const selectedComponent = useSelector(getSelectedComponent)
-  const selectedId = selectedComponent.id
-  const props = useSelector(getPropsBy(selectedId)).filter(
+  const props = useSelector(getPropsOfSelectedComp).filter(
     prop => prop.name !== 'children',
   )
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const dispatch = useDispatch()
   const isChildrenPresent =
-    useSelector(getPropsBy(selectedId)).findIndex(
+    useSelector(getPropsOfSelectedComp).findIndex(
       prop => prop.name === 'children',
     ) !== -1
 
