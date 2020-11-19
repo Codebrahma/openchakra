@@ -38,6 +38,7 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "redux-undo": "^1.0.0",
+    "reselect": "^4.0.0",
     "typescript": "^3.7.5",
     "webfontloader": "^1.6.28",
     "webpack-bundle-analyzer": "^3.6.0"

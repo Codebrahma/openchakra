@@ -1,4 +1,4 @@
-import { useRef, MouseEvent, useState } from 'react'
+import { useRef, MouseEvent } from 'react'
 import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
@@ -25,7 +25,6 @@ export const useInteractive = (
   const showLayout = useSelector(getShowLayout)
   const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
   const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
-  const [isHovered, setIsHovered] = useState(false)
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
@@ -70,25 +69,15 @@ export const useInteractive = (
     ? [
         {
           id: generatePropId(),
-          name: 'onMouseOver',
-          value: (event: MouseEvent) => {
-            event.stopPropagation()
-            setIsHovered(true)
+          name: '_hover',
+          value: {
+            boxShadow: '#0C008C 0px 0px 0px 2px inset',
           },
           componentId: component.id,
           derivedFromComponentType: null,
           derivedFromPropName: null,
         },
-        {
-          id: generatePropId(),
-          name: 'onMouseOut',
-          value: () => {
-            setIsHovered(false)
-          },
-          componentId: component.id,
-          derivedFromComponentType: null,
-          derivedFromPropName: null,
-        },
+
         {
           id: generatePropId(),
           name: 'fontFamily',
@@ -158,7 +147,7 @@ export const useInteractive = (
       derivedFromPropName: null,
     })
 
-    if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
+    if (isComponentSelected || isElementOnInspectorHovered) {
       props.push({
         id: generatePropId(),
         name: 'boxShadow',

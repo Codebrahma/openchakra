@@ -5,19 +5,19 @@ import { generateCode } from '../utils/codeGeneration/code'
 import theme from 'prism-react-renderer/themes/nightOwlLight'
 import { useSelector } from 'react-redux'
 import {
-  getComponents,
+  getSelectedPageComponents,
   getCustomComponents,
   getCustomComponentsList,
-  getProps,
   getCustomComponentsProps,
+  getSelectedPageProps,
 } from '../core/selectors/components'
 import { getCustomTheme } from '../core/selectors/app'
 
 const CodePanel = () => {
-  const components = useSelector(getComponents)
+  const components = useSelector(getSelectedPageComponents)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsList = useSelector(getCustomComponentsList)
-  const props = useSelector(getProps)
+  const props = useSelector(getSelectedPageProps)
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const [code, setCode] = useState<string | undefined>(undefined)
   const customTheme = useSelector(getCustomTheme)

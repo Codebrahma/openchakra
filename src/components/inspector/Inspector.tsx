@@ -17,16 +17,14 @@ import useDispatch from '../../hooks/useDispatch'
 import StylesPanel from './panels/StylesPanel'
 import {
   getSelectedComponent,
-  getComponents,
   getCustomComponentsList,
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
   getChildrenBy,
   getProps,
-  getCustomComponents,
-  getCustomComponentsProps,
   isSelectedRangeContainsTwoSpan,
   checkIsContainerComponent,
+  getComponents,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/codeGeneration/code'
@@ -43,16 +41,10 @@ import {
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
   const { onCopy, hasCopied } = useClipboard()
-
   const selectedComponent = useSelector(getSelectedComponent)
-  const components = useSelector(getComponents)
-  const customComponents = useSelector(getCustomComponents)
-  const props = useSelector(getProps)
-  const customComponentsProps = useSelector(getCustomComponentsProps)
   const parentId = selectedComponent.parent
-  const isCustomComponentChild = useSelector(
-    isChildrenOfCustomComponent(parentId),
-  )
+  const components = useSelector(getComponents(parentId))
+  const props = useSelector(getProps(parentId))
 
   return (
     <ActionButton
@@ -61,20 +53,11 @@ const CodeActionButton = memo(() => {
       colorScheme={hasCopied ? 'green' : 'gray'}
       onClick={async () => {
         setIsLoading(true)
-        const code = isCustomComponentChild
-          ? await generateComponentCode(
-              {
-                ...customComponents[parentId],
-                children: [selectedComponent.id],
-              },
-              customComponents,
-              customComponentsProps,
-            )
-          : await generateComponentCode(
-              { ...components[parentId], children: [selectedComponent.id] },
-              components,
-              props,
-            )
+        const code = await generateComponentCode(
+          { ...components[parentId], children: [selectedComponent.id] },
+          components,
+          props,
+        )
         onCopy(code)
         setIsLoading(false)
       }}

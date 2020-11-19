@@ -15,7 +15,7 @@ import {
   getShowCustomComponentPage,
   isInstanceOfCustomComponent,
   getSelectedComponentId,
-  getPropsBy,
+  getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
@@ -37,7 +37,7 @@ const FormControl: React.FC<FormControlPropType> = ({
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const selectedId = useSelector(getSelectedComponentId)
   const isCustomComponent = useSelector(isInstanceOfCustomComponent(selectedId))
-  const selectedProp = useSelector(getPropsBy(selectedId)).find(
+  const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === htmlFor,
   )
   const isPropExposed =

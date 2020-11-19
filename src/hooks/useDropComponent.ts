@@ -7,7 +7,6 @@ import {
   getShowCustomComponentPage,
   getComponents,
   isChildrenOfCustomComponent,
-  getCustomComponents,
 } from '../core/selectors/components'
 
 export const useDropComponent = (
@@ -21,14 +20,11 @@ export const useDropComponent = (
 ) => {
   const dispatch = useDispatch()
   const isCustomPage = useSelector(getShowCustomComponentPage)
+
+  const components = useSelector(getComponents())
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(componentId),
   )
-  const components = useSelector(getComponents)
-  const customComponents = useSelector(getCustomComponents)
-  const selectedComponents = isCustomComponentChild
-    ? customComponents
-    : components
 
   const [{ isOver }, drop] = useDrop({
     accept: accept,
@@ -38,20 +34,20 @@ export const useDropComponent = (
     hover: (item: ComponentItemProps, monitor: DropTargetMonitor) => {
       if (item.isMoved && boundingPosition) {
         if (componentId === item.id) return
-        if (selectedComponents[item.id] === undefined) return
+        if (components[item.id] === undefined) return
 
-        const selectedComponent = selectedComponents[item.id]
+        const selectedComponent = components[item.id]
         if (selectedComponent.parent === 'Prop') return
 
         const { top, bottom } = boundingPosition
         const hoverMiddleY = (bottom - top) / 2
         const clientOffset = monitor.getClientOffset()
-        const fromIndex = selectedComponents[
-          selectedComponent.parent
-        ].children.indexOf(item.id)
-        const toIndex = selectedComponents[
-          selectedComponent.parent
-        ].children.indexOf(componentId)
+        const fromIndex = components[selectedComponent.parent].children.indexOf(
+          item.id,
+        )
+        const toIndex = components[selectedComponent.parent].children.indexOf(
+          componentId,
+        )
         const hoverClientY = clientOffset && clientOffset.y - top
 
         if (toIndex === -1) return

@@ -8,6 +8,7 @@ import {
   getPropsBy,
   getCustomComponentsProps,
   checkIsKeyForComponent,
+  getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import ColorsControl from './ColorsControl'
 import { Input, Select, Text, Flex } from '@chakra-ui/core'
@@ -20,6 +21,7 @@ import { findControl } from '../../../utils/recursive'
 import getRequiredThemeOptions from '../../../utils/getRequiredThemeOptions'
 import useCustomTheme from '../../../hooks/useCustomTheme'
 import ComboBox from '../inputs/ComboBox'
+import { RootState } from '../../../core/store'
 
 export type optionsType = {
   [name: string]: Array<string>
@@ -38,7 +40,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   //Why both the instance of custom component and also the original custom component.
   //Because derivedFromComponentType only points to original custom component.
   //instance of custom component is used to get value for the prop.
-  const selectedProp = useSelector(getPropsBy(selectedComponent.id)).find(
+  const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === propName,
   )
 
@@ -49,9 +51,10 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   const props = useSelector(getCustomComponentsProps)
   const customComponents = useSelector(getCustomComponents)
 
-  const isKeyForComponent = useSelector(
-    checkIsKeyForComponent(selectedProp, selectedComponent.id),
-  )
+  const isKeyForComponent = useSelector((state: RootState) => {
+    if (selectedProp)
+      return checkIsKeyForComponent(selectedProp, selectedComponent.id)(state)
+  })
 
   if (selectedProp && selectedCustomComponentProp) {
     const { controlProp, controlPropComponentId } = findControl(

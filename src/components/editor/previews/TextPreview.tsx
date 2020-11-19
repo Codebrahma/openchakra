@@ -8,7 +8,7 @@ import {
 } from '../../../core/selectors/app'
 import { useSelector } from 'react-redux'
 import {
-  getCurrentSelectedComponents,
+  getComponents,
   getSelectedComponentId,
 } from '../../../core/selectors/components'
 import ComponentPreview from '../ComponentPreview'
@@ -42,9 +42,7 @@ const TextPreview: React.FC<{
   const dispatch = useDispatch()
   const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
   const inputTextFocused = useSelector(getInputTextFocused)
-  const selectedComponents = useSelector(
-    getCurrentSelectedComponents(component.id),
-  )
+  const selectedComponents = useSelector(getComponents(component.id))
   const textValue = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
 
