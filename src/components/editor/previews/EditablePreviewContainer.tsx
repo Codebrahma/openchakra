@@ -54,7 +54,7 @@ const EditablePreviewContainer: React.FC<{
     dispatch.text.setSelectionDetails()
     dispatch.app.toggleInputText(false)
     if (propId)
-      dispatch.components.updateProps({
+      dispatch.components.updateProp({
         componentId: component.id,
         id: propId,
         name: 'children',

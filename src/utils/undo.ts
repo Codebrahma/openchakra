@@ -4,7 +4,7 @@ export default function filterActions(action: Action) {
   if (
     [
       'components/resetProps',
-      'components/updateProps',
+      'components/updateProp',
       'components/addComponent',
       'components/deleteComponent',
       'components/moveComponent',
@@ -20,6 +20,8 @@ export default function filterActions(action: Action) {
       'components/updateTextChildrenProp',
       'components/addSpan',
       'components/removeSpan',
+      'components/deleteProps',
+      'components/addProps',
     ].includes(action.type)
   ) {
     return true

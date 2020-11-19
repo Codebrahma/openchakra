@@ -9,6 +9,7 @@ import {
 } from '../../../utils/reducerUtilities'
 import { generatePropId } from '../../../utils/generateId'
 import { ComponentsState } from './components'
+import convertToProperPropName from '../../../utils/convertToProperPropName'
 
 /**
  * @typedef {Object} updatePropsPayload
@@ -20,12 +21,12 @@ import { ComponentsState } from './components'
 
 /**
  * @method
- * @name updateProps
+ * @name updateProp
  * @description This function will update the props on the selected component.
  * @param {ComponentsState} draftState workspace state
  * @param {updatePropsPayload} payload
  */
-export const updateProps = (
+export const updateProp = (
   draftState: ComponentsState,
   payload: { componentId: string; id: string; name: string; value: any },
 ) => {
@@ -53,6 +54,47 @@ export const updateProps = (
       derivedFromComponentType: null,
     }
   }
+}
+
+/**
+ * @method
+ * @name addProps
+ * @description This function will add the list of props based on key and value.
+ * @param {ComponentsState} draftState workspace state
+ * @param {updatePropsPayload} propsObject  This includes the key and value pair of props.
+ */
+
+export const addProps = (draftState: ComponentsState, propsObject: any) => {
+  const { props, selectedId } = loadRequired(draftState)
+
+  Object.keys(propsObject).forEach(propKey => {
+    const value = propsObject[propKey]
+    const propName = convertToProperPropName(propKey)
+
+    // If the value is number, convert it to number.
+    const propValue =
+      value.length > 0 && !isNaN(value) ? parseInt(value, 10) : value
+
+    let existingPropId: undefined | string = undefined
+
+    props.byComponentId[selectedId].forEach(propId => {
+      if (props.byId[propId].name === propName)
+        existingPropId = props.byId[propId].id
+    })
+    if (existingPropId) {
+      props.byId[existingPropId].value = propValue
+    } else {
+      const newPropId = generatePropId()
+      props.byComponentId[selectedId].push(newPropId)
+      props.byId[newPropId] = {
+        id: newPropId,
+        name: propName,
+        value: propValue,
+        derivedFromPropName: null,
+        derivedFromComponentType: null,
+      }
+    }
+  })
 }
 
 /**
