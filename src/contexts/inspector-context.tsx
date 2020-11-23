@@ -6,6 +6,11 @@ import React, {
   useMemo,
 } from 'react'
 
+// The background colour alone is made as default because it is the only prop present on both root and non-root elements.
+// When the component changes, the background colour is left out, so it is not added to the array.
+// That is the reason, why it had been added as the default prop.
+const DEFAULT_ACTIVE_PROPS = ['backgroundColor']
+
 type UpdateProps = {
   addActiveProps: (propsName: string) => void
   clearActiveProps: () => void
@@ -20,14 +25,14 @@ const InspectorUpdateContext = createContext<UpdateProps>({
 })
 
 function InspectorProvider({ children }: InspectorProviderProps) {
-  const [activeProps, setActiveProps] = useState<string[]>([])
+  const [activeProps, setActiveProps] = useState<string[]>(DEFAULT_ACTIVE_PROPS)
 
   const addActiveProps = useCallback((propsName: string) => {
     setActiveProps(prevActiveProps => [...prevActiveProps, propsName])
   }, [])
 
   const clearActiveProps = useCallback(() => {
-    setActiveProps([])
+    setActiveProps(DEFAULT_ACTIVE_PROPS)
   }, [])
 
   const values = useMemo(() => {
