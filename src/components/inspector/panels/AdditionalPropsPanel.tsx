@@ -44,27 +44,29 @@ const AdditionalPropsPanel = () => {
     })
   }
 
+  const submitHandler = (event: FormEvent) => {
+    event.preventDefault()
+
+    const index = quickProps.indexOf('=')
+    const name = quickProps.slice(0, index)
+    const value = quickProps.slice(index + 1)
+
+    if (name && value) {
+      const id = props.find(prop => prop.name === name)?.id
+
+      setValue(id || name, name, value)
+      setQuickProps('')
+      setError(false)
+    } else {
+      setError(true)
+    }
+  }
+
   const activeProps = activePropsRef || []
   const customProps = props.filter(prop => !activeProps.includes(prop.name))
   return (
     <>
-      <form
-        onSubmit={(event: FormEvent) => {
-          event.preventDefault()
-
-          const num = quickProps.indexOf('=')
-          const name = quickProps.slice(0, num)
-          const value = quickProps.slice(num + 1)
-
-          if (name && value) {
-            setValue(name, name, value)
-            setQuickProps('')
-            setError(false)
-          } else {
-            setError(true)
-          }
-        }}
-      >
+      <form onSubmit={submitHandler}>
         <InputGroup mb={3} size="sm">
           <InputRightElement
             children={<Box as={IoIosFlash} color="gray.300" />}
