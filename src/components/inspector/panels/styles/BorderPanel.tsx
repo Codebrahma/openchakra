@@ -3,6 +3,7 @@ import FormControl from '../../controls/FormControl'
 import ComboBox from '../../inputs/ComboBox'
 import usePropsSelector from '../../../../hooks/usePropsSelector'
 import useCustomTheme from '../../../../hooks/useCustomTheme'
+import ColorsControl from '../../controls/ColorsControl'
 
 const BorderPanel = () => {
   const theme = useCustomTheme()
@@ -25,6 +26,12 @@ const BorderPanel = () => {
           name="border"
         />
       </FormControl>
+      <ColorsControl
+        withFullColor
+        label="Border color"
+        name="borderColor"
+        enableHues
+      />
       <FormControl label="Border Radius" htmlFor="borderRadius">
         <ComboBox
           id={borderRadiusId}
