@@ -32,6 +32,8 @@ export const duplicateComp = (
     if (props.byComponentId[component.id].length === 0) {
       clonedProps.byComponentId[newId] = []
     } else {
+      clonedProps.byComponentId[newId] = []
+
       props.byComponentId[component.id]?.forEach(propId => {
         const prop = props.byId[propId]
         let propValue = prop.value
@@ -54,7 +56,6 @@ export const duplicateComp = (
           mergeProps(clonedProps, duplicatedProps)
         }
         const newPropId = generatePropId()
-        clonedProps.byComponentId[newId] = []
 
         clonedProps.byComponentId[newId].push(newPropId)
         clonedProps.byId[newPropId] = {
