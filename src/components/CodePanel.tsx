@@ -1,57 +1,35 @@
-import React, { memo, useState, useEffect } from 'react'
-import Highlight, { defaultProps } from 'prism-react-renderer'
+import React, { memo, useRef } from 'react'
 import { Box, Button, useClipboard } from '@chakra-ui/core'
-import { generateCode } from '../utils/codeGeneration/code'
-import theme from 'prism-react-renderer/themes/nightOwlLight'
 import { useSelector } from 'react-redux'
-import {
-  getSelectedPageComponents,
-  getCustomComponents,
-  getCustomComponentsList,
-  getCustomComponentsProps,
-  getSelectedPageProps,
-} from '../core/selectors/components'
-import { getCustomTheme } from '../core/selectors/app'
+import { getCode } from '../core/selectors/code'
+import MonacoEditor from '@monaco-editor/react'
+import { getComponentsState } from '../babel-queries/queries'
+import useDispatch from '../hooks/useDispatch'
 
 const CodePanel = () => {
-  const components = useSelector(getSelectedPageComponents)
-  const customComponents = useSelector(getCustomComponents)
-  const customComponentsList = useSelector(getCustomComponentsList)
-  const props = useSelector(getSelectedPageProps)
-  const customComponentsProps = useSelector(getCustomComponentsProps)
-  const [code, setCode] = useState<string | undefined>(undefined)
-  const customTheme = useSelector(getCustomTheme)
+  const editorRef = useRef(null)
+  const dispatch = useDispatch()
+  const code = useSelector(getCode)
 
-  useEffect(() => {
-    const getCode = async () => {
-      const code = await generateCode(
-        components,
-        customComponents,
-        customComponentsList,
-        props,
-        customComponentsProps,
-        customTheme,
-      )
-      setCode(code)
+  const handleEditorDidMount = (_: any, editor: any) => {
+    editorRef.current = editor
+  }
+  const saveCodeHandler = () => {
+    const codeEditorElement: any = editorRef.current
+    if (codeEditorElement) {
+      const newCode = codeEditorElement.getValue()
+      dispatch.code.setCode(newCode)
+      const componentsState = getComponentsState(newCode)
+      dispatch.components.updateComponentsState(componentsState)
     }
-
-    getCode()
-  }, [
-    components,
-    customComponents,
-    customComponentsList,
-    props,
-    customComponentsProps,
-    customTheme,
-  ])
+  }
 
   const { onCopy, hasCopied } = useClipboard(code || '')
 
   return (
     <Box
-      p={4}
       fontSize="sm"
-      backgroundColor="rgb(251 251 251)"
+      backgroundColor="white"
       overflow="auto"
       height="100%"
       position="relative"
@@ -73,32 +51,38 @@ const CodePanel = () => {
       >
         {hasCopied ? 'copied' : 'copy'}
       </Button>
-      <Highlight
-        {...defaultProps}
-        theme={theme}
-        code={code || '// Formatting code… please wait ✨'}
-        language="jsx"
+      <Button
+        onClick={saveCodeHandler}
+        size="sm"
+        position="absolute"
+        textTransform="uppercase"
+        fontSize="xs"
+        height="30px"
+        top={20}
+        right="2.25em"
+        zIndex={100}
+        bg="#8888FC"
+        color="white"
+        _hover={{ bg: '#4D3DF7' }}
       >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={className} style={style}>
-            {tokens.map((line, i) => (
-              <div {...getLineProps({ line, key: i })}>
-                <Box
-                  display="inline-block"
-                  width="2em"
-                  userSelect="none"
-                  opacity={0.3}
-                >
-                  {i + 1}
-                </Box>
-                {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
-                ))}
-              </div>
-            ))}
-          </pre>
-        )}
-      </Highlight>
+        Save Code
+      </Button>
+
+      <MonacoEditor
+        height="100%"
+        value={code}
+        language="javascript"
+        editorDidMount={handleEditorDidMount}
+        theme="dark"
+        options={{
+          minimap: {
+            enabled: false,
+          },
+          scrollbar: {
+            vertical: 'hidden',
+          },
+        }}
+      />
     </Box>
   )
 }

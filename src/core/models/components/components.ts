@@ -476,6 +476,58 @@ const components = createModel({
         )
       })
     },
+    updateComponentsState(
+      state: ComponentsState,
+      payload: {
+        components: IComponents
+        props: IProps
+        customComponents: IComponents
+        customComponentsProps: IProps
+      },
+    ) {
+      return produce(state, (draftState: ComponentsState) => {
+        const {
+          components,
+          props,
+          customComponents,
+          customComponentsProps,
+        } = payload
+        const componentsId =
+          draftState.pages[draftState.selectedPage].componentsId
+        const propsId = draftState.pages[draftState.selectedPage].componentsId
+
+        draftState.componentsById[componentsId] = components
+        draftState.propsById[propsId] = props
+        draftState.customComponents = customComponents
+        draftState.customComponentsProps = customComponentsProps
+
+        const chakraProviderTypeId = Object.values(components).find(
+          component => component.type === 'ChakraProvider',
+        )?.id
+
+        // Since chakra-provider is the outermost element, we have to change it.
+        // Try doing this operation inside traverse itself
+        if (chakraProviderTypeId) {
+          const children = components[chakraProviderTypeId].children
+
+          children.forEach(childId => {
+            draftState.componentsById[componentsId][childId].parent = 'root'
+          })
+          delete draftState.componentsById[componentsId][chakraProviderTypeId]
+
+          draftState.componentsById[componentsId]['root'].children = children
+
+          draftState.propsById[propsId].byComponentId[
+            chakraProviderTypeId
+          ].forEach(propId => {
+            delete draftState.propsById[propsId].byId[propId]
+          })
+          delete draftState.propsById[propsId].byComponentId[
+            chakraProviderTypeId
+          ]
+        }
+      })
+    },
   },
 })
 
