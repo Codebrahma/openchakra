@@ -3,13 +3,22 @@ import { Box, Button, useClipboard } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getCode } from '../core/selectors/code'
 import MonacoEditor from '@monaco-editor/react'
-import { getComponentsState } from '../babel-queries/queries'
+import {
+  getComponentsState,
+  setIdToComponents,
+  removeComponentId,
+} from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 
 const CodePanel = () => {
   const editorRef = useRef(null)
   const dispatch = useDispatch()
-  const code = useSelector(getCode)
+
+  // This includes code with compId prop added to every component.
+  const transformedCode = useSelector(getCode)
+
+  // While displaying the code, the comp-id that is been added should be removed.
+  const code = removeComponentId(transformedCode)
 
   const handleEditorDidMount = (_: any, editor: any) => {
     editorRef.current = editor
@@ -18,8 +27,12 @@ const CodePanel = () => {
     const codeEditorElement: any = editorRef.current
     if (codeEditorElement) {
       const newCode = codeEditorElement.getValue()
-      dispatch.code.setCode(newCode)
-      const componentsState = getComponentsState(newCode)
+
+      // Id is set to the props of the every component.
+      // This is done for identification of components using id.
+      const transformedCode = setIdToComponents(newCode)
+      const componentsState = getComponentsState(transformedCode)
+      dispatch.code.setCode(transformedCode)
       dispatch.components.updateComponentsState(componentsState)
     }
   }
