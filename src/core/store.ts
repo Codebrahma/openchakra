@@ -9,11 +9,13 @@ import { AppState } from './models/app'
 import models from './models'
 import filterUndoableActions from '../utils/undo'
 import { TextState } from './models/text'
+import { CodeState } from './models/code'
 
 export type RootState = {
   app: AppState
   components: ComponentsStateWithUndo
   text: TextState
+  code: CodeState
 }
 
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
@@ -29,6 +31,14 @@ const persistThemeConfig = {
   key: `composer_customTheme_v${version}`,
   storage,
   whitelist: ['customTheme', 'loadedFonts'],
+  version,
+  throttle: 500,
+}
+
+const persistCodeConfig = {
+  key: `composer_code_v${version}`,
+  storage,
+  whitelist: ['code'],
   version,
   throttle: 500,
 }
@@ -54,6 +64,7 @@ export const storeConfig = {
           }),
         ),
         text: reducers.text,
+        code: persistReducer(persistCodeConfig, reducers.code),
       })
     },
   },
