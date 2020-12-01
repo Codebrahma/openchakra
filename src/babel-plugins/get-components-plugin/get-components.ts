@@ -1,7 +1,11 @@
 import { declare } from '@babel/helper-plugin-utils'
 import { functionOnEnter, functionOnExit } from './functionDeclaration'
 import addProps, { identifierPropHandler } from './addProps'
-import { generateComponentId, generatePropId } from '../../utils/generateId'
+import { generatePropId } from '../../utils/generateId'
+import {
+  getComponentId,
+  getParentComponentId,
+} from '../utils/babel-plugin-utils'
 
 class getComponentsPlugin {
   state: {
@@ -115,9 +119,9 @@ class getComponentsPlugin {
           },
           JSXElement: (path: any) => {
             const openingElement = path.node.openingElement
-            const componentId = generateComponentId()
+            const componentId = getComponentId(openingElement)
             const isCustomComponent = functionName !== 'App'
-            const parentId = path.parent.id
+            const parentId = getParentComponentId(path)
 
             const components = isCustomComponent
               ? this.state.customComponents

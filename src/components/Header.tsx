@@ -134,7 +134,10 @@ const Header = () => {
             <ActionButton
               label="Code"
               icon={<RiCodeLine />}
-              onClick={() => dispatch.app.toggleCodePanel()}
+              onClick={() => {
+                dispatch.components.unselect()
+                dispatch.app.toggleCodePanel()
+              }}
               bg={showCode ? 'primary.100' : 'white'}
               color={showCode ? 'primary.900' : 'black'}
               size="sm"

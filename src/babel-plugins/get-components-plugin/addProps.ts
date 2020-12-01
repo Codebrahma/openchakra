@@ -58,6 +58,9 @@ const addProps = (payload: IAddProps) => {
   const { path, props, openingElement, componentId, functionName } = payload
   // Get the props of each component by attributes property
   openingElement.attributes.forEach((attr: any) => {
+    const propName = attr.name.name
+    // component-id need not to be added as the prop for the component.
+    if (propName === 'compId') return
     const value = attr.value
     const propId = generatePropId()
     props.byComponentId[componentId].push(propId)
@@ -67,7 +70,7 @@ const addProps = (payload: IAddProps) => {
     if (value && t.isJSXExpressionContainer(value)) {
       props.byId[propId] = {
         id: propId,
-        name: attr.name.name,
+        name: propName,
         value: '',
         derivedFromPropName: null,
         derivedFromComponentType: null,

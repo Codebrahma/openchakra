@@ -73,6 +73,7 @@ const Inspector = () => {
 
   const { clearActiveProps } = useInspectorUpdate()
 
+  console.log(component)
   const { type, id } = component
   const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
