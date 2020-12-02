@@ -4,8 +4,9 @@ import BabelPluginGetComponents from '../babel-plugins/get-components-plugin/get
 import BabelPluginSetProp from '../babel-plugins/set-prop-plugin'
 import BabelSetComponentId from '../babel-plugins/set-componentId-plugin'
 import BabelRemoveComponentId from '../babel-plugins/remove-componentId-plugin'
+import BabelDeleteComponent from '../babel-plugins/delete-component-plugin'
 
-export const getComponentsState = (code: string) => {
+const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
 
   transform(code, {
@@ -15,7 +16,7 @@ export const getComponentsState = (code: string) => {
   return plugin.state
 }
 
-export const setProp = (
+const setProp = (
   code: string,
   options: { componentId: string; propName: string; value: string },
 ) => {
@@ -24,15 +25,29 @@ export const setProp = (
   }).code
 }
 
-export const setIdToComponents = (code: string) => {
+const setIdToComponents = (code: string) => {
   const transformed = transform(code, {
     plugins: [babelPluginSyntaxJsx, BabelSetComponentId],
   })
   return transformed.code
 }
 
-export const removeComponentId = (code: string) => {
+const removeComponentId = (code: string) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, BabelRemoveComponentId],
   }).code
+}
+
+const deleteComponent = (code: string, options: { componentId: string }) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelDeleteComponent, options]],
+  }).code
+}
+
+export default {
+  getComponentsState,
+  setProp,
+  setIdToComponents,
+  removeComponentId,
+  deleteComponent,
 }

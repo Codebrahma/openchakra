@@ -1,5 +1,9 @@
 import useDispatch from './useDispatch'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
+import babelQueries from '../babel-queries/queries'
+import { useSelector } from 'react-redux'
+import { getCode } from '../core/selectors/code'
+import { getSelectedComponentId } from '../core/selectors/components'
 
 /**
  * @member
@@ -26,12 +30,18 @@ const hasNoSpecialKeyPressed = (event: KeyboardEvent | undefined) =>
 
 const useShortcuts = () => {
   const dispatch = useDispatch()
+  const code = useSelector(getCode)
+  const selectedComponentId = useSelector(getSelectedComponentId)
 
   const deleteNode = (event: KeyboardEvent | undefined) => {
     if (event) {
       event.preventDefault()
     }
     dispatch.components.deleteComponent()
+    const updatedCode = babelQueries.deleteComponent(code, {
+      componentId: selectedComponentId,
+    })
+    dispatch.code.setCode(updatedCode)
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {

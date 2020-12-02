@@ -3,11 +3,7 @@ import { Box, Button, useClipboard } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getCode } from '../core/selectors/code'
 import MonacoEditor from '@monaco-editor/react'
-import {
-  getComponentsState,
-  setIdToComponents,
-  removeComponentId,
-} from '../babel-queries/queries'
+import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 
 const CodePanel = () => {
@@ -18,7 +14,7 @@ const CodePanel = () => {
   const transformedCode = useSelector(getCode)
 
   // While displaying the code, the comp-id that is been added should be removed.
-  const code = removeComponentId(transformedCode)
+  const code = babelQueries.removeComponentId(transformedCode)
 
   const handleEditorDidMount = (_: any, editor: any) => {
     editorRef.current = editor
@@ -30,8 +26,8 @@ const CodePanel = () => {
 
       // Id is set to the props of the every component.
       // This is done for identification of components using id.
-      const transformedCode = setIdToComponents(newCode)
-      const componentsState = getComponentsState(transformedCode)
+      const transformedCode = babelQueries.setIdToComponents(newCode)
+      const componentsState = babelQueries.getComponentsState(transformedCode)
       dispatch.code.setCode(transformedCode)
       dispatch.components.updateComponentsState(componentsState)
     }

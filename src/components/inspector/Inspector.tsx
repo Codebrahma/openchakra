@@ -37,6 +37,8 @@ import {
   getSelectedTextDetails,
   getIsSelectionEnabled,
 } from '../../core/selectors/text'
+import babelQueries from '../../babel-queries/queries'
+import { getCode } from '../../core/selectors/code'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +75,6 @@ const Inspector = () => {
 
   const { clearActiveProps } = useInspectorUpdate()
 
-  console.log(component)
   const { type, id } = component
   const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
@@ -94,6 +95,7 @@ const Inspector = () => {
   )
   const isSelectionEnabled = useSelector(getIsSelectionEnabled)
   const isContainerComponent = useSelector(checkIsContainerComponent(id))
+  const code = useSelector(getCode)
 
   // check if its a normal component or a container component
   const isNormalOrContainer = () => {
@@ -137,6 +139,14 @@ const Inspector = () => {
       }
       dispatch.text.removeSelection()
     }
+  }
+
+  const removeComponentHandler = () => {
+    dispatch.components.deleteComponent(component.id)
+    const updatedCode = babelQueries.deleteComponent(code, {
+      componentId: component.id,
+    })
+    dispatch.code.setCode(updatedCode)
   }
 
   return (
@@ -262,7 +272,7 @@ const Inspector = () => {
             />
             <ActionButton
               label="Remove"
-              onClick={() => dispatch.components.deleteComponent(component.id)}
+              onClick={removeComponentHandler}
               icon={<FiTrash2 />}
             />
           </Flex>
