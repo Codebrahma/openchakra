@@ -1,6 +1,4 @@
-import * as t from '@babel/types'
-
-import { getComponentId } from './utils/babel-plugin-utils'
+import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
 
 const setPropPlugin = (
   _: any,
@@ -18,11 +16,7 @@ const setPropPlugin = (
         const visitedComponentId = getComponentId(path.node)
 
         if (visitedComponentId === componentId) {
-          // Convert to jsx attribute using propName and prop-value
-          const jsxAttribute = t.jsxAttribute(
-            t.jsxIdentifier(propName),
-            t.stringLiteral(value),
-          )
+          const jsxAttribute = toJsxAttribute(propName, value)
           const existingAttrIndex = path.node.attributes.findIndex(
             (node: any) => node.name.name === propName,
           )

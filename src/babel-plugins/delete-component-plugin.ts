@@ -1,3 +1,5 @@
+import { getComponentId } from './utils/babel-plugin-utils'
+
 const deleteComponentPlugin = (
   _: any,
   options: {
@@ -9,10 +11,8 @@ const deleteComponentPlugin = (
   return {
     visitor: {
       JSXOpeningElement(path: any) {
-        const idAttribute = path.node.attributes.find(
-          (node: any) => node.name.name === 'compId',
-        )
-        if (idAttribute && idAttribute.value.value === componentId) {
+        const visitedComponentId = getComponentId(path.node)
+        if (visitedComponentId && visitedComponentId === componentId) {
           path.parentPath.remove()
         } else return
       },

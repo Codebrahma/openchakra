@@ -11,6 +11,7 @@ import { ChakraProvider, theme } from '@chakra-ui/core'
 const App = () => {
   return (
     <ChakraProvider resetCSS theme={theme}>
+    <Box compId='root'></Box>
     </ChakraProvider>
   )
 }

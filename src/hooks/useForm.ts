@@ -13,13 +13,6 @@ export const useForm = () => {
   const setValue = useCallback(
     (id: string, name: string, value: any) => {
       // Updated the AST tree using babel plugin
-      const updatedCode = babelQueries.setProp(code, {
-        componentId,
-        propName: name,
-        value,
-      })
-      // update the code
-      dispatch.code.setCode(updatedCode)
 
       dispatch.components.updateProp({
         componentId,
@@ -27,6 +20,13 @@ export const useForm = () => {
         name,
         value,
       })
+      const updatedCode = babelQueries.setProp(code, {
+        componentId,
+        propName: name,
+        value,
+      })
+      // update the code
+      dispatch.code.setCode(updatedCode)
     },
     [code, componentId, dispatch.code, dispatch.components],
   )

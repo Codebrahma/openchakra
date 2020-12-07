@@ -1,20 +1,27 @@
-import React, { memo, useRef } from 'react'
+import React, { memo, useRef, useState, useEffect } from 'react'
 import { Box, Button, useClipboard } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getCode } from '../core/selectors/code'
 import MonacoEditor from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
+import formatCode from '../utils/codeGeneration/formatCode'
 
 const CodePanel = () => {
   const editorRef = useRef(null)
   const dispatch = useDispatch()
+  const [formattedCode, setFormattedCode] = useState('')
 
   // This includes code with compId prop added to every component.
   const transformedCode = useSelector(getCode)
 
-  // While displaying the code, the comp-id that is been added should be removed.
-  const code = babelQueries.removeComponentId(transformedCode)
+  useEffect(() => {
+    // While displaying the code, the comp-id that is been added should be removed.
+    const code = babelQueries.removeComponentId(transformedCode)
+
+    formatCode(code).then(code => setFormattedCode(code))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleEditorDidMount = (_: any, editor: any) => {
     editorRef.current = editor
@@ -33,7 +40,7 @@ const CodePanel = () => {
     }
   }
 
-  const { onCopy, hasCopied } = useClipboard(code || '')
+  const { onCopy, hasCopied } = useClipboard(formattedCode || '')
 
   return (
     <Box
@@ -79,7 +86,7 @@ const CodePanel = () => {
 
       <MonacoEditor
         height="100%"
-        value={code}
+        value={formattedCode}
         language="javascript"
         editorDidMount={handleEditorDidMount}
         theme="dark"

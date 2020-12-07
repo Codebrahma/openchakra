@@ -123,6 +123,10 @@ class getComponentsPlugin {
             const isCustomComponent = functionName !== 'App'
             const parentId = getParentComponentId(path)
 
+            if (openingElement.name.name === 'ChakraProvider') return
+
+            console.log(componentId)
+
             const components = isCustomComponent
               ? this.state.customComponents
               : this.state.components
@@ -139,7 +143,7 @@ class getComponentsPlugin {
               parent: isCustomComponent ? functionName : 'root',
             }
 
-            if (parentId) {
+            if (parentId && components[parentId]) {
               components[parentId].children.push(componentId)
               components[componentId].parent = parentId
             }

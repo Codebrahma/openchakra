@@ -142,10 +142,21 @@ const Inspector = () => {
   }
 
   const removeComponentHandler = () => {
-    dispatch.components.deleteComponent(component.id)
     const updatedCode = babelQueries.deleteComponent(code, {
       componentId: component.id,
     })
+    const componentsState = babelQueries.getComponentsState(updatedCode)
+    dispatch.code.setCode(updatedCode)
+    dispatch.components.updateComponentsState(componentsState)
+    dispatch.components.unselect()
+  }
+  const duplicateComponentHandler = () => {
+    dispatch.components.duplicate()
+    const updatedCode = babelQueries.duplicateComponent(code, {
+      componentId: component.id,
+    })
+    const componentsState = babelQueries.getComponentsState(updatedCode)
+    dispatch.components.updateComponentsState(componentsState)
     dispatch.code.setCode(updatedCode)
   }
 
@@ -252,7 +263,7 @@ const Inspector = () => {
 
             <ActionButton
               label="Duplicate"
-              onClick={() => dispatch.components.duplicate()}
+              onClick={duplicateComponentHandler}
               icon={<CopyIcon />}
             />
             <ActionButton
