@@ -6,6 +6,7 @@
     "@babel/helper-plugin-utils": "^7.10.4",
     "@babel/plugin-syntax-jsx": "^7.12.1",
     "@babel/standalone": "^7.12.9",
+    "@babel/template": "^7.12.7",
     "@babel/traverse": "^7.12.9",
     "@babel/types": "^7.12.7",
     "@bugsnag/js": "^6.5.2",

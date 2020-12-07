@@ -8,6 +8,8 @@ import {
   getComponents,
   isChildrenOfCustomComponent,
 } from '../core/selectors/components'
+import { getCode } from '../core/selectors/code'
+import babelQueries from '../babel-queries/queries'
 
 export const useDropComponent = (
   componentId: string,
@@ -25,6 +27,7 @@ export const useDropComponent = (
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(componentId),
   )
+  const code = useSelector(getCode)
 
   const [{ isOver }, drop] = useDrop({
     accept: accept,
@@ -88,11 +91,14 @@ export const useDropComponent = (
       } else if (item.isMeta) {
         dispatch.components.addMetaComponent(builder[item.type](componentId))
       } else {
-        dispatch.components.addComponent({
-          parentName: componentId,
+        const updatedCode = babelQueries.addComponent(code, {
+          parentId: componentId,
           type: item.type,
-          rootParentType: item.rootParentType,
         })
+        const componentsState = babelQueries.getComponentsState(updatedCode)
+        dispatch.code.setCode(updatedCode)
+        dispatch.components.updateComponentsState(componentsState)
+        dispatch.components.unselect()
       }
     },
   })

@@ -6,6 +6,7 @@ import BabelSetComponentId from '../babel-plugins/set-componentId-plugin'
 import BabelRemoveComponentId from '../babel-plugins/remove-componentId-plugin'
 import BabelDeleteComponent from '../babel-plugins/delete-component-plugin'
 import BabelDuplicateComponent from '../babel-plugins/duplicate-component-plugin'
+import BabelAddComponent from '../babel-plugins/add-component-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -51,6 +52,15 @@ const duplicateComponent = (code: string, options: { componentId: string }) => {
   }).code
 }
 
+const addComponent = (
+  code: string,
+  options: { parentId: string; type: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -58,4 +68,5 @@ export default {
   removeComponentId,
   deleteComponent,
   duplicateComponent,
+  addComponent,
 }
