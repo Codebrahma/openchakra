@@ -88,6 +88,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
       dispatch.components.resetAll()
       dispatch.app.resetCustomTheme()
       dispatch.app.removeAllFonts()
+      dispatch.code.resetCode()
     }
   }
 

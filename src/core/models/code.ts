@@ -30,6 +30,12 @@ const code = createModel({
         code: updatedCode,
       }
     },
+    resetCode(state: CodeState): CodeState {
+      return {
+        ...state,
+        code: DEFAULT_CODE,
+      }
+    },
   },
 })
 
