@@ -1,28 +1,6 @@
-import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
+import { getComponentId } from './utils/babel-plugin-utils'
 import template from '@babel/template'
-import { generateComponentId } from '../utils/generateId'
-
-const components: any = {
-  Box: `<Box></Box>`,
-  Text: `<Text>Text value</Text>`,
-  Button: `<Button>Button Text</Button>`,
-  Heading: `<Heading>Heading Text</Heading>`,
-  Badge: `<Badge>Badge</Badge>`,
-  Avatar: `<Avatar />`,
-  Checkbox: `<Checkbox>Label checkbox</Checkbox>`,
-  Flex: `<Flex></Flex>`,
-}
-
-const addComponentIdAttribute = (node: any) => {
-  const componentId = generateComponentId()
-  const jsxAttribute = toJsxAttribute('compId', componentId)
-
-  if (node.expression.openingElement.attributes) {
-    node.expression.openingElement.attributes.push(jsxAttribute)
-  } else {
-    node.expression.openingElement.attributes = [jsxAttribute]
-  }
-}
+import componentsStructure from '../utils/defaultComponentStructure'
 
 const addComponentPlugin = (
   _: any,
@@ -41,12 +19,9 @@ const addComponentPlugin = (
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const node = template.ast(components[type], {
+          const node = template.ast(componentsStructure[type], {
             plugins: ['jsx'],
           })
-
-          // Add the component-id in the attribute
-          addComponentIdAttribute(node)
 
           // Add to the children of the parent component
           if (path.node.children) {

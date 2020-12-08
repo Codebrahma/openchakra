@@ -2,7 +2,6 @@ import { useDrop, DropTargetMonitor } from 'react-dnd'
 import { useSelector } from 'react-redux'
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
-import builder from '../core/models/composer/builder'
 import {
   getShowCustomComponentPage,
   getComponents,
@@ -88,8 +87,6 @@ export const useDropComponent = (
           parentId: componentId,
           type: item.id,
         })
-      } else if (item.isMeta) {
-        dispatch.components.addMetaComponent(builder[item.type](componentId))
       } else {
         const updatedCode = babelQueries.addComponent(code, {
           parentId: componentId,

@@ -57,7 +57,11 @@ const addComponent = (
   options: { parentId: string; type: string },
 ) => {
   return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
+    plugins: [
+      babelPluginSyntaxJsx,
+      [BabelAddComponent, options],
+      BabelSetComponentId,
+    ],
   }).code
 }
 
