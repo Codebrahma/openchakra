@@ -15,7 +15,6 @@ const setComponentIdPlugin = () => {
 
         const componentId = generateComponentId()
         const idAttribute = getAttribute('id', path.node)
-        console.log(idAttribute)
 
         // Convert to jsx attribute with compId as name.
         const jsxAttribute = toJsxAttribute(

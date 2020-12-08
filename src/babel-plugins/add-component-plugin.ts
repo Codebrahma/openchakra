@@ -21,7 +21,7 @@ const addComponentPlugin = (
           // Change the JSX element in the string to node template
           const node = template.ast(componentsStructure[type], {
             plugins: ['jsx'],
-          })
+          }).expression
 
           // Add to the children of the parent component
           if (path.node.children) {
