@@ -18,14 +18,7 @@ class getComponentsPlugin {
   constructor() {
     // The state of the babel.
     this.state = {
-      components: {
-        root: {
-          id: 'root',
-          type: 'Box',
-          parent: '',
-          children: [],
-        },
-      },
+      components: {},
       props: {
         byId: {},
         byComponentId: {
@@ -125,8 +118,6 @@ class getComponentsPlugin {
 
             if (openingElement.name.name === 'ChakraProvider') return
 
-            console.log(componentId)
-
             const components = isCustomComponent
               ? this.state.customComponents
               : this.state.components
@@ -162,45 +153,50 @@ class getComponentsPlugin {
             // Box also has the children as text which includes empty spaces.
             // To differentiate between Box and other components like Text, Button, Badge etc..
             // The string is trimmed and spaces are removed and then the length of the string is checked.
-            path.node.children
-              .filter(
-                (child: any) =>
-                  t.isJSXText(child) || t.isJSXExpressionContainer(child),
-              )
-              .forEach((child: any) => {
-                const propId = generatePropId()
-                props.byComponentId[componentId].push(propId)
-                if (t.isJSXText(child)) {
-                  const trimmedChildValue = child.value.trim()
-                  // The value is trimmed because by default every component will have child component with white spaces
-                  // When the child component of box component is in next line, it will add whitespaces automatically.
-                  // Thus removing white spaces makes us to differentiate between automatically added children and manually added children.
-                  if (trimmedChildValue.length > 0) {
+
+            // Needs to be Handled in better way.
+            if (openingElement.name.name !== 'Box') {
+              path.node.children
+                .filter(
+                  (child: any) =>
+                    t.isJSXText(child) || t.isJSXExpressionContainer(child),
+                )
+                .forEach((child: any) => {
+                  const propId = generatePropId()
+                  if (t.isJSXText(child)) {
+                    const trimmedChildValue = child.value.trim()
+                    // The value is trimmed because by default every component will have child component with white spaces
+                    // When the child component of box component is in next line, it will add whitespaces automatically.
+                    // Thus removing white spaces makes us to differentiate between automatically added children and manually added children.
+                    if (trimmedChildValue.length > 0) {
+                      props.byComponentId[componentId].push(propId)
+                      props.byId[propId] = {
+                        id: propId,
+                        name: 'children',
+                        value: trimmedChildValue,
+                        derivedFromPropName: null,
+                        derivedFromComponentType: null,
+                      }
+                    }
+                  } else {
+                    props.byComponentId[componentId].push(propId)
                     props.byId[propId] = {
                       id: propId,
                       name: 'children',
-                      value: trimmedChildValue,
+                      value: '',
                       derivedFromPropName: null,
                       derivedFromComponentType: null,
                     }
+                    identifierPropHandler({
+                      identifierName: child.expression.name,
+                      path,
+                      propId,
+                      props,
+                      functionName,
+                    })
                   }
-                } else {
-                  props.byId[propId] = {
-                    id: propId,
-                    name: 'children',
-                    value: '',
-                    derivedFromPropName: null,
-                    derivedFromComponentType: null,
-                  }
-                  identifierPropHandler({
-                    identifierName: child.expression.name,
-                    path,
-                    propId,
-                    props,
-                    functionName,
-                  })
-                }
-              })
+                })
+            }
           },
         },
       }
