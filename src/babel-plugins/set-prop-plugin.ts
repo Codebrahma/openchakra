@@ -1,4 +1,8 @@
-import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
+import {
+  getComponentId,
+  toJsxAttribute,
+  toJsxText,
+} from './utils/babel-plugin-utils'
 
 const setPropPlugin = (
   _: any,
@@ -16,6 +20,19 @@ const setPropPlugin = (
         const visitedComponentId = getComponentId(path.node)
 
         if (visitedComponentId !== componentId) return
+
+        // If the prop is children, add it in the children attribute.
+        // All the other props will be aded to attributes property
+        if (propName === 'children') {
+          if (path.container.children[0])
+            path.container.children[0].value = value
+          else {
+            // If the children is not present, create a text Element and add it to the children.
+            const jsxText = toJsxText(value)
+            path.container.children.push(jsxText)
+          }
+          return
+        }
 
         const jsxAttribute = toJsxAttribute(propName, value)
         const existingAttrIndex = path.node.attributes.findIndex(

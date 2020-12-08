@@ -32,3 +32,7 @@ export const addAttribute = (attribute: any, node: any) =>
 
 export const getAttribute = (attributeName: string, node: any) =>
   node.attributes?.find((attr: any) => attr.name.name === attributeName)
+
+export const toJsxText = (textValue: string) => {
+  return t.jsxText(textValue)
+}

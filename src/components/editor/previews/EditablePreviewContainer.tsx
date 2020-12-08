@@ -15,6 +15,8 @@ import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { isPropRelatedToIcon } from '../PreviewContainer'
 import stringToIconConvertor from '../../../utils/stringToIconConvertor'
+import { getCode } from '../../../core/selectors/code'
+import babelQueries from '../../../babel-queries/queries'
 
 const EditablePreviewContainer: React.FC<{
   component: IComponent
@@ -47,19 +49,28 @@ const EditablePreviewContainer: React.FC<{
   const innerHTMLText = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
   const propId = useSelector(getChildrenPropOfSelectedComp)?.id
+  const code = useSelector(getCode)
 
   const blurHandler = (event: any) => {
     event.preventDefault()
     event.stopPropagation()
     dispatch.text.setSelectionDetails()
     dispatch.app.toggleInputText(false)
-    if (propId)
+    if (propId) {
       dispatch.components.updateProp({
         componentId: component.id,
         id: propId,
         name: 'children',
         value: event.target.textContent || '',
       })
+      const updatedCode = babelQueries.setProp(code, {
+        componentId: component.id,
+        propName: 'children',
+        value: event.target.textContent || '',
+      })
+      // update the code
+      dispatch.code.setCode(updatedCode)
+    }
   }
 
   const doubleClickHandler = (event: MouseEvent) => {
