@@ -68,6 +68,12 @@ export const useDropComponent = (
           fromIndex,
           toIndex: toIndex === -1 ? fromIndex : toIndex,
         })
+        const updatedCode = babelQueries.reorderComponentChildren(code, {
+          componentId: selectedComponent.parent,
+          fromIndex,
+          toIndex: toIndex === -1 ? fromIndex : toIndex,
+        })
+        dispatch.code.setCode(updatedCode)
       }
     },
     canDrop: () => canDrop,

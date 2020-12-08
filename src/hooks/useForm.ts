@@ -12,8 +12,6 @@ export const useForm = () => {
 
   const setValue = useCallback(
     (id: string, name: string, value: any) => {
-      // Updated the AST tree using babel plugin
-
       dispatch.components.updateProp({
         componentId,
         id,

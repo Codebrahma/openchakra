@@ -7,6 +7,7 @@ import BabelRemoveComponentId from '../babel-plugins/remove-componentId-plugin'
 import BabelDeleteComponent from '../babel-plugins/delete-component-plugin'
 import BabelDuplicateComponent from '../babel-plugins/duplicate-component-plugin'
 import BabelAddComponent from '../babel-plugins/add-component-plugin'
+import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -65,6 +66,19 @@ const addComponent = (
   }).code
 }
 
+const reorderComponentChildren = (
+  code: string,
+  options: {
+    componentId: string
+    fromIndex: number
+    toIndex: number
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelReorderChildren, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -73,4 +87,5 @@ export default {
   deleteComponent,
   duplicateComponent,
   addComponent,
+  reorderComponentChildren,
 }
