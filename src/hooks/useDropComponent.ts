@@ -84,10 +84,17 @@ export const useDropComponent = (
       if (isCustomComponentChild && !isCustomPage) return
 
       if (item.isMoved) {
-        dispatch.components.moveComponent({
-          parentId: componentId,
+        // dispatch.components.moveComponent({
+        //   parentId: componentId,
+        //   componentId: item.id,
+        // })
+        const updatedCode = babelQueries.moveComponent(code, {
           componentId: item.id,
+          newParentId: componentId,
         })
+        const componentsState = babelQueries.getComponentsState(updatedCode)
+        dispatch.code.setCode(updatedCode)
+        dispatch.components.updateComponentsState(componentsState)
       } else if (item.custom) {
         dispatch.components.addCustomComponent({
           parentId: componentId,
