@@ -9,20 +9,11 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 import { buildParameters } from '../utils/codesandbox'
-import { generateCode } from '../utils/codeGeneration/code'
 import useDispatch from '../hooks/useDispatch'
-import {
-  getCustomComponents,
-  getCustomComponentsList,
-  getShowCustomComponentPage,
-  getSelectedPageProps,
-  getCustomComponentsProps,
-  getSelectedPageComponents,
-} from '../core/selectors/components'
+import { getShowCustomComponentPage } from '../core/selectors/components'
 import {
   getShowLayout,
   getShowCode,
-  getCustomTheme,
   getLoadedFonts,
 } from '../core/selectors/app'
 import HeaderMenu from './HeaderMenu'
@@ -30,27 +21,16 @@ import ClearOptionPopover from './ClearOptionPopover'
 import EditThemeModal from './EditThemeModal'
 import ActionButton from './inspector/ActionButton'
 import composerIcon from '../composer-icon.png'
+import { getCode } from '../core/selectors/code'
 
 const CodeSandboxButton = () => {
-  const components = useSelector(getSelectedPageComponents)
-  const customComponents = useSelector(getCustomComponents)
-  const customComponentsList = useSelector(getCustomComponentsList)
-  const props = useSelector(getSelectedPageProps)
-  const customComponentsProps = useSelector(getCustomComponentsProps)
   const [isLoading, setIsLoading] = useState(false)
-  const customTheme = useSelector(getCustomTheme)
   const fonts = useSelector(getLoadedFonts)
+  const code = useSelector(getCode)
 
   const clickHandler = async () => {
     setIsLoading(true)
-    const code = await generateCode(
-      components,
-      customComponents,
-      customComponentsList,
-      props,
-      customComponentsProps,
-      customTheme,
-    )
+
     setIsLoading(false)
     const parameters = buildParameters(code, fonts)
 
