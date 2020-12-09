@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import uniq from 'lodash/uniq'
 import { RootState } from '../store'
 import { searchRootCustomComponent } from '../../utils/recursive'
 
@@ -270,4 +271,19 @@ export const checkIsContainerComponent = (id: string) => (state: RootState) => {
   )
     return true
   else return false
+}
+
+export const getAllUsedComponents = (state: RootState): string[] => {
+  const componentsType: string[] = []
+
+  const components = getSelectedPageComponents(state)
+  const customComponents = getCustomComponents(state)
+
+  Object.values(components).forEach(component =>
+    componentsType.push(component.type),
+  )
+  Object.values(customComponents).forEach(component =>
+    componentsType.push(component.type),
+  )
+  return uniq(componentsType)
 }

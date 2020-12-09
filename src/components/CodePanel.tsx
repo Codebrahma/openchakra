@@ -6,6 +6,7 @@ import MonacoEditor from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import formatCode from '../utils/codeGeneration/formatCode'
+import { getAllUsedComponents } from '../core/selectors/components'
 
 const CodePanel = () => {
   const editorRef = useRef(null)
@@ -14,12 +15,16 @@ const CodePanel = () => {
 
   // This includes code with compId prop added to every component.
   const transformedCode = useSelector(getCode)
+  const allComponents = useSelector(getAllUsedComponents)
 
   useEffect(() => {
     // While displaying the code, the comp-id that is been added should be removed.
     const code = babelQueries.removeComponentId(transformedCode)
+    const codeWithImports = babelQueries.addComponentImports(code, {
+      components: allComponents,
+    })
 
-    formatCode(code).then(code => setFormattedCode(code))
+    formatCode(codeWithImports).then(code => setFormattedCode(code))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
