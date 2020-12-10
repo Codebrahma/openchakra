@@ -273,18 +273,21 @@ export const checkIsContainerComponent = (id: string) => (state: RootState) => {
   else return false
 }
 
-export const getAllUsedComponents = (state: RootState): string[] => {
+export const getChakraComponents = (state: RootState): string[] => {
   const componentsType: string[] = []
 
   const components = getSelectedPageComponents(state)
   const customComponents = getCustomComponents(state)
+  const customComponentList = getCustomComponentsList(state)
 
-  Object.values(components).forEach(component =>
-    componentsType.push(component.type),
-  )
-  Object.values(customComponents).forEach(component =>
-    componentsType.push(component.type),
-  )
+  Object.values(components).forEach(component => {
+    if (!customComponentList.includes(component.type))
+      componentsType.push(component.type)
+  })
+  Object.values(customComponents).forEach(component => {
+    if (!customComponentList.includes(component.type))
+      componentsType.push(component.type)
+  })
   return uniq(componentsType)
 }
 

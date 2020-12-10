@@ -7,7 +7,7 @@ import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import formatCode from '../utils/codeGeneration/formatCode'
 import {
-  getAllUsedComponents,
+  getChakraComponents,
   getSelectedPage,
 } from '../core/selectors/components'
 
@@ -18,7 +18,7 @@ const CodePanel = () => {
 
   // This includes code with compId prop added to every component.
   const transformedCode = useSelector(getCode)
-  const allComponents = useSelector(getAllUsedComponents)
+  const allComponents = useSelector(getChakraComponents)
   const selectedPage = useSelector(getSelectedPage)
 
   useEffect(() => {
