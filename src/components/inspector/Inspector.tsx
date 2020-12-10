@@ -213,7 +213,15 @@ const Inspector = () => {
                         position: 'top',
                       })
                     else {
-                      dispatch.components.saveComponent(editedName)
+                      const updatedCode = babelQueries.saveComponent(code, {
+                        componentId: component.id,
+                        customComponentName: editedName,
+                      })
+                      const componentsState = babelQueries.getComponentsState(
+                        updatedCode,
+                      )
+                      dispatch.components.updateComponentsState(componentsState)
+                      dispatch.code.setCode(updatedCode, selectedPage)
                       toast({
                         title: 'Component is saved successfully.',
                         status: 'success',

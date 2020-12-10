@@ -34,7 +34,6 @@ const code = createModel({
       updatedCode: string,
       selectedPage: string,
     ): CodeState {
-      console.log(selectedPage)
       return {
         ...state,
         code: {

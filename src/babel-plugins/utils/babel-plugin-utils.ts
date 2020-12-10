@@ -1,4 +1,5 @@
 import * as t from '@babel/types'
+import template from '@babel/template'
 
 export const getComponentId = (node: any) => {
   const attribute = node.attributes?.find(
@@ -35,4 +36,11 @@ export const getAttribute = (attributeName: string, node: any) =>
 
 export const toJsxText = (textValue: string) => {
   return t.jsxText(textValue)
+}
+
+export const getNode = (jsxString: string) => {
+  const ast = template.ast(jsxString, {
+    plugins: ['jsx'],
+  })
+  return ast
 }
