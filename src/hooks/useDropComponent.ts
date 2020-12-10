@@ -86,10 +86,6 @@ export const useDropComponent = (
       if (isCustomComponentChild && !isCustomPage) return
 
       if (item.isMoved) {
-        // dispatch.components.moveComponent({
-        //   parentId: componentId,
-        //   componentId: item.id,
-        // })
         const updatedCode = babelQueries.moveComponent(code, {
           componentId: item.id,
           newParentId: componentId,
@@ -97,16 +93,20 @@ export const useDropComponent = (
         const componentsState = babelQueries.getComponentsState(updatedCode)
         dispatch.code.setCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)
-      } else if (item.custom) {
-        dispatch.components.addCustomComponent({
-          parentId: componentId,
-          type: item.id,
-        })
       } else {
-        const updatedCode = babelQueries.addComponent(code, {
-          parentId: componentId,
-          type: item.type,
-        })
+        let updatedCode: string = ``
+
+        if (item.custom) {
+          updatedCode = babelQueries.addCustomComponent(code, {
+            parentId: componentId,
+            type: item.id,
+          })
+        } else {
+          updatedCode = babelQueries.addComponent(code, {
+            parentId: componentId,
+            type: item.type,
+          })
+        }
         const componentsState = babelQueries.getComponentsState(updatedCode)
         dispatch.code.setCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)

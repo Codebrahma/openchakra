@@ -11,6 +11,7 @@ import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
 import BabelMoveComponent from '../babel-plugins/move-component-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
+import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -109,6 +110,15 @@ const saveComponent = (
   }).code
 }
 
+const addCustomComponent = (
+  code: string,
+  options: { parentId: string; type: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelAddCustomComponent, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -121,4 +131,5 @@ export default {
   addComponentImports,
   moveComponent,
   saveComponent,
+  addCustomComponent,
 }
