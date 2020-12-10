@@ -153,7 +153,6 @@ const Inspector = () => {
     dispatch.components.unselect()
   }
   const duplicateComponentHandler = () => {
-    dispatch.components.duplicate()
     const updatedCode = babelQueries.duplicateComponent(code, {
       componentId: component.id,
     })
