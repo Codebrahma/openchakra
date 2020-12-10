@@ -25,6 +25,7 @@ import {
   isSelectedRangeContainsTwoSpan,
   checkIsContainerComponent,
   getComponents,
+  getSelectedPage,
 } from '../../core/selectors/components'
 import ActionButton from './ActionButton'
 import { generateComponentCode } from '../../utils/codeGeneration/code'
@@ -72,6 +73,7 @@ const Inspector = () => {
   const dispatch = useDispatch()
   const component = useSelector(getSelectedComponent)
   const toast = useToast()
+  const selectedPage = useSelector(getSelectedPage)
 
   const { clearActiveProps } = useInspectorUpdate()
 
@@ -146,7 +148,7 @@ const Inspector = () => {
       componentId: component.id,
     })
     const componentsState = babelQueries.getComponentsState(updatedCode)
-    dispatch.code.setCode(updatedCode)
+    dispatch.code.setCode(updatedCode, selectedPage)
     dispatch.components.updateComponentsState(componentsState)
     dispatch.components.unselect()
   }
@@ -157,7 +159,7 @@ const Inspector = () => {
     })
     const componentsState = babelQueries.getComponentsState(updatedCode)
     dispatch.components.updateComponentsState(componentsState)
-    dispatch.code.setCode(updatedCode)
+    dispatch.code.setCode(updatedCode, selectedPage)
   }
 
   return (

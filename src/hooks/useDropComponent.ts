@@ -6,6 +6,7 @@ import {
   getShowCustomComponentPage,
   getComponents,
   isChildrenOfCustomComponent,
+  getSelectedPage,
 } from '../core/selectors/components'
 import { getCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
@@ -27,6 +28,7 @@ export const useDropComponent = (
     isChildrenOfCustomComponent(componentId),
   )
   const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
 
   const [{ isOver }, drop] = useDrop({
     accept: accept,
@@ -73,7 +75,7 @@ export const useDropComponent = (
           fromIndex,
           toIndex: toIndex === -1 ? fromIndex : toIndex,
         })
-        dispatch.code.setCode(updatedCode)
+        dispatch.code.setCode(updatedCode, selectedPage)
       }
     },
     canDrop: () => canDrop,
@@ -93,7 +95,7 @@ export const useDropComponent = (
           newParentId: componentId,
         })
         const componentsState = babelQueries.getComponentsState(updatedCode)
-        dispatch.code.setCode(updatedCode)
+        dispatch.code.setCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)
       } else if (item.custom) {
         dispatch.components.addCustomComponent({
@@ -106,7 +108,7 @@ export const useDropComponent = (
           type: item.type,
         })
         const componentsState = babelQueries.getComponentsState(updatedCode)
-        dispatch.code.setCode(updatedCode)
+        dispatch.code.setCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)
         dispatch.components.unselect()
       }

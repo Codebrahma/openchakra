@@ -6,7 +6,10 @@ import MonacoEditor from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import formatCode from '../utils/codeGeneration/formatCode'
-import { getAllUsedComponents } from '../core/selectors/components'
+import {
+  getAllUsedComponents,
+  getSelectedPage,
+} from '../core/selectors/components'
 
 const CodePanel = () => {
   const editorRef = useRef(null)
@@ -16,6 +19,7 @@ const CodePanel = () => {
   // This includes code with compId prop added to every component.
   const transformedCode = useSelector(getCode)
   const allComponents = useSelector(getAllUsedComponents)
+  const selectedPage = useSelector(getSelectedPage)
 
   useEffect(() => {
     // While displaying the code, the comp-id that is been added should be removed.
@@ -40,7 +44,7 @@ const CodePanel = () => {
       // This is done for identification of components using id.
       const transformedCode = babelQueries.setIdToComponents(newCode)
       const componentsState = babelQueries.getComponentsState(transformedCode)
-      dispatch.code.setCode(transformedCode)
+      dispatch.code.setCode(transformedCode, selectedPage)
       dispatch.components.updateComponentsState(componentsState)
     }
   }

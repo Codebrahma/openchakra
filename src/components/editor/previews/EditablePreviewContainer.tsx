@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 import {
   getSelectedComponentId,
   getChildrenPropOfSelectedComp,
+  getSelectedPage,
 } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
@@ -50,6 +51,7 @@ const EditablePreviewContainer: React.FC<{
   const selectedId = useSelector(getSelectedComponentId)
   const propId = useSelector(getChildrenPropOfSelectedComp)?.id
   const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
 
   const blurHandler = (event: any) => {
     event.preventDefault()
@@ -69,7 +71,7 @@ const EditablePreviewContainer: React.FC<{
         value: event.target.textContent || '',
       })
       // update the code
-      dispatch.code.setCode(updatedCode)
+      dispatch.code.setCode(updatedCode, selectedPage)
     }
   }
 

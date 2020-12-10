@@ -3,7 +3,10 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import babelQueries from '../babel-queries/queries'
 import { useSelector } from 'react-redux'
 import { getCode } from '../core/selectors/code'
-import { getSelectedComponentId } from '../core/selectors/components'
+import {
+  getSelectedComponentId,
+  getSelectedPage,
+} from '../core/selectors/components'
 
 /**
  * @member
@@ -32,6 +35,7 @@ const useShortcuts = () => {
   const dispatch = useDispatch()
   const code = useSelector(getCode)
   const selectedComponentId = useSelector(getSelectedComponentId)
+  const selectedPage = useSelector(getSelectedPage)
 
   const deleteNode = (event: KeyboardEvent | undefined) => {
     if (event) {
@@ -41,7 +45,7 @@ const useShortcuts = () => {
     const updatedCode = babelQueries.deleteComponent(code, {
       componentId: selectedComponentId,
     })
-    dispatch.code.setCode(updatedCode)
+    dispatch.code.setCode(updatedCode, selectedPage)
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {

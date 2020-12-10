@@ -172,3 +172,7 @@ interface IProps {
 interface IPropsByPageId {
   [id: string]: IProps
 }
+
+interface ICode {
+  [pageName: string]: string
+}

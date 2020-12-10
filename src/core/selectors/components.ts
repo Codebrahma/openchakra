@@ -287,3 +287,6 @@ export const getAllUsedComponents = (state: RootState): string[] => {
   )
   return uniq(componentsType)
 }
+
+export const getSelectedPage = (state: RootState) =>
+  state.components.present.selectedPage
