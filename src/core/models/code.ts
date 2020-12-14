@@ -15,8 +15,6 @@ const App = () => {
     </ChakraProvider>
   )
 }
-
-export default App
 `
 
 const INITIAL_CODE = {

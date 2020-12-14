@@ -12,6 +12,7 @@ import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
 import BabelMoveComponent from '../babel-plugins/move-component-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
 import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
+import BabelRemoveImports from '../babel-plugins/remove-imports-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -119,6 +120,12 @@ const addCustomComponent = (
   }).code
 }
 
+const removeImports = (code: string) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, BabelRemoveImports],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -132,4 +139,5 @@ export default {
   moveComponent,
   saveComponent,
   addCustomComponent,
+  removeImports,
 }

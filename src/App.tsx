@@ -57,12 +57,7 @@ const App = () => {
             <ThemeProvider theme={theme}>
               {/* <EditorErrorBoundary> */}
 
-              <Box
-                bg="white"
-                height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
-              >
-                {showCode ? <CodePanel /> : <Editor />}
-              </Box>
+              {showCode ? <CodePanel /> : <Editor />}
               {/* </EditorErrorBoundary> */}
             </ThemeProvider>
           </Box>

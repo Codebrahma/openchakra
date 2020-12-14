@@ -1,5 +1,7 @@
 import React, { memo } from 'react'
 import { Box, Text } from '@chakra-ui/core'
+import * as chakraComponent from '@chakra-ui/core'
+import { LiveProvider, LivePreview, LiveError } from 'react-live'
 import ComponentPreview from './ComponentPreview'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import { useSelector } from 'react-redux'
@@ -9,8 +11,10 @@ import {
   getPropsBy,
   getShowCustomComponentPage,
 } from '../../core/selectors/components'
-import { getShowLayout } from '../../core/selectors/app'
+import { getShowLayout, getShowFullScreen } from '../../core/selectors/app'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import { getCode } from '../../core/selectors/code'
+import babelQueries from '../../babel-queries/queries'
 
 export const gridStyles = {
   backgroundImage:
@@ -19,7 +23,7 @@ export const gridStyles = {
 }
 
 const Editor: React.FC = () => {
-  const showLayout = useSelector(getShowLayout)
+  const isBuilderMode = useSelector(getShowLayout)
   const dispatch = useDispatch()
 
   const { drop } = useDropComponent('root')
@@ -27,38 +31,33 @@ const Editor: React.FC = () => {
   const isEmpty = !children.length
   const rootProps = useSelector(getPropsBy('root'))
   const isComponentsCreationPage = useSelector(getShowCustomComponentPage)
+  const showFullScreen = useSelector(getShowFullScreen)
 
-  let editorBackgroundProps = {}
+  const scope = { ...chakraComponent, React }
+  const code = useSelector(getCode)
+
+  // React-live does not support import statements
+  const codeWithoutImports = babelQueries.removeImports(code)
 
   const onSelectBackground = () => {
     dispatch.components.unselect()
   }
-
-  if (showLayout) {
-    editorBackgroundProps = gridStyles
-  }
-
-  editorBackgroundProps = {
-    ...editorBackgroundProps,
+  let editorBackgroundProps = {
+    height: '100%',
+    minWidth: '10rem',
+    width: '100%',
+    display: isEmpty ? 'flex' : 'block',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'auto',
+    position: 'relative',
+    flexDirection: 'column',
+    onClick: onSelectBackground,
     ...generatePropsKeyValue(rootProps),
   }
 
-  return (
-    <Box
-      bg="white"
-      {...editorBackgroundProps}
-      height="100%"
-      minWidth="10rem"
-      width="100%"
-      display={isEmpty ? 'flex' : 'block'}
-      justifyContent="center"
-      alignItems="center"
-      overflow="auto"
-      ref={drop}
-      position="relative"
-      flexDirection="column"
-      onClick={onSelectBackground}
-    >
+  const EditorPreview = (
+    <Box ref={drop} {...editorBackgroundProps} {...gridStyles}>
       {isEmpty && (
         <Text maxWidth="md" color="gray.400" fontSize="xl" textAlign="center">
           {isComponentsCreationPage
@@ -70,6 +69,25 @@ const Editor: React.FC = () => {
       {children.map((name: string) => (
         <ComponentPreview key={name} componentName={name} />
       ))}
+    </Box>
+  )
+
+  const OnlyPreview = (
+    <Box {...editorBackgroundProps}>
+      <LiveProvider
+        code={codeWithoutImports + `\n render(<App />)`}
+        scope={scope}
+        noInline={true}
+      >
+        <LivePreview />
+        <LiveError />
+      </LiveProvider>
+    </Box>
+  )
+
+  return (
+    <Box height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}>
+      {isBuilderMode ? EditorPreview : OnlyPreview}
     </Box>
   )
 }
