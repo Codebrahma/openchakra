@@ -20,11 +20,13 @@ export const getParentComponentId = (path: any) => {
 
 export const toJsxAttribute = (
   attributeName: string,
-  attributeValue: string,
+  attributeValue: string | number,
 ) => {
   return t.jsxAttribute(
     t.jsxIdentifier(attributeName),
-    t.stringLiteral(attributeValue),
+    typeof attributeValue === 'string'
+      ? t.stringLiteral(attributeValue)
+      : t.jsxExpressionContainer(t.numericLiteral(attributeValue)),
   )
 }
 

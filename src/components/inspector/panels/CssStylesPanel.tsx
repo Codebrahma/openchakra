@@ -1,19 +1,37 @@
 import React, { useState } from 'react'
 import { Box, Textarea, Button } from '@chakra-ui/core'
 import cssToObject from 'css-to-object'
+import { useSelector } from 'react-redux'
 
 import useDispatch from '../../../hooks/useDispatch'
+import { getCode } from '../../../core/selectors/code'
+import babelQueries from '../../../babel-queries/queries'
+import {
+  getSelectedComponentId,
+  getSelectedPage,
+} from '../../../core/selectors/components'
 
 const CssStylesPanel = () => {
   const [textareaValue, setTextareaValue] = useState('')
   const dispatch = useDispatch()
+  const code = useSelector(getCode)
+  const componentId = useSelector(getSelectedComponentId)
+  const selectedPage = useSelector(getSelectedPage)
 
   const changeHandler = (e: any) => {
     setTextareaValue(e.target.value)
   }
   const addStylesHandler = () => {
     const stylesObject = cssToObject(textareaValue)
-    dispatch.components.addProps(stylesObject)
+
+    const updatedCode = babelQueries.addProps(code, {
+      componentId,
+      propsToBeAdded: stylesObject,
+    })
+    const componentsState = babelQueries.getComponentsState(updatedCode)
+    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.components.updateComponentsState(componentsState)
+
     setTextareaValue('')
   }
 
