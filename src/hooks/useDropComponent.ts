@@ -65,17 +65,16 @@ export const useDropComponent = (
         if (fromIndex > toIndex && hoverClientY && hoverClientY > hoverMiddleY)
           return
 
-        dispatch.components.moveSelectedComponentChildren({
-          componentId: selectedComponent.parent,
-          fromIndex,
-          toIndex: toIndex === -1 ? fromIndex : toIndex,
-        })
         const updatedCode = babelQueries.reorderComponentChildren(code, {
           componentId: selectedComponent.parent,
           fromIndex,
-          toIndex: toIndex === -1 ? fromIndex : toIndex,
+          toIndex,
         })
-        dispatch.code.setCode(updatedCode, selectedPage)
+        if (updatedCode !== code) {
+          const componentsState = babelQueries.getComponentsState(updatedCode)
+          dispatch.components.updateComponentsState(componentsState)
+          dispatch.code.setCode(updatedCode, selectedPage)
+        }
       }
     },
     canDrop: () => canDrop,

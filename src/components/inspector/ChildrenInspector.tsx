@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import {
   getSelectedComponentChildren,
   getSelectedComponentId,
+  getSelectedPage,
 } from '../../core/selectors/components'
 import ElementsList from './elements-list/ElementsList'
 import useDispatch from '../../hooks/useDispatch'
@@ -14,19 +15,19 @@ const ChildrenInspector = () => {
   const dispatch = useDispatch()
   const componentId = useSelector(getSelectedComponentId)
   const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
 
   const moveChildren = (fromIndex: number, toIndex: number) => {
-    dispatch.components.moveSelectedComponentChildren({
-      componentId,
-      fromIndex,
-      toIndex,
-    })
     const updatedCode = babelQueries.reorderComponentChildren(code, {
       componentId,
       fromIndex,
       toIndex,
     })
-    dispatch.code.setCode(updatedCode)
+    if (updatedCode !== code) {
+      const componentsState = babelQueries.getComponentsState(updatedCode)
+      dispatch.components.updateComponentsState(componentsState)
+      dispatch.code.setCode(updatedCode, selectedPage)
+    }
   }
 
   const onSelectChild = (id: IComponent['id']) => {
