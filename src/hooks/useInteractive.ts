@@ -1,4 +1,4 @@
-import { useRef, MouseEvent } from 'react'
+import { useRef, MouseEvent, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
@@ -40,6 +40,7 @@ export const useInteractive = (
 
   const componentProps = isInstanceOfCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()
+  const [isHovered, setIsHovered] = useState(false)
 
   //Finds whether the component is span or not.
   const isSpanElement =
@@ -69,15 +70,25 @@ export const useInteractive = (
     ? [
         {
           id: generatePropId(),
-          name: '_hover',
-          value: {
-            boxShadow: '#0C008C 0px 0px 0px 2px inset',
+          name: 'onMouseOver',
+          value: (event: MouseEvent) => {
+            event.stopPropagation()
+            setIsHovered(true)
           },
           componentId: component.id,
           derivedFromComponentType: null,
           derivedFromPropName: null,
         },
-
+        {
+          id: generatePropId(),
+          name: 'onMouseOut',
+          value: () => {
+            setIsHovered(false)
+          },
+          componentId: component.id,
+          derivedFromComponentType: null,
+          derivedFromPropName: null,
+        },
         {
           id: generatePropId(),
           name: 'fontFamily',
@@ -147,7 +158,7 @@ export const useInteractive = (
       derivedFromPropName: null,
     })
 
-    if (isComponentSelected || isElementOnInspectorHovered) {
+    if (isHovered || isComponentSelected || isElementOnInspectorHovered) {
       props.push({
         id: generatePropId(),
         name: 'boxShadow',
