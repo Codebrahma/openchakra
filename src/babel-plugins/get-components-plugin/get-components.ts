@@ -155,48 +155,46 @@ class getComponentsPlugin {
             // The string is trimmed and spaces are removed and then the length of the string is checked.
 
             // Needs to be Handled in better way.
-            if (openingElement.name.name !== 'Box') {
-              path.node.children
-                .filter(
-                  (child: any) =>
-                    t.isJSXText(child) || t.isJSXExpressionContainer(child),
-                )
-                .forEach((child: any) => {
-                  const propId = generatePropId()
-                  if (t.isJSXText(child)) {
-                    const trimmedChildValue = child.value.trim()
-                    // The value is trimmed because by default every component will have child component with white spaces
-                    // When the child component of box component is in next line, it will add whitespaces automatically.
-                    // Thus removing white spaces makes us to differentiate between automatically added children and manually added children.
-                    if (trimmedChildValue.length > 0) {
-                      props.byComponentId[componentId].push(propId)
-                      props.byId[propId] = {
-                        id: propId,
-                        name: 'children',
-                        value: trimmedChildValue,
-                        derivedFromPropName: null,
-                        derivedFromComponentType: null,
-                      }
-                    }
-                  } else {
+            path.node.children
+              .filter(
+                (child: any) =>
+                  t.isJSXText(child) || t.isJSXExpressionContainer(child),
+              )
+              .forEach((child: any) => {
+                const propId = generatePropId()
+                if (t.isJSXText(child)) {
+                  const trimmedChildValue = child.value.trim()
+                  // The value is trimmed because by default every component will have child component with white spaces
+                  // When the child component of box component is in next line, it will add whitespaces automatically.
+                  // Thus removing white spaces makes us to differentiate between automatically added children and manually added children.
+                  if (trimmedChildValue.length > 0) {
                     props.byComponentId[componentId].push(propId)
                     props.byId[propId] = {
                       id: propId,
                       name: 'children',
-                      value: '',
+                      value: trimmedChildValue,
                       derivedFromPropName: null,
                       derivedFromComponentType: null,
                     }
-                    identifierPropHandler({
-                      identifierName: child.expression.name,
-                      path,
-                      propId,
-                      props,
-                      functionName,
-                    })
                   }
-                })
-            }
+                } else {
+                  props.byComponentId[componentId].push(propId)
+                  props.byId[propId] = {
+                    id: propId,
+                    name: 'children',
+                    value: '',
+                    derivedFromPropName: null,
+                    derivedFromComponentType: null,
+                  }
+                  identifierPropHandler({
+                    identifierName: child.expression.name,
+                    path,
+                    propId,
+                    props,
+                    functionName,
+                  })
+                }
+              })
           },
         },
       }

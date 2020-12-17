@@ -9,7 +9,7 @@ const componentsStructure: any = {
   Checkbox: `<Checkbox>Label checkbox</Checkbox>`,
   Flex: `<Flex></Flex>`,
   AspectRatio: `AspectRatio`,
-  Grid: `<Grid templateColumns="repeat(5, 1fr)" gap={6} />`,
+  Grid: `<Grid templateColumns="repeat(5, 1fr)" gap={6} ></Grid>`,
   Icon: `<Icon as={CopyIcon} />`,
   IconButton: `<IconButton aria-label="icon" />`,
   CircularProgress: `<CircularProgress value={50} size="48px" />`,
