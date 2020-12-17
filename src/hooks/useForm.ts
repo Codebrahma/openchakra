@@ -25,7 +25,7 @@ export const useForm = () => {
       const updatedCode = babelQueries.setProp(code, {
         componentId,
         propName: name,
-        value,
+        value: value.toString(),
       })
       // update the code
       dispatch.code.setCode(updatedCode, selectedPage)
