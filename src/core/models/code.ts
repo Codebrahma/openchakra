@@ -19,7 +19,7 @@ const App = () => {
 export default App
 `
 
-const INITIAL_CODE = {
+export const INITIAL_CODE = {
   app: DEFAULT_CODE,
   customPage: DEFAULT_CODE,
 }
@@ -42,10 +42,10 @@ const code = createModel({
         },
       }
     },
-    resetCode(state: CodeState): CodeState {
+    resetCode(state: CodeState, codeState?: ICode): CodeState {
       return {
         ...state,
-        code: INITIAL_CODE,
+        code: codeState || INITIAL_CODE,
       }
     },
   },

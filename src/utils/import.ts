@@ -1,11 +1,13 @@
 import { fileOpen, fileSave } from 'browser-nativefs'
 import { ComponentsState } from '../core/models/components/components'
 import { INITIAL_STATE } from '../core/models/components/components-types'
+import { INITIAL_CODE } from '../core/models/code'
 
 type Workspace = {
   components: ComponentsState
   theme: any
   googleFonts: string[]
+  code: ICode
 }
 
 /**
@@ -43,10 +45,16 @@ export async function loadFromJSON(): Promise<Workspace> {
       components: workspace.components,
       theme: workspace.theme,
       googleFonts: workspace.googleFonts,
+      code: workspace.code,
     }
   } catch (error) {}
 
-  return { components: INITIAL_STATE, theme: {}, googleFonts: [] }
+  return {
+    components: INITIAL_STATE,
+    theme: {},
+    googleFonts: [],
+    code: INITIAL_CODE,
+  }
 }
 
 /**
@@ -56,8 +64,8 @@ export async function loadFromJSON(): Promise<Workspace> {
  * @param {Workspace} payload workspace of the composer
  */
 export async function saveAsJSON(payload: Workspace) {
-  const { components, theme, googleFonts } = payload
-  const serialized = JSON.stringify({ components, theme, googleFonts })
+  const { components, theme, googleFonts, code } = payload
+  const serialized = JSON.stringify({ components, theme, googleFonts, code })
   const name = `workspace.json`
 
   await fileSave(

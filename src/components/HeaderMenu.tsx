@@ -25,6 +25,7 @@ import { FiUpload } from 'react-icons/fi'
 import { MdDeleteForever } from 'react-icons/md'
 import { getCustomTheme, getLoadedFonts } from '../core/selectors/app'
 import loadFonts from '../utils/loadFonts'
+import { getAllPagesCode } from '../core/selectors/code'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -49,11 +50,12 @@ const ExportMenuItem = () => {
   const componentsState = useSelector(getState)
   const theme = useSelector(getCustomTheme)
   const googleFonts = useSelector(getLoadedFonts)
+  const code = useSelector(getAllPagesCode)
 
   return (
     <MenuItem
       onClick={() =>
-        saveAsJSON({ components: componentsState, theme, googleFonts })
+        saveAsJSON({ components: componentsState, theme, googleFonts, code })
       }
     >
       <Box mr={2} as={FaSave} />
@@ -109,10 +111,12 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
             onClick={async () => {
               const workspace = await loadFromJSON()
               //reset the existing fonts
+              const { components, theme, googleFonts, code } = workspace
               dispatch.app.setFonts([])
-              dispatch.components.resetAll(workspace.components)
-              dispatch.app.setCustomTheme(workspace.theme)
-              workspace.googleFonts && loadFontsOnImport(workspace.googleFonts)
+              dispatch.components.resetAll(components)
+              dispatch.app.setCustomTheme(theme)
+              googleFonts && loadFontsOnImport(googleFonts)
+              dispatch.code.resetCode(code)
             }}
           >
             <Box mr={2} as={FiUpload} />
