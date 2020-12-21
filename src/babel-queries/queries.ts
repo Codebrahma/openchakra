@@ -13,6 +13,7 @@ import BabelMoveComponent from '../babel-plugins/move-component-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
 import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
+import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -129,6 +130,15 @@ const addProps = (
   }).code
 }
 
+const deleteProp = (
+  code: string,
+  options: { componentId: string; propName: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelDeleteProp, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -143,4 +153,5 @@ export default {
   saveComponent,
   addCustomComponent,
   addProps,
+  deleteProp,
 }

@@ -3,6 +3,7 @@ import { useInspectorState } from '../../../contexts/inspector-context'
 import {
   getSelectedComponent,
   getPropsOfSelectedComp,
+  getSelectedPage,
 } from '../../../core/selectors/components'
 import { useSelector } from 'react-redux'
 import { IoIosFlash } from 'react-icons/io'
@@ -20,6 +21,8 @@ import { SmallCloseIcon, EditIcon } from '@chakra-ui/icons'
 
 import useDispatch from '../../../hooks/useDispatch'
 import { useForm } from '../../../hooks/useForm'
+import babelQueries from '../../../babel-queries/queries'
+import { getCode } from '../../../core/selectors/code'
 
 const SEPARATOR = '='
 
@@ -30,18 +33,23 @@ const AdditionalPropsPanel = () => {
   const activePropsRef = useInspectorState()
   const { id } = useSelector(getSelectedComponent)
   const props = useSelector(getPropsOfSelectedComp)
-  const { setValue } = useForm()
+  const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
 
+  const { setValue } = useForm()
   const [quickProps, setQuickProps] = useState('')
   const [hasError, setError] = useState(false)
 
   const onDelete = (propsName: string) => {
-    const propId = props.find(prop => prop.name === propsName)?.id || ''
+    const propName = props.find(prop => prop.name === propsName)?.name || ''
 
-    dispatch.components.deleteProps({
+    const updatedCode = babelQueries.deleteProp(code, {
       componentId: id,
-      propId,
+      propName,
     })
+    const componentsState = babelQueries.getComponentsState(updatedCode)
+    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.components.updateComponentsState(componentsState)
   }
 
   const submitHandler = (event: FormEvent) => {
