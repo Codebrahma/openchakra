@@ -71,7 +71,7 @@ const EditablePreviewContainer: React.FC<{
         value: event.target.textContent || '',
       })
       // update the code
-      dispatch.code.setCode(updatedCode, selectedPage)
+      dispatch.code.setPageCode(updatedCode, selectedPage)
     }
   }
 

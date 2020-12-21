@@ -101,7 +101,7 @@ const TextPreview: React.FC<{
             value: childrenDetails[0].value,
           })
           // update the code
-          dispatch.code.setCode(updatedCode, selectedPage)
+          dispatch.code.setPageCode(updatedCode, selectedPage)
         }
         dispatch.components.updateTextChildrenProp({
           id: component.id,

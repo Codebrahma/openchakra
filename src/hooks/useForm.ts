@@ -28,7 +28,7 @@ export const useForm = () => {
         value: value.toString(),
       })
       // update the code
-      dispatch.code.setCode(updatedCode, selectedPage)
+      dispatch.code.setPageCode(updatedCode, selectedPage)
     },
     [code, componentId, dispatch.code, dispatch.components, selectedPage],
   )

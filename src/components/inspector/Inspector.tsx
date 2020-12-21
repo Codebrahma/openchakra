@@ -148,7 +148,7 @@ const Inspector = () => {
       componentId: component.id,
     })
     const componentsState = babelQueries.getComponentsState(updatedCode)
-    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
     dispatch.components.updateComponentsState(componentsState)
     dispatch.components.unselect()
   }
@@ -158,7 +158,7 @@ const Inspector = () => {
     })
     const componentsState = babelQueries.getComponentsState(updatedCode)
     dispatch.components.updateComponentsState(componentsState)
-    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
   }
 
   return (
@@ -220,7 +220,7 @@ const Inspector = () => {
                         updatedCode,
                       )
                       dispatch.components.updateComponentsState(componentsState)
-                      dispatch.code.setCode(updatedCode, selectedPage)
+                      dispatch.code.setPageCode(updatedCode, selectedPage)
                       toast({
                         title: 'Component is saved successfully.',
                         status: 'success',

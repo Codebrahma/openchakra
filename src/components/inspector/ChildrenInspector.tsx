@@ -26,7 +26,7 @@ const ChildrenInspector = () => {
     if (updatedCode !== code) {
       const componentsState = babelQueries.getComponentsState(updatedCode)
       dispatch.components.updateComponentsState(componentsState)
-      dispatch.code.setCode(updatedCode, selectedPage)
+      dispatch.code.setPageCode(updatedCode, selectedPage)
     }
   }
 

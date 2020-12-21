@@ -48,7 +48,7 @@ const AdditionalPropsPanel = () => {
       propName,
     })
     const componentsState = babelQueries.getComponentsState(updatedCode)
-    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
     dispatch.components.updateComponentsState(componentsState)
   }
 

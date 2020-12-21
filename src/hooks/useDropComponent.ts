@@ -73,7 +73,7 @@ export const useDropComponent = (
         if (updatedCode !== code) {
           const componentsState = babelQueries.getComponentsState(updatedCode)
           dispatch.components.updateComponentsState(componentsState)
-          dispatch.code.setCode(updatedCode, selectedPage)
+          dispatch.code.setPageCode(updatedCode, selectedPage)
         }
       }
     },
@@ -90,7 +90,7 @@ export const useDropComponent = (
           newParentId: componentId,
         })
         const componentsState = babelQueries.getComponentsState(updatedCode)
-        dispatch.code.setCode(updatedCode, selectedPage)
+        dispatch.code.setPageCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)
       } else {
         let updatedCode: string = ``
@@ -107,7 +107,7 @@ export const useDropComponent = (
           })
         }
         const componentsState = babelQueries.getComponentsState(updatedCode)
-        dispatch.code.setCode(updatedCode, selectedPage)
+        dispatch.code.setPageCode(updatedCode, selectedPage)
         dispatch.components.updateComponentsState(componentsState)
         dispatch.components.unselect()
       }

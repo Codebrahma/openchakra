@@ -45,7 +45,7 @@ const useShortcuts = () => {
     const updatedCode = babelQueries.deleteComponent(code, {
       componentId: selectedComponentId,
     })
-    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {

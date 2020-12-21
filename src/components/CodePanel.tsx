@@ -44,7 +44,7 @@ const CodePanel = () => {
       // This is done for identification of components using id.
       const transformedCode = babelQueries.setIdToComponents(newCode)
       const componentsState = babelQueries.getComponentsState(transformedCode)
-      dispatch.code.setCode(transformedCode, selectedPage)
+      dispatch.code.setPageCode(transformedCode, selectedPage)
       dispatch.components.updateComponentsState(componentsState)
     }
   }
