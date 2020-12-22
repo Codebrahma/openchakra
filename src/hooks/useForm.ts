@@ -30,12 +30,13 @@ export const useForm = () => {
   }
 
   const setValue = (id: string, name: string, value: any) => {
-    dispatch.components.updateProp({
-      componentId,
-      id,
-      name,
-      value,
-    })
+    if (id.length > 0)
+      dispatch.components.updateProp({
+        componentId,
+        id,
+        name,
+        value,
+      })
     const updatedCode = babelQueries.setProp(
       isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
       {
