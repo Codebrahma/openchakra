@@ -107,9 +107,15 @@ const saveComponent = (
   code: string,
   options: { componentId: string; customComponentName: string },
 ) => {
-  return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelSaveComponent, options]],
-  }).code
+  const plugin = new BabelSaveComponent(options)
+
+  const transformed = transform(code, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+  return {
+    updatedCode: transformed.code,
+    customComponentCode: plugin.functionalComponentCode,
+  }
 }
 
 const addCustomComponent = (

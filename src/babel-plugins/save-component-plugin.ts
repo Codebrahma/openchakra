@@ -1,54 +1,43 @@
+import { declare } from '@babel/helper-plugin-utils'
 import { getComponentId, getNode } from './utils/babel-plugin-utils'
 // import * as t from '@babel/types'
 import { generateComponentId } from '../utils/generateId'
+class saveComponentPlugin {
+  functionalComponentCode: string
+  plugin: any
+  constructor(options: { componentId: string; customComponentName: string }) {
+    const { componentId, customComponentName } = options
+    this.functionalComponentCode = ``
 
-const saveComponentPlugin = (
-  _: any,
-  options: {
-    componentId: string
-    customComponentName: string
-  },
-) => {
-  const { componentId, customComponentName } = options
+    this.plugin = declare(() => {
+      return {
+        visitor: {
+          JSXElement: (path: any) => {
+            const element = path.node
+            const visitedComponentId = getComponentId(element.openingElement)
 
-  return {
-    visitor: {
-      JSXElement(path: any) {
-        const element = path.node
-        const visitedComponentId = getComponentId(element.openingElement)
+            if (visitedComponentId === componentId) {
+              // Get the root parent path. Thus we can find the element to move
+              const component = path.toString()
+              const newComponentId = generateComponentId()
 
-        if (visitedComponentId === componentId) {
-          // Get the root parent path. Thus we can find the element to move
-          const component = path.toString()
-          const newComponentId = generateComponentId()
+              const customCompInstance = `<${customComponentName} compId="${newComponentId}"/>`
+              const customCompInstanceNode = getNode(customCompInstance)
 
-          const customCompInstance = `<${customComponentName} compId="${newComponentId}"/>`
-          const customCompInstanceNode = getNode(customCompInstance)
+              this.functionalComponentCode = `import React from 'react'\n;
+               const ${customComponentName}=()=>{return (${component})}\n export default ${customComponentName} `
 
-          const functionalComponent = `const ${customComponentName}=()=>{return (${component})}`
-          const functionalComponentNode = getNode(functionalComponent)
+              // The component that is made as custom component is replaced with the custom component instance
+              path.insertAfter(customCompInstanceNode.expression)
+              path.remove()
 
-          const programPath = path
-            .getAncestry()
-            .find((path: any) => path.type === 'Program')
-
-          // New custom component function will be added after the import statement
-          let index = 0
-          programPath.node.body.forEach((path: any) => {
-            if (path.type === 'ImportDeclaration') index = index + 1
-            else return
-          })
-          programPath.node.body.splice(index, 0, functionalComponentNode)
-
-          // The component that is made as custom component is replaced with the custom component instance
-          path.insertAfter(customCompInstanceNode.expression)
-          path.remove()
-
-          // As The element is found, so we can stop all other traversing
-          path.stop()
-        }
-      },
-    },
+              // As The element is found, so we can stop all other traversing
+              path.stop()
+            }
+          },
+        },
+      }
+    })
   }
 }
 

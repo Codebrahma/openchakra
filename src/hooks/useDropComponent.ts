@@ -7,9 +7,11 @@ import {
   getComponents,
   isChildrenOfCustomComponent,
   getSelectedPage,
+  getCustomComponents,
 } from '../core/selectors/components'
-import { getCode } from '../core/selectors/code'
+import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
+import { searchRootCustomComponent } from '../utils/recursive'
 
 export const useDropComponent = (
   componentId: string,
@@ -29,6 +31,31 @@ export const useDropComponent = (
   )
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
+  const customComponents = useSelector(getCustomComponents)
+  const componentsCode = useSelector(getAllComponentsCode)
+  let rootCustomParent: string = ``
+
+  if (isCustomComponentChild) {
+    rootCustomParent = searchRootCustomComponent(
+      customComponents[componentId],
+      customComponents,
+    )
+  }
+
+  const updateStateAndCode = (
+    code: string,
+    updateInCustomComponent: boolean,
+  ) => {
+    const componentsState = babelQueries.getComponentsState(code)
+
+    if (updateInCustomComponent) {
+      dispatch.code.setComponentsCode(code, rootCustomParent)
+      dispatch.components.updateCustomComponentsState(componentsState)
+    } else {
+      dispatch.code.setPageCode(code, selectedPage)
+      dispatch.components.updateComponentsState(componentsState)
+    }
+  }
 
   const [{ isOver }, drop] = useDrop({
     accept: accept,
@@ -65,15 +92,19 @@ export const useDropComponent = (
         if (fromIndex > toIndex && hoverClientY && hoverClientY > hoverMiddleY)
           return
 
-        const updatedCode = babelQueries.reorderComponentChildren(code, {
-          componentId: selectedComponent.parent,
-          fromIndex,
-          toIndex,
-        })
+        const isCustomComponentUpdate =
+          customComponents[selectedComponent.id] !== undefined ? true : false
+
+        const updatedCode = babelQueries.reorderComponentChildren(
+          isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
+          {
+            componentId: selectedComponent.parent,
+            fromIndex,
+            toIndex,
+          },
+        )
         if (updatedCode !== code) {
-          const componentsState = babelQueries.getComponentsState(updatedCode)
-          dispatch.components.updateComponentsState(componentsState)
-          dispatch.code.setPageCode(updatedCode, selectedPage)
+          updateStateAndCode(updatedCode, isCustomComponentUpdate)
         }
       }
     },
@@ -96,20 +127,23 @@ export const useDropComponent = (
         let updatedCode: string = ``
 
         if (item.custom) {
-          updatedCode = babelQueries.addCustomComponent(code, {
-            parentId: componentId,
-            type: item.id,
-          })
+          updatedCode = babelQueries.addCustomComponent(
+            isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+            {
+              parentId: componentId,
+              type: item.id,
+            },
+          )
         } else {
-          updatedCode = babelQueries.addComponent(code, {
-            parentId: componentId,
-            type: item.type,
-          })
+          updatedCode = updatedCode = babelQueries.addComponent(
+            isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+            {
+              parentId: componentId,
+              type: item.type,
+            },
+          )
         }
-        const componentsState = babelQueries.getComponentsState(updatedCode)
-        dispatch.code.setPageCode(updatedCode, selectedPage)
-        dispatch.components.updateComponentsState(componentsState)
-        dispatch.components.unselect()
+        updateStateAndCode(updatedCode, isCustomComponentChild)
       }
     },
   })

@@ -13,6 +13,14 @@ const addCustomComponentPlugin = (
 
   return {
     visitor: {
+      ImportDeclaration(path: any) {
+        const importAst = template.ast(
+          `import ${type} from './components/${type}.js'`,
+        )
+        if (path.node.source.value === 'react') {
+          path.insertAfter(importAst)
+        }
+      },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
         const componentId = generateComponentId()

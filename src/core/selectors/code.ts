@@ -8,3 +8,11 @@ export const getCode = (state: RootState) => {
 export const getAllPagesCode = (state: RootState) => {
   return state.code.pagesCode
 }
+
+export const getAllComponentsCode = (state: RootState) => {
+  return state.code.componentsCode
+}
+
+export const getCodeState = (state: RootState) => {
+  return state.code
+}

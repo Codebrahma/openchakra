@@ -1,55 +1,115 @@
-import React, { memo, useRef, useState, useEffect } from 'react'
-import { Box, Button, useClipboard } from '@chakra-ui/core'
+import React, { memo } from 'react'
+import {
+  Box,
+  Button,
+  Tabs,
+  TabPanels,
+  TabList,
+  Tab,
+  TabPanel,
+} from '@chakra-ui/core'
+import { AddIcon } from '@chakra-ui/icons'
 import { useSelector } from 'react-redux'
-import { getCode } from '../core/selectors/code'
-import MonacoEditor from '@monaco-editor/react'
+import { getCodeState } from '../core/selectors/code'
+import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
-import formatCode from '../utils/codeGeneration/formatCode'
 import {
-  getChakraComponents,
+  getChakraCompUsedInSelectedPage,
   getSelectedPage,
 } from '../core/selectors/components'
 
+const SaveButton = ({
+  children,
+  onClick,
+}: {
+  children: any
+  onClick: () => void
+}) => {
+  return (
+    <Button
+      onClick={onClick}
+      size="sm"
+      position="absolute"
+      textTransform="uppercase"
+      fontSize="xs"
+      height="30px"
+      top={20}
+      right="2.25em"
+      zIndex={100}
+      bg="#8888FC"
+      color="white"
+      _hover={{ bg: '#4D3DF7' }}
+    >
+      {children}
+    </Button>
+  )
+}
+
+const MonacoEditor = ({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (event: any, value: string | undefined) => void
+}) => {
+  return (
+    <ControlledEditor
+      height="100%"
+      language="javascript"
+      theme="dark"
+      options={{
+        minimap: {
+          enabled: false,
+        },
+        scrollbar: {
+          vertical: 'hidden',
+        },
+      }}
+      value={value}
+      onChange={onChange}
+    />
+  )
+}
+
 const CodePanel = () => {
-  const editorRef = useRef(null)
   const dispatch = useDispatch()
-  const [formattedCode, setFormattedCode] = useState('')
 
   // This includes code with compId prop added to every component.
-  const transformedCode = useSelector(getCode)
-  const allComponents = useSelector(getChakraComponents)
+  const allComponents = useSelector(getChakraCompUsedInSelectedPage)
   const selectedPage = useSelector(getSelectedPage)
 
-  useEffect(() => {
-    // While displaying the code, the comp-id that is been added should be removed.
-    const code = babelQueries.removeComponentId(transformedCode)
-    const codeWithImports = babelQueries.addComponentImports(code, {
-      components: allComponents,
-    })
+  const codeState = useSelector(getCodeState)
 
-    formatCode(codeWithImports).then(code => setFormattedCode(code))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { componentsCode, pagesCode } = codeState
 
-  const handleEditorDidMount = (_: any, editor: any) => {
-    editorRef.current = editor
-  }
-  const saveCodeHandler = () => {
-    const codeEditorElement: any = editorRef.current
-    if (codeEditorElement) {
-      const newCode = codeEditorElement.getValue()
-
-      // Id is set to the props of the every component.
-      // This is done for identification of components using id.
-      const transformedCode = babelQueries.setIdToComponents(newCode)
-      const componentsState = babelQueries.getComponentsState(transformedCode)
-      dispatch.code.setPageCode(transformedCode, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
-    }
+  const formatCode = (code: string) => {
+    const codeWithOutComponentId = babelQueries.removeComponentId(code)
+    const codeWithImports = babelQueries.addComponentImports(
+      codeWithOutComponentId,
+      {
+        components: allComponents,
+      },
+    )
+    return codeWithImports
   }
 
-  const { onCopy, hasCopied } = useClipboard(formattedCode || '')
+  const savePageCodeHandler = (pageName: string, codeValue: string) => {
+    const transformedCode = babelQueries.setIdToComponents(codeValue)
+    const componentsState = babelQueries.getComponentsState(transformedCode)
+    dispatch.code.setPageCode(transformedCode, pageName)
+    dispatch.components.updateComponentsState(componentsState)
+  }
+
+  const saveComponentsCodeHandler = (
+    componentName: string,
+    codeValue: string,
+  ) => {
+    const transformedCode = babelQueries.setIdToComponents(codeValue)
+    const componentsState = babelQueries.getComponentsState(transformedCode)
+    dispatch.code.setComponentsCode(transformedCode, componentName)
+    dispatch.components.updateCustomComponentsState(componentsState)
+  }
 
   return (
     <Box
@@ -60,54 +120,56 @@ const CodePanel = () => {
       position="relative"
       maxWidth="83vw"
     >
-      <Button
-        onClick={onCopy}
-        size="sm"
-        position="absolute"
-        textTransform="uppercase"
-        fontSize="xs"
-        height="30px"
-        top={3}
-        right="2.25em"
-        zIndex={100}
-        bg="#8888FC"
-        color="white"
-        _hover={{ bg: '#4D3DF7' }}
-      >
-        {hasCopied ? 'copied' : 'copy'}
-      </Button>
-      <Button
-        onClick={saveCodeHandler}
-        size="sm"
-        position="absolute"
-        textTransform="uppercase"
-        fontSize="xs"
-        height="30px"
-        top={20}
-        right="2.25em"
-        zIndex={100}
-        bg="#8888FC"
-        color="white"
-        _hover={{ bg: '#4D3DF7' }}
-      >
-        Save Code
-      </Button>
-
-      <MonacoEditor
-        height="100%"
-        value={formattedCode}
-        language="javascript"
-        editorDidMount={handleEditorDidMount}
-        theme="dark"
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          scrollbar: {
-            vertical: 'hidden',
-          },
-        }}
-      />
+      <Tabs variant="enclosed">
+        <TabList>
+          <Tab>App.js</Tab>
+          {Object.keys(componentsCode).map(componentName => (
+            <Tab key={componentName}>{componentName + '.js'}</Tab>
+          ))}
+          <Tab>
+            <AddIcon fontSize="sm" />
+          </Tab>
+        </TabList>
+        <TabPanels height="90vh">
+          <TabPanel height="100%" p={0}>
+            <MonacoEditor
+              value={formatCode(pagesCode[selectedPage])}
+              onChange={(_, value) => {
+                pagesCode[selectedPage] = value || ''
+              }}
+            />
+            <SaveButton
+              onClick={() =>
+                savePageCodeHandler(selectedPage, pagesCode[selectedPage])
+              }
+            >
+              Save Code
+            </SaveButton>
+          </TabPanel>
+          {Object.keys(componentsCode).map(componentName => {
+            return (
+              <TabPanel height="100%" p={0} key={componentName}>
+                <MonacoEditor
+                  value={formatCode(componentsCode[componentName])}
+                  onChange={(_, value) => {
+                    componentsCode[componentName] = value || ''
+                  }}
+                />
+                <SaveButton
+                  onClick={() =>
+                    saveComponentsCodeHandler(
+                      componentName,
+                      componentsCode[componentName],
+                    )
+                  }
+                >
+                  Save Code
+                </SaveButton>
+              </TabPanel>
+            )
+          })}
+        </TabPanels>
+      </Tabs>
     </Box>
   )
 }

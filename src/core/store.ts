@@ -38,7 +38,7 @@ const persistThemeConfig = {
 const persistCodeConfig = {
   key: `composer_code_v${version}`,
   storage,
-  whitelist: ['code'],
+  whitelist: ['pagesCode', 'componentsCode'],
   version,
   throttle: 500,
 }

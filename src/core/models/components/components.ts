@@ -481,25 +481,42 @@ const components = createModel({
       payload: {
         components: IComponents
         props: IProps
-        customComponents: IComponents
-        customComponentsProps: IProps
       },
     ) {
       return produce(state, (draftState: ComponentsState) => {
-        const {
-          components,
-          props,
-          customComponents,
-          customComponentsProps,
-        } = payload
+        const { components, props } = payload
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
         const propsId = draftState.pages[draftState.selectedPage].componentsId
 
         draftState.componentsById[componentsId] = components
         draftState.propsById[propsId] = props
-        draftState.customComponents = customComponents
-        draftState.customComponentsProps = customComponentsProps
+      })
+    },
+    updateCustomComponentsState(
+      state: ComponentsState,
+      payload: {
+        components: IComponents
+        props: IProps
+      },
+    ) {
+      return produce(state, (draftState: ComponentsState) => {
+        const { components, props } = payload
+
+        draftState.customComponents = {
+          ...draftState.customComponents,
+          ...components,
+        }
+        draftState.customComponentsProps = {
+          byId: {
+            ...draftState.customComponentsProps.byId,
+            ...props.byId,
+          },
+          byComponentId: {
+            ...draftState.customComponentsProps.byComponentId,
+            ...props.byComponentId,
+          },
+        }
       })
     },
   },
