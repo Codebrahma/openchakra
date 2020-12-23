@@ -7,6 +7,7 @@ import {
   TabList,
   Tab,
   TabPanel,
+  IconButton,
 } from '@chakra-ui/core'
 import { AddIcon } from '@chakra-ui/icons'
 import { useSelector } from 'react-redux'
@@ -18,6 +19,7 @@ import {
   getChakraCompUsedInSelectedPage,
   getSelectedPage,
 } from '../core/selectors/components'
+import { generateComponentId } from '../utils/generateId'
 
 const SaveButton = ({
   children,
@@ -78,7 +80,6 @@ const CodePanel = () => {
   // This includes code with compId prop added to every component.
   const allComponents = useSelector(getChakraCompUsedInSelectedPage)
   const selectedPage = useSelector(getSelectedPage)
-
   const codeState = useSelector(getCodeState)
 
   const { componentsCode, pagesCode } = codeState
@@ -111,6 +112,31 @@ const CodePanel = () => {
     dispatch.components.updateCustomComponentsState(componentsState)
   }
 
+  const createNewFileHandler = () => {
+    const customComponentName: string =
+      window.prompt('Enter the custom component name') || ''
+    const componentId = generateComponentId()
+
+    if (customComponentName.length > 1) {
+      const customComponentCode = `
+    import React from 'react';
+    import {Box} from '@chakra-ui/core'
+
+    const ${customComponentName} =()=>{
+      return (
+        <Box compId='${componentId}'></Box>
+      )
+    }
+    export default ${customComponentName}
+    `
+      dispatch.code.setComponentsCode(customComponentCode, customComponentName)
+      const componentsState = babelQueries.getComponentsState(
+        customComponentCode,
+      )
+      dispatch.components.updateCustomComponentsState(componentsState)
+    }
+  }
+
   return (
     <Box
       fontSize="sm"
@@ -126,9 +152,12 @@ const CodePanel = () => {
           {Object.keys(componentsCode).map(componentName => (
             <Tab key={componentName}>{componentName + '.js'}</Tab>
           ))}
-          <Tab>
-            <AddIcon fontSize="sm" />
-          </Tab>
+          <IconButton
+            aria-label="Search database"
+            icon={<AddIcon />}
+            backgroundColor="white"
+            onClick={createNewFileHandler}
+          />
         </TabList>
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
