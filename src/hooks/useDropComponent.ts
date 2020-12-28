@@ -204,7 +204,9 @@ export const useDropComponent = (
           componentId: item.id,
           parentId,
         })
-        moveComponentBabelQueryHandler(item.id)
+        setTimeout(() => {
+          moveComponentBabelQueryHandler(item.id)
+        }, 200)
       } else {
         let updatedCode: string = ``
         if (item.custom) {
