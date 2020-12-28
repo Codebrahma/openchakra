@@ -12,7 +12,6 @@ import {
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
-import builder from '../core/models/composer/builder'
 
 export const useDropComponent = (
   componentId: string,
@@ -41,6 +40,21 @@ export const useDropComponent = (
       customComponents[componentId],
       customComponents,
     )
+  }
+
+  const updateStateAndCode = (
+    code: string,
+    updateInCustomComponent: boolean,
+  ) => {
+    const componentsState = babelQueries.getComponentsState(code)
+
+    if (updateInCustomComponent) {
+      dispatch.code.setComponentsCode(code, rootCustomParent)
+      dispatch.components.updateCustomComponentsState(componentsState)
+    } else {
+      dispatch.code.setPageCode(code, selectedPage)
+      dispatch.components.updateComponentsState(componentsState)
+    }
   }
 
   const [{ isOver }, drop] = useDrop({
@@ -119,12 +133,7 @@ export const useDropComponent = (
         dispatch.code.setPageCode(updatedCode, selectedPage)
       } else {
         let updatedCode: string = ``
-
         if (item.custom) {
-          dispatch.components.addCustomComponent({
-            parentId: componentId,
-            type: item.id,
-          })
           updatedCode = babelQueries.addCustomComponent(
             isCustomComponentChild ? componentsCode[rootCustomParent] : code,
             {
@@ -133,16 +142,6 @@ export const useDropComponent = (
             },
           )
         } else {
-          if (item.isMeta) {
-            dispatch.components.addMetaComponent(
-              builder[item.type](componentId),
-            )
-          } else {
-            dispatch.components.addComponent({
-              parentName: componentId,
-              type: item.type,
-            })
-          }
           updatedCode = updatedCode = babelQueries.addComponent(
             isCustomComponentChild ? componentsCode[rootCustomParent] : code,
             {
@@ -151,10 +150,7 @@ export const useDropComponent = (
             },
           )
         }
-        dispatch.code.setPageCode(
-          updatedCode,
-          isCustomComponentChild ? rootCustomParent : selectedPage,
-        )
+        updateStateAndCode(updatedCode, isCustomComponentChild)
       }
     },
   })

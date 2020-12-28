@@ -171,18 +171,21 @@ const Inspector = () => {
     dispatch.components.unselect()
   }
   const duplicateComponentHandler = () => {
-    dispatch.components.duplicate()
     const updatedCode = babelQueries.duplicateComponent(
       isCustomComponentChild ? componentsCode[rootCustomParent] : code,
       {
         componentId: component.id,
       },
     )
+    const componentsState = babelQueries.getComponentsState(code)
 
-    dispatch.code.setPageCode(
-      updatedCode,
-      isCustomComponentChild ? rootCustomParent : selectedPage,
-    )
+    if (isCustomComponentChild) {
+      dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
+      dispatch.components.updateCustomComponentsState(componentsState)
+    } else {
+      dispatch.code.setPageCode(updatedCode, selectedPage)
+      dispatch.components.updateComponentsState(componentsState)
+    }
   }
 
   return (
