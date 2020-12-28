@@ -16,7 +16,6 @@ class removeComponentPlugin {
             const visitedComponentId = getComponentId(element.openingElement)
             if (visitedComponentId === componentId) {
               // Remove the element from its original position
-              console.log(path.toString())
               this.removedComponent = path.toString()
               path.remove()
               path.stop()
