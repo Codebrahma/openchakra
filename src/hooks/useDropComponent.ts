@@ -70,7 +70,11 @@ export const useDropComponent = (
     }
 
     // If the component is dragged into the same custom component.
-    if (rootParentOfComponent === rootParentOfParentElement) return
+    if (
+      rootParentOfComponent !== '' &&
+      rootParentOfComponent === rootParentOfParentElement
+    )
+      return
 
     // Normal component moved from normal component to another normal component
     if (!isCustomComponentUpdate && !isParentCustomComponent) {
