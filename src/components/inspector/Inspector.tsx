@@ -155,40 +155,34 @@ const Inspector = () => {
     }
   }
 
-  const updateStateAndCode = (
-    code: string,
-    updateInCustomComponent: boolean,
-  ) => {
-    const componentsState = babelQueries.getComponentsState(code)
-
-    if (updateInCustomComponent) {
-      dispatch.code.setComponentsCode(code, rootCustomParent)
-      dispatch.components.updateCustomComponentsState(componentsState)
-    } else {
-      dispatch.code.setPageCode(code, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
-    }
-  }
-
   const removeComponentHandler = () => {
+    dispatch.components.deleteComponent(component.id)
     const updatedCode = babelQueries.deleteComponent(
       isCustomComponentChild ? componentsCode[rootCustomParent] : code,
       {
         componentId: component.id,
       },
     )
-    updateStateAndCode(updatedCode, isCustomComponentChild)
+    dispatch.code.setPageCode(
+      updatedCode,
+      isCustomComponentChild ? rootCustomParent : selectedPage,
+    )
 
     dispatch.components.unselect()
   }
   const duplicateComponentHandler = () => {
+    dispatch.components.duplicate()
     const updatedCode = babelQueries.duplicateComponent(
       isCustomComponentChild ? componentsCode[rootCustomParent] : code,
       {
         componentId: component.id,
       },
     )
-    updateStateAndCode(updatedCode, isCustomComponentChild)
+
+    dispatch.code.setPageCode(
+      updatedCode,
+      isCustomComponentChild ? rootCustomParent : selectedPage,
+    )
   }
 
   return (
@@ -242,6 +236,7 @@ const Inspector = () => {
                         position: 'top',
                       })
                     else {
+                      dispatch.components.saveComponent(editedName)
                       const {
                         updatedCode,
                         customComponentCode,
@@ -249,16 +244,6 @@ const Inspector = () => {
                         componentId: component.id,
                         customComponentName: editedName,
                       })
-                      const componentsState = babelQueries.getComponentsState(
-                        updatedCode,
-                      )
-                      const customComponentsState = babelQueries.getComponentsState(
-                        customComponentCode,
-                      )
-                      dispatch.components.updateComponentsState(componentsState)
-                      dispatch.components.updateCustomComponentsState(
-                        customComponentsState,
-                      )
                       dispatch.code.setPageCode(updatedCode, selectedPage)
                       dispatch.code.setComponentsCode(
                         customComponentCode,
