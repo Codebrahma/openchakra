@@ -9,11 +9,12 @@ import BabelDuplicateComponent from '../babel-plugins/duplicate-component-plugin
 import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
-import BabelMoveComponent from '../babel-plugins/move-component-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
 import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
 import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
+import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
+import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -94,13 +95,44 @@ const addComponentImports = (
   }).code
 }
 
+// Here two babel plugins are used.
+// One plugin is used to remove the specified component from its parent and it will return the removed component.
+// Another plugin is used to insert the removed component in its new component
 const moveComponent = (
-  code: string,
-  options: { componentId: string; newParentId: string },
+  sourceCode: string,
+  destinationCode: string,
+  options: { componentId: string; destParentId: string },
 ) => {
-  return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelMoveComponent, options]],
-  }).code
+  const plugin = new BabelRemoveMovedComponentFromSource({
+    componentId: options.componentId,
+  })
+
+  const transformedSource = transform(sourceCode, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  // If the source and destination code is same, the transformed code from the source is used here.
+  // Because we need to perform both remove component from old parent and insert component in new parent in same code
+  const transformedDest = transform(
+    sourceCode === destinationCode ? transformedSource.code : destinationCode,
+    {
+      plugins: [
+        babelPluginSyntaxJsx,
+        [
+          BabelInsertMovedComponentToDest,
+          {
+            parentId: options.destParentId,
+            componentToInsert: plugin.removedComponent,
+          },
+        ],
+      ],
+    },
+  )
+
+  return {
+    updatedSourceCode: transformedSource.code,
+    updatedDestCode: transformedDest.code,
+  }
 }
 
 const saveComponent = (
