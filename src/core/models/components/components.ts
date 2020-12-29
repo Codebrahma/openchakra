@@ -234,17 +234,13 @@ const components = createModel({
     addComponent(
       state: ComponentsState,
       payload: {
-        parentName: string
+        componentId: string
+        parentId: string
         type: ComponentType
-        rootParentType?: ComponentType
-        testId?: string
       },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        addComponent(draftState, {
-          parentId: payload.parentName,
-          type: payload.type,
-        })
+        addComponent(draftState, payload)
       })
     },
     addCustomComponent(

@@ -62,14 +62,10 @@ const duplicateComponent = (code: string, options: { componentId: string }) => {
 
 const addComponent = (
   code: string,
-  options: { parentId: string; type: string },
+  options: { componentId: string; parentId: string; type: string },
 ) => {
   return transform(code, {
-    plugins: [
-      babelPluginSyntaxJsx,
-      [BabelAddComponent, options],
-      BabelSetComponentId,
-    ],
+    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
   }).code
 }
 

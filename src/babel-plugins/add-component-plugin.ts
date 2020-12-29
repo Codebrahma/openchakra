@@ -1,4 +1,4 @@
-import { getComponentId } from './utils/babel-plugin-utils'
+import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
 import template from '@babel/template'
 import * as t from '@babel/types'
 import componentsStructure from '../utils/defaultComponentStructure'
@@ -6,11 +6,12 @@ import componentsStructure from '../utils/defaultComponentStructure'
 const addComponentPlugin = (
   _: any,
   options: {
+    componentId: string
     parentId: string
     type: string
   },
 ) => {
-  const { parentId, type } = options
+  const { componentId, parentId, type } = options
 
   return {
     visitor: {
@@ -23,6 +24,11 @@ const addComponentPlugin = (
           const node = template.ast(componentsStructure[type], {
             plugins: ['jsx'],
           }).expression
+
+          // Convert to jsx attribute with compId as name.
+          const jsxAttribute = toJsxAttribute('compId', componentId)
+
+          node.openingElement.attributes.push(jsxAttribute)
 
           const newLineText = t.jsxText('\n')
 

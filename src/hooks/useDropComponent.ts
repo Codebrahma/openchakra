@@ -12,6 +12,7 @@ import {
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
+import { generateComponentId } from '../utils/generateId'
 
 export const useDropComponent = (
   parentId: string,
@@ -220,15 +221,26 @@ export const useDropComponent = (
             },
           )
         } else {
-          updatedCode = updatedCode = babelQueries.addComponent(
-            isCustomComponentChild
-              ? componentsCode[rootParentOfParentElement]
-              : code,
-            {
+          if (item.isMeta) {
+          } else {
+            const newComponentId = generateComponentId()
+            dispatch.components.addComponent({
+              componentId: newComponentId,
               parentId,
               type: item.type,
-            },
-          )
+            })
+            updatedCode = updatedCode = babelQueries.addComponent(
+              isCustomComponentChild
+                ? componentsCode[rootParentOfParentElement]
+                : code,
+              {
+                componentId: newComponentId,
+                parentId,
+                type: item.type,
+              },
+            )
+            dispatch.code.setPageCode(selectedPage, updatedCode)
+          }
         }
         updateStateAndCode(updatedCode, isCustomComponentChild)
       }
