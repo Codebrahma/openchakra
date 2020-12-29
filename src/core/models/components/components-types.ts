@@ -1,9 +1,16 @@
 import { ComponentsState } from './components'
+import { CodeState } from '../code'
 
 export type ComponentsStateWithUndo = {
   past: ComponentsState[]
   present: ComponentsState
   future: ComponentsState[]
+}
+
+export type CodeStateWithUndo = {
+  past: CodeState[]
+  present: CodeState
+  future: CodeState[]
 }
 
 export type ChildrenPropDetails = Array<{
