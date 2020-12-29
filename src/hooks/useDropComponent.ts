@@ -14,6 +14,9 @@ import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
 import { generateComponentId } from '../utils/generateId'
 
+import builder from '../core/models/composer/builder'
+import { IComponentIds } from '../babel-plugins/add-meta-component-plugin'
+
 export const useDropComponent = (
   parentId: string,
   accept: (ComponentType | MetaComponentType)[] = [...rootComponents],
@@ -197,6 +200,7 @@ export const useDropComponent = (
         let updatedCode: string = ``
         const newComponentId = generateComponentId()
 
+        // TODO : Yet to be refactored. Everything should go into a private function
         if (item.custom) {
           dispatch.components.addCustomComponent({
             componentId: newComponentId,
@@ -213,26 +217,42 @@ export const useDropComponent = (
               type: item.id,
             },
           )
+        } else if (item.isMeta) {
+          const componentIds: IComponentIds = {}
+
+          const metaBuilderObject = builder[item.type](parentId)
+          const components = metaBuilderObject.components
+
+          // type will be the key and the id will be the value.
+          Object.values(components).forEach(component => {
+            componentIds[component.type] = component.id
+          })
+
+          dispatch.components.addMetaComponent(metaBuilderObject)
+
+          updatedCode = babelQueries.addMetaComponent(code, {
+            componentIds,
+            parentId,
+            type: item.type,
+          })
         } else {
-          if (item.isMeta) {
-          } else {
-            dispatch.components.addComponent({
+          dispatch.components.addComponent({
+            componentId: newComponentId,
+            parentId,
+            type: item.type,
+          })
+          updatedCode = updatedCode = babelQueries.addComponent(
+            isCustomComponentChild
+              ? componentsCode[rootParentOfParentElement]
+              : code,
+            {
               componentId: newComponentId,
               parentId,
               type: item.type,
-            })
-            updatedCode = updatedCode = babelQueries.addComponent(
-              isCustomComponentChild
-                ? componentsCode[rootParentOfParentElement]
-                : code,
-              {
-                componentId: newComponentId,
-                parentId,
-                type: item.type,
-              },
-            )
-          }
+            },
+          )
         }
+
         if (updatedCode.length > 0) {
           if (isCustomComponentChild) {
             dispatch.code.setComponentsCode(
