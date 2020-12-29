@@ -1,5 +1,6 @@
 import { getComponentId } from './utils/babel-plugin-utils'
 import template from '@babel/template'
+import * as t from '@babel/types'
 import { generateComponentId } from '../utils/generateId'
 
 const addCustomComponentPlugin = (
@@ -13,14 +14,6 @@ const addCustomComponentPlugin = (
 
   return {
     visitor: {
-      ImportDeclaration(path: any) {
-        const importAst = template.ast(
-          `import ${type} from './components/${type}.js'`,
-        )
-        if (path.node.source.value === 'react') {
-          path.insertAfter(importAst)
-        }
-      },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
         const componentId = generateComponentId()
@@ -32,12 +25,14 @@ const addCustomComponentPlugin = (
           const node = template.ast(component, {
             plugins: ['jsx'],
           }).expression
+          const newLineText = t.jsxText('\n')
 
           // Add to the children of the parent component
-          if (path.node.children) {
+          if (path.node.children.length > 0) {
             path.node.children.push(node)
+            path.node.children.push(newLineText)
           } else {
-            path.node.children = [node]
+            path.node.children = [newLineText, node, newLineText]
           }
         }
       },

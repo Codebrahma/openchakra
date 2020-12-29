@@ -1,5 +1,6 @@
 import { getComponentId } from './utils/babel-plugin-utils'
 import template from '@babel/template'
+import * as t from '@babel/types'
 import componentsStructure from '../utils/defaultComponentStructure'
 
 const addComponentPlugin = (
@@ -23,11 +24,14 @@ const addComponentPlugin = (
             plugins: ['jsx'],
           }).expression
 
+          const newLineText = t.jsxText('\n')
+
           // Add to the children of the parent component
-          if (path.node.children) {
+          if (path.node.children.length > 0) {
             path.node.children.push(node)
+            path.node.children.push(newLineText)
           } else {
-            path.node.children = [node]
+            path.node.children = [newLineText, node, newLineText]
           }
         }
       },
