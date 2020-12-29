@@ -43,21 +43,6 @@ export const useDropComponent = (
     )
   }
 
-  const updateStateAndCode = (
-    code: string,
-    updateInCustomComponent: boolean,
-  ) => {
-    const componentsState = babelQueries.getComponentsState(code)
-
-    if (updateInCustomComponent) {
-      dispatch.code.setComponentsCode(code, rootParentOfParentElement)
-      dispatch.components.updateCustomComponentsState(componentsState)
-    } else {
-      dispatch.code.setPageCode(code, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
-    }
-  }
-
   const moveComponentBabelQueryHandler = (componentId: string) => {
     const isCustomComponentUpdate = customComponents[componentId] ? true : false
     const isParentCustomComponent = isCustomComponentChild
@@ -210,12 +195,20 @@ export const useDropComponent = (
         }, 200)
       } else {
         let updatedCode: string = ``
+        const newComponentId = generateComponentId()
+
         if (item.custom) {
+          dispatch.components.addCustomComponent({
+            componentId: newComponentId,
+            parentId,
+            type: item.id,
+          })
           updatedCode = babelQueries.addCustomComponent(
             isCustomComponentChild
               ? componentsCode[rootParentOfParentElement]
               : code,
             {
+              componentId: newComponentId,
               parentId,
               type: item.id,
             },
@@ -223,7 +216,6 @@ export const useDropComponent = (
         } else {
           if (item.isMeta) {
           } else {
-            const newComponentId = generateComponentId()
             dispatch.components.addComponent({
               componentId: newComponentId,
               parentId,
@@ -239,10 +231,18 @@ export const useDropComponent = (
                 type: item.type,
               },
             )
-            dispatch.code.setPageCode(selectedPage, updatedCode)
           }
         }
-        updateStateAndCode(updatedCode, isCustomComponentChild)
+        if (updatedCode.length > 0) {
+          if (isCustomComponentChild) {
+            dispatch.code.setComponentsCode(
+              updatedCode,
+              rootParentOfParentElement,
+            )
+          } else {
+            dispatch.code.setPageCode(updatedCode, selectedPage)
+          }
+        }
       }
     },
   })
