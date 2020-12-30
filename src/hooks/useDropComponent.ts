@@ -204,9 +204,16 @@ export const useDropComponent = (
           componentId: item.id,
           parentId,
         })
-        setTimeout(() => {
-          moveComponentBabelQueryHandler(item.id)
-        }, 200)
+        const oldParentId = isCustomComponentChild
+          ? customComponents[item.id].parent
+          : components[item.id].parent
+
+        // Only if the parent changes, the component should be moved or else the component should just be reordered.
+        if (oldParentId !== parentId) {
+          setTimeout(() => {
+            moveComponentBabelQueryHandler(item.id)
+          }, 200)
+        }
       } else {
         let updatedCode: string = ``
         if (item.custom) {
