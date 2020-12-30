@@ -16,3 +16,7 @@ export const getAllComponentsCode = (state: RootState) => {
 export const getCodeState = (state: RootState) => {
   return state.code.present
 }
+
+export const getPageCode = (pageName: string) => (state: RootState) => {
+  return state.code.present.pagesCode[pageName]
+}
