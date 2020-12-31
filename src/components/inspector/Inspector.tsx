@@ -40,7 +40,11 @@ import {
   getIsSelectionEnabled,
 } from '../../core/selectors/text'
 import babelQueries from '../../babel-queries/queries'
-import { getCode, getAllComponentsCode } from '../../core/selectors/code'
+import {
+  getCode,
+  getAllComponentsCode,
+  getPageCode,
+} from '../../core/selectors/code'
 import { searchRootCustomComponent } from '../../utils/recursive'
 import buildComponentIds from '../../utils/componentIdsBuilder'
 
@@ -104,6 +108,7 @@ const Inspector = () => {
   const isContainerComponent = useSelector(checkIsContainerComponent(id))
   const code = useSelector(getCode)
   const componentsCode = useSelector(getAllComponentsCode)
+  const customPageCode = useSelector(getPageCode('customPage'))
   let rootCustomParent: string = ``
 
   if (isCustomComponentChild) {
@@ -301,9 +306,20 @@ const Inspector = () => {
                     isCustomComponentChild ? customComponents : components,
                   )
 
-                  dispatch.components.exportSelectedComponentToCustomPage(
-                    componentIds,
+                  dispatch.components.exportSelectedComponentToCustomPage([
+                    ...componentIds,
+                  ])
+                  const updatedCode = babelQueries.exportToCustomComponentsPage(
+                    code,
+                    customPageCode,
+                    {
+                      componentId: component.id,
+                      componentIds: [...componentIds],
+                    },
                   )
+
+                  dispatch.code.setPageCode(updatedCode, 'customPage')
+
                   toast({
                     title: 'Component is exported successfully.',
                     status: 'success',
