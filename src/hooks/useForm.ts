@@ -37,18 +37,21 @@ export const useForm = () => {
         name,
         value,
       })
-    const updatedCode = babelQueries.setProp(
-      isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
-      {
-        componentId,
-        propName: name,
-        value: value.toString(),
-      },
-    )
-    // update the code
-    isCustomComponentUpdate
-      ? dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-      : dispatch.code.setPageCode(updatedCode, selectedPage)
+
+    setTimeout(() => {
+      const updatedCode = babelQueries.setProp(
+        isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
+        {
+          componentId,
+          propName: name,
+          value: value.toString(),
+        },
+      )
+      // update the code
+      isCustomComponentUpdate
+        ? dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
+        : dispatch.code.setPageCode(updatedCode, selectedPage)
+    }, 200)
   }
 
   return { setValue }

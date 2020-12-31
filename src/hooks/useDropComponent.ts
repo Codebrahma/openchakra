@@ -121,6 +121,14 @@ export const useDropComponent = (
     }
   }
 
+  const updateCode = (code: string) => {
+    if (code.length > 0) {
+      // update the code
+      isCustomComponentChild
+        ? dispatch.code.setComponentsCode(code, rootParentOfParentElement)
+        : dispatch.code.setPageCode(code, selectedPage)
+    }
+  }
   const [{ isOver }, drop] = useDrop({
     accept: accept,
     collect: monitor => ({
@@ -164,20 +172,19 @@ export const useDropComponent = (
           fromIndex,
           toIndex,
         })
-        const updatedCode = babelQueries.reorderComponentChildren(
-          isCustomComponentUpdate
-            ? componentsCode[rootParentOfParentElement]
-            : code,
-          {
-            componentId: selectedComponent.parent,
-            fromIndex,
-            toIndex,
-          },
-        )
-        dispatch.code.setPageCode(
-          updatedCode,
-          isCustomComponentUpdate ? rootParentOfParentElement : selectedPage,
-        )
+        setTimeout(() => {
+          const updatedCode = babelQueries.reorderComponentChildren(
+            isCustomComponentUpdate
+              ? componentsCode[rootParentOfParentElement]
+              : code,
+            {
+              componentId: selectedComponent.parent,
+              fromIndex,
+              toIndex,
+            },
+          )
+          updateCode(updatedCode)
+        }, 200)
       }
     },
     canDrop: () => canDrop,
@@ -213,53 +220,51 @@ export const useDropComponent = (
             parentId,
             type: item.id,
           })
-          updatedCode = babelQueries.addCustomComponent(
-            isCustomComponentChild
-              ? componentsCode[rootParentOfParentElement]
-              : code,
-            {
-              componentId: newComponentId,
-              parentId,
-              type: item.id,
-            },
-          )
+          setTimeout(() => {
+            updatedCode = babelQueries.addCustomComponent(
+              isCustomComponentChild
+                ? componentsCode[rootParentOfParentElement]
+                : code,
+              {
+                componentId: newComponentId,
+                parentId,
+                type: item.id,
+              },
+            )
+            updateCode(updatedCode)
+          }, 200)
         } else if (item.isMeta) {
           const metaBuilderObject = builder[item.type](parentId)
 
           dispatch.components.addMetaComponent(metaBuilderObject)
 
-          updatedCode = babelQueries.addMetaComponent(code, {
-            componentIds: metaBuilderObject.componentIds,
-            parentId,
-            type: item.type,
-          })
+          setTimeout(() => {
+            updatedCode = babelQueries.addMetaComponent(code, {
+              componentIds: metaBuilderObject.componentIds,
+              parentId,
+              type: item.type,
+            })
+            updateCode(updatedCode)
+          }, 200)
         } else {
           dispatch.components.addComponent({
             componentId: newComponentId,
             parentId,
             type: item.type,
           })
-          updatedCode = updatedCode = babelQueries.addComponent(
-            isCustomComponentChild
-              ? componentsCode[rootParentOfParentElement]
-              : code,
-            {
-              componentId: newComponentId,
-              parentId,
-              type: item.type,
-            },
-          )
-        }
-
-        if (updatedCode.length > 0) {
-          if (isCustomComponentChild) {
-            dispatch.code.setComponentsCode(
-              updatedCode,
-              rootParentOfParentElement,
+          setTimeout(() => {
+            updatedCode = updatedCode = babelQueries.addComponent(
+              isCustomComponentChild
+                ? componentsCode[rootParentOfParentElement]
+                : code,
+              {
+                componentId: newComponentId,
+                parentId,
+                type: item.type,
+              },
             )
-          } else {
-            dispatch.code.setPageCode(updatedCode, selectedPage)
-          }
+            updateCode(updatedCode)
+          }, 200)
         }
       }
     },
