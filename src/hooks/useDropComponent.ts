@@ -12,6 +12,9 @@ import {
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
+import { generateComponentId } from '../utils/generateId'
+
+import builder from '../core/models/composer/builder'
 
 export const useDropComponent = (
   parentId: string,
@@ -40,21 +43,6 @@ export const useDropComponent = (
       customComponents[parentId],
       customComponents,
     )
-  }
-
-  const updateStateAndCode = (
-    code: string,
-    updateInCustomComponent: boolean,
-  ) => {
-    const componentsState = babelQueries.getComponentsState(code)
-
-    if (updateInCustomComponent) {
-      dispatch.code.setComponentsCode(code, rootParentOfParentElement)
-      dispatch.components.updateCustomComponentsState(componentsState)
-    } else {
-      dispatch.code.setPageCode(code, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
-    }
   }
 
   const moveComponentBabelQueryHandler = (componentId: string) => {
@@ -209,28 +197,63 @@ export const useDropComponent = (
         }, 200)
       } else {
         let updatedCode: string = ``
+        const newComponentId = generateComponentId()
+
+        // TODO : Yet to be refactored. Everything should go into a private function
         if (item.custom) {
+          dispatch.components.addCustomComponent({
+            componentId: newComponentId,
+            parentId,
+            type: item.id,
+          })
           updatedCode = babelQueries.addCustomComponent(
             isCustomComponentChild
               ? componentsCode[rootParentOfParentElement]
               : code,
             {
+              componentId: newComponentId,
               parentId,
               type: item.id,
             },
           )
+        } else if (item.isMeta) {
+          const metaBuilderObject = builder[item.type](parentId)
+
+          dispatch.components.addMetaComponent(metaBuilderObject)
+
+          updatedCode = babelQueries.addMetaComponent(code, {
+            componentIds: metaBuilderObject.componentIds,
+            parentId,
+            type: item.type,
+          })
         } else {
+          dispatch.components.addComponent({
+            componentId: newComponentId,
+            parentId,
+            type: item.type,
+          })
           updatedCode = updatedCode = babelQueries.addComponent(
             isCustomComponentChild
               ? componentsCode[rootParentOfParentElement]
               : code,
             {
+              componentId: newComponentId,
               parentId,
               type: item.type,
             },
           )
         }
-        updateStateAndCode(updatedCode, isCustomComponentChild)
+
+        if (updatedCode.length > 0) {
+          if (isCustomComponentChild) {
+            dispatch.code.setComponentsCode(
+              updatedCode,
+              rootParentOfParentElement,
+            )
+          } else {
+            dispatch.code.setPageCode(updatedCode, selectedPage)
+          }
+        }
       }
     },
   })

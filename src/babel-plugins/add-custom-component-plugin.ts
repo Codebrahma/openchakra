@@ -1,22 +1,21 @@
 import { getComponentId } from './utils/babel-plugin-utils'
 import template from '@babel/template'
 import * as t from '@babel/types'
-import { generateComponentId } from '../utils/generateId'
 
 const addCustomComponentPlugin = (
   _: any,
   options: {
+    componentId: string
     parentId: string
     type: string
   },
 ) => {
-  const { parentId, type } = options
+  const { componentId, parentId, type } = options
 
   return {
     visitor: {
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
-        const componentId = generateComponentId()
 
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {

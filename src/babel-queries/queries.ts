@@ -10,11 +10,12 @@ import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
-import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
+import BabelAddCustomComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
 import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
 import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
+import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -54,7 +55,10 @@ const deleteComponent = (code: string, options: { componentId: string }) => {
   }).code
 }
 
-const duplicateComponent = (code: string, options: { componentId: string }) => {
+const duplicateComponent = (
+  code: string,
+  options: { componentId: string; componentIds: string[] },
+) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelDuplicateComponent, options]],
   }).code
@@ -62,14 +66,10 @@ const duplicateComponent = (code: string, options: { componentId: string }) => {
 
 const addComponent = (
   code: string,
-  options: { parentId: string; type: string },
+  options: { componentId: string; parentId: string; type: string },
 ) => {
   return transform(code, {
-    plugins: [
-      babelPluginSyntaxJsx,
-      [BabelAddComponent, options],
-      BabelSetComponentId,
-    ],
+    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
   }).code
 }
 
@@ -152,7 +152,7 @@ const saveComponent = (
 
 const addCustomComponent = (
   code: string,
-  options: { parentId: string; type: string },
+  options: { componentId: string; parentId: string; type: string },
 ) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelAddCustomComponent, options]],
@@ -177,6 +177,15 @@ const deleteProp = (
   }).code
 }
 
+const addMetaComponent = (
+  code: string,
+  options: { componentIds: string[]; parentId: string; type: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelAddMetaComponent, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -192,4 +201,5 @@ export default {
   addCustomComponent,
   addProps,
   deleteProp,
+  addMetaComponent,
 }

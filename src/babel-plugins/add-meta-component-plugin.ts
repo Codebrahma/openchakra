@@ -1,17 +1,23 @@
-import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
+import traverse from '@babel/traverse'
 import template from '@babel/template'
 import * as t from '@babel/types'
+
+import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
 import componentsStructure from '../utils/defaultComponentStructure'
 
-const addComponentPlugin = (
+export interface IComponentIds {
+  [type: string]: string
+}
+
+const addMetaComponentPlugin = (
   _: any,
   options: {
-    componentId: string
+    componentIds: string[]
     parentId: string
     type: string
   },
 ) => {
-  const { componentId, parentId, type } = options
+  const { componentIds, parentId, type } = options
 
   return {
     visitor: {
@@ -25,10 +31,21 @@ const addComponentPlugin = (
             plugins: ['jsx'],
           }).expression
 
-          // Convert to jsx attribute with compId as name.
-          const jsxAttribute = toJsxAttribute('compId', componentId)
-
-          node.openingElement.attributes.push(jsxAttribute)
+          // Traverse into the node and assign component-id prop to every element
+          traverse(
+            node,
+            {
+              JSXOpeningElement(path: any) {
+                const componentId = componentIds.shift()
+                if (componentId) {
+                  const compIdAttribute = toJsxAttribute('compId', componentId)
+                  path.node.attributes.push(compIdAttribute)
+                }
+              },
+            },
+            path.scope,
+            path,
+          )
 
           const newLineText = t.jsxText('\n')
 
@@ -45,4 +62,4 @@ const addComponentPlugin = (
   }
 }
 
-export default addComponentPlugin
+export default addMetaComponentPlugin

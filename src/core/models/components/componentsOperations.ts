@@ -1,5 +1,5 @@
 import { DEFAULT_ID } from './components-types'
-import { generateComponentId, generatePropId } from '../../../utils/generateId'
+import { generatePropId } from '../../../utils/generateId'
 import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
@@ -15,6 +15,7 @@ import { ComponentsState } from './components'
 
 /**
  * @typedef {Object} AddComponentPayload
+ * @property {string} componentId - Id of the component
  * @property {string} parentId - Id of the parent component where the component is added.
  * @property {ComponentType} type - Type of the added component.
  */
@@ -28,10 +29,9 @@ import { ComponentsState } from './components'
  */
 export const addComponent = (
   draftState: ComponentsState,
-  payload: { parentId: string; type: ComponentType },
+  payload: { componentId: string; parentId: string; type: ComponentType },
 ) => {
-  const id = generateComponentId()
-  const { parentId, type } = payload
+  const { componentId: id, parentId, type } = payload
   const { components, props } = loadRequired(draftState, parentId)
   const defaultProps: IPropsById = {}
   const defaultPropsIds: string[] = []
@@ -229,6 +229,7 @@ export const deleteComponent = (
 export const duplicateComponent = (
   draftState: ComponentsState,
   selectedComponent: IComponent,
+  componentIds: string[],
 ) => {
   const {
     isCustomComponentChild,
@@ -243,6 +244,7 @@ export const duplicateComponent = (
     selectedComponent,
     components,
     props,
+    componentIds,
   )
 
   // Add the duplicated component id in the children of the parent component
