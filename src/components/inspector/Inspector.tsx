@@ -164,16 +164,19 @@ const Inspector = () => {
 
   const removeComponentHandler = () => {
     dispatch.components.deleteComponent(component.id)
-    const updatedCode = babelQueries.deleteComponent(
-      isCustomComponentChild ? componentsCode[rootCustomParent] : code,
-      {
-        componentId: component.id,
-      },
-    )
-    dispatch.code.setPageCode(
-      updatedCode,
-      isCustomComponentChild ? rootCustomParent : selectedPage,
-    )
+
+    setTimeout(() => {
+      const updatedCode = babelQueries.deleteComponent(
+        isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+        {
+          componentId: component.id,
+        },
+      )
+      dispatch.code.setPageCode(
+        updatedCode,
+        isCustomComponentChild ? rootCustomParent : selectedPage,
+      )
+    }, 200)
 
     dispatch.components.unselect()
   }
@@ -186,19 +189,21 @@ const Inspector = () => {
 
     dispatch.components.duplicate([...componentIds])
 
-    const updatedCode = babelQueries.duplicateComponent(
-      isCustomComponentChild ? componentsCode[rootCustomParent] : code,
-      {
-        componentId: component.id,
-        componentIds: [...componentIds],
-      },
-    )
+    setTimeout(() => {
+      const updatedCode = babelQueries.duplicateComponent(
+        isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+        {
+          componentId: component.id,
+          componentIds: [...componentIds],
+        },
+      )
 
-    if (isCustomComponentChild) {
-      dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-    } else {
-      dispatch.code.setPageCode(updatedCode, selectedPage)
-    }
+      if (isCustomComponentChild) {
+        dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
+      } else {
+        dispatch.code.setPageCode(updatedCode, selectedPage)
+      }
+    }, 200)
   }
 
   return (

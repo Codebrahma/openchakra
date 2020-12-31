@@ -164,20 +164,25 @@ export const useDropComponent = (
           fromIndex,
           toIndex,
         })
-        const updatedCode = babelQueries.reorderComponentChildren(
+        setTimeout(() => {
+          const updatedCode = babelQueries.reorderComponentChildren(
+            isCustomComponentUpdate
+              ? componentsCode[rootParentOfParentElement]
+              : code,
+            {
+              componentId: selectedComponent.parent,
+              fromIndex,
+              toIndex,
+            },
+          )
+          // update the code
           isCustomComponentUpdate
-            ? componentsCode[rootParentOfParentElement]
-            : code,
-          {
-            componentId: selectedComponent.parent,
-            fromIndex,
-            toIndex,
-          },
-        )
-        dispatch.code.setPageCode(
-          updatedCode,
-          isCustomComponentUpdate ? rootParentOfParentElement : selectedPage,
-        )
+            ? dispatch.code.setComponentsCode(
+                updatedCode,
+                rootParentOfParentElement,
+              )
+            : dispatch.code.setPageCode(updatedCode, selectedPage)
+        }, 200)
       }
     },
     canDrop: () => canDrop,
@@ -252,14 +257,13 @@ export const useDropComponent = (
         }
 
         if (updatedCode.length > 0) {
-          if (isCustomComponentChild) {
-            dispatch.code.setComponentsCode(
-              updatedCode,
-              rootParentOfParentElement,
-            )
-          } else {
-            dispatch.code.setPageCode(updatedCode, selectedPage)
-          }
+          // update the code
+          isCustomComponentChild
+            ? dispatch.code.setComponentsCode(
+                updatedCode,
+                rootParentOfParentElement,
+              )
+            : dispatch.code.setPageCode(updatedCode, selectedPage)
         }
       }
     },
