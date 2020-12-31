@@ -87,7 +87,7 @@ const useShortcuts = () => {
       event.preventDefault()
     }
 
-    dispatch.components.duplicate()
+    // dispatch.components.duplicate()
   }
 
   const fullScreen = (event: KeyboardEvent | undefined) => {

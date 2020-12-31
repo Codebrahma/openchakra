@@ -42,6 +42,7 @@ import {
 import babelQueries from '../../babel-queries/queries'
 import { getCode, getAllComponentsCode } from '../../core/selectors/code'
 import { searchRootCustomComponent } from '../../utils/recursive'
+import buildComponentIds from '../../utils/componentIdsBuilder'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -83,6 +84,7 @@ const Inspector = () => {
   const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
   const customComponents = useSelector(getCustomComponents)
+  const components = useSelector(getComponents())
 
   const isCustomComponent =
     customComponentsList && customComponentsList.indexOf(type) !== -1
@@ -170,21 +172,27 @@ const Inspector = () => {
 
     dispatch.components.unselect()
   }
+
   const duplicateComponentHandler = () => {
+    const componentIds = buildComponentIds(
+      component.id,
+      isCustomComponentChild ? customComponents : components,
+    )
+
+    dispatch.components.duplicate([...componentIds])
+
     const updatedCode = babelQueries.duplicateComponent(
       isCustomComponentChild ? componentsCode[rootCustomParent] : code,
       {
         componentId: component.id,
+        componentIds: [...componentIds],
       },
     )
-    const componentsState = babelQueries.getComponentsState(code)
 
     if (isCustomComponentChild) {
       dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-      dispatch.components.updateCustomComponentsState(componentsState)
     } else {
       dispatch.code.setPageCode(updatedCode, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
     }
   }
 
@@ -288,7 +296,14 @@ const Inspector = () => {
               <ActionButton
                 label="Export to custom components page"
                 onClick={() => {
-                  dispatch.components.exportSelectedComponentToCustomPage()
+                  const componentIds = buildComponentIds(
+                    component.id,
+                    isCustomComponentChild ? customComponents : components,
+                  )
+
+                  dispatch.components.exportSelectedComponentToCustomPage(
+                    componentIds,
+                  )
                   toast({
                     title: 'Component is exported successfully.',
                     status: 'success',

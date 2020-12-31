@@ -55,7 +55,10 @@ const deleteComponent = (code: string, options: { componentId: string }) => {
   }).code
 }
 
-const duplicateComponent = (code: string, options: { componentId: string }) => {
+const duplicateComponent = (
+  code: string,
+  options: { componentId: string; componentIds: string[] },
+) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelDuplicateComponent, options]],
   }).code

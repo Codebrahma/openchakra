@@ -229,6 +229,7 @@ export const deleteComponent = (
 export const duplicateComponent = (
   draftState: ComponentsState,
   selectedComponent: IComponent,
+  componentIds: string[],
 ) => {
   const {
     isCustomComponentChild,
@@ -243,6 +244,7 @@ export const duplicateComponent = (
     selectedComponent,
     components,
     props,
+    componentIds,
   )
 
   // Add the duplicated component id in the children of the parent component

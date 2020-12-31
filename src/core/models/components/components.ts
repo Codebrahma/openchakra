@@ -299,7 +299,7 @@ const components = createModel({
           state.componentsById[componentsId][selectedComponent.parent].id,
       }
     },
-    duplicate(state: ComponentsState): ComponentsState {
+    duplicate(state: ComponentsState, componentIds: string[]): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { isCustomComponentChild, components, selectedId } = loadRequired(
           draftState,
@@ -315,7 +315,7 @@ const components = createModel({
         )
           return state
 
-        duplicateComponent(draftState, selectedComponent)
+        duplicateComponent(draftState, selectedComponent, componentIds)
       })
     },
     saveComponent(state: ComponentsState, name: string): ComponentsState {
@@ -356,6 +356,7 @@ const components = createModel({
     },
     exportSelectedComponentToCustomPage(
       state: ComponentsState,
+      componentIds: string[],
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { propsId, componentsId } = loadRequired(draftState)
@@ -365,6 +366,7 @@ const components = createModel({
           components[draftState.selectedId],
           components,
           props,
+          componentIds,
         )
         //id of 2 refers to the custom component page.
         draftState.componentsById['2'] = {
