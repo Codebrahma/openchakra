@@ -7,6 +7,9 @@ type ComposedComponent = {
   parent: string
 }
 
+// The order of builder and default components structure should be same.
+// When you add a meta component, the default component structure and also the builder file should be updated.
+
 export const buildAlert = (parent: string): ComposedComponent => {
   const composer = new Composer()
   const nodeId = composer.addNode({ type: 'Alert', parent })
@@ -67,9 +70,9 @@ export const buildAccordion = (parent: string): ComposedComponent => {
   const nodeId = composer.addNode({ type: 'Accordion', parent })
   const itemId = composer.addNode({ type: 'AccordionItem', parent: nodeId })
   const headerId = composer.addNode({ type: 'AccordionButton', parent: itemId })
-  const panelId = composer.addNode({ type: 'AccordionPanel', parent: itemId })
   composer.addNode({ type: 'Text', parent: headerId, rootParentType: 'Text' })
   composer.addNode({ type: 'AccordionIcon', parent: headerId })
+  const panelId = composer.addNode({ type: 'AccordionPanel', parent: itemId })
   composer.addNode({ type: 'Box', parent: panelId, rootParentType: 'Box' })
 
   const { componentIds, components } = composer.getComponents()
