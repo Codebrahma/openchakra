@@ -118,6 +118,15 @@ const Inspector = () => {
     )
   }
 
+  const updateCode = (code: string) => {
+    if (code.length > 0) {
+      // update the code
+      isCustomComponentChild
+        ? dispatch.code.setComponentsCode(code, rootCustomParent)
+        : dispatch.code.setPageCode(code, selectedPage)
+    }
+  }
+
   // check if its a normal component or a container component
   const isNormalOrContainer = () => {
     if (!isCustomComponent) return true
@@ -172,10 +181,7 @@ const Inspector = () => {
           componentId: component.id,
         },
       )
-      dispatch.code.setPageCode(
-        updatedCode,
-        isCustomComponentChild ? rootCustomParent : selectedPage,
-      )
+      updateCode(updatedCode)
     }, 200)
 
     dispatch.components.unselect()
@@ -198,11 +204,7 @@ const Inspector = () => {
         },
       )
 
-      if (isCustomComponentChild) {
-        dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-      } else {
-        dispatch.code.setPageCode(updatedCode, selectedPage)
-      }
+      updateCode(updatedCode)
     }, 200)
   }
 
