@@ -2,6 +2,7 @@ import Composer from './composer'
 
 type ComposedComponent = {
   components: IComponents
+  componentIds: string[]
   root: string
   parent: string
 }
@@ -12,9 +13,10 @@ export const buildAlert = (parent: string): ComposedComponent => {
   composer.addNode({ type: 'AlertIcon', parent: nodeId })
   composer.addNode({ type: 'AlertTitle', parent: nodeId })
   composer.addNode({ type: 'AlertDescription', parent: nodeId })
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -32,10 +34,11 @@ export const buildBreadcrumb = (parent: string): ComposedComponent => {
   })
   composer.addNode({ type: 'BreadcrumbLink', parent: secondItemId })
 
-  const components = composer.getComponents()
+  const { components, componentIds } = composer.getComponents()
 
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -49,10 +52,11 @@ export const buildFormControl = (parent: string): ComposedComponent => {
   composer.addNode({ type: 'FormHelperText', parent: nodeId })
   composer.addNode({ type: 'FormErrorMessage', parent: nodeId })
 
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
 
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -68,10 +72,11 @@ export const buildAccordion = (parent: string): ComposedComponent => {
   composer.addNode({ type: 'AccordionIcon', parent: headerId })
   composer.addNode({ type: 'Box', parent: panelId, rootParentType: 'Box' })
 
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
 
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -100,9 +105,10 @@ export const buildMenu = (parent: string): ComposedComponent => {
     rootParentType: 'Text',
   })
 
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -112,10 +118,11 @@ export const buildList = (parent: string): ComposedComponent => {
   const composer = new Composer('List')
   const nodeId = composer.addNode({ type: 'List', parent })
   composer.addNode({ type: 'ListItem', parent: nodeId })
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
 
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -139,9 +146,10 @@ export const buildInputGroup = (parent: string): ComposedComponent => {
     parent: elementId,
     props: { name: 'email' },
   })
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }
@@ -159,10 +167,11 @@ export const buildNumberInput = (parent: string): ComposedComponent => {
   composer.addNode({ type: 'NumberIncrementStepper', parent: stepperId })
   composer.addNode({ type: 'NumberDecrementStepper', parent: stepperId })
 
-  const components = composer.getComponents()
+  const { componentIds, components } = composer.getComponents()
 
   return {
     components,
+    componentIds,
     root: nodeId,
     parent,
   }

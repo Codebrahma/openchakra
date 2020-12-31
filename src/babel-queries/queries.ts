@@ -10,9 +10,7 @@ import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
-import BabelAddCustomComponent, {
-  IComponentIds,
-} from '../babel-plugins/add-meta-component-plugin'
+import BabelAddCustomComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
 import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
 import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
@@ -178,7 +176,7 @@ const deleteProp = (
 
 const addMetaComponent = (
   code: string,
-  options: { componentIds: IComponentIds; parentId: string; type: string },
+  options: { componentIds: string[]; parentId: string; type: string },
 ) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelAddMetaComponent, options]],

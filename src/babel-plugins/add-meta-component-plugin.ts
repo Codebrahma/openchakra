@@ -12,7 +12,7 @@ export interface IComponentIds {
 const addMetaComponentPlugin = (
   _: any,
   options: {
-    componentIds: IComponentIds
+    componentIds: string[]
     parentId: string
     type: string
   },
@@ -36,11 +36,11 @@ const addMetaComponentPlugin = (
             node,
             {
               JSXOpeningElement(path: any) {
-                const componentName = path.node.name.name
-                const componentId = componentIds[componentName]
-
-                const compIdAttribute = toJsxAttribute('compId', componentId)
-                path.node.attributes.push(compIdAttribute)
+                const componentId = componentIds.shift()
+                if (componentId) {
+                  const compIdAttribute = toJsxAttribute('compId', componentId)
+                  path.node.attributes.push(compIdAttribute)
+                }
               },
             },
             path.scope,
