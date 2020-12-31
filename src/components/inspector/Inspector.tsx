@@ -306,14 +306,15 @@ const Inspector = () => {
                     isCustomComponentChild ? customComponents : components,
                   )
 
-                  dispatch.components.exportSelectedComponentToCustomPage(
-                    componentIds,
-                  )
+                  dispatch.components.exportSelectedComponentToCustomPage([
+                    ...componentIds,
+                  ])
                   const updatedCode = babelQueries.exportToCustomComponentsPage(
                     code,
                     customPageCode,
                     {
                       componentId: component.id,
+                      componentIds: [...componentIds],
                     },
                   )
 

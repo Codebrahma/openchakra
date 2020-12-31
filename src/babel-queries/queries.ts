@@ -189,7 +189,7 @@ const addMetaComponent = (
 const exportToCustomComponentsPage = (
   pageCode: string,
   customComponentsPageCode: string,
-  options: { componentId: string },
+  options: { componentId: string; componentIds: string[] },
 ) => {
   // First the component is fetched from the Page code source.
   const plugin = new BabelRemoveMovedComponentFromSource({
@@ -202,7 +202,10 @@ const exportToCustomComponentsPage = (
 
   // The component-id's for the components are reassigned.
   const modifiedComponentCode = transform(plugin.removedComponent, {
-    plugins: [babelPluginSyntaxJsx, BabelReassignComponentId],
+    plugins: [
+      babelPluginSyntaxJsx,
+      [BabelReassignComponentId, { componentIds: options.componentIds }],
+    ],
   }).code
 
   // The component code with the reassigned componentIds are added as the children to the root of the custom components page.

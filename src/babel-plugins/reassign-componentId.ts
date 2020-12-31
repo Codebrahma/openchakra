@@ -1,10 +1,9 @@
-import { generateComponentId } from '../utils/generateId'
-
-const reassignComponentId = () => {
+const reassignComponentId = (_: any, options: { componentIds: string[] }) => {
+  const { componentIds } = options
   return {
     visitor: {
       JSXOpeningElement(path: any) {
-        const componentId = generateComponentId()
+        const componentId = componentIds.shift() || ''
         const compIdPropIndex = path.node.attributes.findIndex(
           (node: any) => node.name.name === 'compId',
         )
