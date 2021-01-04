@@ -21,10 +21,9 @@ import {
 
 export const addCustomComponent = (
   draftState: ComponentsState,
-  payload: { parentId: string; type: string },
+  payload: { componentId: string; parentId: string; type: string },
 ) => {
-  const componentId = generateComponentId()
-  const { type, parentId } = payload
+  const { componentId, type, parentId } = payload
   const { components, props } = loadRequired(draftState, parentId)
 
   const customComponentProps: IPropsById = {}

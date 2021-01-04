@@ -40,16 +40,22 @@ const AdditionalPropsPanel = () => {
   const [quickProps, setQuickProps] = useState('')
   const [hasError, setError] = useState(false)
 
+  // Yet to do for custom components code
   const onDelete = (propsName: string) => {
-    const propName = props.find(prop => prop.name === propsName)?.name || ''
+    const prop = props.find(prop => prop.name === propsName) || undefined
 
-    const updatedCode = babelQueries.deleteProp(code, {
-      componentId: id,
-      propName,
-    })
-    const componentsState = babelQueries.getComponentsState(updatedCode)
-    dispatch.code.setPageCode(updatedCode, selectedPage)
-    dispatch.components.updateComponentsState(componentsState)
+    if (prop) {
+      dispatch.components.deleteProps({
+        componentId: id,
+        propId: prop.id,
+      })
+
+      const updatedCode = babelQueries.deleteProp(code, {
+        componentId: id,
+        propName: prop.name,
+      })
+      dispatch.code.setPageCode(updatedCode, selectedPage)
+    }
   }
 
   const submitHandler = (event: FormEvent) => {

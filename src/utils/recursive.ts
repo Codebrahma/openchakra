@@ -1,4 +1,4 @@
-import { generatePropId, generateComponentId } from './generateId'
+import { generatePropId } from './generateId'
 import {
   updateInAllInstances,
   deletePropsByComponentId,
@@ -10,6 +10,7 @@ export const duplicateComp = (
   componentToClone: IComponent,
   sourceComponents: IComponents,
   props: IProps,
+  componentIds: string[],
 ) => {
   let clonedComponents: IComponents = {}
   let clonedProps: IProps = {
@@ -18,7 +19,7 @@ export const duplicateComp = (
   }
 
   const cloneComponent = (component: IComponent) => {
-    const newId = generateComponentId()
+    const newId = componentIds.shift() || ''
     const children = component.children.map(child => {
       return cloneComponent(sourceComponents[child])
     })
@@ -46,6 +47,7 @@ export const duplicateComp = (
             sourceComponents[prop.value],
             sourceComponents,
             props,
+            componentIds,
           )
           propValue = newId
           clonedComponents = {

@@ -40,8 +40,13 @@ import {
   getIsSelectionEnabled,
 } from '../../core/selectors/text'
 import babelQueries from '../../babel-queries/queries'
-import { getCode, getAllComponentsCode } from '../../core/selectors/code'
+import {
+  getCode,
+  getAllComponentsCode,
+  getPageCode,
+} from '../../core/selectors/code'
 import { searchRootCustomComponent } from '../../utils/recursive'
+import buildComponentIds from '../../utils/componentIdsBuilder'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -83,6 +88,7 @@ const Inspector = () => {
   const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
   const customComponents = useSelector(getCustomComponents)
+  const components = useSelector(getComponents())
 
   const isCustomComponent =
     customComponentsList && customComponentsList.indexOf(type) !== -1
@@ -102,6 +108,7 @@ const Inspector = () => {
   const isContainerComponent = useSelector(checkIsContainerComponent(id))
   const code = useSelector(getCode)
   const componentsCode = useSelector(getAllComponentsCode)
+  const customPageCode = useSelector(getPageCode('customPage'))
   let rootCustomParent: string = ``
 
   if (isCustomComponentChild) {
@@ -109,6 +116,15 @@ const Inspector = () => {
       customComponents[id],
       customComponents,
     )
+  }
+
+  const updateCode = (code: string) => {
+    if (code.length > 0) {
+      // update the code
+      isCustomComponentChild
+        ? dispatch.code.setComponentsCode(code, rootCustomParent)
+        : dispatch.code.setPageCode(code, selectedPage)
+    }
   }
 
   // check if its a normal component or a container component
@@ -155,40 +171,41 @@ const Inspector = () => {
     }
   }
 
-  const updateStateAndCode = (
-    code: string,
-    updateInCustomComponent: boolean,
-  ) => {
-    const componentsState = babelQueries.getComponentsState(code)
-
-    if (updateInCustomComponent) {
-      dispatch.code.setComponentsCode(code, rootCustomParent)
-      dispatch.components.updateCustomComponentsState(componentsState)
-    } else {
-      dispatch.code.setPageCode(code, selectedPage)
-      dispatch.components.updateComponentsState(componentsState)
-    }
-  }
-
   const removeComponentHandler = () => {
-    const updatedCode = babelQueries.deleteComponent(
-      isCustomComponentChild ? componentsCode[rootCustomParent] : code,
-      {
-        componentId: component.id,
-      },
-    )
-    updateStateAndCode(updatedCode, isCustomComponentChild)
+    dispatch.components.deleteComponent(component.id)
+
+    setTimeout(() => {
+      const updatedCode = babelQueries.deleteComponent(
+        isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+        {
+          componentId: component.id,
+        },
+      )
+      updateCode(updatedCode)
+    }, 200)
 
     dispatch.components.unselect()
   }
+
   const duplicateComponentHandler = () => {
-    const updatedCode = babelQueries.duplicateComponent(
-      isCustomComponentChild ? componentsCode[rootCustomParent] : code,
-      {
-        componentId: component.id,
-      },
+    const componentIds = buildComponentIds(
+      component.id,
+      isCustomComponentChild ? customComponents : components,
     )
-    updateStateAndCode(updatedCode, isCustomComponentChild)
+
+    dispatch.components.duplicate([...componentIds])
+
+    setTimeout(() => {
+      const updatedCode = babelQueries.duplicateComponent(
+        isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+        {
+          componentId: component.id,
+          componentIds: [...componentIds],
+        },
+      )
+
+      updateCode(updatedCode)
+    }, 200)
   }
 
   return (
@@ -242,6 +259,7 @@ const Inspector = () => {
                         position: 'top',
                       })
                     else {
+                      dispatch.components.saveComponent(editedName)
                       const {
                         updatedCode,
                         customComponentCode,
@@ -249,16 +267,6 @@ const Inspector = () => {
                         componentId: component.id,
                         customComponentName: editedName,
                       })
-                      const componentsState = babelQueries.getComponentsState(
-                        updatedCode,
-                      )
-                      const customComponentsState = babelQueries.getComponentsState(
-                        customComponentCode,
-                      )
-                      dispatch.components.updateComponentsState(componentsState)
-                      dispatch.components.updateCustomComponentsState(
-                        customComponentsState,
-                      )
                       dispatch.code.setPageCode(updatedCode, selectedPage)
                       dispatch.code.setComponentsCode(
                         customComponentCode,
@@ -300,7 +308,25 @@ const Inspector = () => {
               <ActionButton
                 label="Export to custom components page"
                 onClick={() => {
-                  dispatch.components.exportSelectedComponentToCustomPage()
+                  const componentIds = buildComponentIds(
+                    component.id,
+                    isCustomComponentChild ? customComponents : components,
+                  )
+
+                  dispatch.components.exportSelectedComponentToCustomPage([
+                    ...componentIds,
+                  ])
+                  const updatedCode = babelQueries.exportToCustomComponentsPage(
+                    code,
+                    customPageCode,
+                    {
+                      componentId: component.id,
+                      componentIds: [...componentIds],
+                    },
+                  )
+
+                  dispatch.code.setPageCode(updatedCode, 'customPage')
+
                   toast({
                     title: 'Component is exported successfully.',
                     status: 'success',

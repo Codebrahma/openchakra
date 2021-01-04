@@ -6,15 +6,15 @@ import {
   getAttribute,
   addAttribute,
 } from './utils/babel-plugin-utils'
-import { generateComponentId } from '../utils/generateId'
 
 const duplicateComponentPlugin = (
   _: any,
   options: {
     componentId: string
+    componentIds: string[]
   },
 ) => {
-  const { componentId } = options
+  const { componentId, componentIds } = options
 
   return {
     visitor: {
@@ -33,7 +33,7 @@ const duplicateComponentPlugin = (
             {
               JSXOpeningElement(path) {
                 const idAttribute = getAttribute('compId', path.node)
-                const newComponentId = generateComponentId()
+                const newComponentId = componentIds.shift() || ''
 
                 // If the id attribute is present, just change the value or else add the id attribute.
                 if (idAttribute) {

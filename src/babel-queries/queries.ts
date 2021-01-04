@@ -9,11 +9,14 @@ import BabelDuplicateComponent from '../babel-plugins/duplicate-component-plugin
 import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
-import BabelMoveComponent from '../babel-plugins/move-component-plugin'
 import BabelSaveComponent from '../babel-plugins/save-component-plugin'
 import BabelAddCustomComponent from '../babel-plugins/add-custom-component-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
 import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
+import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
+import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
+import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
+import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -53,7 +56,10 @@ const deleteComponent = (code: string, options: { componentId: string }) => {
   }).code
 }
 
-const duplicateComponent = (code: string, options: { componentId: string }) => {
+const duplicateComponent = (
+  code: string,
+  options: { componentId: string; componentIds: string[] },
+) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelDuplicateComponent, options]],
   }).code
@@ -61,14 +67,10 @@ const duplicateComponent = (code: string, options: { componentId: string }) => {
 
 const addComponent = (
   code: string,
-  options: { parentId: string; type: string },
+  options: { componentId: string; parentId: string; type: string },
 ) => {
   return transform(code, {
-    plugins: [
-      babelPluginSyntaxJsx,
-      [BabelAddComponent, options],
-      BabelSetComponentId,
-    ],
+    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
   }).code
 }
 
@@ -94,13 +96,44 @@ const addComponentImports = (
   }).code
 }
 
+// Here two babel plugins are used.
+// One plugin is used to remove the specified component from its parent and it will return the removed component.
+// Another plugin is used to insert the removed component in its new component
 const moveComponent = (
-  code: string,
-  options: { componentId: string; newParentId: string },
+  sourceCode: string,
+  destinationCode: string,
+  options: { componentId: string; destParentId: string },
 ) => {
-  return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelMoveComponent, options]],
-  }).code
+  const plugin = new BabelRemoveMovedComponentFromSource({
+    componentId: options.componentId,
+  })
+
+  const transformedSource = transform(sourceCode, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  // If the source and destination code is same, the transformed code from the source is used here.
+  // Because we need to perform both remove component from old parent and insert component in new parent in same code
+  const transformedDest = transform(
+    sourceCode === destinationCode ? transformedSource.code : destinationCode,
+    {
+      plugins: [
+        babelPluginSyntaxJsx,
+        [
+          BabelInsertMovedComponentToDest,
+          {
+            parentId: options.destParentId,
+            componentToInsert: plugin.removedComponent,
+          },
+        ],
+      ],
+    },
+  )
+
+  return {
+    updatedSourceCode: transformedSource.code,
+    updatedDestCode: transformedDest.code,
+  }
 }
 
 const saveComponent = (
@@ -120,7 +153,7 @@ const saveComponent = (
 
 const addCustomComponent = (
   code: string,
-  options: { parentId: string; type: string },
+  options: { componentId: string; parentId: string; type: string },
 ) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelAddCustomComponent, options]],
@@ -145,6 +178,53 @@ const deleteProp = (
   }).code
 }
 
+const addMetaComponent = (
+  code: string,
+  options: { componentIds: string[]; parentId: string; type: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelAddMetaComponent, options]],
+  }).code
+}
+const exportToCustomComponentsPage = (
+  pageCode: string,
+  customComponentsPageCode: string,
+  options: { componentId: string; componentIds: string[] },
+) => {
+  // First the component is fetched from the Page code source.
+  const plugin = new BabelRemoveMovedComponentFromSource({
+    componentId: options.componentId,
+  })
+
+  transform(pageCode, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  // The component-id's for the components are reassigned.
+  const modifiedComponentCode = transform(plugin.removedComponent, {
+    plugins: [
+      babelPluginSyntaxJsx,
+      [BabelReassignComponentId, { componentIds: options.componentIds }],
+    ],
+  }).code
+
+  // The component code with the reassigned componentIds are added as the children to the root of the custom components page.
+  const updatedCustomComponentsCode = transform(customComponentsPageCode, {
+    plugins: [
+      babelPluginSyntaxJsx,
+      [
+        BabelInsertMovedComponentToDest,
+        {
+          parentId: 'root',
+          componentToInsert: modifiedComponentCode,
+        },
+      ],
+    ],
+  }).code
+
+  return updatedCustomComponentsCode
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -160,4 +240,6 @@ export default {
   addCustomComponent,
   addProps,
   deleteProp,
+  addMetaComponent,
+  exportToCustomComponentsPage,
 }

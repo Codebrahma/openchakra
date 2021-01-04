@@ -9,6 +9,7 @@ type AddNode = {
 
 class Composer {
   components: IComponents = {}
+  componentIds: string[] = []
 
   rootComponentType: ComponentType | undefined = undefined
 
@@ -34,6 +35,8 @@ class Composer {
         children: [],
       },
     }
+
+    this.componentIds.push(id)
     if (parent !== 'root' && this.components[parent]) {
       this.components[parent].children.push(id)
     }
@@ -42,7 +45,7 @@ class Composer {
   }
 
   getComponents() {
-    return this.components
+    return { components: this.components, componentIds: this.componentIds }
   }
 }
 
