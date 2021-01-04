@@ -16,9 +16,13 @@ import {
   isInstanceOfCustomComponent,
   getSelectedComponentId,
   getPropsOfSelectedComp,
+  getCustomComponents,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
+import { getAllComponentsCode } from '../../../core/selectors/code'
+import { searchRootCustomComponent } from '../../../utils/recursive'
+import babelQueries from '../../../babel-queries/queries'
 
 type FormControlPropType = {
   label: ReactNode
@@ -42,6 +46,36 @@ const FormControl: React.FC<FormControlPropType> = ({
   )
   const isPropExposed =
     selectedProp && selectedProp.derivedFromPropName ? true : false
+
+  const customComponents = useSelector(getCustomComponents)
+  const componentsCode = useSelector(getAllComponentsCode)
+  let propValue = selectedProp?.value
+
+  // TODO : Needs to be modified after completing the span component plugin
+  propValue = Array.isArray(propValue) ? propValue[0] : propValue
+
+  const unExposePropHandler = () => {
+    dispatch.components.unexpose(htmlFor || '')
+    if (customComponents[selectedId] && selectedProp) {
+      const rootCustomParentElement = searchRootCustomComponent(
+        customComponents[selectedId],
+        customComponents,
+      )
+      const updatedCode = babelQueries.unExposeProp(
+        componentsCode[rootCustomParentElement],
+        {
+          componentId: selectedId,
+          exposedPropName: selectedProp?.name,
+          exposedPropValue: propValue,
+          customPropName:
+            selectedProp?.derivedFromPropName === null
+              ? ''
+              : selectedProp?.derivedFromPropName,
+        },
+      )
+      dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+    }
+  }
 
   return (
     <ChakraFormControl
@@ -80,7 +114,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           <ActionButton
             label="Unexpose"
             icon={<FiRepeat />}
-            onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
+            onClick={unExposePropHandler}
           />
         </Box>
       ) : (

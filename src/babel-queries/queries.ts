@@ -19,6 +19,7 @@ import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
 import BabelExposeProp from '../babel-plugins/expose-prop-plugin'
 import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instances'
+import BabelUnExposeProp from '../babel-plugins/unexpose-prop-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -277,6 +278,20 @@ const exposeProp = (
   }
 }
 
+const unExposeProp = (
+  code: string,
+  options: {
+    componentId: string
+    customPropName: string
+    exposedPropName: string
+    exposedPropValue: string
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -295,4 +310,5 @@ export default {
   addMetaComponent,
   exportToCustomComponentsPage,
   exposeProp,
+  unExposeProp,
 }
