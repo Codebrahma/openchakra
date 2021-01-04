@@ -13,6 +13,15 @@ import {
   Tooltip,
   useToast,
 } from '@chakra-ui/core'
+import babelQueries from '../../../babel-queries/queries'
+import { useSelector } from 'react-redux'
+import {
+  getSelectedComponentId,
+  getCustomComponents,
+  getPropByName,
+} from '../../../core/selectors/components'
+import { getAllComponentsCode } from '../../../core/selectors/code'
+import { searchRootCustomComponent } from '../../../utils/recursive'
 
 type FormControlPropType = {
   label: ReactNode
@@ -29,6 +38,10 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
   const toast = useToast()
+  const componentId = useSelector(getSelectedComponentId)
+  const customComponents = useSelector(getCustomComponents)
+  const componentsCode = useSelector(getAllComponentsCode)
+  const propValue = useSelector(getPropByName(htmlFor || ''))?.value
 
   const rightClickHandler = (e: any) => {
     e.preventDefault()
@@ -48,11 +61,28 @@ const PopOverControl: React.FC<FormControlPropType> = ({
           isClosable: true,
           position: 'top',
         })
-      else
+      else {
         dispatch.components.exposeProp({
           name: propName,
           targetedProp: htmlFor || '',
         })
+        if (customComponents[componentId] !== undefined) {
+          let rootCustomParentElement = searchRootCustomComponent(
+            customComponents[componentId],
+            customComponents,
+          )
+          const updatedCode = babelQueries.exposeProp(
+            componentsCode[rootCustomParentElement],
+            {
+              componentId,
+              propName,
+              targetedPropName: htmlFor || '',
+              defaultPropValue: propValue || '',
+            },
+          )
+          dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+        }
+      }
     }
   }
   return (

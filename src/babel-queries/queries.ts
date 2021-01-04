@@ -17,6 +17,7 @@ import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
+import BabelExposeProp from '../babel-plugins/expose-prop-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -225,6 +226,20 @@ const exportToCustomComponentsPage = (
   return updatedCustomComponentsCode
 }
 
+const exposeProp = (
+  code: string,
+  options: {
+    componentId: string
+    propName: string
+    targetedPropName: string
+    defaultPropValue: string
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -242,4 +257,5 @@ export default {
   deleteProp,
   addMetaComponent,
   exportToCustomComponentsPage,
+  exposeProp,
 }
