@@ -46,10 +46,13 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const componentId = useSelector(getSelectedComponentId)
   const customComponents = useSelector(getCustomComponents)
   const componentsCode = useSelector(getAllComponentsCode)
-  const propValue = useSelector(getPropByName(htmlFor || ''))?.value
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
   const pagesCode = useSelector(getAllPagesCode)
+  let propValue = useSelector(getPropByName(htmlFor || ''))?.value
+
+  // TODO : Needs to be modified after completing the span component plugin
+  propValue = Array.isArray(propValue) ? propValue[0] : propValue
 
   const babelExposePropHandler = () => {
     let rootCustomParentElement = ''
