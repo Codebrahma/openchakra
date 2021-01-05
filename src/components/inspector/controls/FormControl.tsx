@@ -20,7 +20,10 @@ import {
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
-import { getAllComponentsCode } from '../../../core/selectors/code'
+import {
+  getAllComponentsCode,
+  getAllPagesCode,
+} from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 import babelQueries from '../../../babel-queries/queries'
 
@@ -49,31 +52,51 @@ const FormControl: React.FC<FormControlPropType> = ({
 
   const customComponents = useSelector(getCustomComponents)
   const componentsCode = useSelector(getAllComponentsCode)
+  const pagesCode = useSelector(getAllPagesCode)
   let propValue = selectedProp?.value
 
   // TODO : Needs to be modified after completing the span component plugin
   propValue = Array.isArray(propValue) ? propValue[0] : propValue
 
-  const unExposePropHandler = () => {
-    dispatch.components.unexpose(htmlFor || '')
-    if (customComponents[selectedId] && selectedProp) {
+  const unExposeBabelQueryHandler = () => {
+    if (selectedProp) {
       const rootCustomParentElement = searchRootCustomComponent(
         customComponents[selectedId],
         customComponents,
       )
-      const updatedCode = babelQueries.unExposeProp(
+      const options = {
+        customComponentName: rootCustomParentElement,
+        componentId: selectedId,
+        exposedPropName: selectedProp?.name,
+        exposedPropValue: propValue,
+        customPropName:
+          selectedProp?.derivedFromPropName === null
+            ? ''
+            : selectedProp?.derivedFromPropName,
+      }
+
+      const {
+        updatedPagesCode,
+        updatedComponentCode,
+      } = babelQueries.unExposeProp(
         componentsCode[rootCustomParentElement],
-        {
-          componentId: selectedId,
-          exposedPropName: selectedProp?.name,
-          exposedPropValue: propValue,
-          customPropName:
-            selectedProp?.derivedFromPropName === null
-              ? ''
-              : selectedProp?.derivedFromPropName,
-        },
+        pagesCode,
+        options,
       )
-      dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+      dispatch.code.setComponentsCode(
+        updatedComponentCode,
+        rootCustomParentElement,
+      )
+      dispatch.code.resetPagesCode(updatedPagesCode)
+    }
+  }
+
+  const unExposePropHandler = () => {
+    dispatch.components.unexpose(htmlFor || '')
+    if (customComponents[selectedId]) {
+      setTimeout(() => {
+        unExposeBabelQueryHandler()
+      }, 200)
     }
   }
 

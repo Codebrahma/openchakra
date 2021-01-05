@@ -20,6 +20,7 @@ import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
 import BabelExposeProp from '../babel-plugins/expose-prop-plugin'
 import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instances'
 import BabelUnExposeProp from '../babel-plugins/unexpose-prop-plugin'
+import BabelDeleteInAllInstances from '../babel-plugins/delete-prop-in-all-instances'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -279,17 +280,43 @@ const exposeProp = (
 }
 
 const unExposeProp = (
-  code: string,
+  componentCode: string,
+  pagesCode: ICode,
   options: {
+    customComponentName: string
     componentId: string
     customPropName: string
     exposedPropName: string
     exposedPropValue: string
   },
 ) => {
-  return transform(code, {
+  // Modify the component code.
+  const transformedComponentCode = transform(componentCode, {
     plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
   }).code
+
+  const updatedPagesCode = { ...pagesCode }
+
+  // Remove the custom prop from all the instances of the component.
+  Object.keys(updatedPagesCode).forEach(pageName => {
+    const code = updatedPagesCode[pageName]
+    updatedPagesCode[pageName] = transform(code, {
+      plugins: [
+        babelPluginSyntaxJsx,
+        [
+          BabelDeleteInAllInstances,
+          {
+            componentName: options.customComponentName,
+            propName: options.customPropName,
+          },
+        ],
+      ],
+    }).code
+  })
+  return {
+    updatedPagesCode,
+    updatedComponentCode: transformedComponentCode,
+  }
 }
 
 export default {
