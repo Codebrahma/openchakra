@@ -203,7 +203,13 @@ export const deleteCustomPropUtility = (
   if (customPropId) {
     const customProp = props.byId[customPropId]
 
-    delete props.byComponentId[component.id]
+    // Remove the prop-id in its component.
+    // Remove the prop.
+    const customPropIdIndex = props.byComponentId[component.id].findIndex(
+      propId => propId === customPropId,
+    )
+    props.byComponentId[component.id].splice(customPropIdIndex, 1)
+
     delete props.byId[customPropId]
 
     if (customPropId && component.id !== component.type) {
