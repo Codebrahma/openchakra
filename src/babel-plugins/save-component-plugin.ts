@@ -3,7 +3,6 @@ import traverse from '@babel/traverse'
 import * as t from '@babel/types'
 
 import { getComponentId, getNode } from './utils/babel-plugin-utils'
-import { generateComponentId } from '../utils/generateId'
 
 class saveComponentPlugin {
   functionalComponentCode: string
@@ -12,8 +11,15 @@ class saveComponentPlugin {
     componentId: string
     customComponentName: string
     exposedProps: IProp[]
+    componentInstanceId: string
   }) {
-    const { componentId, customComponentName, exposedProps } = options
+    const {
+      componentId,
+      customComponentName,
+      exposedProps,
+      componentInstanceId,
+    } = options
+
     this.functionalComponentCode = ``
 
     this.plugin = declare(() => {
@@ -26,9 +32,8 @@ class saveComponentPlugin {
             if (visitedComponentId === componentId) {
               // Get the root parent path. Thus we can find the element to move
               const component = path.toString()
-              const newComponentId = generateComponentId()
 
-              const customCompInstance = `<${customComponentName} compId="${newComponentId}"/>`
+              const customCompInstance = `<${customComponentName} compId="${componentInstanceId}"/>`
               const customCompInstanceNode = getNode(customCompInstance)
 
               const functionParams: string[] = []

@@ -48,6 +48,7 @@ import {
 import { searchRootCustomComponent } from '../../utils/recursive'
 import buildComponentIds from '../../utils/componentIdsBuilder'
 import { getExposedProps } from '../../utils/getExposedProps'
+import { generateComponentId } from '../../utils/generateId'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -210,12 +211,16 @@ const Inspector = () => {
     }, 200)
   }
 
-  const babelSaveQueryHandler = (customComponentName: string) => {
+  const babelSaveQueryHandler = (
+    customComponentName: string,
+    newComponentId: string,
+  ) => {
     const exposedProps = getExposedProps(component.id, components, props)
     const { updatedCode, customComponentCode } = babelQueries.saveComponent(
       code,
       {
         componentId: component.id,
+        componentInstanceId: newComponentId,
         customComponentName,
         exposedProps,
       },
@@ -244,9 +249,11 @@ const Inspector = () => {
           position: 'top',
         })
       else {
-        dispatch.components.saveComponent(editedName)
+        const newComponentId = generateComponentId()
+
+        dispatch.components.saveComponent(editedName, newComponentId)
         setTimeout(() => {
-          babelSaveQueryHandler(editedName)
+          babelSaveQueryHandler(editedName, newComponentId)
         }, 200)
         toast({
           title: 'Component is saved successfully.',

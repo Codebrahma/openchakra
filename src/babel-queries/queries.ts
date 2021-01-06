@@ -143,6 +143,7 @@ const saveComponent = (
     componentId: string
     customComponentName: string
     exposedProps: IProp[]
+    componentInstanceId: string
   },
 ) => {
   const plugin = new BabelSaveComponent(options)

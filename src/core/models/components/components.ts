@@ -318,7 +318,11 @@ const components = createModel({
         duplicateComponent(draftState, selectedComponent, componentIds)
       })
     },
-    saveComponent(state: ComponentsState, name: string): ComponentsState {
+    saveComponent(
+      state: ComponentsState,
+      name: string,
+      componentInstanceId: string,
+    ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { selectedId, componentsId } = loadRequired(draftState)
         const parentId =
@@ -330,6 +334,7 @@ const components = createModel({
           name,
           componentId: selectedId,
           parentId,
+          componentInstanceId,
         })
       })
     },
