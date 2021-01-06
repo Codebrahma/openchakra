@@ -64,6 +64,12 @@ const code = createModel({
         componentsCode: {},
       }
     },
+    resetPagesCode(state: CodeState, pagesCode: ICode): CodeState {
+      return {
+        ...state,
+        pagesCode: pagesCode,
+      }
+    },
   },
 })
 

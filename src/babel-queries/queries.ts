@@ -18,6 +18,7 @@ import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plu
 import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
 import BabelExposeProp from '../babel-plugins/expose-prop-plugin'
+import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instances'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -233,16 +234,47 @@ const exportToCustomComponentsPage = (
 
 const exposeProp = (
   code: string,
+  pagesCode: ICode,
   options: {
+    customComponentName: string
     componentId: string
     propName: string
     targetedPropName: string
     defaultPropValue: string
   },
 ) => {
-  return transform(code, {
+  const updatedCode = transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
   }).code
+
+  const { customComponentName, propName, defaultPropValue } = options
+
+  const updatedPagesCode = { ...pagesCode }
+
+  if (customComponentName.length > 0) {
+    // Remove the custom prop from all the instances of the component.
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [
+          babelPluginSyntaxJsx,
+          [
+            BabelAddPropInAllInstances,
+            {
+              componentName: customComponentName,
+              propName: propName,
+              propValue: defaultPropValue,
+            },
+          ],
+        ],
+      }).code
+    })
+  }
+
+  return {
+    updatedCode: updatedCode,
+    updatedPagesCode: updatedPagesCode,
+  }
 }
 
 export default {

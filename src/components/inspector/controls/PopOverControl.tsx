@@ -21,7 +21,11 @@ import {
   getPropByName,
   getSelectedPage,
 } from '../../../core/selectors/components'
-import { getAllComponentsCode, getCode } from '../../../core/selectors/code'
+import {
+  getAllComponentsCode,
+  getCode,
+  getAllPagesCode,
+} from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 
 type FormControlPropType = {
@@ -45,6 +49,7 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const propValue = useSelector(getPropByName(htmlFor || ''))?.value
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
+  const pagesCode = useSelector(getAllPagesCode)
 
   const babelExposePropHandler = () => {
     let rootCustomParentElement = ''
@@ -56,18 +61,21 @@ const PopOverControl: React.FC<FormControlPropType> = ({
         customComponents[componentId],
         customComponents,
       )
-    const updatedCode = babelQueries.exposeProp(
+    const { updatedCode, updatedPagesCode } = babelQueries.exposeProp(
       isCustomComponentChild ? componentsCode[rootCustomParentElement] : code,
+      pagesCode,
       {
+        customComponentName: rootCustomParentElement,
         componentId,
         propName,
         targetedPropName: htmlFor || '',
         defaultPropValue: propValue || '',
       },
     )
-    if (isCustomComponentChild)
+    if (isCustomComponentChild) {
       dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-    else dispatch.code.setPageCode(updatedCode, selectedPage)
+      dispatch.code.resetPagesCode(updatedPagesCode)
+    } else dispatch.code.setPageCode(updatedCode, selectedPage)
   }
 
   const rightClickHandler = (e: any) => {
