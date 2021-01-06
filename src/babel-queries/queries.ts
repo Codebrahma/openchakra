@@ -280,7 +280,7 @@ const exposeProp = (
 }
 
 const unExposeProp = (
-  componentCode: string,
+  code: string,
   pagesCode: ICode,
   options: {
     customComponentName: string
@@ -291,31 +291,34 @@ const unExposeProp = (
   },
 ) => {
   // Modify the component code.
-  const transformedComponentCode = transform(componentCode, {
+  const transformedCode = transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
   }).code
 
   const updatedPagesCode = { ...pagesCode }
 
-  // Remove the custom prop from all the instances of the component.
-  Object.keys(updatedPagesCode).forEach(pageName => {
-    const code = updatedPagesCode[pageName]
-    updatedPagesCode[pageName] = transform(code, {
-      plugins: [
-        babelPluginSyntaxJsx,
-        [
-          BabelDeleteInAllInstances,
-          {
-            componentName: options.customComponentName,
-            propName: options.customPropName,
-          },
+  // Only update the instances of the custom component, if the exposed prop present in custom component.
+  if (options.customComponentName.length > 0) {
+    // Remove the custom prop from all the instances of the component.
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [
+          babelPluginSyntaxJsx,
+          [
+            BabelDeleteInAllInstances,
+            {
+              componentName: options.customComponentName,
+              propName: options.customPropName,
+            },
+          ],
         ],
-      ],
-    }).code
-  })
+      }).code
+    })
+  }
   return {
     updatedPagesCode,
-    updatedComponentCode: transformedComponentCode,
+    updatedCode: transformedCode,
   }
 }
 

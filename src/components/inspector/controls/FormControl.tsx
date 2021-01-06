@@ -17,6 +17,7 @@ import {
   getSelectedComponentId,
   getPropsOfSelectedComp,
   getCustomComponents,
+  getSelectedPage,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
@@ -43,7 +44,9 @@ const FormControl: React.FC<FormControlPropType> = ({
   const dispatch = useDispatch()
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const selectedId = useSelector(getSelectedComponentId)
-  const isCustomComponent = useSelector(isInstanceOfCustomComponent(selectedId))
+  const isCustomComponentInstance = useSelector(
+    isInstanceOfCustomComponent(selectedId),
+  )
   const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === htmlFor,
   )
@@ -53,6 +56,8 @@ const FormControl: React.FC<FormControlPropType> = ({
   const customComponents = useSelector(getCustomComponents)
   const componentsCode = useSelector(getAllComponentsCode)
   const pagesCode = useSelector(getAllPagesCode)
+  const selectedPage = useSelector(getSelectedPage)
+
   let propValue = selectedProp?.value
 
   // TODO : Needs to be modified after completing the span component plugin
@@ -60,10 +65,15 @@ const FormControl: React.FC<FormControlPropType> = ({
 
   const unExposeBabelQueryHandler = () => {
     if (selectedProp) {
-      const rootCustomParentElement = searchRootCustomComponent(
-        customComponents[selectedId],
-        customComponents,
-      )
+      let rootCustomParentElement: string = ''
+
+      const isChildOfCustomComponent = customComponents[selectedId]
+
+      if (isChildOfCustomComponent)
+        rootCustomParentElement = searchRootCustomComponent(
+          isChildOfCustomComponent,
+          customComponents,
+        )
       const options = {
         customComponentName: rootCustomParentElement,
         componentId: selectedId,
@@ -75,29 +85,30 @@ const FormControl: React.FC<FormControlPropType> = ({
             : selectedProp?.derivedFromPropName,
       }
 
-      const {
-        updatedPagesCode,
-        updatedComponentCode,
-      } = babelQueries.unExposeProp(
-        componentsCode[rootCustomParentElement],
+      const code = isChildOfCustomComponent
+        ? componentsCode[rootCustomParentElement]
+        : pagesCode[selectedPage]
+
+      const { updatedPagesCode, updatedCode } = babelQueries.unExposeProp(
+        code,
         pagesCode,
         options,
       )
-      dispatch.code.setComponentsCode(
-        updatedComponentCode,
-        rootCustomParentElement,
-      )
-      dispatch.code.resetPagesCode(updatedPagesCode)
+
+      if (isChildOfCustomComponent) {
+        dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+        dispatch.code.resetPagesCode(updatedPagesCode)
+      } else {
+        dispatch.code.setPageCode(updatedCode, selectedPage)
+      }
     }
   }
 
   const unExposePropHandler = () => {
     dispatch.components.unexpose(htmlFor || '')
-    if (customComponents[selectedId]) {
-      setTimeout(() => {
-        unExposeBabelQueryHandler()
-      }, 200)
-    }
+    setTimeout(() => {
+      unExposeBabelQueryHandler()
+    }, 200)
   }
 
   return (
@@ -150,7 +161,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
-      {isCustomComponentPage && isCustomComponent && !isPropExposed ? (
+      {isCustomComponentPage && isCustomComponentInstance && !isPropExposed ? (
         <ActionButton
           label="delete Exposed prop"
           icon={<SmallCloseIcon />}

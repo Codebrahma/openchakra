@@ -20,6 +20,11 @@ const unExposeProp = (
   return {
     visitor: {
       ArrowFunctionExpression(path: any) {
+        const componentName = path.parentPath.node.id.name
+
+        // Only remove the params for the component, if it is a custom component.
+        if (componentName === 'App') return
+
         // Get the properties for the function.
         const objectPatternProperties = path.node.params[0].properties
 
