@@ -139,7 +139,11 @@ const moveComponent = (
 
 const saveComponent = (
   code: string,
-  options: { componentId: string; customComponentName: string },
+  options: {
+    componentId: string
+    customComponentName: string
+    exposedProps: IProp[]
+  },
 ) => {
   const plugin = new BabelSaveComponent(options)
 

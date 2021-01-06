@@ -19,8 +19,9 @@ import {
   getSelectedComponentId,
   getCustomComponents,
   getPropByName,
+  getSelectedPage,
 } from '../../../core/selectors/components'
-import { getAllComponentsCode } from '../../../core/selectors/code'
+import { getAllComponentsCode, getCode } from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 
 type FormControlPropType = {
@@ -42,6 +43,32 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const customComponents = useSelector(getCustomComponents)
   const componentsCode = useSelector(getAllComponentsCode)
   const propValue = useSelector(getPropByName(htmlFor || ''))?.value
+  const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
+
+  const babelExposePropHandler = () => {
+    let rootCustomParentElement = ''
+
+    const isCustomComponentChild = customComponents[componentId] !== undefined
+
+    if (isCustomComponentChild)
+      rootCustomParentElement = searchRootCustomComponent(
+        customComponents[componentId],
+        customComponents,
+      )
+    const updatedCode = babelQueries.exposeProp(
+      isCustomComponentChild ? componentsCode[rootCustomParentElement] : code,
+      {
+        componentId,
+        propName,
+        targetedPropName: htmlFor || '',
+        defaultPropValue: propValue || '',
+      },
+    )
+    if (isCustomComponentChild)
+      dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+    else dispatch.code.setPageCode(updatedCode, selectedPage)
+  }
 
   const rightClickHandler = (e: any) => {
     e.preventDefault()
@@ -66,22 +93,9 @@ const PopOverControl: React.FC<FormControlPropType> = ({
           name: propName,
           targetedProp: htmlFor || '',
         })
-        if (customComponents[componentId] !== undefined) {
-          let rootCustomParentElement = searchRootCustomComponent(
-            customComponents[componentId],
-            customComponents,
-          )
-          const updatedCode = babelQueries.exposeProp(
-            componentsCode[rootCustomParentElement],
-            {
-              componentId,
-              propName,
-              targetedPropName: htmlFor || '',
-              defaultPropValue: propValue || '',
-            },
-          )
-          dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-        }
+        setTimeout(() => {
+          babelExposePropHandler()
+        }, 200)
       }
     }
   }

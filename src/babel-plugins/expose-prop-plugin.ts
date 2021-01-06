@@ -37,10 +37,16 @@ const exposePropPlugin = (
   return {
     visitor: {
       ArrowFunctionExpression(path: any) {
+        const componentName = path.parentPath.node.id.name
+
+        // Only update the params for the component, if it is a custom component.
+        if (componentName === 'App') return
+
         // First we need to assign the parameters in the function definition.
         // For Example : const CustomButton=({buttonColor='red.500'})=><Button bg={buttonColor}>Hello world</Button>
 
         // First create the assignment pattern (buttonColor='red.500')
+
         const assignmentPattern = t.assignmentPattern(
           t.identifier(propName),
           t.stringLiteral(defaultPropValue),
