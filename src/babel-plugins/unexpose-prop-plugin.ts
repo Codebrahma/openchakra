@@ -51,10 +51,14 @@ const unExposeProp = (
             const exposedPropIndex = openingElement.attributes.findIndex(
               (node: any) => node.name.name === exposedPropName,
             )
-            openingElement.attributes[exposedPropIndex] = t.jsxAttribute(
-              t.jsxIdentifier(exposedPropName),
-              t.stringLiteral(exposedPropValue),
-            )
+            if (exposedPropValue.length > 0) {
+              openingElement.attributes[exposedPropIndex] = t.jsxAttribute(
+                t.jsxIdentifier(exposedPropName),
+                t.stringLiteral(exposedPropValue),
+              )
+            } else {
+              openingElement.attributes.splice(exposedPropIndex, 1)
+            }
           }
         } else return
       },
