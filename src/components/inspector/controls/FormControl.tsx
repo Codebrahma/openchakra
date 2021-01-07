@@ -18,6 +18,8 @@ import {
   getPropsOfSelectedComp,
   getCustomComponents,
   getSelectedPage,
+  getCustomComponentsProps,
+  getComponentBy,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
@@ -27,6 +29,7 @@ import {
 } from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 import babelQueries from '../../../babel-queries/queries'
+import getPropsThatUseCustomProp from '../../../utils/getPropsThatUseCustomProp'
 
 type FormControlPropType = {
   label: ReactNode
@@ -47,6 +50,7 @@ const FormControl: React.FC<FormControlPropType> = ({
   const isCustomComponentInstance = useSelector(
     isInstanceOfCustomComponent(selectedId),
   )
+  const component = useSelector(getComponentBy(selectedId))
   const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === htmlFor,
   )
@@ -54,9 +58,12 @@ const FormControl: React.FC<FormControlPropType> = ({
     selectedProp && selectedProp.derivedFromPropName ? true : false
 
   const customComponents = useSelector(getCustomComponents)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
+
   const componentsCode = useSelector(getAllComponentsCode)
   const pagesCode = useSelector(getAllPagesCode)
   const selectedPage = useSelector(getSelectedPage)
+  const isChildOfCustomComponent = customComponents[selectedId]
 
   let propValue = selectedProp?.value
 
@@ -67,11 +74,9 @@ const FormControl: React.FC<FormControlPropType> = ({
     if (selectedProp) {
       let rootCustomParentElement: string = ''
 
-      const isChildOfCustomComponent = customComponents[selectedId]
-
       if (isChildOfCustomComponent)
         rootCustomParentElement = searchRootCustomComponent(
-          isChildOfCustomComponent,
+          customComponents[selectedId],
           customComponents,
         )
       const options = {
@@ -108,6 +113,35 @@ const FormControl: React.FC<FormControlPropType> = ({
     dispatch.components.unexpose(htmlFor || '')
     setTimeout(() => {
       unExposeBabelQueryHandler()
+    }, 200)
+  }
+
+  const babelCustomPropDeletionQueryHandler = () => {
+    const customComponentType = component.type
+    const propsUsingCustomProp = getPropsThatUseCustomProp(
+      htmlFor || '',
+      customComponentType,
+      customComponents,
+      customComponentsProps,
+    )
+
+    const { updatedCode, updatedPagesCode } = babelQueries.deleteCustomProp(
+      componentsCode[customComponentType],
+      pagesCode,
+      {
+        customComponentName: customComponentType,
+        customPropName: htmlFor || '',
+        propsUsingCustomProp,
+      },
+    )
+    dispatch.code.setComponentsCode(updatedCode, customComponentType)
+    dispatch.code.resetPagesCode(updatedPagesCode)
+  }
+
+  const customPropDeletionHandler = () => {
+    dispatch.components.deleteCustomProp(htmlFor || '')
+    setTimeout(() => {
+      babelCustomPropDeletionQueryHandler()
     }, 200)
   }
 
@@ -165,9 +199,7 @@ const FormControl: React.FC<FormControlPropType> = ({
         <ActionButton
           label="delete Exposed prop"
           icon={<SmallCloseIcon />}
-          onClick={() =>
-            htmlFor && dispatch.components.deleteCustomProp(htmlFor)
-          }
+          onClick={customPropDeletionHandler}
         />
       ) : null}
     </ChakraFormControl>
