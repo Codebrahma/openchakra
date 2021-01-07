@@ -12,7 +12,7 @@ import {
   LightMode,
   Box,
 } from '@chakra-ui/core'
-import ActionButton from './inspector/ActionButton'
+import ActionButton from './actionButtons/ActionButton'
 import { FiTrash2 } from 'react-icons/fi'
 import { CheckIcon } from '@chakra-ui/icons'
 

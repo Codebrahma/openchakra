@@ -280,6 +280,27 @@ const exposeProp = (
   }
 }
 
+const deletePropInAllInstances = (
+  pagesCode: ICode,
+  options: {
+    componentName: string
+    propName: string
+  },
+) => {
+  const updatedPagesCode = { ...pagesCode }
+
+  // Only update the instances of the custom component, if the exposed prop present in custom component.
+  if (options.componentName.length > 0) {
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [babelPluginSyntaxJsx, [BabelDeleteInAllInstances, options]],
+      }).code
+    })
+  }
+  return updatedPagesCode
+}
+
 const unExposeProp = (
   code: string,
   pagesCode: ICode,
@@ -296,27 +317,12 @@ const unExposeProp = (
     plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
   }).code
 
-  const updatedPagesCode = { ...pagesCode }
+  // Remove the custom prop from all the instances of the component.
+  const updatedPagesCode = deletePropInAllInstances(pagesCode, {
+    componentName: options.customComponentName,
+    propName: options.customPropName,
+  })
 
-  // Only update the instances of the custom component, if the exposed prop present in custom component.
-  if (options.customComponentName.length > 0) {
-    // Remove the custom prop from all the instances of the component.
-    Object.keys(updatedPagesCode).forEach(pageName => {
-      const code = updatedPagesCode[pageName]
-      updatedPagesCode[pageName] = transform(code, {
-        plugins: [
-          babelPluginSyntaxJsx,
-          [
-            BabelDeleteInAllInstances,
-            {
-              componentName: options.customComponentName,
-              propName: options.customPropName,
-            },
-          ],
-        ],
-      }).code
-    })
-  }
   return {
     updatedPagesCode,
     updatedCode: transformedCode,
@@ -337,27 +343,12 @@ const deleteCustomProp = (
     plugins: [babelPluginSyntaxJsx, [BabelDeleteCustomProp, options]],
   }).code
 
-  const updatedPagesCode = { ...pagesCode }
+  // Remove the custom prop from all the instances of the component.
+  const updatedPagesCode = deletePropInAllInstances(pagesCode, {
+    componentName: options.customComponentName,
+    propName: options.customPropName,
+  })
 
-  // Only update the instances of the custom component, if the exposed prop present in custom component.
-  if (options.customComponentName.length > 0) {
-    // Remove the custom prop from all the instances of the component.
-    Object.keys(updatedPagesCode).forEach(pageName => {
-      const code = updatedPagesCode[pageName]
-      updatedPagesCode[pageName] = transform(code, {
-        plugins: [
-          babelPluginSyntaxJsx,
-          [
-            BabelDeleteInAllInstances,
-            {
-              componentName: options.customComponentName,
-              propName: options.customPropName,
-            },
-          ],
-        ],
-      }).code
-    })
-  }
   return {
     updatedPagesCode,
     updatedCode: transformedComponentCode,

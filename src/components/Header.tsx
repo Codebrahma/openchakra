@@ -19,7 +19,7 @@ import {
 import HeaderMenu from './HeaderMenu'
 import ClearOptionPopover from './ClearOptionPopover'
 import EditThemeModal from './EditThemeModal'
-import ActionButton from './inspector/ActionButton'
+import ActionButton from './actionButtons/ActionButton'
 import composerIcon from '../composer-icon.png'
 import { getCode } from '../core/selectors/code'
 

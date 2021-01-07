@@ -15,6 +15,7 @@ import { searchRootCustomComponent } from '../utils/recursive'
 import { generateComponentId } from '../utils/generateId'
 
 import builder from '../core/models/composer/builder'
+import useMoveComponent from './useMoveComponent'
 
 export const useDropComponent = (
   parentId: string,
@@ -37,88 +38,13 @@ export const useDropComponent = (
   const customComponents = useSelector(getCustomComponents)
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
+  const onComponentMoved = useMoveComponent(parentId)
 
   if (isCustomComponentChild) {
     rootParentOfParentElement = searchRootCustomComponent(
       customComponents[parentId],
       customComponents,
     )
-  }
-
-  const moveComponentBabelQueryHandler = (componentId: string) => {
-    const isCustomComponentUpdate = customComponents[componentId] ? true : false
-    const isParentCustomComponent = isCustomComponentChild
-
-    let rootParentOfComponent = ``
-    if (isCustomComponentUpdate) {
-      rootParentOfComponent = searchRootCustomComponent(
-        customComponents[componentId],
-        customComponents,
-      )
-    }
-
-    // If the component is dragged into the same custom component.
-    if (
-      rootParentOfComponent !== '' &&
-      rootParentOfComponent === rootParentOfParentElement
-    )
-      return
-
-    // Normal component moved from normal component to another normal component
-    if (!isCustomComponentUpdate && !isParentCustomComponent) {
-      const { updatedDestCode } = babelQueries.moveComponent(code, code, {
-        componentId,
-        destParentId: parentId,
-      })
-      dispatch.code.setPageCode(updatedDestCode, selectedPage)
-    }
-    // Normal Component moved from normal component to custom component
-    else if (!isCustomComponentUpdate && isParentCustomComponent) {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        code,
-        componentsCode[rootParentOfParentElement],
-        {
-          componentId,
-          destParentId: parentId,
-        },
-      )
-      dispatch.code.setPageCode(updatedSourceCode, selectedPage)
-
-      dispatch.code.setComponentsCode(
-        updatedDestCode,
-        rootParentOfParentElement,
-      )
-    }
-    // Custom component moved from custom component to normal component
-    else if (isCustomComponentUpdate && !isParentCustomComponent) {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        componentsCode[rootParentOfComponent],
-        code,
-        {
-          componentId,
-          destParentId: parentId,
-        },
-      )
-      dispatch.code.setComponentsCode(updatedSourceCode, rootParentOfComponent)
-
-      dispatch.code.setPageCode(updatedDestCode, selectedPage)
-    }
-    // custom component moved from custom component to another custom component
-    else {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        componentsCode[rootParentOfComponent],
-        componentsCode[rootParentOfParentElement],
-        {
-          componentId,
-          destParentId: parentId,
-        },
-      )
-      dispatch.code.setComponentsCode(updatedSourceCode, rootParentOfComponent)
-      dispatch.code.setComponentsCode(
-        updatedDestCode,
-        rootParentOfParentElement,
-      )
-    }
   }
 
   const updateCode = (code: string) => {
@@ -195,20 +121,7 @@ export const useDropComponent = (
       if (isCustomComponentChild && !isCustomPage) return
 
       if (item.isMoved) {
-        dispatch.components.moveComponent({
-          componentId: item.id,
-          parentId,
-        })
-        const oldParentId = isCustomComponentChild
-          ? customComponents[item.id].parent
-          : components[item.id].parent
-
-        // Only if the parent changes, the component should be moved or else the component should just be reordered.
-        if (oldParentId !== parentId) {
-          setTimeout(() => {
-            moveComponentBabelQueryHandler(item.id)
-          }, 200)
-        }
+        onComponentMoved(item.id)
       } else {
         let updatedCode: string = ``
         const newComponentId = generateComponentId()

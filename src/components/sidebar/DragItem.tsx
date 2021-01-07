@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
 import { DeleteIcon, DragHandleIcon } from '@chakra-ui/icons'
 import { Text, Box, Flex, useToast } from '@chakra-ui/core'
-import ActionButton from '../inspector/ActionButton'
+import ActionButton from '../actionButtons/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
 import {
   getAllTheComponents,
