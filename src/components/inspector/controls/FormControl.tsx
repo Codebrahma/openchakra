@@ -16,9 +16,17 @@ import {
   isInstanceOfCustomComponent,
   getSelectedComponentId,
   getPropsOfSelectedComp,
+  getCustomComponents,
+  getSelectedPage,
 } from '../../../core/selectors/components'
 import ActionButton from '../ActionButton'
 import useDispatch from '../../../hooks/useDispatch'
+import {
+  getAllComponentsCode,
+  getAllPagesCode,
+} from '../../../core/selectors/code'
+import { searchRootCustomComponent } from '../../../utils/recursive'
+import babelQueries from '../../../babel-queries/queries'
 
 type FormControlPropType = {
   label: ReactNode
@@ -36,12 +44,72 @@ const FormControl: React.FC<FormControlPropType> = ({
   const dispatch = useDispatch()
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const selectedId = useSelector(getSelectedComponentId)
-  const isCustomComponent = useSelector(isInstanceOfCustomComponent(selectedId))
+  const isCustomComponentInstance = useSelector(
+    isInstanceOfCustomComponent(selectedId),
+  )
   const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === htmlFor,
   )
   const isPropExposed =
     selectedProp && selectedProp.derivedFromPropName ? true : false
+
+  const customComponents = useSelector(getCustomComponents)
+  const componentsCode = useSelector(getAllComponentsCode)
+  const pagesCode = useSelector(getAllPagesCode)
+  const selectedPage = useSelector(getSelectedPage)
+
+  let propValue = selectedProp?.value
+
+  // TODO : Needs to be modified after completing the span component plugin
+  propValue = Array.isArray(propValue) ? propValue[0] : propValue
+
+  const unExposeBabelQueryHandler = () => {
+    if (selectedProp) {
+      let rootCustomParentElement: string = ''
+
+      const isChildOfCustomComponent = customComponents[selectedId]
+
+      if (isChildOfCustomComponent)
+        rootCustomParentElement = searchRootCustomComponent(
+          isChildOfCustomComponent,
+          customComponents,
+        )
+      const options = {
+        customComponentName: rootCustomParentElement,
+        componentId: selectedId,
+        exposedPropName: selectedProp?.name,
+        exposedPropValue: propValue,
+        customPropName:
+          selectedProp?.derivedFromPropName === null
+            ? ''
+            : selectedProp?.derivedFromPropName,
+      }
+
+      const code = isChildOfCustomComponent
+        ? componentsCode[rootCustomParentElement]
+        : pagesCode[selectedPage]
+
+      const { updatedPagesCode, updatedCode } = babelQueries.unExposeProp(
+        code,
+        pagesCode,
+        options,
+      )
+
+      if (isChildOfCustomComponent) {
+        dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+        dispatch.code.resetPagesCode(updatedPagesCode)
+      } else {
+        dispatch.code.setPageCode(updatedCode, selectedPage)
+      }
+    }
+  }
+
+  const unExposePropHandler = () => {
+    dispatch.components.unexpose(htmlFor || '')
+    setTimeout(() => {
+      unExposeBabelQueryHandler()
+    }, 200)
+  }
 
   return (
     <ChakraFormControl
@@ -80,7 +148,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           <ActionButton
             label="Unexpose"
             icon={<FiRepeat />}
-            onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
+            onClick={unExposePropHandler}
           />
         </Box>
       ) : (
@@ -93,7 +161,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
-      {isCustomComponentPage && isCustomComponent && !isPropExposed ? (
+      {isCustomComponentPage && isCustomComponentInstance && !isPropExposed ? (
         <ActionButton
           label="delete Exposed prop"
           icon={<SmallCloseIcon />}
