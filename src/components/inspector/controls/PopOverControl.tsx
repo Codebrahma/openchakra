@@ -13,6 +13,20 @@ import {
   Tooltip,
   useToast,
 } from '@chakra-ui/core'
+import babelQueries from '../../../babel-queries/queries'
+import { useSelector } from 'react-redux'
+import {
+  getSelectedComponentId,
+  getCustomComponents,
+  getPropByName,
+  getSelectedPage,
+} from '../../../core/selectors/components'
+import {
+  getAllComponentsCode,
+  getCode,
+  getAllPagesCode,
+} from '../../../core/selectors/code'
+import { searchRootCustomComponent } from '../../../utils/recursive'
 
 type FormControlPropType = {
   label: ReactNode
@@ -29,6 +43,43 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
   const toast = useToast()
+  const componentId = useSelector(getSelectedComponentId)
+  const customComponents = useSelector(getCustomComponents)
+  const componentsCode = useSelector(getAllComponentsCode)
+  const code = useSelector(getCode)
+  const selectedPage = useSelector(getSelectedPage)
+  const pagesCode = useSelector(getAllPagesCode)
+  let propValue = useSelector(getPropByName(htmlFor || ''))?.value
+
+  // TODO : Needs to be modified after completing the span component plugin
+  propValue = Array.isArray(propValue) ? propValue[0] : propValue
+
+  const babelExposePropHandler = () => {
+    let rootCustomParentElement = ''
+
+    const isCustomComponentChild = customComponents[componentId] !== undefined
+
+    if (isCustomComponentChild)
+      rootCustomParentElement = searchRootCustomComponent(
+        customComponents[componentId],
+        customComponents,
+      )
+    const { updatedCode, updatedPagesCode } = babelQueries.exposeProp(
+      isCustomComponentChild ? componentsCode[rootCustomParentElement] : code,
+      pagesCode,
+      {
+        customComponentName: rootCustomParentElement,
+        componentId,
+        propName,
+        targetedPropName: htmlFor || '',
+        defaultPropValue: propValue || '',
+      },
+    )
+    if (isCustomComponentChild) {
+      dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+      dispatch.code.resetPagesCode(updatedPagesCode)
+    } else dispatch.code.setPageCode(updatedCode, selectedPage)
+  }
 
   const rightClickHandler = (e: any) => {
     e.preventDefault()
@@ -48,11 +99,15 @@ const PopOverControl: React.FC<FormControlPropType> = ({
           isClosable: true,
           position: 'top',
         })
-      else
+      else {
         dispatch.components.exposeProp({
           name: propName,
           targetedProp: htmlFor || '',
         })
+        setTimeout(() => {
+          babelExposePropHandler()
+        }, 200)
+      }
     }
   }
   return (

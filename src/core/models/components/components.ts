@@ -234,22 +234,18 @@ const components = createModel({
     addComponent(
       state: ComponentsState,
       payload: {
-        parentName: string
+        componentId: string
+        parentId: string
         type: ComponentType
-        rootParentType?: ComponentType
-        testId?: string
       },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        addComponent(draftState, {
-          parentId: payload.parentName,
-          type: payload.type,
-        })
+        addComponent(draftState, payload)
       })
     },
     addCustomComponent(
       state: ComponentsState,
-      payload: { parentId: string; type: string },
+      payload: { componentId: string; parentId: string; type: string },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { parentId, type } = payload
@@ -303,7 +299,7 @@ const components = createModel({
           state.componentsById[componentsId][selectedComponent.parent].id,
       }
     },
-    duplicate(state: ComponentsState): ComponentsState {
+    duplicate(state: ComponentsState, componentIds: string[]): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { isCustomComponentChild, components, selectedId } = loadRequired(
           draftState,
@@ -319,10 +315,14 @@ const components = createModel({
         )
           return state
 
-        duplicateComponent(draftState, selectedComponent)
+        duplicateComponent(draftState, selectedComponent, componentIds)
       })
     },
-    saveComponent(state: ComponentsState, name: string): ComponentsState {
+    saveComponent(
+      state: ComponentsState,
+      name: string,
+      componentInstanceId: string,
+    ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { selectedId, componentsId } = loadRequired(draftState)
         const parentId =
@@ -334,6 +334,7 @@ const components = createModel({
           name,
           componentId: selectedId,
           parentId,
+          componentInstanceId,
         })
       })
     },
@@ -360,6 +361,7 @@ const components = createModel({
     },
     exportSelectedComponentToCustomPage(
       state: ComponentsState,
+      componentIds: string[],
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { propsId, componentsId } = loadRequired(draftState)
@@ -369,6 +371,7 @@ const components = createModel({
           components[draftState.selectedId],
           components,
           props,
+          componentIds,
         )
         //id of 2 refers to the custom component page.
         draftState.componentsById['2'] = {
@@ -481,25 +484,42 @@ const components = createModel({
       payload: {
         components: IComponents
         props: IProps
-        customComponents: IComponents
-        customComponentsProps: IProps
       },
     ) {
       return produce(state, (draftState: ComponentsState) => {
-        const {
-          components,
-          props,
-          customComponents,
-          customComponentsProps,
-        } = payload
+        const { components, props } = payload
         const componentsId =
           draftState.pages[draftState.selectedPage].componentsId
         const propsId = draftState.pages[draftState.selectedPage].componentsId
 
         draftState.componentsById[componentsId] = components
         draftState.propsById[propsId] = props
-        draftState.customComponents = customComponents
-        draftState.customComponentsProps = customComponentsProps
+      })
+    },
+    updateCustomComponentsState(
+      state: ComponentsState,
+      payload: {
+        components: IComponents
+        props: IProps
+      },
+    ) {
+      return produce(state, (draftState: ComponentsState) => {
+        const { components, props } = payload
+
+        draftState.customComponents = {
+          ...draftState.customComponents,
+          ...components,
+        }
+        draftState.customComponentsProps = {
+          byId: {
+            ...draftState.customComponentsProps.byId,
+            ...props.byId,
+          },
+          byComponentId: {
+            ...draftState.customComponentsProps.byComponentId,
+            ...props.byComponentId,
+          },
+        }
       })
     },
   },

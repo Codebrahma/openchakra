@@ -24,13 +24,12 @@ const CssStylesPanel = () => {
   const addStylesHandler = () => {
     const stylesObject = cssToObject(textareaValue)
 
+    dispatch.components.addProps(stylesObject)
     const updatedCode = babelQueries.addProps(code, {
       componentId,
       propsToBeAdded: stylesObject,
     })
-    const componentsState = babelQueries.getComponentsState(updatedCode)
-    dispatch.code.setCode(updatedCode, selectedPage)
-    dispatch.components.updateComponentsState(componentsState)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
 
     setTextareaValue('')
   }

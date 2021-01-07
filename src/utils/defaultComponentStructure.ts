@@ -1,3 +1,6 @@
+// The order of builder and default components structure should be same.
+// When you add a meta component, the default component structure and also the builder file should be updated.
+
 const componentsStructure: any = {
   Box: `<Box></Box>`,
   Text: `<Text>Text value</Text>`,
@@ -82,6 +85,13 @@ const componentsStructure: any = {
   <NumberDecrementStepper />
 </NumberInputStepper>
 </NumberInput>`,
+  InputGroupMeta: `  <InputGroup>
+<InputLeftAddon>left</InputLeftAddon>
+<Input />
+<InputRightElement>
+  <Icon as={CopyIcon} />
+</InputRightElement>
+</InputGroup>`,
 }
 
 export default componentsStructure

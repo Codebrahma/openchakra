@@ -21,10 +21,9 @@ import {
 
 export const addCustomComponent = (
   draftState: ComponentsState,
-  payload: { parentId: string; type: string },
+  payload: { componentId: string; parentId: string; type: string },
 ) => {
-  const componentId = generateComponentId()
-  const { type, parentId } = payload
+  const { componentId, type, parentId } = payload
   const { components, props } = loadRequired(draftState, parentId)
 
   const customComponentProps: IPropsById = {}
@@ -93,11 +92,16 @@ export const addCustomComponent = (
  */
 export const saveComponent = (
   draftState: ComponentsState,
-  payload: { name: string; componentId: string; parentId: string },
+  payload: {
+    name: string
+    componentId: string
+    parentId: string
+    componentInstanceId: string
+  },
 ) => {
   const { propsId, componentsId } = loadRequired(draftState)
   const { name, componentId, parentId } = payload
-  const newId = generateComponentId()
+  const newId = payload.componentInstanceId
 
   //move the component & props from the components data to custom components data
   const {

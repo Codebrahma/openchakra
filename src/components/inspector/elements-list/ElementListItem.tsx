@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import { SettingsIcon, ArrowUpDownIcon } from '@chakra-ui/icons'
 import { Box, Text, BoxProps, Flex } from '@chakra-ui/core'
 
-import ActionButton from '../ActionButton'
+import ActionButton from '../../actionButtons/ActionButton'
 
 interface Props extends Pick<IComponent, 'type'> {
   opacity?: number

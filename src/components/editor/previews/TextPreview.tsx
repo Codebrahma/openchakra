@@ -10,13 +10,11 @@ import { useSelector } from 'react-redux'
 import {
   getComponents,
   getSelectedComponentId,
-  getSelectedPage,
 } from '../../../core/selectors/components'
 import ComponentPreview from '../ComponentPreview'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { getCode } from '../../../core/selectors/code'
-import babelQueries from '../../../babel-queries/queries'
+import { useForm } from '../../../hooks/useForm'
 
 const TextPreview: React.FC<{
   component: IComponent
@@ -48,8 +46,7 @@ const TextPreview: React.FC<{
   const selectedComponents = useSelector(getComponents(component.id))
   const textValue = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
-  const code = useSelector(getCode)
-  const selectedPage = useSelector(getSelectedPage)
+  const { setValue } = useForm()
 
   const componentChildren =
     propsKeyValue.children && Array.isArray(propsKeyValue.children)
@@ -92,16 +89,9 @@ const TextPreview: React.FC<{
               value: value || '',
             })
         })
-        console.log(childrenDetails)
         // As of now span elements are not handled by the AST tree
         if (childrenDetails[0]?.type === '#text') {
-          const updatedCode = babelQueries.setProp(code, {
-            componentId: component.id,
-            propName: 'children',
-            value: childrenDetails[0].value,
-          })
-          // update the code
-          dispatch.code.setCode(updatedCode, selectedPage)
+          setValue('', 'children', childrenDetails[0].value)
         }
         dispatch.components.updateTextChildrenProp({
           id: component.id,

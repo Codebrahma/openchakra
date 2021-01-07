@@ -4,18 +4,20 @@ import undoable from 'redux-undo'
 import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import { ComponentsStateWithUndo } from './models/components/components-types'
+import {
+  ComponentsStateWithUndo,
+  CodeStateWithUndo,
+} from './models/components/components-types'
 import { AppState } from './models/app'
 import models from './models'
-import filterUndoableActions from '../utils/undo'
+import { componentsFilterActions, codeFilterActions } from '../utils/undo'
 import { TextState } from './models/text'
-import { CodeState } from './models/code'
 
 export type RootState = {
   app: AppState
   components: ComponentsStateWithUndo
   text: TextState
-  code: CodeState
+  code: CodeStateWithUndo
 }
 
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
@@ -38,7 +40,7 @@ const persistThemeConfig = {
 const persistCodeConfig = {
   key: `composer_code_v${version}`,
   storage,
-  whitelist: ['code'],
+  whitelist: ['present'],
   version,
   throttle: 500,
 }
@@ -60,11 +62,17 @@ export const storeConfig = {
           persistConfig,
           undoable(reducers.components, {
             limit: 10,
-            filter: filterUndoableActions,
+            filter: componentsFilterActions,
           }),
         ),
         text: reducers.text,
-        code: persistReducer(persistCodeConfig, reducers.code),
+        code: persistReducer(
+          persistCodeConfig,
+          undoable(reducers.code, {
+            limit: 10,
+            filter: codeFilterActions,
+          }),
+        ),
       })
     },
   },

@@ -1,6 +1,5 @@
 import React, { ReactNode, memo } from 'react'
 import { useSelector } from 'react-redux'
-import { FiRepeat } from 'react-icons/fi'
 import {
   FormControl as ChakraFormControl,
   Grid,
@@ -8,7 +7,6 @@ import {
   FormLabel,
   Text,
 } from '@chakra-ui/core'
-import { SmallCloseIcon } from '@chakra-ui/icons'
 
 import PopOverControl from './PopOverControl'
 import {
@@ -17,8 +15,8 @@ import {
   getSelectedComponentId,
   getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
-import ActionButton from '../ActionButton'
-import useDispatch from '../../../hooks/useDispatch'
+import UnExposePropButton from '../../actionButtons/UnExposePropButton'
+import CustomPropDeletionButton from '../../actionButtons/CustomPropDeletionButton'
 
 type FormControlPropType = {
   label: ReactNode
@@ -33,10 +31,11 @@ const FormControl: React.FC<FormControlPropType> = ({
   children,
   hasColumn,
 }) => {
-  const dispatch = useDispatch()
   const isCustomComponentPage = useSelector(getShowCustomComponentPage)
   const selectedId = useSelector(getSelectedComponentId)
-  const isCustomComponent = useSelector(isInstanceOfCustomComponent(selectedId))
+  const isCustomComponentInstance = useSelector(
+    isInstanceOfCustomComponent(selectedId),
+  )
   const selectedProp = useSelector(getPropsOfSelectedComp).find(
     prop => prop.name === htmlFor,
   )
@@ -66,7 +65,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           {label}
         </FormLabel>
       )}
-      {isPropExposed ? (
+      {isPropExposed && selectedProp !== undefined ? (
         <Box display="flex" alignItems="center">
           <Text
             fontSize="10px"
@@ -75,13 +74,9 @@ const FormControl: React.FC<FormControlPropType> = ({
             mr="11px"
           >
             exposed as{' '}
-            {isPropExposed && htmlFor && selectedProp?.derivedFromPropName}
+            {isPropExposed && htmlFor && selectedProp.derivedFromPropName}
           </Text>
-          <ActionButton
-            label="Unexpose"
-            icon={<FiRepeat />}
-            onClick={() => htmlFor && dispatch.components.unexpose(htmlFor)}
-          />
+          <UnExposePropButton propToUnExpose={selectedProp} />
         </Box>
       ) : (
         <Box
@@ -93,14 +88,8 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
-      {isCustomComponentPage && isCustomComponent && !isPropExposed ? (
-        <ActionButton
-          label="delete Exposed prop"
-          icon={<SmallCloseIcon />}
-          onClick={() =>
-            htmlFor && dispatch.components.deleteCustomProp(htmlFor)
-          }
-        />
+      {isCustomComponentPage && isCustomComponentInstance && !isPropExposed ? (
+        <CustomPropDeletionButton customPropName={htmlFor || ''} />
       ) : null}
     </ChakraFormControl>
   )

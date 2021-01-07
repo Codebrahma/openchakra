@@ -174,5 +174,5 @@ interface IPropsByPageId {
 }
 
 interface ICode {
-  [pageName: string]: string
+  [name: string]: string
 }

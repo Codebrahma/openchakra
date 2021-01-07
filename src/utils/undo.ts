@@ -1,6 +1,6 @@
 import { Action } from '@rematch/core'
 
-export default function filterActions(action: Action) {
+export function componentsFilterActions(action: Action) {
   if (
     [
       'components/resetProps',
@@ -24,6 +24,14 @@ export default function filterActions(action: Action) {
       'components/addProps',
     ].includes(action.type)
   ) {
+    return true
+  }
+
+  return false
+}
+
+export function codeFilterActions(action: Action) {
+  if (['code/setPageCode', 'code/setComponentsCode'].includes(action.type)) {
     return true
   }
 

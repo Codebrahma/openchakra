@@ -1,5 +1,4 @@
 import { declare } from '@babel/helper-plugin-utils'
-import { functionOnEnter, functionOnExit } from './functionDeclaration'
 import addProps, { identifierPropHandler } from './addProps'
 import { generatePropId } from '../../utils/generateId'
 import {
@@ -11,8 +10,6 @@ class getComponentsPlugin {
   state: {
     components: IComponents
     props: IProps
-    customComponents: IComponents
-    customComponentsProps: IProps
   }
   plugin: any
   constructor() {
@@ -20,13 +17,6 @@ class getComponentsPlugin {
     this.state = {
       components: {},
       props: {
-        byId: {},
-        byComponentId: {
-          root: [],
-        },
-      },
-      customComponents: {},
-      customComponentsProps: {
         byId: {},
         byComponentId: {
           root: [],
@@ -43,73 +33,25 @@ class getComponentsPlugin {
 
       return {
         visitor: {
-          // This type includes functions like
-          // const App=()=>{} && const App=function(){}
-          VariableDeclaration: {
-            enter: (path: any) => {
-              const variableDeclaratorType = path.node.declarations[0].init.type
-
-              if (
-                variableDeclaratorType === 'ArrowFunctionExpression' ||
-                variableDeclaratorType === 'FunctionExpression'
-              ) {
-                const newFunctionName = path.node.declarations[0].id.name
-
-                const { customComponents, customComponentsProps } = this.state
-                const isJsxReturned = functionOnEnter({
-                  node: path.node.declarations[0].init,
-                  functionName: newFunctionName,
-                  customComponents,
-                  customComponentsProps,
-                })
-                // Only update the function name if the function returns jsx.
-                if (isJsxReturned) functionName = newFunctionName
+          VariableDeclaration: (path: any) => {
+            functionName = path.node.declarations[0].id.name
+            if (functionName === 'App') {
+              this.state.components['root'] = {
+                id: 'root',
+                type: 'Box',
+                parent: '',
+                children: [],
               }
-            },
-            exit: (path: any) => {
-              const variableDeclaratorType = path.node.declarations[0].init.type
-
-              const { customComponents } = this.state
-              if (
-                variableDeclaratorType === 'ArrowFunctionExpression' ||
-                variableDeclaratorType === 'FunctionExpression'
-              ) {
-                functionOnExit({
-                  node: path.node.declarations[0].init,
-                  functionName: path.node.declarations[0].id.name,
-                  customComponents,
-                })
+            } else {
+              this.state.components[functionName] = {
+                id: functionName,
+                type: functionName,
+                parent: '',
+                children: [],
               }
-            },
+            }
           },
-          // This type includes functions like
-          // function App(){ }
-          FunctionDeclaration: {
-            enter: (path: any) => {
-              const { customComponents, customComponentsProps } = this.state
-              const newFunctionName = path.node.id.name
 
-              const isJsxReturned = functionOnEnter({
-                node: path.node,
-                functionName: newFunctionName,
-                customComponents,
-                customComponentsProps,
-              })
-              // Only update the function name if the function returns jsx.
-              if (isJsxReturned) functionName = newFunctionName
-            },
-            // Children is set at the exit because when entering the fucntional, we had not set id to the nodes.
-            // That is the reason why we set the children property at the exit.
-            exit: (path: any) => {
-              const { customComponents } = this.state
-
-              functionOnExit({
-                node: path.node,
-                functionName: path.node.id.name,
-                customComponents,
-              })
-            },
-          },
           JSXElement: (path: any) => {
             const openingElement = path.node.openingElement
             const componentId = getComponentId(openingElement)
@@ -118,12 +60,8 @@ class getComponentsPlugin {
 
             if (openingElement.name.name === 'ChakraProvider') return
 
-            const components = isCustomComponent
-              ? this.state.customComponents
-              : this.state.components
-            const props = isCustomComponent
-              ? this.state.customComponentsProps
-              : this.state.props
+            const components = this.state.components
+            const props = this.state.props
 
             // Store the component-id in each node
             path.node.id = componentId
@@ -134,9 +72,16 @@ class getComponentsPlugin {
               parent: isCustomComponent ? functionName : 'root',
             }
 
-            if (parentId && components[parentId]) {
-              components[parentId].children.push(componentId)
-              components[componentId].parent = parentId
+            if (parentId) {
+              // This is to set the root element of the custom component
+              if (parentId === 'root' && isCustomComponent) {
+                components[functionName].children.push(componentId)
+              }
+              // This is for setting children and parent for all the components
+              if (components[parentId]) {
+                components[parentId].children.push(componentId)
+                components[componentId].parent = parentId
+              }
             }
 
             props.byComponentId[componentId] = []

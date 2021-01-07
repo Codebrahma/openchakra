@@ -45,7 +45,7 @@ const useShortcuts = () => {
     const updatedCode = babelQueries.deleteComponent(code, {
       componentId: selectedComponentId,
     })
-    dispatch.code.setCode(updatedCode, selectedPage)
+    dispatch.code.setPageCode(updatedCode, selectedPage)
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {
@@ -87,7 +87,7 @@ const useShortcuts = () => {
       event.preventDefault()
     }
 
-    dispatch.components.duplicate()
+    // dispatch.components.duplicate()
   }
 
   const fullScreen = (event: KeyboardEvent | undefined) => {

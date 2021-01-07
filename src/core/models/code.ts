@@ -1,7 +1,8 @@
 import { createModel } from '@rematch/core'
 
 export type CodeState = {
-  code: ICode
+  pagesCode: ICode
+  componentsCode: ICode
 }
 
 const DEFAULT_CODE = `
@@ -26,26 +27,47 @@ export const INITIAL_CODE = {
 
 const code = createModel({
   state: {
-    code: INITIAL_CODE,
+    pagesCode: INITIAL_CODE,
+    componentsCode: {},
   } as CodeState,
   reducers: {
-    setCode(
+    setPageCode(
       state: CodeState,
       updatedCode: string,
       selectedPage: string,
     ): CodeState {
       return {
         ...state,
-        code: {
-          ...state.code,
+        pagesCode: {
+          ...state.pagesCode,
           [selectedPage]: updatedCode,
+        },
+      }
+    },
+    setComponentsCode(
+      state: CodeState,
+      updatedCode: string,
+      componentName: string,
+    ): CodeState {
+      return {
+        ...state,
+        componentsCode: {
+          ...state.componentsCode,
+          [componentName]: updatedCode,
         },
       }
     },
     resetCode(state: CodeState, codeState?: ICode): CodeState {
       return {
         ...state,
-        code: codeState || INITIAL_CODE,
+        pagesCode: codeState || INITIAL_CODE,
+        componentsCode: {},
+      }
+    },
+    resetPagesCode(state: CodeState, pagesCode: ICode): CodeState {
+      return {
+        ...state,
+        pagesCode: pagesCode,
       }
     },
   },
