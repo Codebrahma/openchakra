@@ -17,6 +17,8 @@ import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
+import BabelExposeProp from '../babel-plugins/expose-prop-plugin'
+import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instances'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -138,7 +140,12 @@ const moveComponent = (
 
 const saveComponent = (
   code: string,
-  options: { componentId: string; customComponentName: string },
+  options: {
+    componentId: string
+    customComponentName: string
+    exposedProps: IProp[]
+    componentInstanceId: string
+  },
 ) => {
   const plugin = new BabelSaveComponent(options)
 
@@ -225,6 +232,51 @@ const exportToCustomComponentsPage = (
   return updatedCustomComponentsCode
 }
 
+const exposeProp = (
+  code: string,
+  pagesCode: ICode,
+  options: {
+    customComponentName: string
+    componentId: string
+    propName: string
+    targetedPropName: string
+    defaultPropValue: string
+  },
+) => {
+  const updatedCode = transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
+  }).code
+
+  const { customComponentName, propName, defaultPropValue } = options
+
+  const updatedPagesCode = { ...pagesCode }
+
+  if (customComponentName.length > 0) {
+    // Remove the custom prop from all the instances of the component.
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [
+          babelPluginSyntaxJsx,
+          [
+            BabelAddPropInAllInstances,
+            {
+              componentName: customComponentName,
+              propName: propName,
+              propValue: defaultPropValue,
+            },
+          ],
+        ],
+      }).code
+    })
+  }
+
+  return {
+    updatedCode: updatedCode,
+    updatedPagesCode: updatedPagesCode,
+  }
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -242,4 +294,5 @@ export default {
   deleteProp,
   addMetaComponent,
   exportToCustomComponentsPage,
+  exposeProp,
 }

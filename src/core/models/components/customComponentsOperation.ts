@@ -92,11 +92,16 @@ export const addCustomComponent = (
  */
 export const saveComponent = (
   draftState: ComponentsState,
-  payload: { name: string; componentId: string; parentId: string },
+  payload: {
+    name: string
+    componentId: string
+    parentId: string
+    componentInstanceId: string
+  },
 ) => {
   const { propsId, componentsId } = loadRequired(draftState)
   const { name, componentId, parentId } = payload
-  const newId = generateComponentId()
+  const newId = payload.componentInstanceId
 
   //move the component & props from the components data to custom components data
   const {

@@ -47,6 +47,8 @@ import {
 } from '../../core/selectors/code'
 import { searchRootCustomComponent } from '../../utils/recursive'
 import buildComponentIds from '../../utils/componentIdsBuilder'
+import { getExposedProps } from '../../utils/getExposedProps'
+import { generateComponentId } from '../../utils/generateId'
 
 const CodeActionButton = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
@@ -89,6 +91,7 @@ const Inspector = () => {
   const customComponentsList = useSelector(getCustomComponentsList)
   const customComponents = useSelector(getCustomComponents)
   const components = useSelector(getComponents())
+  const props = useSelector(getProps())
 
   const isCustomComponent =
     customComponentsList && customComponentsList.indexOf(type) !== -1
@@ -208,6 +211,61 @@ const Inspector = () => {
     }, 200)
   }
 
+  const babelSaveQueryHandler = (
+    customComponentName: string,
+    newComponentId: string,
+  ) => {
+    const exposedProps = getExposedProps(component.id, components, props)
+    const { updatedCode, customComponentCode } = babelQueries.saveComponent(
+      code,
+      {
+        componentId: component.id,
+        componentInstanceId: newComponentId,
+        customComponentName,
+        exposedProps,
+      },
+    )
+    dispatch.code.setPageCode(updatedCode, selectedPage)
+    dispatch.code.setComponentsCode(customComponentCode, customComponentName)
+  }
+
+  const saveComponentHandler = () => {
+    const name = prompt('Enter the name for the Component')
+    if (name && name.length > 1) {
+      let editedName = name.split(' ').join('')
+      editedName = editedName.charAt(0).toUpperCase() + editedName.slice(1)
+
+      //check if the name already exist
+      if (
+        customComponentsList.indexOf(editedName) !== -1 ||
+        Object.keys(menuItems).indexOf(editedName) !== -1
+      )
+        toast({
+          title: 'Duplicate type',
+          description: 'A component already exists with the same name.',
+          status: 'error',
+          duration: 1000,
+          isClosable: true,
+          position: 'top',
+        })
+      else {
+        const newComponentId = generateComponentId()
+
+        dispatch.components.saveComponent(editedName, newComponentId)
+        setTimeout(() => {
+          babelSaveQueryHandler(editedName, newComponentId)
+        }, 200)
+        toast({
+          title: 'Component is saved successfully.',
+          status: 'success',
+          duration: 1000,
+          isClosable: true,
+          position: 'top',
+        })
+      }
+    }
+  }
+
   return (
     <>
       <Box bg="white">
@@ -237,51 +295,7 @@ const Inspector = () => {
             {enableSaveIcon() ? (
               <ActionButton
                 label="Save component"
-                onClick={() => {
-                  const name = prompt('Enter the name for the Component')
-                  if (name && name.length > 1) {
-                    let editedName = name.split(' ').join('')
-                    editedName =
-                      editedName.charAt(0).toUpperCase() + editedName.slice(1)
-
-                    //check if the name already exist
-                    if (
-                      customComponentsList.indexOf(editedName) !== -1 ||
-                      Object.keys(menuItems).indexOf(editedName) !== -1
-                    )
-                      toast({
-                        title: 'Duplicate type',
-                        description:
-                          'A component already exists with the same name.',
-                        status: 'error',
-                        duration: 1000,
-                        isClosable: true,
-                        position: 'top',
-                      })
-                    else {
-                      dispatch.components.saveComponent(editedName)
-                      const {
-                        updatedCode,
-                        customComponentCode,
-                      } = babelQueries.saveComponent(code, {
-                        componentId: component.id,
-                        customComponentName: editedName,
-                      })
-                      dispatch.code.setPageCode(updatedCode, selectedPage)
-                      dispatch.code.setComponentsCode(
-                        customComponentCode,
-                        editedName,
-                      )
-                      toast({
-                        title: 'Component is saved successfully.',
-                        status: 'success',
-                        duration: 1000,
-                        isClosable: true,
-                        position: 'top',
-                      })
-                    }
-                  }
-                }}
+                onClick={saveComponentHandler}
                 icon={<AddIcon />}
               />
             ) : null}
