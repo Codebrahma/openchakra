@@ -25,7 +25,7 @@ export const identifierPropHandler = (payload: IIdentifierPropHandler) => {
     functionName !== 'App' ? props.byComponentId[functionName] : []
 
   const isIdentifierPresentInProp =
-    customComponentRootProps.findIndex(
+    customComponentRootProps?.findIndex(
       propId => props.byId[propId].name === identifierName,
     ) !== -1
 

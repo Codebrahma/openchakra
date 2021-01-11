@@ -1,4 +1,5 @@
 import { declare } from '@babel/helper-plugin-utils'
+import * as t from '@babel/types'
 import addProps, { identifierPropHandler } from './addProps'
 import { generatePropId } from '../../utils/generateId'
 import {
@@ -27,14 +28,16 @@ class getComponentsPlugin {
     // Used to differentiate between App component and other custom components
     let functionName = ''
 
-    this.plugin = declare((api: any) => {
+    this.plugin = declare(() => {
       // Used to check the types
-      const { types: t } = api
 
       return {
         visitor: {
-          VariableDeclaration: (path: any) => {
-            functionName = path.node.declarations[0].id.name
+          ArrowFunctionExpression: (path: any) => {
+            const parentPath = path.parentPath
+            // Finding the function name
+            // And updating the components based on the function name.
+            functionName = parentPath.node.id.name
             if (functionName === 'App') {
               this.state.components['root'] = {
                 id: 'root',
@@ -42,12 +45,33 @@ class getComponentsPlugin {
                 parent: '',
                 children: [],
               }
+              this.state.props.byComponentId['root'] = []
             } else {
               this.state.components[functionName] = {
                 id: functionName,
                 type: functionName,
                 parent: '',
                 children: [],
+              }
+              this.state.props.byComponentId[functionName] = []
+
+              // Find the params defined for the custom components
+              const params = path.node.params
+              if (params.length > 0 && t.isObjectPattern(params[0])) {
+                const properties = params[0].properties
+                properties.forEach((property: any) => {
+                  const name = property.key.name
+                  const value = property.value ? property.value.name : ''
+                  const newPropId = generatePropId()
+                  this.state.props.byComponentId[functionName].push(newPropId)
+                  this.state.props.byId[newPropId] = {
+                    id: newPropId,
+                    name,
+                    value,
+                    derivedFromPropName: null,
+                    derivedFromComponentType: null,
+                  }
+                })
               }
             }
           },
