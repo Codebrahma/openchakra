@@ -1,11 +1,12 @@
 import { declare } from '@babel/helper-plugin-utils'
 import * as t from '@babel/types'
-import addProps, { identifierPropHandler } from './addProps'
+import addProps from './addProps'
 import { generatePropId } from '../../utils/generateId'
 import {
   getComponentId,
   getParentComponentId,
 } from '../utils/babel-plugin-utils'
+import childrenAttributeHandler from './childrenAttributeHandler'
 
 class getComponentsPlugin {
   state: {
@@ -29,8 +30,6 @@ class getComponentsPlugin {
     let functionName = ''
 
     this.plugin = declare(() => {
-      // Used to check the types
-
       return {
         visitor: {
           ArrowFunctionExpression: (path: any) => {
@@ -86,12 +85,13 @@ class getComponentsPlugin {
 
             const components = this.state.components
             const props = this.state.props
+            const componentType = openingElement.name.name
 
             // Store the component-id in each node
             path.node.id = componentId
             components[componentId] = {
               id: componentId,
-              type: openingElement.name.name,
+              type: componentType,
               children: [],
               parent: isCustomComponent ? functionName : 'root',
             }
@@ -110,7 +110,7 @@ class getComponentsPlugin {
 
             props.byComponentId[componentId] = []
 
-            // Add the props.
+            // Handles the props of the component except the children prop.
             addProps({
               path,
               props,
@@ -119,51 +119,13 @@ class getComponentsPlugin {
               functionName,
             })
 
-            // Box also has the children as text which includes empty spaces.
-            // To differentiate between Box and other components like Text, Button, Badge etc..
-            // The string is trimmed and spaces are removed and then the length of the string is checked.
-
-            // Needs to be Handled in better way.
-            path.node.children
-              .filter(
-                (child: any) =>
-                  t.isJSXText(child) || t.isJSXExpressionContainer(child),
-              )
-              .forEach((child: any) => {
-                const propId = generatePropId()
-                if (t.isJSXText(child)) {
-                  const trimmedChildValue = child.value.trim()
-                  // The value is trimmed because by default every component will have child component with white spaces
-                  // When the child component of box component is in next line, it will add whitespaces automatically.
-                  // Thus removing white spaces makes us to differentiate between automatically added children and manually added children.
-                  if (trimmedChildValue.length > 0) {
-                    props.byComponentId[componentId].push(propId)
-                    props.byId[propId] = {
-                      id: propId,
-                      name: 'children',
-                      value: trimmedChildValue,
-                      derivedFromPropName: null,
-                      derivedFromComponentType: null,
-                    }
-                  }
-                } else {
-                  props.byComponentId[componentId].push(propId)
-                  props.byId[propId] = {
-                    id: propId,
-                    name: 'children',
-                    value: '',
-                    derivedFromPropName: null,
-                    derivedFromComponentType: null,
-                  }
-                  identifierPropHandler({
-                    identifierName: child.expression.name,
-                    path,
-                    propId,
-                    props,
-                    functionName,
-                  })
-                }
-              })
+            console.log(componentType)
+            // The children prop will be handled in this function
+            childrenAttributeHandler(path, props, {
+              componentId,
+              componentType,
+              functionName,
+            })
           },
         },
       }
