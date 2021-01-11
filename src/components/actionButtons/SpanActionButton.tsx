@@ -49,12 +49,11 @@ const SpanActionButton = () => {
 
   useEffect(() => {
     if (childrenProp) {
-      setTimeout(() => {
-        const { value } = childrenProp
-
-        // span component-id will be the key and its children prop value will be the value
-        const spanComponentsValues: ISpanComponentsValues = {}
-        if (value.length > 0 && Array.isArray(value)) {
+      const { value } = childrenProp
+      if (value.length > 0 && Array.isArray(value)) {
+        setTimeout(() => {
+          // span component-id will be the key and its children prop value will be the value
+          const spanComponentsValues: ISpanComponentsValues = {}
           value.forEach((val: string) => {
             if (props.byComponentId[val]) {
               props.byComponentId[val].forEach(propId => {
@@ -90,8 +89,8 @@ const SpanActionButton = () => {
             })
             dispatch.code.setPageCode(updatedCode, selectedPage)
           }
-        }
-      }, 500)
+        }, 500)
+      }
     }
   }, [childrenProp])
 
