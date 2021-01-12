@@ -1,6 +1,7 @@
 import { getComponentId } from './utils/babel-plugin-utils'
 import template from '@babel/template'
 import * as t from '@babel/types'
+import checkIsComponentId from '../utils/checkIsComponentId'
 
 const addCustomComponentPlugin = (
   _: any,
@@ -13,6 +14,20 @@ const addCustomComponentPlugin = (
 ) => {
   const { componentId, parentId, type, defaultProps } = options
 
+  // If the value of the prop is a component-id, then the box component should be added.
+  // or else its respective value will be added.
+  const defaultPropsProvider = () => {
+    return defaultProps
+      .map(prop => {
+        if (checkIsComponentId(prop.value)) {
+          return `${prop.name}={<Box compId="${prop.value}"></Box>}`
+        } else {
+          return `${prop.name}="${prop.value}"`
+        }
+      })
+      .join(' ')
+  }
+
   return {
     visitor: {
       JSXElement(path: any) {
@@ -21,9 +36,7 @@ const addCustomComponentPlugin = (
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const component = `<${type} compId="${componentId}" ${defaultProps
-            .map(prop => `${prop.name}="${prop.value}"`)
-            .join(' ')}/>`
+          const component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
 
           const node = template.ast(component, {
             plugins: ['jsx'],

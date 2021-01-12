@@ -19,6 +19,7 @@ const addComponentPlugin = (
         const openingElement = path.node.openingElement
 
         const visitedComponentId = getComponentId(openingElement)
+
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
           const node = template.ast(componentsStructure[type], {

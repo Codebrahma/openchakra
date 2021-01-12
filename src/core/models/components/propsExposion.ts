@@ -26,7 +26,7 @@ import { generatePropId } from '../../../utils/generateId'
  */
 export const exposeProp = (
   draftState: ComponentsState,
-  payload: { name: string; targetedProp: string },
+  payload: { name: string; targetedProp: string; boxId?: string },
 ) => {
   const {
     selectedId: componentId,
@@ -34,7 +34,7 @@ export const exposeProp = (
     props,
   } = loadRequired(draftState)
   let { name } = payload
-  const { targetedProp } = payload
+  const { targetedProp, boxId } = payload
 
   const propId = props.byComponentId[componentId].find(
     propId => props.byId[propId].name === targetedProp,
@@ -120,6 +120,7 @@ export const exposeProp = (
             componentsId,
             updateInCustomComponent,
             draftState,
+            boxId,
           })
         },
       )

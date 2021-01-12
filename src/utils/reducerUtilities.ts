@@ -1,5 +1,5 @@
 import { deleteComp } from './recursive'
-import { generatePropId, generateComponentId } from './generateId'
+import { generatePropId } from './generateId'
 import { ComponentsState } from '../core/models/components/components'
 
 /**
@@ -293,6 +293,7 @@ export const addCustomPropsInAllComponentInstances = (payload: {
   propsId: string
   componentsId: string
   draftState: ComponentsState
+  boxId?: string
 }) => {
   const {
     exposedProp,
@@ -302,12 +303,13 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     propsId,
     draftState,
     updateInCustomComponent,
+    boxId,
   } = payload
 
-  const boxId = generateComponentId()
+  const newBoxId = boxId || ''
 
   const boxComponent = {
-    id: boxId,
+    id: newBoxId,
     type: 'Box',
     parent: 'Prop',
     children: [],
@@ -329,7 +331,7 @@ export const addCustomPropsInAllComponentInstances = (payload: {
   const prop = {
     id: propId,
     name: exposedProp.customPropName || '',
-    value: isBoxChildrenExposed ? boxId : exposedProp.value,
+    value: isBoxChildrenExposed ? newBoxId : exposedProp.value,
     derivedFromPropName: null,
     derivedFromComponentType: null,
   }
@@ -339,8 +341,10 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     draftState.customComponentsProps.byId[propId] = { ...prop }
 
     if (isBoxChildrenExposed) {
-      draftState.customComponents[boxId] = boxComponent
-      draftState.customComponentsProps.byComponentId[boxId]?.push(heightProp.id)
+      draftState.customComponents[newBoxId] = boxComponent
+      draftState.customComponentsProps.byComponentId[newBoxId]?.push(
+        heightProp.id,
+      )
       draftState.customComponentsProps.byId[heightProp.id] = { ...heightProp }
     }
   } else {
@@ -348,8 +352,8 @@ export const addCustomPropsInAllComponentInstances = (payload: {
     draftState.propsById[propsId].byId[propId] = { ...prop }
 
     if (isBoxChildrenExposed) {
-      draftState.componentsById[componentsId][boxId] = boxComponent
-      draftState.propsById[propsId].byComponentId[boxId]?.push(heightProp.id)
+      draftState.componentsById[componentsId][newBoxId] = boxComponent
+      draftState.propsById[propsId].byComponentId[newBoxId]?.push(heightProp.id)
       draftState.propsById[propsId].byId[heightProp.id] = { ...heightProp }
     }
   }

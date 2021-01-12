@@ -10,6 +10,7 @@ import {
   fetchAndUpdateExposedProps,
   deleteComp,
 } from '../../../utils/recursive'
+import checkIsComponentId from '../../../utils/checkIsComponentId'
 
 /**
  * @method
@@ -21,7 +22,12 @@ import {
 
 export const addCustomComponent = (
   draftState: ComponentsState,
-  payload: { componentId: string; parentId: string; type: string },
+  payload: {
+    componentId: string
+    parentId: string
+    type: string
+    defaultProps: IProp[]
+  },
 ) => {
   const { componentId, type, parentId } = payload
   const { components, props } = loadRequired(draftState, parentId)
@@ -56,8 +62,8 @@ export const addCustomComponent = (
 
   Object.values(duplicatedProps).forEach(prop => {
     //If the children of the container is exposed
-    if (draftState.customComponents[prop.value]) {
-      const boxId = generateComponentId()
+    if (checkIsComponentId(prop.value)) {
+      const boxId = prop.value
       components[boxId] = {
         id: boxId,
         type: 'Box',

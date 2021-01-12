@@ -17,6 +17,7 @@ import { generateComponentId } from '../utils/generateId'
 
 import builder from '../core/models/composer/builder'
 import useMoveComponent from './useMoveComponent'
+import checkIsComponentId from '../utils/checkIsComponentId'
 
 export const useDropComponent = (
   parentId: string,
@@ -57,6 +58,24 @@ export const useDropComponent = (
         : dispatch.code.setPageCode(code, selectedPage)
     }
   }
+
+  // Get the props of the given custom component
+  const getPropsOfCustomComponent = (componentId: string): IProp[] => {
+    return customComponentsProps.byComponentId[componentId].map(propId => {
+      const prop = customComponentsProps.byId[propId]
+
+      // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
+      // New-id is generated for the box component in the exposed children prop.
+      if (checkIsComponentId(prop.value)) {
+        const newComponentId = generateComponentId()
+        prop.value = newComponentId
+        return prop
+      } else {
+        return prop
+      }
+    })
+  }
+
   const [{ isOver }, drop] = useDrop({
     accept: accept,
     collect: monitor => ({
@@ -130,17 +149,16 @@ export const useDropComponent = (
 
         // TODO : Yet to be refactored. Everything should go into a private function
         if (item.custom) {
+          // Get the default props for the required custom component type.
+          const defaultProps = getPropsOfCustomComponent(item.id)
+
           dispatch.components.addCustomComponent({
             componentId: newComponentId,
             parentId,
             type: item.id,
+            defaultProps,
           })
           setTimeout(() => {
-            // Get the default props for the required custom component type.
-            const defaultProps = customComponentsProps.byComponentId[
-              item.id
-            ].map(propId => customComponentsProps.byId[propId])
-
             updatedCode = babelQueries.addCustomComponent(
               isCustomComponentChild
                 ? componentsCode[rootParentOfParentElement]
