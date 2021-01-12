@@ -166,7 +166,12 @@ const saveComponent = (
 
 const addCustomComponent = (
   code: string,
-  options: { componentId: string; parentId: string; type: string },
+  options: {
+    componentId: string
+    parentId: string
+    type: string
+    defaultProps: IProp[]
+  },
 ) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelAddCustomComponent, options]],

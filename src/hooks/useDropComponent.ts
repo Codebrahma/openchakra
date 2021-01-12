@@ -8,6 +8,7 @@ import {
   isChildrenOfCustomComponent,
   getSelectedPage,
   getCustomComponents,
+  getCustomComponentsProps,
 } from '../core/selectors/components'
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
@@ -36,6 +37,7 @@ export const useDropComponent = (
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
   const customComponents = useSelector(getCustomComponents)
+  const customComponentsProps = useSelector(getCustomComponentsProps)
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
   const onComponentMoved = useMoveComponent(parentId)
@@ -134,6 +136,11 @@ export const useDropComponent = (
             type: item.id,
           })
           setTimeout(() => {
+            // Get the default props for the required custom component type.
+            const defaultProps = customComponentsProps.byComponentId[
+              item.id
+            ].map(propId => customComponentsProps.byId[propId])
+
             updatedCode = babelQueries.addCustomComponent(
               isCustomComponentChild
                 ? componentsCode[rootParentOfParentElement]
@@ -142,6 +149,7 @@ export const useDropComponent = (
                 componentId: newComponentId,
                 parentId,
                 type: item.id,
+                defaultProps,
               },
             )
             updateCode(updatedCode)

@@ -1,29 +1,45 @@
 import * as t from '@babel/types'
+import traverse from '@babel/traverse'
+
 import { getComponentId } from './utils/babel-plugin-utils'
 
 const deleteCustomPropUtility = (
   _: any,
   options: {
-    customPropName: string
     propsUsingCustomProp: IProps
+    customPropName: string
   },
 ) => {
-  const { customPropName, propsUsingCustomProp } = options
+  const { propsUsingCustomProp, customPropName } = options
 
   return {
     visitor: {
       ArrowFunctionExpression(path: any) {
-        // Get the properties for the function.
-        const objectPatternProperties = path.node.params[0].properties
+        const componentName = path.parentPath.node.id.name
 
-        const propertyIndex = objectPatternProperties.findIndex(
-          (property: any) => property.key.name === customPropName,
+        // Only remove the params for the component, if it is a custom component.
+        if (componentName === 'App') return
+
+        let isPropsUsed = false
+
+        // Traverse and check whether any other component uses the props.
+        traverse(
+          path.parentPath.node,
+          {
+            MemberExpression(path: any) {
+              if (
+                path.node.object.name === 'props' &&
+                path.node.property.name !== customPropName
+              )
+                isPropsUsed = true
+            },
+          },
+          path.parentPath.scope,
+          path.parentPath.state,
+          path.parentPath,
         )
 
-        // Remove the property
-        objectPatternProperties.splice(propertyIndex, 1)
-
-        if (objectPatternProperties.length === 0) path.node.params = []
+        if (!isPropsUsed) path.node.params = []
       },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement

@@ -1,20 +1,22 @@
 import * as t from '@babel/types'
+import traverse from '@babel/traverse'
+
 import { getComponentId } from './utils/babel-plugin-utils'
 
 const unExposeProp = (
   _: any,
   options: {
     componentId: string
-    customPropName: string
     exposedPropName: string
     exposedPropValue: string
+    customPropName: string
   },
 ) => {
   const {
-    customPropName,
     componentId,
     exposedPropName,
     exposedPropValue,
+    customPropName,
   } = options
 
   return {
@@ -25,17 +27,26 @@ const unExposeProp = (
         // Only remove the params for the component, if it is a custom component.
         if (componentName === 'App') return
 
-        // Get the properties for the function.
-        const objectPatternProperties = path.node.params[0].properties
+        let isPropsUsed = false
 
-        const propertyIndex = objectPatternProperties.findIndex(
-          (property: any) => property.key.name === customPropName,
+        // Traverse and check whether any other component uses the props.
+        traverse(
+          path.parentPath.node,
+          {
+            MemberExpression(path: any) {
+              if (
+                path.node.object.name === 'props' &&
+                path.node.property.name !== customPropName
+              )
+                isPropsUsed = true
+            },
+          },
+          path.parentPath.scope,
+          path.parentPath.state,
+          path.parentPath,
         )
 
-        // Remove the property
-        objectPatternProperties.splice(propertyIndex, 1)
-
-        if (objectPatternProperties.length === 0) path.node.params = []
+        if (!isPropsUsed) path.node.params = []
       },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
