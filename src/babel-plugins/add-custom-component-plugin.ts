@@ -8,9 +8,10 @@ const addCustomComponentPlugin = (
     componentId: string
     parentId: string
     type: string
+    defaultProps: IProp[]
   },
 ) => {
-  const { componentId, parentId, type } = options
+  const { componentId, parentId, type, defaultProps } = options
 
   return {
     visitor: {
@@ -20,7 +21,10 @@ const addCustomComponentPlugin = (
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const component = `<${type} compId="${componentId}"/>`
+          const component = `<${type} compId="${componentId}" ${defaultProps
+            .map(prop => `${prop.name}="${prop.value}"`)
+            .join(' ')}/>`
+
           const node = template.ast(component, {
             plugins: ['jsx'],
           }).expression
