@@ -1,6 +1,4 @@
 import { declare } from '@babel/helper-plugin-utils'
-import traverse from '@babel/traverse'
-import * as t from '@babel/types'
 
 import { getComponentId, getNode } from './utils/babel-plugin-utils'
 
@@ -33,54 +31,22 @@ class saveComponentPlugin {
               // Get the root parent path. Thus we can find the element to move
               const component = path.toString()
 
-              const functionParams: string[] = []
-
-              // Traverse through the element and add the params required for the component.
-              traverse(
-                element,
-                {
-                  JSXElement(path: any) {
-                    const children = path.node.children
-                    if (t.isJSXExpressionContainer(children[0])) {
-                      const customPropName =
-                        path.node.children[0].expression.name
-
-                      functionParams.push(customPropName)
-                    }
-                  },
-                  JSXAttribute(path: any) {
-                    if (t.isJSXExpressionContainer(path.node.value)) {
-                      const customPropName = path.node.value.expression.name
-
-                      functionParams.push(customPropName)
-                    }
-                  },
-                },
-                path.scope,
-                path.state,
-                path,
-              )
-
-              const functionComponentParams: string =
-                functionParams.length > 0 ? `{${functionParams.join(',')}}` : ''
-
               // Create the function component.
               this.functionalComponentCode = `import React from 'react'\n;
-                       const ${customComponentName}=(${functionComponentParams})=>
-                       {
+                       const ${customComponentName}= ${
+                exposedProps.length > 0 ? '(props)' : '()'
+              }=>
+                      {
                          return (${component})
                         }\n
                          export default ${customComponentName} `
 
               // Obtain the props for the component instance.
-              const props = functionParams.map(param => {
-                const propValue =
-                  exposedProps.find(prop => prop.derivedFromPropName === param)
-                    ?.value || ''
-                return `${param}="${propValue}"`
-              })
+              const customProps = exposedProps.map(
+                prop => `${prop.derivedFromPropName}="${prop.value}"`,
+              )
 
-              const customCompInstance = `<${customComponentName} compId="${componentInstanceId}" ${props.join(
+              const customCompInstance = `<${customComponentName} compId="${componentInstanceId}" ${customProps.join(
                 ' ',
               )}/>`
               const customCompInstanceNode = getNode(customCompInstance)
