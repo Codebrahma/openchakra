@@ -22,6 +22,9 @@ import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instanc
 import BabelUnExposeProp from '../babel-plugins/unexpose-prop-plugin'
 import BabelDeleteInAllInstances from '../babel-plugins/delete-prop-in-all-instances'
 import BabelDeleteCustomProp from '../babel-plugins/delete-custom-prop-plugin'
+import BabelSetChildrenProp, {
+  ISpanComponentsValues,
+} from '../babel-plugins/set-children-prop-plugin'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -355,6 +358,19 @@ const deleteCustomProp = (
   }
 }
 
+const setChildrenProp = (
+  code: string,
+  options: {
+    componentId: string
+    value: string[]
+    spanComponentsValues: ISpanComponentsValues
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelSetChildrenProp, options]],
+  }).code
+}
+
 export default {
   getComponentsState,
   setProp,
@@ -375,4 +391,5 @@ export default {
   exposeProp,
   unExposeProp,
   deleteCustomProp,
+  setChildrenProp,
 }
