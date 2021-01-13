@@ -66,7 +66,10 @@ const ExposeChildrenControl: React.FC<{}> = () => {
             )
           }
 
-          const { updatedCode, updatedPagesCode } = babelQueries.exposeProp(
+          const {
+            updatedCode,
+            updatedPagesCode,
+          } = babelQueries.exposePropAndUpdateInstances(
             isCustomComponentChild
               ? componentsCode[rootCustomParentElement]
               : code,

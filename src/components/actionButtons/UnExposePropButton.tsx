@@ -56,11 +56,10 @@ const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
         ? componentsCode[rootCustomParentElement]
         : pagesCode[selectedPage]
 
-      const { updatedPagesCode, updatedCode } = babelQueries.unExposeProp(
-        code,
-        pagesCode,
-        options,
-      )
+      const {
+        updatedPagesCode,
+        updatedCode,
+      } = babelQueries.unExposePropAndUpdateInstances(code, pagesCode, options)
 
       if (isChildOfCustomComponent) {
         dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)

@@ -10,14 +10,22 @@ const addCustomComponentPlugin = (
     parentId: string
     type: string
     defaultProps: IProp[]
+    isContainerComponent: boolean
   },
 ) => {
-  const { componentId, parentId, type, defaultProps } = options
+  const {
+    componentId,
+    parentId,
+    type,
+    defaultProps,
+    isContainerComponent,
+  } = options
 
   // If the value of the prop is a component-id, then the box component should be added.
   // or else its respective value will be added.
   const defaultPropsProvider = () => {
     return defaultProps
+      .filter(prop => prop.name !== 'children')
       .map(prop => {
         if (checkIsComponentId(prop.value)) {
           return `${prop.name}={<Box compId="${prop.value}"></Box>}`
@@ -36,7 +44,13 @@ const addCustomComponentPlugin = (
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
+          let component: string = ``
+
+          if (isContainerComponent) {
+            component = `<${type} compId="${componentId}" ${defaultPropsProvider()}></${type}>`
+          } else {
+            component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
+          }
 
           const node = template.ast(component, {
             plugins: ['jsx'],

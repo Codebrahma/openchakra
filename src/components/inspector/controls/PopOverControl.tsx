@@ -64,7 +64,10 @@ const PopOverControl: React.FC<FormControlPropType> = ({
         customComponents[componentId],
         customComponents,
       )
-    const { updatedCode, updatedPagesCode } = babelQueries.exposeProp(
+    const {
+      updatedCode,
+      updatedPagesCode,
+    } = babelQueries.exposePropAndUpdateInstances(
       isCustomComponentChild ? componentsCode[rootCustomParentElement] : code,
       pagesCode,
       {

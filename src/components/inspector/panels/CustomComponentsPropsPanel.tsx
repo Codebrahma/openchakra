@@ -11,6 +11,8 @@ import ParentInspector from '../ParentInspector'
 import AccordionContainer from '../AccordionContainer'
 import ChildrenInspector from '../ChildrenInspector'
 import useDispatch from '../../../hooks/useDispatch'
+import babelQueries from '../../../babel-queries/queries'
+import { getAllPagesCode } from '../../../core/selectors/code'
 
 const CustomComponentsPropsPanel = () => {
   const selectedComponent = useSelector(getSelectedComponent)
@@ -23,14 +25,27 @@ const CustomComponentsPropsPanel = () => {
     useSelector(getPropsOfSelectedComp).findIndex(
       prop => prop.name === 'children',
     ) !== -1
+  const pagesCode = useSelector(getAllPagesCode)
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {
       dispatch.components.convertToContainerComponent({
         customComponentType: selectedComponent.type,
       })
+      setTimeout(() => {
+        const updatedPagesCode = babelQueries.convertInstancesToContainerComp(
+          pagesCode,
+          { componentName: selectedComponent.type },
+        )
+        dispatch.code.resetPagesCode(updatedPagesCode)
+      })
     } else {
       dispatch.components.deleteCustomProp('children')
+      const updatedPagesCode = babelQueries.convertInstancesToNormalComp(
+        pagesCode,
+        { componentName: selectedComponent.type },
+      )
+      dispatch.code.resetPagesCode(updatedPagesCode)
     }
   }
 
