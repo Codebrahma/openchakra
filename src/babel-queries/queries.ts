@@ -27,6 +27,7 @@ import BabelSetChildrenProp, {
 } from '../babel-plugins/set-children-prop-plugin'
 import BabelConvertInstancesToContainerCompoenent from '../babel-plugins/convert-instances-to-container-component'
 import BabelConvertInstancesToNormalComponent from '../babel-plugins/convert-instances-to-normal-component'
+import BabelDeleteCustomChildrenProp from '../babel-plugins/delete-custom-children-prop'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -439,6 +440,15 @@ const unExposePropAndUpdateInstances = (
   }
 }
 
+const deleteCustomChildrenProp = (componentCode: string) => {
+  return transform(componentCode, {
+    plugins: [babelPluginSyntaxJsx, BabelDeleteCustomChildrenProp],
+  }).code
+}
+
+// We are passing the props that use custom prop as attribute
+// Because the code does not hold the initial value before exposed
+// To replace the exposed prop with the old initial value, we are passing the props that use custom prop.
 const deleteCustomProp = (
   componentCode: string,
   pagesCode: ICode,
@@ -503,4 +513,5 @@ export default {
   convertInstancesToNormalComp,
   exposeProp,
   unExposeProp,
+  deleteCustomChildrenProp,
 }
