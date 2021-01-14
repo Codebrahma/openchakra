@@ -16,7 +16,6 @@ import {
   getShowCustomComponentPage,
   isChildrenOfCustomComponent,
   getChildrenBy,
-  checkIsContainerComponent,
   getComponents,
   getSelectedPage,
   getCustomComponents,
@@ -52,7 +51,6 @@ const Inspector = () => {
 
   const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
   const isCustomComponentChild = useSelector(isChildrenOfCustomComponent(id))
-  const isContainerComponent = useSelector(checkIsContainerComponent(id))
   const code = useSelector(getCode)
   const componentsCode = useSelector(getAllComponentsCode)
   let rootCustomParent: string = ``
@@ -73,18 +71,14 @@ const Inspector = () => {
     }
   }
 
-  // check if its a normal component or a container component
-  const isNormalOrContainer = () => {
-    if (!isCustomComponent) return true
-    else if (isContainerComponent) return true
-    else return false
-  }
-
   const enableSaveIcon = () => {
-    if (isCustomComponentsPage && !isCustomComponentChild) {
-      if (isNormalOrContainer()) return true
-    }
-    return false
+    if (!isCustomComponentsPage) return false
+
+    if (isCustomComponentChild) return false
+
+    if (customComponents[component.type]) return false
+
+    return true
   }
 
   const isRoot = id === 'root'

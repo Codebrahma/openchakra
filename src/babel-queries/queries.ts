@@ -25,6 +25,9 @@ import BabelDeleteCustomProp from '../babel-plugins/delete-custom-prop-plugin'
 import BabelSetChildrenProp, {
   ISpanComponentsValues,
 } from '../babel-plugins/set-children-prop-plugin'
+import BabelConvertInstancesToContainerCompoenent from '../babel-plugins/convert-instances-to-container-component'
+import BabelConvertInstancesToNormalComponent from '../babel-plugins/convert-instances-to-normal-component'
+import BabelDeleteCustomChildrenProp from '../babel-plugins/delete-custom-children-prop'
 
 const getComponentsState = (code: string) => {
   const plugin = new BabelPluginGetComponents()
@@ -171,6 +174,7 @@ const addCustomComponent = (
     parentId: string
     type: string
     defaultProps: IProp[]
+    isContainerComponent: boolean
   },
 ) => {
   return transform(code, {
@@ -245,6 +249,42 @@ const exportToCustomComponentsPage = (
 
 const exposeProp = (
   code: string,
+  options: {
+    componentId: string
+    propName: string
+    targetedPropName: string
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
+  }).code
+}
+
+const addPropInAllInstances = (
+  pagesCode: ICode,
+  options: {
+    propName: string
+    propValue: string
+    componentName: string
+    boxId?: string
+  },
+) => {
+  const updatedPagesCode = { ...pagesCode }
+
+  if (options.componentName.length > 0) {
+    // Remove the custom prop from all the instances of the component.
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [babelPluginSyntaxJsx, [BabelAddPropInAllInstances, options]],
+      }).code
+    })
+  }
+  return updatedPagesCode
+}
+
+const exposePropAndUpdateInstances = (
+  code: string,
   pagesCode: ICode,
   options: {
     customComponentName: string
@@ -255,15 +295,43 @@ const exposeProp = (
     boxId?: string
   },
 ) => {
-  const updatedCode = transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
-  }).code
+  const {
+    customComponentName,
+    propName,
+    defaultPropValue,
+    boxId,
+    componentId,
+    targetedPropName,
+  } = options
 
-  const { customComponentName, propName, defaultPropValue, boxId } = options
+  const updatedCode = exposeProp(code, {
+    componentId,
+    propName,
+    targetedPropName,
+  })
 
+  const updatedPagesCode = addPropInAllInstances(pagesCode, {
+    propName,
+    propValue: defaultPropValue,
+    componentName: customComponentName,
+    boxId,
+  })
+
+  return {
+    updatedCode: updatedCode,
+    updatedPagesCode: updatedPagesCode,
+  }
+}
+
+// Convert the instances of normal custom component to container custom component
+const convertInstancesToContainerComp = (
+  pagesCode: ICode,
+  options: { componentName: string },
+) => {
+  const { componentName } = options
   const updatedPagesCode = { ...pagesCode }
 
-  if (customComponentName.length > 0) {
+  if (componentName.length > 0) {
     // Remove the custom prop from all the instances of the component.
     Object.keys(updatedPagesCode).forEach(pageName => {
       const code = updatedPagesCode[pageName]
@@ -271,23 +339,44 @@ const exposeProp = (
         plugins: [
           babelPluginSyntaxJsx,
           [
-            BabelAddPropInAllInstances,
+            BabelConvertInstancesToContainerCompoenent,
             {
-              componentName: customComponentName,
-              propName: propName,
-              propValue: defaultPropValue,
-              boxId,
+              componentName,
             },
           ],
         ],
       }).code
     })
   }
+  return updatedPagesCode
+}
 
-  return {
-    updatedCode: updatedCode,
-    updatedPagesCode: updatedPagesCode,
+// Convert the instances of container custom component to normal custom component
+const convertInstancesToNormalComp = (
+  pagesCode: ICode,
+  options: { componentName: string },
+) => {
+  const { componentName } = options
+  const updatedPagesCode = { ...pagesCode }
+
+  if (componentName.length > 0) {
+    // Remove the custom prop from all the instances of the component.
+    Object.keys(updatedPagesCode).forEach(pageName => {
+      const code = updatedPagesCode[pageName]
+      updatedPagesCode[pageName] = transform(code, {
+        plugins: [
+          babelPluginSyntaxJsx,
+          [
+            BabelConvertInstancesToNormalComponent,
+            {
+              componentName,
+            },
+          ],
+        ],
+      }).code
+    })
   }
+  return updatedPagesCode
 }
 
 const deletePropInAllInstances = (
@@ -313,6 +402,20 @@ const deletePropInAllInstances = (
 
 const unExposeProp = (
   code: string,
+  options: {
+    componentId: string
+    exposedPropName: string
+    exposedPropValue: string
+    customPropName: string
+  },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
+  }).code
+}
+
+const unExposePropAndUpdateInstances = (
+  code: string,
   pagesCode: ICode,
   options: {
     customComponentName: string
@@ -323,9 +426,7 @@ const unExposeProp = (
   },
 ) => {
   // Modify the component code.
-  const transformedCode = transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelUnExposeProp, options]],
-  }).code
+  const transformedCode = unExposeProp(code, options)
 
   // Remove the custom prop from all the instances of the component.
   const updatedPagesCode = deletePropInAllInstances(pagesCode, {
@@ -339,6 +440,15 @@ const unExposeProp = (
   }
 }
 
+const deleteCustomChildrenProp = (componentCode: string) => {
+  return transform(componentCode, {
+    plugins: [babelPluginSyntaxJsx, BabelDeleteCustomChildrenProp],
+  }).code
+}
+
+// We are passing the props that use custom prop as attribute
+// Because the code does not hold the initial value before exposed
+// To replace the exposed prop with the old initial value, we are passing the props that use custom prop.
 const deleteCustomProp = (
   componentCode: string,
   pagesCode: ICode,
@@ -395,8 +505,13 @@ export default {
   deleteProp,
   addMetaComponent,
   exportToCustomComponentsPage,
-  exposeProp,
-  unExposeProp,
+  exposePropAndUpdateInstances,
+  unExposePropAndUpdateInstances,
   deleteCustomProp,
   setChildrenProp,
+  convertInstancesToContainerComp,
+  convertInstancesToNormalComp,
+  exposeProp,
+  unExposeProp,
+  deleteCustomChildrenProp,
 }

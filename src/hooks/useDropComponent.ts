@@ -18,6 +18,7 @@ import { generateComponentId } from '../utils/generateId'
 import builder from '../core/models/composer/builder'
 import useMoveComponent from './useMoveComponent'
 import checkIsComponentId from '../utils/checkIsComponentId'
+import checkIsContainerComponent from '../utils/checkIsContainerComponent'
 
 export const useDropComponent = (
   parentId: string,
@@ -159,6 +160,10 @@ export const useDropComponent = (
             defaultProps,
           })
           setTimeout(() => {
+            const isContainerComponent = checkIsContainerComponent(
+              item.id,
+              customComponentsProps,
+            )
             updatedCode = babelQueries.addCustomComponent(
               isCustomComponentChild
                 ? componentsCode[rootParentOfParentElement]
@@ -168,6 +173,7 @@ export const useDropComponent = (
                 parentId,
                 type: item.id,
                 defaultProps,
+                isContainerComponent,
               },
             )
             updateCode(updatedCode)
