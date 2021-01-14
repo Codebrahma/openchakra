@@ -8,7 +8,7 @@ import {
   getSelectedComponent,
   checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
-import ExposeChildrenControl from '../../../actionButtons/ExposeChildrenControl'
+import ExposeChildrenControl from '../../controls/ExposeChildrenControl'
 import ChildrenPropAccessControl from '../../controls/ChildrenPropAccessControl'
 
 const BoxPanel = () => {

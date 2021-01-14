@@ -2,21 +2,21 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Flex, Input, useToast } from '@chakra-ui/core'
 
-import useDispatch from '../../hooks/useDispatch'
-import { generateComponentId } from '../../utils/generateId'
+import useDispatch from '../../../hooks/useDispatch'
+import { generateComponentId } from '../../../utils/generateId'
 import {
   getSelectedComponent,
   getPropByName,
   getCustomComponents,
   getSelectedPage,
-} from '../../core/selectors/components'
-import { searchRootCustomComponent } from '../../utils/recursive'
-import babelQueries from '../../babel-queries/queries'
+} from '../../../core/selectors/components'
+import { searchRootCustomComponent } from '../../../utils/recursive'
+import babelQueries from '../../../babel-queries/queries'
 import {
   getCode,
   getAllPagesCode,
   getAllComponentsCode,
-} from '../../core/selectors/code'
+} from '../../../core/selectors/code'
 
 const ExposeChildrenControl: React.FC<{}> = () => {
   const dispatch = useDispatch()
