@@ -36,9 +36,43 @@ const ExposeChildrenControl: React.FC<{}> = () => {
 
   const changeHandler = (e: any) => setName(e.target.value)
 
+  // todo : Needs to be refactored. UnExposePropButton file has the similar code. Try to use a single function that shares both.
   const clickHandler = () => {
-    if (childrenProp) dispatch.components.unexpose('children')
-    else {
+    let rootCustomParentElement = ''
+
+    if (isCustomComponentChild) {
+      rootCustomParentElement = searchRootCustomComponent(
+        component,
+        customComponents,
+      )
+    }
+    if (childrenProp) {
+      dispatch.components.unexpose('children')
+
+      const options = {
+        customComponentName: rootCustomParentElement,
+        componentId: id,
+        exposedPropName: 'children',
+        exposedPropValue: '',
+        customPropName: childrenProp?.derivedFromPropName || '',
+      }
+
+      const code = isCustomComponentChild
+        ? componentsCode[rootCustomParentElement]
+        : pagesCode[selectedPage]
+
+      const {
+        updatedPagesCode,
+        updatedCode,
+      } = babelQueries.unExposePropAndUpdateInstances(code, pagesCode, options)
+
+      if (isCustomComponentChild) {
+        dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
+        dispatch.code.resetPagesCode(updatedPagesCode)
+      } else {
+        dispatch.code.setPageCode(updatedCode, selectedPage)
+      }
+    } else {
       if (children.length === 0 && name.length > 0) {
         if (name === 'children') {
           toast({
@@ -57,14 +91,6 @@ const ExposeChildrenControl: React.FC<{}> = () => {
             targetedProp: 'children',
             boxId: newComponentId,
           })
-          let rootCustomParentElement = ''
-
-          if (isCustomComponentChild) {
-            rootCustomParentElement = searchRootCustomComponent(
-              component,
-              customComponents,
-            )
-          }
 
           const {
             updatedCode,
