@@ -140,7 +140,7 @@ const components = createModel({
     },
     exposeProp(
       state: ComponentsState,
-      payload: { name: string; targetedProp: string },
+      payload: { name: string; targetedProp: string; boxId?: string },
     ) {
       return produce(state, (draftState: ComponentsState) => {
         exposeProp(draftState, { ...payload })
@@ -245,7 +245,12 @@ const components = createModel({
     },
     addCustomComponent(
       state: ComponentsState,
-      payload: { componentId: string; parentId: string; type: string },
+      payload: {
+        componentId: string
+        parentId: string
+        type: string
+        defaultProps: IProp[]
+      },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
         const { parentId, type } = payload

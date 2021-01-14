@@ -246,8 +246,10 @@ export const searchRootCustomComponent = (
   let rootId = ''
 
   const searchRootRecursive = (comp: IComponent) => {
-    if (comp.parent.length === 0) rootId = comp.id
-    else searchRootRecursive(customComponents[comp.parent])
+    if (comp) {
+      if (comp.parent.length === 0) rootId = comp.id
+      else searchRootRecursive(customComponents[comp.parent])
+    }
   }
 
   searchRootRecursive(component)

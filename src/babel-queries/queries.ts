@@ -252,13 +252,14 @@ const exposeProp = (
     propName: string
     targetedPropName: string
     defaultPropValue: string
+    boxId?: string
   },
 ) => {
   const updatedCode = transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelExposeProp, options]],
   }).code
 
-  const { customComponentName, propName, defaultPropValue } = options
+  const { customComponentName, propName, defaultPropValue, boxId } = options
 
   const updatedPagesCode = { ...pagesCode }
 
@@ -275,6 +276,7 @@ const exposeProp = (
               componentName: customComponentName,
               propName: propName,
               propValue: defaultPropValue,
+              boxId,
             },
           ],
         ],

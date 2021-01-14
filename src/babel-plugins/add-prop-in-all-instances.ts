@@ -1,4 +1,5 @@
-import { toJsxAttribute } from './utils/babel-plugin-utils'
+import * as t from '@babel/types'
+import { toJsxAttribute, getNode } from './utils/babel-plugin-utils'
 
 const addPropInAllInstances = (
   _: any,
@@ -6,9 +7,10 @@ const addPropInAllInstances = (
     propName: string
     propValue: string
     componentName: string
+    boxId?: string
   },
 ) => {
-  const { propName, propValue, componentName } = options
+  const { propName, propValue, componentName, boxId } = options
 
   return {
     visitor: {
@@ -16,9 +18,20 @@ const addPropInAllInstances = (
         const visitedComponentName = path.node.name.name
 
         if (visitedComponentName === componentName) {
-          const jsxAttribute = toJsxAttribute(propName, propValue)
+          if (boxId) {
+            const boxComponent = `<Box compId="${boxId}"></Box>`
 
-          path.node.attributes.push(jsxAttribute)
+            const expressionStatement = getNode(boxComponent)
+
+            const jsxAttribute = t.jsxAttribute(
+              t.jsxIdentifier(propName),
+              t.jsxExpressionContainer(expressionStatement.expression),
+            )
+            path.node.attributes.push(jsxAttribute)
+          } else {
+            const jsxAttribute = toJsxAttribute(propName, propValue)
+            path.node.attributes.push(jsxAttribute)
+          }
         } else return
       },
     },
