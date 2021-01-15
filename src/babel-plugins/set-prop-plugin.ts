@@ -1,7 +1,10 @@
+import * as t from '@babel/types'
+
 import {
   getComponentId,
   toJsxAttribute,
   toJsxText,
+  getNode,
 } from './utils/babel-plugin-utils'
 
 const setPropPlugin = (
@@ -13,6 +16,26 @@ const setPropPlugin = (
   },
 ) => {
   const { componentId, propName, value } = options
+
+  const checkIsIconProp = (propName: string, componentName: string) =>
+    ['leftIcon', 'rightIcon', 'icon'].includes(propName) ||
+    (componentName === 'Icon' && propName === 'as')
+
+  const buildIconProp = (name: string, value: string) => {
+    // For this icon prop, <Icon as={copyIcon} /> is the correct format
+    if (name === 'as') {
+      return t.jsxAttribute(
+        t.jsxIdentifier(name),
+        t.jsxExpressionContainer(t.identifier(value)),
+      )
+    } else {
+      // Other icon props, <IconButton icon={<SearchIcon />} /> is the correct format
+      return t.jsxAttribute(
+        t.jsxIdentifier(name),
+        t.jsxExpressionContainer(getNode(`<${value} />`).expression),
+      )
+    }
+  }
 
   return {
     visitor: {
@@ -34,7 +57,12 @@ const setPropPlugin = (
           return
         }
 
-        const jsxAttribute = toJsxAttribute(propName, value)
+        // For icon props, the attribute will be <Button leftIcon={<SearchIcon />}>Click</Button>.
+        // For other props, the attribute value will be either string or number.
+        const jsxAttribute = checkIsIconProp(propName, path.node.name.name)
+          ? buildIconProp(propName, value)
+          : toJsxAttribute(propName, value)
+
         const existingAttrIndex = path.node.attributes.findIndex(
           (node: any) => node.name.name === propName,
         )
