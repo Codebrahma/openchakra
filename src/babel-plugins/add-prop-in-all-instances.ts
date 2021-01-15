@@ -1,5 +1,5 @@
 import * as t from '@babel/types'
-import { toJsxAttribute, getNode } from './utils/babel-plugin-utils'
+import { toJsxAttribute, getJSXElement } from './utils/babel-plugin-utils'
 
 const addPropInAllInstances = (
   _: any,
@@ -21,7 +21,7 @@ const addPropInAllInstances = (
           if (boxId) {
             const boxComponent = `<Box compId="${boxId}"></Box>`
 
-            const expressionStatement = getNode(boxComponent)
+            const expressionStatement = getJSXElement(boxComponent)
 
             const jsxAttribute = t.jsxAttribute(
               t.jsxIdentifier(propName),

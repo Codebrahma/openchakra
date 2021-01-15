@@ -1,6 +1,6 @@
 import { declare } from '@babel/helper-plugin-utils'
 
-import { getComponentId, getNode } from './utils/babel-plugin-utils'
+import { getComponentId, getJSXElement } from './utils/babel-plugin-utils'
 
 class saveComponentPlugin {
   functionalComponentCode: string
@@ -49,7 +49,7 @@ class saveComponentPlugin {
               const customCompInstance = `<${customComponentName} compId="${componentInstanceId}" ${customProps.join(
                 ' ',
               )}/>`
-              const customCompInstanceNode = getNode(customCompInstance)
+              const customCompInstanceNode = getJSXElement(customCompInstance)
 
               // The component that is made as custom component is replaced with the custom component instance
               path.insertAfter(customCompInstanceNode.expression)
