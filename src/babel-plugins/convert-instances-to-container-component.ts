@@ -1,5 +1,7 @@
 import * as t from '@babel/types'
 
+// This will convert the normal components instances to container components.
+// For example : <Card /> will be converted to <Card></Card>
 const convertInstancesToContainerComponent = (
   _: any,
   options: {

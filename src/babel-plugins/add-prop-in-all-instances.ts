@@ -10,6 +10,9 @@ const addPropInAllInstances = (
     boxId?: string
   },
 ) => {
+  // If the prop boxId is present, then it denotes that children prop is exposed.
+  // And the custom prop will hold jsx element
+  // For example : <Layout top={<Box><Text>Hello world</Text></Box>} bottom={<Box><Button>Click me</Button></Box>}/>
   const { propName, propValue, componentName, boxId } = options
 
   return {

@@ -1,3 +1,5 @@
+// This will convert the container components instances to normal components.
+// For example : <Card></Card>  will be converted to <Card />
 const convertInstancesToNormalComponent = (
   _: any,
   options: {
