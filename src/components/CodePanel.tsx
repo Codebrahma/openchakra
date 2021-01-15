@@ -162,9 +162,9 @@ const CodePanel = () => {
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
             <MonacoEditor
-              value={formatCode(pagesCode[selectedPage])}
+              value={formatCode(pagesCode['app'])}
               onChange={(_, value) => {
-                pagesCode[selectedPage] = value || ''
+                pagesCode['pp'] = value || ''
               }}
             />
             <SaveButton
