@@ -1,7 +1,7 @@
 import * as t from '@babel/types'
 import { getComponentId } from '../utils/babel-plugin-utils'
 import { generatePropId } from '../../utils/generateId'
-import { identifierPropHandler } from './addProps'
+import { expressionContainerValueHandler } from './addProps'
 
 const checkIsComponentSupportSpan = (
   componentType: string,
@@ -22,10 +22,9 @@ const childrenAttributeHandler = (
   payload: {
     componentId: string
     componentType: string
-    functionName: string
   },
 ) => {
-  const { componentId, componentType, functionName } = payload
+  const { componentId, componentType } = payload
   if (checkIsComponentSupportSpan(componentType, path.node.children)) {
     const childrenArray: string[] = []
 
@@ -78,13 +77,10 @@ const childrenAttributeHandler = (
             derivedFromPropName: null,
             derivedFromComponentType: null,
           }
-          identifierPropHandler({
-            identifierName: child.expression.name,
+          props.byId[propId].value = expressionContainerValueHandler(
             path,
-            propId,
-            props,
-            functionName,
-          })
+            child.expression,
+          )
         }
       })
   }

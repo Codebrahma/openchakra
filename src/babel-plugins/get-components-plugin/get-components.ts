@@ -116,15 +116,12 @@ class getComponentsPlugin {
               props,
               openingElement,
               componentId,
-              functionName,
             })
 
-            console.log(componentType)
             // The children prop will be handled in this function
             childrenAttributeHandler(path, props, {
               componentId,
               componentType,
-              functionName,
             })
           },
         },
