@@ -368,7 +368,7 @@ export const deleteCustomPropInRootComponent = (
             const { updatedComponents, updatedProps } = deleteComp(
               components[customProp.value],
               components,
-              updatedCustomComponentProps,
+              props,
             )
             if (updateInCustomComponent) {
               updatedCustomComponentProps = updatedProps
