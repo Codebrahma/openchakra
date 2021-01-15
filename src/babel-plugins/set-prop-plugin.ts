@@ -4,7 +4,7 @@ import {
   getComponentId,
   toJsxAttribute,
   toJsxText,
-  getNode,
+  getJSXElement,
 } from './utils/babel-plugin-utils'
 
 const setPropPlugin = (
@@ -32,7 +32,7 @@ const setPropPlugin = (
       // Other icon props, <IconButton icon={<SearchIcon />} /> is the correct format
       return t.jsxAttribute(
         t.jsxIdentifier(name),
-        t.jsxExpressionContainer(getNode(`<${value} />`).expression),
+        t.jsxExpressionContainer(getJSXElement(`<${value} />`)),
       )
     }
   }

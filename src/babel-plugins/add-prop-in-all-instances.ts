@@ -1,5 +1,5 @@
 import * as t from '@babel/types'
-import { toJsxAttribute, getNode } from './utils/babel-plugin-utils'
+import { toJsxAttribute, getJSXElement } from './utils/babel-plugin-utils'
 
 const addPropInAllInstances = (
   _: any,
@@ -10,6 +10,9 @@ const addPropInAllInstances = (
     boxId?: string
   },
 ) => {
+  // If the prop boxId is present, then it denotes that children prop is exposed.
+  // And the custom prop will hold jsx element
+  // For example : <Layout top={<Box><Text>Hello world</Text></Box>} bottom={<Box><Button>Click me</Button></Box>}/>
   const { propName, propValue, componentName, boxId } = options
 
   return {
@@ -21,7 +24,7 @@ const addPropInAllInstances = (
           if (boxId) {
             const boxComponent = `<Box compId="${boxId}"></Box>`
 
-            const expressionStatement = getNode(boxComponent)
+            const expressionStatement = getJSXElement(boxComponent)
 
             const jsxAttribute = t.jsxAttribute(
               t.jsxIdentifier(propName),

@@ -43,8 +43,10 @@ const addCustomComponentPlugin = (
 
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
-          // Change the JSX element in the string to node template
           let component: string = ``
+
+          // If the component is container component, the element will be <Card></Card>
+          // If the component is not a container component, the element will be <Card />
 
           if (isContainerComponent) {
             component = `<${type} compId="${componentId}" ${defaultPropsProvider()}></${type}>`
@@ -52,6 +54,7 @@ const addCustomComponentPlugin = (
             component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
           }
 
+          // Change the JSX element in the string to node template
           const node = template.ast(component, {
             plugins: ['jsx'],
           }).expression

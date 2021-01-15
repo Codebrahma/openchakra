@@ -1,4 +1,8 @@
-import { getComponentId, toJsxText, getNode } from './utils/babel-plugin-utils'
+import {
+  getComponentId,
+  toJsxText,
+  getJSXElement,
+} from './utils/babel-plugin-utils'
 
 export type ISpanComponentsValues = { [spanComponentId: string]: string }
 
@@ -27,7 +31,7 @@ const setPropPlugin = (
         value.forEach(val => {
           if (spanComponentsValues[val]) {
             const element = `<Box as="span" compId="${val}">${spanComponentsValues[val]}</Box>`
-            children.push(getNode(element).expression)
+            children.push(getJSXElement(element))
           } else {
             children.push(toJsxText(val))
           }

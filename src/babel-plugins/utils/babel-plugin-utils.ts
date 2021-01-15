@@ -39,9 +39,9 @@ export const toJsxText = (textValue: string) => {
   return t.jsxText(textValue)
 }
 
-export const getNode = (jsxString: string) => {
+export const getJSXElement = (jsxString: string) => {
   const ast = template.ast(jsxString, {
     plugins: ['jsx'],
   })
-  return ast
+  return ast.expression
 }
