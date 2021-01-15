@@ -14,7 +14,7 @@ const componentsStructure: any = {
   AspectRatio: `AspectRatio`,
   Grid: `<Grid templateColumns="repeat(5, 1fr)" gap={6} ></Grid>`,
   Icon: `<Icon as={CopyIcon} />`,
-  IconButton: `<IconButton aria-label="icon" />`,
+  IconButton: `<IconButton aria-label="icon" icon={<CopyIcon />}/>`,
   CircularProgress: `<CircularProgress value={50} size="48px" />`,
   CloseButton: `<CloseButton />`,
   Code: `<Code>Code value</Code>`,

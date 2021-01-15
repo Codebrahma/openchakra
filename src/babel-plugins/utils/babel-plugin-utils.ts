@@ -17,7 +17,6 @@ export const getParentComponentId = (path: any) => {
 }
 
 // Convert to jsx attribute using attr name and attr value
-
 export const toJsxAttribute = (
   attributeName: string,
   attributeValue: string | number,
