@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Box, Accordion } from '@chakra-ui/core'
 import {
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import CustomComponentsPropsControl from '../controls/customComponentsPropsControl'
@@ -15,7 +15,7 @@ const CustomComponentsPropsPanel = () => {
   const props = useSelector(getPropsOfSelectedComp).filter(
     prop => prop.name !== 'children',
   )
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
 
   return (
     <>
@@ -29,13 +29,13 @@ const CustomComponentsPropsPanel = () => {
         <AccordionContainer title="Parent">
           <ParentInspector />
         </AccordionContainer>
-        {isCustomComponentPage && (
+        {isCustomPage && (
           <AccordionContainer title="Children">
             <ChildrenInspector />
           </AccordionContainer>
         )}
       </Accordion>
-      {isCustomComponentPage ? <ContainerComponentControl /> : null}
+      {isCustomPage ? <ContainerComponentControl /> : null}
     </>
   )
 }

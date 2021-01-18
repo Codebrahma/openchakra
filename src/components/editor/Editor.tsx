@@ -7,7 +7,7 @@ import useDispatch from '../../hooks/useDispatch'
 import {
   getChildrenBy,
   getPropsBy,
-  getShowCustomComponentPage,
+  checkIsCustomPage,
 } from '../../core/selectors/components'
 import { getShowLayout } from '../../core/selectors/app'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
@@ -26,7 +26,7 @@ const Editor: React.FC = () => {
   const children = useSelector(getChildrenBy('root'))
   const isEmpty = !children.length
   const rootProps = useSelector(getPropsBy('root'))
-  const isComponentsCreationPage = useSelector(getShowCustomComponentPage)
+  const isComponentsCreationPage = useSelector(checkIsCustomPage)
 
   let editorBackgroundProps = {}
 

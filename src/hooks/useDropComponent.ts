@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
 import {
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   getComponents,
   isChildrenOfCustomComponent,
   getSelectedPage,
@@ -30,7 +30,7 @@ export const useDropComponent = (
   },
 ) => {
   const dispatch = useDispatch()
-  const isCustomPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
 
   const components = useSelector(getComponents())
   const isCustomComponentChild = useSelector(

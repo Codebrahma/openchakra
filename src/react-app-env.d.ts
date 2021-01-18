@@ -116,10 +116,6 @@ interface IComponents {
   [name: string]: IComponent
 }
 
-interface IComponentsById {
-  [name: string]: IComponents
-}
-
 interface IPreviewProps {
   component: IComponent
   customProps?: any

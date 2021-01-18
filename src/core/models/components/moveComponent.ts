@@ -2,7 +2,6 @@ import { ComponentsState } from './components'
 import {
   checkIsChildOfCustomComponent,
   updateInAllInstances,
-  loadRequired,
   addCustomPropsInAllComponentInstances,
   mergeProps,
 } from '../../../utils/reducerUtilities'
@@ -36,7 +35,6 @@ export const moveComponent = (
   },
 ) => {
   const { componentId, newParentId, oldParentId } = payload
-  const { propsId, componentsId } = loadRequired(draftState, componentId)
 
   if (checkIsChildOfCustomComponent(componentId, draftState.customComponents)) {
     draftState.customComponents[componentId].parent = newParentId
@@ -95,25 +93,24 @@ export const moveComponent = (
 
             const {
               updatedCustomComponentProps,
-              updatedPropsById,
-              updatedComponentsById,
+              updatedProps,
+              updatedComponents,
               updatedCustomComponents,
             } = deleteCustomPropInRootComponent(
               exposedProp,
-              draftState.pages,
-              draftState.componentsById,
+              draftState.components,
               draftState.customComponents,
-              draftState.propsById,
+              draftState.props,
               draftState.customComponentsProps,
             )
-            draftState.propsById = { ...updatedPropsById }
+            draftState.props = { ...updatedProps }
 
             mergeProps(
               draftState.customComponentsProps,
               updatedCustomComponentProps,
             )
 
-            draftState.componentsById = { ...updatedComponentsById }
+            draftState.components = { ...updatedComponents }
             draftState.customComponents = { ...updatedCustomComponents }
 
             const isCustomPropPresent = draftState.customComponentsProps.byComponentId[
@@ -126,15 +123,10 @@ export const moveComponent = (
 
             if (isCustomPropPresent === -1) {
               updateInAllInstances(
-                draftState.pages,
-                draftState.componentsById,
+                draftState.components,
                 draftState.customComponents,
                 draftState.customComponents[rootCustomParent].type,
-                (
-                  component: IComponent,
-                  updateInCustomComponent: Boolean,
-                  propsId: string,
-                ) => {
+                (component: IComponent, updateInCustomComponent: Boolean) => {
                   addCustomPropsInAllComponentInstances({
                     exposedProp: {
                       name: exposedProp.name,
@@ -144,8 +136,6 @@ export const moveComponent = (
                     exposedPropComponentType:
                       draftState.customComponents[componentId].type,
                     component,
-                    componentsId,
-                    propsId,
                     updateInCustomComponent,
                     draftState,
                   })
@@ -157,16 +147,14 @@ export const moveComponent = (
     }
     //moved from custom component to components data
     else {
-      draftState.componentsById[componentsId] = {
-        ...draftState.componentsById[componentsId],
+      draftState.components = {
+        ...draftState.components,
         ...movedComponents,
       }
       draftState.customComponents = { ...updatedCustomComponents }
-      draftState.componentsById[componentsId][componentId].parent = newParentId
+      draftState.components[componentId].parent = newParentId
       //Add the componentId in the children of new parent
-      draftState.componentsById[componentsId][newParentId].children.push(
-        componentId,
-      )
+      draftState.components[newParentId].children.push(componentId)
 
       mergeProps(draftState.customComponentsProps, updatedCustomComponentProps)
 
@@ -177,23 +165,22 @@ export const moveComponent = (
           .forEach(propId => {
             const {
               updatedCustomComponentProps,
-              updatedPropsById,
-              updatedComponentsById,
+              updatedProps,
+              updatedComponents,
               updatedCustomComponents,
             } = deleteCustomPropInRootComponent(
               movedProps.byId[propId],
-              draftState.pages,
-              draftState.componentsById,
+              draftState.components,
               draftState.customComponents,
-              draftState.propsById,
+              draftState.props,
               draftState.customComponentsProps,
             )
-            draftState.propsById = { ...updatedPropsById }
+            draftState.props = { ...updatedProps }
             mergeProps(
               draftState.customComponentsProps,
               updatedCustomComponentProps,
             )
-            draftState.componentsById = { ...updatedComponentsById }
+            draftState.components = { ...updatedComponents }
             draftState.customComponents = { ...updatedCustomComponents }
           })
       })
@@ -205,7 +192,7 @@ export const moveComponent = (
         }
       })
 
-      mergeProps(draftState.propsById[propsId], movedProps)
+      mergeProps(draftState.props, movedProps)
     }
   } else {
     const isCustomComponentChild = checkIsChildOfCustomComponent(
@@ -223,15 +210,13 @@ export const moveComponent = (
       //one instance of custom component can not be moved into another instance of same custom component
       if (
         draftState.customComponents[rootCustomParent].type ===
-        draftState.componentsById[componentsId][componentId].type
+        draftState.components[componentId].type
       )
         return draftState
 
       //remove the componentId from children of old parent
-      draftState.componentsById[componentsId][oldParentId].children.splice(
-        draftState.componentsById[componentsId][oldParentId].children.indexOf(
-          componentId,
-        ),
+      draftState.components[oldParentId].children.splice(
+        draftState.components[oldParentId].children.indexOf(componentId),
         1,
       )
 
@@ -240,12 +225,8 @@ export const moveComponent = (
         updatedSourceProps: updatedProps,
         movedComponents,
         movedProps,
-      } = moveComp(
-        componentId,
-        draftState.componentsById[componentsId],
-        draftState.propsById[propsId],
-      )
-      draftState.componentsById[componentsId] = { ...updatedComponents }
+      } = moveComp(componentId, draftState.components, draftState.props)
+      draftState.components = { ...updatedComponents }
       draftState.customComponents = {
         ...draftState.customComponents,
         ...movedComponents,
@@ -254,7 +235,7 @@ export const moveComponent = (
       //Add the componentId in the children of new parent
       draftState.customComponents[newParentId].children.push(componentId)
 
-      draftState.propsById[propsId] = { ...updatedProps }
+      draftState.props = { ...updatedProps }
 
       Object.keys(movedProps.byComponentId).forEach(componentId => {
         movedProps.byComponentId[componentId].forEach(propId => {
@@ -284,16 +265,10 @@ export const moveComponent = (
 
             if (isPropPresent === -1) {
               updateInAllInstances(
-                draftState.pages,
-                draftState.componentsById,
+                draftState.components,
                 draftState.customComponents,
                 draftState.customComponents[rootCustomParent].type,
-                (
-                  component: IComponent,
-                  updateInCustomComponent: Boolean,
-                  propsId: string,
-                  componentsId: string,
-                ) => {
+                (component: IComponent, updateInCustomComponent: Boolean) => {
                   addCustomPropsInAllComponentInstances({
                     exposedProp: {
                       name: exposedProp.name,
@@ -303,8 +278,6 @@ export const moveComponent = (
                     exposedPropComponentType:
                       draftState.customComponents[componentId].type,
                     component,
-                    componentsId,
-                    propsId,
                     updateInCustomComponent,
                     draftState,
                   })
@@ -318,18 +291,14 @@ export const moveComponent = (
     //moved inside the components data
     else {
       //remove the componentId from children of old parent
-      draftState.componentsById[componentsId][oldParentId].children.splice(
-        draftState.componentsById[componentsId][oldParentId].children.indexOf(
-          componentId,
-        ),
+      draftState.components[oldParentId].children.splice(
+        draftState.components[oldParentId].children.indexOf(componentId),
         1,
       )
-      draftState.componentsById[componentsId][componentId].parent = newParentId
+      draftState.components[componentId].parent = newParentId
 
       //Add the componentId in the children of new parent
-      draftState.componentsById[componentsId][newParentId].children.push(
-        componentId,
-      )
+      draftState.components[newParentId].children.push(componentId)
     }
   }
   draftState.selectedId = componentId

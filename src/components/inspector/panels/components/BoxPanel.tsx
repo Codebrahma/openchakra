@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import {
   getPropsOfSelectedComp,
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   getSelectedComponent,
   checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
@@ -14,7 +14,7 @@ import ChildrenPropAccessControl from '../../controls/ChildrenPropAccessControl'
 const BoxPanel = () => {
   const component = useSelector(getSelectedComponent)
   const props = useSelector(getPropsOfSelectedComp)
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const isComponentDerivedFromProps = component.parent === 'Prop'
   const asProp = props.find(prop => prop.name === 'as')
   let isSpanElement = false
@@ -26,7 +26,7 @@ const BoxPanel = () => {
   )
 
   const enableWayToExposeChildren =
-    isCustomComponentPage && !isComponentDerivedFromProps && !isSpanElement
+    isCustomPage && !isComponentDerivedFromProps && !isSpanElement
 
   return (
     <Box>
@@ -37,7 +37,7 @@ const BoxPanel = () => {
         enableHues
       />
       {enableWayToExposeChildren ? <ExposeChildrenControl /> : null}
-      {isCustomComponentPage && isChildrenOfWrapperComponent ? (
+      {isCustomPage && isChildrenOfWrapperComponent ? (
         <ChildrenPropAccessControl />
       ) : null}
     </Box>

@@ -3,7 +3,7 @@ import ColorsControl from '../../controls/ColorsControl'
 import { Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import {
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   getSelectedComponent,
   checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
@@ -13,7 +13,7 @@ import ExposeChildrenControl from '../../controls/ExposeChildrenControl'
 
 const FlexPanel = () => {
   const component = useSelector(getSelectedComponent)
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const isComponentDerivedFromProps = component.parent === 'Prop'
   const isChildrenOfWrapperComponent = useSelector(
     checkIsChildrenOfWrapperComponent(component.id),
@@ -29,10 +29,10 @@ const FlexPanel = () => {
       />
 
       <DisplayFlexPanel />
-      {isCustomComponentPage && !isComponentDerivedFromProps ? (
+      {isCustomPage && !isComponentDerivedFromProps ? (
         <ExposeChildrenControl />
       ) : null}
-      {isCustomComponentPage && isChildrenOfWrapperComponent ? (
+      {isCustomPage && isChildrenOfWrapperComponent ? (
         <ChildrenPropAccessControl />
       ) : null}
     </Box>

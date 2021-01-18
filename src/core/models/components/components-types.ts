@@ -30,36 +30,18 @@ export const DEFAULT_ID = 'root'
 
 export const DEFAULT_PAGE = 'app'
 
-export const INITIAL_COMPONENTS: IComponentsById = {
-  '1': {
-    root: {
-      id: 'root',
-      type: 'Box',
-      parent: '',
-      children: [],
-    },
-  },
-  '2': {
-    root: {
-      id: 'root',
-      type: 'Box',
-      parent: '',
-      children: [],
-    },
+export const INITIAL_COMPONENTS: IComponents = {
+  root: {
+    id: 'root',
+    type: 'Box',
+    parent: '',
+    children: [],
   },
 }
-export const INITIAL_PROPS: IPropsByPageId = {
-  '1': {
-    byId: {},
-    byComponentId: {
-      root: [],
-    },
-  },
-  '2': {
-    byId: {},
-    byComponentId: {
-      root: [],
-    },
+export const INITIAL_PROPS: IProps = {
+  byId: {},
+  byComponentId: {
+    root: [],
   },
 }
 
@@ -80,8 +62,8 @@ export const INITIAL_PAGES: IPages = {
 
 export const INITIAL_STATE: ComponentsState = {
   pages: INITIAL_PAGES,
-  componentsById: INITIAL_COMPONENTS,
-  propsById: INITIAL_PROPS,
+  components: INITIAL_COMPONENTS,
+  props: INITIAL_PROPS,
   selectedPage: DEFAULT_PAGE,
   customComponents: {},
   customComponentsProps: {

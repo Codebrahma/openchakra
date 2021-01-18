@@ -1,14 +1,10 @@
 import { createModel } from '@rematch/core'
 import produce from 'immer'
 import { generatePropId } from '../../../utils/generateId'
-import {
-  searchRootCustomComponent,
-  duplicateComp,
-} from '../../../utils/recursive'
+import { searchRootCustomComponent } from '../../../utils/recursive'
 import {
   updateInAllInstances,
   loadRequired,
-  mergeProps,
 } from '../../../utils/reducerUtilities'
 import {
   addComponent,
@@ -36,21 +32,19 @@ import {
 } from './spanOperations'
 import { moveComponent } from './moveComponent'
 import {
-  INITIAL_COMPONENTS,
-  INITIAL_PAGES,
-  INITIAL_PROPS,
   ISelectedTextDetails,
   DEFAULT_ID,
-  DEFAULT_PAGE,
   ChildrenPropDetails,
   INITIAL_STATE,
+  INITIAL_COMPONENTS,
+  INITIAL_PROPS,
 } from './components-types'
 import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 
 export type ComponentsState = {
   pages: IPages
-  componentsById: IComponentsById
-  propsById: IPropsByPageId
+  components: IComponents
+  props: IProps
   customComponents: IComponents
   customComponentsProps: IProps
   selectedPage: string
@@ -63,45 +57,13 @@ const components = createModel({
   reducers: {
     resetComponents(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const componentsId =
-          draftState.pages[draftState.selectedPage].componentsId
-        const propsId = draftState.pages[draftState.selectedPage].propsId
-
-        draftState.componentsById[componentsId] = {
-          root: {
-            id: 'root',
-            type: 'Box',
-            parent: '',
-            children: [],
-          },
-        }
-        draftState.propsById[propsId] = {
-          byId: {},
-          byComponentId: {},
-        }
+        draftState.components = INITIAL_COMPONENTS
+        draftState.props = INITIAL_PROPS
         draftState.selectedId = DEFAULT_ID
       })
     },
-    resetAll(
-      state: ComponentsState,
-      importedState?: ComponentsState,
-    ): ComponentsState {
-      if (importedState) {
-        return importedState
-      } else {
-        return {
-          pages: INITIAL_PAGES,
-          componentsById: INITIAL_COMPONENTS,
-          propsById: INITIAL_PROPS,
-          selectedPage: DEFAULT_PAGE,
-          customComponents: {},
-          customComponentsProps: {
-            byId: {},
-            byComponentId: {},
-          },
-          selectedId: DEFAULT_ID,
-        }
-      }
+    resetAll(state: ComponentsState): ComponentsState {
+      return INITIAL_STATE
     },
     loadDemo(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {})
@@ -294,14 +256,11 @@ const components = createModel({
       }
     },
     selectParent(state: ComponentsState): ComponentsState {
-      const componentsId = state.pages[state.selectedPage].componentsId
-      const selectedComponent =
-        state.componentsById[componentsId][state.selectedId]
+      const selectedComponent = state.components[state.selectedId]
 
       return {
         ...state,
-        selectedId:
-          state.componentsById[componentsId][selectedComponent.parent].id,
+        selectedId: state.components[selectedComponent.parent].id,
       }
     },
     duplicate(state: ComponentsState, componentIds: string[]): ComponentsState {
@@ -329,9 +288,8 @@ const components = createModel({
       componentInstanceId: string,
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const { selectedId, componentsId } = loadRequired(draftState)
-        const parentId =
-          draftState.componentsById[componentsId][selectedId].parent
+        const { selectedId } = loadRequired(draftState)
+        const parentId = draftState.components[selectedId].parent
 
         if (parentId === 'Prop') return state
 
@@ -363,31 +321,6 @@ const components = createModel({
         ...state,
         selectedPage: page,
       }
-    },
-    exportSelectedComponentToCustomPage(
-      state: ComponentsState,
-      componentIds: string[],
-    ): ComponentsState {
-      return produce(state, (draftState: ComponentsState) => {
-        const { propsId, componentsId } = loadRequired(draftState)
-        const components = draftState.componentsById[componentsId]
-        const props = draftState.propsById[propsId]
-        const { newId, clonedComponents, clonedProps } = duplicateComp(
-          components[draftState.selectedId],
-          components,
-          props,
-          componentIds,
-        )
-        //id of 2 refers to the custom component page.
-        draftState.componentsById['2'] = {
-          ...draftState.componentsById['2'],
-          ...clonedComponents,
-        }
-
-        mergeProps(draftState.propsById['2'], clonedProps)
-        draftState.componentsById['2'][newId].parent = 'root'
-        draftState.componentsById['2']['root'].children.push(newId)
-      })
     },
     unexpose(state: ComponentsState, targetedProp: string): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
@@ -452,8 +385,7 @@ const components = createModel({
           derivedFromComponentType: null,
         }
         updateInAllInstances(
-          draftState.pages,
-          draftState.componentsById,
+          draftState.components,
           draftState.customComponents,
           customComponentType,
           (
@@ -472,10 +404,8 @@ const components = createModel({
               }
             } else {
               const id = generatePropId()
-              draftState.propsById[propsId].byComponentId[component.id]?.push(
-                id,
-              )
-              draftState.propsById[propsId].byId[id] = {
+              draftState.props.byComponentId[component.id]?.push(id)
+              draftState.props.byId[id] = {
                 ...childrenProp,
                 id: generatePropId(),
               }
@@ -493,12 +423,9 @@ const components = createModel({
     ) {
       return produce(state, (draftState: ComponentsState) => {
         const { components, props } = payload
-        const componentsId =
-          draftState.pages[draftState.selectedPage].componentsId
-        const propsId = draftState.pages[draftState.selectedPage].componentsId
 
-        draftState.componentsById[componentsId] = components
-        draftState.propsById[propsId] = props
+        draftState.components = components
+        draftState.props = props
       })
     },
     updateCustomComponentsState(
