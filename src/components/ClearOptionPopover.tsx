@@ -19,8 +19,8 @@ import { CheckIcon } from '@chakra-ui/icons'
 const ClearOptionPopover: FunctionComponent<{
   name: string
   message: string
-  dispatchAction: any
-}> = ({ name, message, dispatchAction }) => {
+  onClick: any
+}> = ({ name, message, onClick }) => {
   return (
     <Popover>
       {({ onClose }) => (
@@ -48,7 +48,7 @@ const ClearOptionPopover: FunctionComponent<{
                   colorScheme="red"
                   rightIcon={<CheckIcon />}
                   onClick={() => {
-                    dispatchAction()
+                    onClick()
                     if (onClose) {
                       onClose()
                     }

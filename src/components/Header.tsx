@@ -159,7 +159,7 @@ const Header = () => {
             <ClearOptionPopover
               name="Clear Page"
               message="Do you really want to remove all components on the page?"
-              dispatchAction={() => {
+              onClick={() => {
                 dispatch.components.resetComponents()
                 dispatch.code.resetPageCode(selectedPage)
               }}
