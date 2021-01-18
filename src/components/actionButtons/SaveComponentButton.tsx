@@ -11,11 +11,11 @@ import {
   getComponents,
   getProps,
   getCustomComponentsList,
-  getSelectedPage,
 } from '../../core/selectors/components'
 import babelQueries from '../../babel-queries/queries'
 import { getCode } from '../../core/selectors/code'
 import { useToast } from '@chakra-ui/core'
+import { getSelectedPage } from '../../core/selectors/page'
 
 const SaveComponentButton: React.FC<{ componentId: string }> = ({
   componentId,

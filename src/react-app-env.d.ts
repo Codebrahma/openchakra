@@ -136,8 +136,6 @@ interface ComponentItemProps {
 interface IPage {
   id: string
   name: string
-  componentsId: string
-  propsId: string
 }
 
 interface IPages {

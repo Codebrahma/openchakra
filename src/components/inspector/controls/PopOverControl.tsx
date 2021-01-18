@@ -19,7 +19,6 @@ import {
   getSelectedComponentId,
   getCustomComponents,
   getPropByName,
-  getSelectedPage,
 } from '../../../core/selectors/components'
 import {
   getAllComponentsCode,
@@ -27,6 +26,7 @@ import {
   getAllPagesCode,
 } from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
+import { getSelectedPage } from '../../../core/selectors/page'
 
 type FormControlPropType = {
   label: ReactNode

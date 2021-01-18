@@ -7,9 +7,9 @@ import {
   isChildrenOfCustomComponent,
   getCustomComponents,
   getSelectedPageComponents,
-  getSelectedPage,
 } from '../core/selectors/components'
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
+import { getSelectedPage } from '../core/selectors/page'
 
 const useMoveComponent = (parentId: string) => {
   const dispatch = useDispatch()

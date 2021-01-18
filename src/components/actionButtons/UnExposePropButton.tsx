@@ -12,9 +12,9 @@ import {
 import {
   getSelectedComponentId,
   getCustomComponents,
-  getSelectedPage,
 } from '../../core/selectors/components'
 import babelQueries from '../../babel-queries/queries'
+import { getSelectedPage } from '../../core/selectors/page'
 
 const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
   propToUnExpose,

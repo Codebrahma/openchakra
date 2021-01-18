@@ -3,10 +3,8 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import babelQueries from '../babel-queries/queries'
 import { useSelector } from 'react-redux'
 import { getCode } from '../core/selectors/code'
-import {
-  getSelectedComponentId,
-  getSelectedPage,
-} from '../core/selectors/components'
+import { getSelectedComponentId } from '../core/selectors/components'
+import { getSelectedPage } from '../core/selectors/page'
 
 /**
  * @member

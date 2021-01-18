@@ -148,10 +148,6 @@ export const isChildrenOfCustomComponent = (id: string | IComponent['id']) => (
   else return true
 }
 
-// Check whether the page is custom page or not.
-export const checkIsCustomPage = (state: RootState): boolean =>
-  state.components.present.selectedPage === 'customPage' ? true : false
-
 // Checks whether the component is a instance of custom component
 export const isInstanceOfCustomComponent = (id: string) => (
   state: RootState,
@@ -276,6 +272,3 @@ export const getChakraCompUsedInSelectedPage = (state: RootState): string[] => {
 
   return uniq(chakraComponents)
 }
-
-export const getSelectedPage = (state: RootState) =>
-  state.components.present.selectedPage

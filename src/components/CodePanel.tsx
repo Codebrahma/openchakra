@@ -15,11 +15,9 @@ import { getCodeState } from '../core/selectors/code'
 import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
-import {
-  getChakraCompUsedInSelectedPage,
-  getSelectedPage,
-} from '../core/selectors/components'
+import { getChakraCompUsedInSelectedPage } from '../core/selectors/components'
 import { generateComponentId } from '../utils/generateId'
+import { getSelectedPage } from '../core/selectors/page'
 
 const SaveButton = ({
   children,

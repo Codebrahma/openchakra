@@ -4,12 +4,12 @@ import { Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import {
   getPropsOfSelectedComp,
-  checkIsCustomPage,
   getSelectedComponent,
   checkIsChildrenOfWrapperComponent,
 } from '../../../../core/selectors/components'
 import ExposeChildrenControl from '../../controls/ExposeChildrenControl'
 import ChildrenPropAccessControl from '../../controls/ChildrenPropAccessControl'
+import { checkIsCustomPage } from '../../../../core/selectors/page'
 
 const BoxPanel = () => {
   const component = useSelector(getSelectedComponent)

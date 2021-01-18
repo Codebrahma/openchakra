@@ -45,23 +45,7 @@ export const INITIAL_PROPS: IProps = {
   },
 }
 
-export const INITIAL_PAGES: IPages = {
-  app: {
-    id: 'app',
-    name: 'App',
-    componentsId: '1',
-    propsId: '1',
-  },
-  customPage: {
-    id: 'customPage',
-    name: 'Custom Page',
-    componentsId: '2',
-    propsId: '2',
-  },
-}
-
 export const INITIAL_STATE: ComponentsState = {
-  pages: INITIAL_PAGES,
   components: INITIAL_COMPONENTS,
   props: INITIAL_PROPS,
   selectedPage: DEFAULT_PAGE,

@@ -3,9 +3,9 @@ import ActionButton from './ActionButton'
 import { MdCreateNewFolder } from 'react-icons/md'
 import useDispatch from '../../hooks/useDispatch'
 import { useSelector } from 'react-redux'
-import { checkIsCustomPage } from '../../core/selectors/components'
 import { getAllPagesCode } from '../../core/selectors/code'
 import babelQueries from '../../babel-queries/queries'
+import { checkIsCustomPage } from '../../core/selectors/page'
 
 const SwitchPageActionButton = () => {
   const dispatch = useDispatch()
@@ -15,13 +15,13 @@ const SwitchPageActionButton = () => {
   const clickHandler = () => {
     dispatch.components.unselect()
     if (showCustomPage) {
-      dispatch.components.switchPage('app')
+      dispatch.page.switchPage('app')
       const componentsState = babelQueries.getComponentsState(
         allPagesCode['app'],
       )
       dispatch.components.updateComponentsState(componentsState)
     } else {
-      dispatch.components.switchPage('customPage')
+      dispatch.page.switchPage('customPage')
       const componentsState = babelQueries.getComponentsState(
         allPagesCode['customPage'],
       )

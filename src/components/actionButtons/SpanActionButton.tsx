@@ -16,13 +16,13 @@ import {
   getSelectedComponentId,
   getPropsBy,
   getProps,
-  getSelectedPage,
   getCustomComponents,
 } from '../../core/selectors/components'
 import { getCode, getAllComponentsCode } from '../../core/selectors/code'
 import babelQueries from '../../babel-queries/queries'
 import { ISpanComponentsValues } from '../../babel-plugins/set-children-prop-plugin'
 import { searchRootCustomComponent } from '../../utils/recursive'
+import { getSelectedPage } from '../../core/selectors/page'
 
 const SpanActionButton = () => {
   const toast = useToast()

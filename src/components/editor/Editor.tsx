@@ -4,13 +4,10 @@ import ComponentPreview from './ComponentPreview'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
-import {
-  getChildrenBy,
-  getPropsBy,
-  checkIsCustomPage,
-} from '../../core/selectors/components'
+import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout } from '../../core/selectors/app'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import { checkIsCustomPage } from '../../core/selectors/page'
 
 export const gridStyles = {
   backgroundImage:

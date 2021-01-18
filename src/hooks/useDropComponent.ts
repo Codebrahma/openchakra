@@ -3,10 +3,8 @@ import { useSelector } from 'react-redux'
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
 import {
-  checkIsCustomPage,
   getComponents,
   isChildrenOfCustomComponent,
-  getSelectedPage,
   getCustomComponents,
   getCustomComponentsProps,
 } from '../core/selectors/components'
@@ -19,6 +17,7 @@ import builder from '../core/models/composer/builder'
 import useMoveComponent from './useMoveComponent'
 import checkIsComponentId from '../utils/checkIsComponentId'
 import checkIsContainerComponent from '../utils/checkIsContainerComponent'
+import { checkIsCustomPage, getSelectedPage } from '../core/selectors/page'
 
 export const useDropComponent = (
   parentId: string,

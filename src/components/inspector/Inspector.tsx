@@ -13,11 +13,9 @@ import StylesPanel from './panels/StylesPanel'
 import {
   getSelectedComponent,
   getCustomComponentsList,
-  checkIsCustomPage,
   isChildrenOfCustomComponent,
   getChildrenBy,
   getComponents,
-  getSelectedPage,
   getCustomComponents,
 } from '../../core/selectors/components'
 import ActionButton from '../actionButtons/ActionButton'
@@ -32,6 +30,7 @@ import ExportToCustomPageButton from '../actionButtons/ExportToCustomPageButton'
 import SaveComponentButton from '../actionButtons/SaveComponentButton'
 import CodeActionButton from '../actionButtons/CodeActionButton'
 import SpanActionButton from '../actionButtons/SpanActionButton'
+import { checkIsCustomPage, getSelectedPage } from '../../core/selectors/page'
 
 const Inspector = () => {
   const dispatch = useDispatch()
