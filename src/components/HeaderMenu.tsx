@@ -21,6 +21,7 @@ import { FaSave, FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { MdDeleteForever } from 'react-icons/md'
 import { getPageCode, getAllComponentsCode } from '../core/selectors/code'
+import { getLoadedFonts, getCustomTheme } from '../core/selectors/app'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -44,9 +45,13 @@ const CustomMenuButton: React.FC<
 const ExportMenuItem = () => {
   const appCode = useSelector(getPageCode('app'))
   const componentsCode = useSelector(getAllComponentsCode)
+  const fonts = useSelector(getLoadedFonts)
+  const customTheme = useSelector(getCustomTheme)
 
   return (
-    <MenuItem onClick={() => saveAsZip(appCode, componentsCode)}>
+    <MenuItem
+      onClick={() => saveAsZip({ appCode, componentsCode, fonts, customTheme })}
+    >
       <Box mr={2} as={FaSave} />
       Save workspace
     </MenuItem>

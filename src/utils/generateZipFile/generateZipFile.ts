@@ -1,11 +1,19 @@
 import JSZip from 'jszip'
-import { packageFile, indexFile, htmlFile } from './projectCode'
+import { packageFile, generateIndexFile, generateHTMLFile } from './projectCode'
 import babelQueries from '../../babel-queries/queries'
 
-const generateZipFile = (appCode: string, componentsCode: ICode) => {
+const generateZipFile = (payload: {
+  appCode: string
+  componentsCode: ICode
+  fonts: Array<string>
+  customTheme: any
+}) => {
   const zip = new JSZip()
+  const { appCode, componentsCode, fonts, customTheme } = payload
 
   const publicFolder = zip.folder('public')
+
+  const htmlFile = generateHTMLFile(fonts)
   publicFolder?.file('index.html', htmlFile)
 
   const srcFolder = zip.folder('src')
@@ -19,6 +27,7 @@ const generateZipFile = (appCode: string, componentsCode: ICode) => {
     componentsFolder?.file(`${componentName}.js`, code)
   })
 
+  const indexFile = generateIndexFile(customTheme)
   srcFolder?.file('index.js', indexFile)
   zip.file('package.json', packageFile)
   return zip
