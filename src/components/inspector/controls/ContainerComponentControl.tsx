@@ -33,7 +33,7 @@ const ContainerComponentControl = () => {
           pagesCode,
           { componentName: type },
         )
-        dispatch.code.resetPagesCode(updatedPagesCode)
+        dispatch.code.resetAllPagesCode(updatedPagesCode)
       }, 300)
     } else {
       dispatch.components.deleteCustomProp('children')
@@ -46,7 +46,7 @@ const ContainerComponentControl = () => {
         const updatedComponentCode = babelQueries.deleteCustomChildrenProp(
           componentsCode[type],
         )
-        dispatch.code.resetPagesCode(updatedPagesCode)
+        dispatch.code.resetAllPagesCode(updatedPagesCode)
         dispatch.code.setComponentsCode(updatedComponentCode, type)
       }, 300)
     }

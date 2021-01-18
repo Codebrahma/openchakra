@@ -80,7 +80,7 @@ const PopOverControl: React.FC<FormControlPropType> = ({
     )
     if (isCustomComponentChild) {
       dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-      dispatch.code.resetPagesCode(updatedPagesCode)
+      dispatch.code.resetAllPagesCode(updatedPagesCode)
     } else dispatch.code.setPageCode(updatedCode, selectedPage)
   }
 

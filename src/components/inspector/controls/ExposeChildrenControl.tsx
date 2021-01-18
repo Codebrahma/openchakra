@@ -68,7 +68,7 @@ const ExposeChildrenControl: React.FC<{}> = () => {
 
       if (isCustomComponentChild) {
         dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-        dispatch.code.resetPagesCode(updatedPagesCode)
+        dispatch.code.resetAllPagesCode(updatedPagesCode)
       } else {
         dispatch.code.setPageCode(updatedCode, selectedPage)
       }
@@ -114,7 +114,7 @@ const ExposeChildrenControl: React.FC<{}> = () => {
               updatedCode,
               rootCustomParentElement,
             )
-            dispatch.code.resetPagesCode(updatedPagesCode)
+            dispatch.code.resetAllPagesCode(updatedPagesCode)
           } else dispatch.code.setPageCode(updatedCode, selectedPage)
         }
       } else if (name.length === 0)
