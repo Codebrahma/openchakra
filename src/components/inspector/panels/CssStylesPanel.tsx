@@ -6,10 +6,8 @@ import { useSelector } from 'react-redux'
 import useDispatch from '../../../hooks/useDispatch'
 import { getCode } from '../../../core/selectors/code'
 import babelQueries from '../../../babel-queries/queries'
-import {
-  getSelectedComponentId,
-  getSelectedPage,
-} from '../../../core/selectors/components'
+import { getSelectedComponentId } from '../../../core/selectors/components'
+import { getSelectedPage } from '../../../core/selectors/page'
 
 const CssStylesPanel = () => {
   const [textareaValue, setTextareaValue] = useState('')

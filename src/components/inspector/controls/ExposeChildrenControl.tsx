@@ -8,7 +8,6 @@ import {
   getSelectedComponent,
   getPropByName,
   getCustomComponents,
-  getSelectedPage,
 } from '../../../core/selectors/components'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 import babelQueries from '../../../babel-queries/queries'
@@ -17,6 +16,7 @@ import {
   getAllPagesCode,
   getAllComponentsCode,
 } from '../../../core/selectors/code'
+import { getSelectedPage } from '../../../core/selectors/page'
 
 const ExposeChildrenControl: React.FC<{}> = () => {
   const dispatch = useDispatch()
@@ -68,7 +68,7 @@ const ExposeChildrenControl: React.FC<{}> = () => {
 
       if (isCustomComponentChild) {
         dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-        dispatch.code.resetPagesCode(updatedPagesCode)
+        dispatch.code.resetAllPagesCode(updatedPagesCode)
       } else {
         dispatch.code.setPageCode(updatedCode, selectedPage)
       }
@@ -114,7 +114,7 @@ const ExposeChildrenControl: React.FC<{}> = () => {
               updatedCode,
               rootCustomParentElement,
             )
-            dispatch.code.resetPagesCode(updatedPagesCode)
+            dispatch.code.resetAllPagesCode(updatedPagesCode)
           } else dispatch.code.setPageCode(updatedCode, selectedPage)
         }
       } else if (name.length === 0)

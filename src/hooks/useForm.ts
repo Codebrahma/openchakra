@@ -2,13 +2,13 @@ import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import {
   getSelectedComponentId,
-  getSelectedPage,
   isChildrenOfCustomComponent,
   getCustomComponents,
 } from '../core/selectors/components'
 import babelQueries from '../babel-queries/queries'
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import { searchRootCustomComponent } from '../utils/recursive'
+import { getSelectedPage } from '../core/selectors/page'
 
 export const useForm = () => {
   const dispatch = useDispatch()

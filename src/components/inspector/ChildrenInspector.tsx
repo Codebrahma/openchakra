@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import {
   getSelectedComponentChildren,
   getSelectedComponentId,
-  getSelectedPage,
   getCustomComponents,
   isChildrenOfCustomComponent,
 } from '../../core/selectors/components'
@@ -12,6 +11,7 @@ import useDispatch from '../../hooks/useDispatch'
 import { getCode, getAllComponentsCode } from '../../core/selectors/code'
 import babelQueries from '../../babel-queries/queries'
 import { searchRootCustomComponent } from '../../utils/recursive'
+import { getSelectedPage } from '../../core/selectors/page'
 
 const ChildrenInspector = () => {
   const childrenComponent = useSelector(getSelectedComponentChildren)

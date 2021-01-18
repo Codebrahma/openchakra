@@ -4,7 +4,6 @@ import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
 import {
   checkIsComponentSelected,
-  checkIsCustomPage,
   isChildrenOfCustomComponent,
   getPropsBy,
   isImmediateChildOfCustomComponent,
@@ -14,6 +13,7 @@ import {
 import { getShowLayout } from '../core/selectors/app'
 import { generatePropId } from '../utils/generateId'
 import useCustomTheme from './useCustomTheme'
+import { checkIsCustomPage } from '../core/selectors/page'
 
 export const useInteractive = (
   component: IComponent,

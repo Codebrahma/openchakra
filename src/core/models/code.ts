@@ -64,7 +64,15 @@ const code = createModel({
         componentsCode: {},
       }
     },
-    resetPagesCode(state: CodeState, pagesCode: ICode): CodeState {
+    resetPageCode(state: CodeState, pageName: string): CodeState {
+      const newPagesCode = { ...state.pagesCode }
+      newPagesCode[pageName] = DEFAULT_CODE
+      return {
+        ...state,
+        pagesCode: newPagesCode,
+      }
+    },
+    resetAllPagesCode(state: CodeState, pagesCode: ICode): CodeState {
       return {
         ...state,
         pagesCode: pagesCode,

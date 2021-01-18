@@ -12,12 +12,14 @@ import { AppState } from './models/app'
 import models from './models'
 import { componentsFilterActions, codeFilterActions } from '../utils/undo'
 import { TextState } from './models/text'
+import { PageState } from './models/page'
 
 export type RootState = {
   app: AppState
   components: ComponentsStateWithUndo
   text: TextState
   code: CodeStateWithUndo
+  page: PageState
 }
 
 const version = parseInt(process.env.REACT_APP_VERSION || '1', 10)
@@ -73,6 +75,7 @@ export const storeConfig = {
             filter: codeFilterActions,
           }),
         ),
+        page: reducers.page,
       })
     },
   },

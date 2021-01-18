@@ -45,7 +45,7 @@ const CustomPropDeletionButton: React.FC<{ customPropName: string }> = ({
       },
     )
     dispatch.code.setComponentsCode(updatedCode, customComponentType)
-    dispatch.code.resetPagesCode(updatedPagesCode)
+    dispatch.code.resetAllPagesCode(updatedPagesCode)
   }
 
   const customPropDeletionHandler = () => {

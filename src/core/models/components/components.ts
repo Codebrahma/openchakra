@@ -42,7 +42,6 @@ import {
 import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 
 export type ComponentsState = {
-  pages: IPages
   components: IComponents
   props: IProps
   customComponents: IComponents
@@ -314,12 +313,6 @@ const components = createModel({
       return {
         ...state,
         hoveredId: undefined,
-      }
-    },
-    switchPage(state: ComponentsState, page: string): ComponentsState {
-      return {
-        ...state,
-        selectedPage: page,
       }
     },
     unexpose(state: ComponentsState, targetedProp: string): ComponentsState {

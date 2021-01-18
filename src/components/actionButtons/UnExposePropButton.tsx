@@ -12,9 +12,9 @@ import {
 import {
   getSelectedComponentId,
   getCustomComponents,
-  getSelectedPage,
 } from '../../core/selectors/components'
 import babelQueries from '../../babel-queries/queries'
+import { getSelectedPage } from '../../core/selectors/page'
 
 const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
   propToUnExpose,
@@ -63,7 +63,7 @@ const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
 
       if (isChildOfCustomComponent) {
         dispatch.code.setComponentsCode(updatedCode, rootCustomParentElement)
-        dispatch.code.resetPagesCode(updatedPagesCode)
+        dispatch.code.resetAllPagesCode(updatedPagesCode)
       } else {
         dispatch.code.setPageCode(updatedCode, selectedPage)
       }

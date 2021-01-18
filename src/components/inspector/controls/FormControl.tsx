@@ -10,13 +10,13 @@ import {
 
 import PopOverControl from './PopOverControl'
 import {
-  checkIsCustomPage,
   isInstanceOfCustomComponent,
   getSelectedComponentId,
   getPropsOfSelectedComp,
 } from '../../../core/selectors/components'
 import UnExposePropButton from '../../actionButtons/UnExposePropButton'
 import CustomPropDeletionButton from '../../actionButtons/CustomPropDeletionButton'
+import { checkIsCustomPage } from '../../../core/selectors/page'
 
 type FormControlPropType = {
   label: ReactNode

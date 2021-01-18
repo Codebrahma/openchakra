@@ -3,7 +3,6 @@ import { useInspectorState } from '../../../contexts/inspector-context'
 import {
   getSelectedComponent,
   getPropsOfSelectedComp,
-  getSelectedPage,
 } from '../../../core/selectors/components'
 import { useSelector } from 'react-redux'
 import { IoIosFlash } from 'react-icons/io'
@@ -23,6 +22,7 @@ import useDispatch from '../../../hooks/useDispatch'
 import { useForm } from '../../../hooks/useForm'
 import babelQueries from '../../../babel-queries/queries'
 import { getCode } from '../../../core/selectors/code'
+import { getSelectedPage } from '../../../core/selectors/page'
 
 const SEPARATOR = '='
 

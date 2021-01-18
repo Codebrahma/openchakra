@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux'
 import { useInteractive } from '../../hooks/useInteractive'
 import {
   getChildrenBy,
-  checkIsCustomPage,
   isChildrenOfCustomComponent,
 } from '../../core/selectors/components'
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import { checkIsCustomPage } from '../../core/selectors/page'
 
 const WithChildrenPreviewContainer: React.FC<{
   component: IComponent
