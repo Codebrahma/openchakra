@@ -125,16 +125,13 @@ export const removeSpanComponent = (
   draftState: ComponentsState,
   payload: ISelectedTextDetails,
 ) => {
-  const {
-    components,
-    isCustomComponentChild,
-    propsId,
-    selectedId: id,
-  } = loadRequired(draftState)
+  const { components, isCustomComponentChild, selectedId: id } = loadRequired(
+    draftState,
+  )
 
   let props = isCustomComponentChild
     ? draftState.customComponentsProps
-    : draftState.propsById[propsId]
+    : draftState.props
 
   const { startIndex, endIndex, startNodePosition, endNodePosition } = payload
 
@@ -169,7 +166,7 @@ export const removeSpanComponent = (
   props.byId[childrenPropId].value = propValue
 
   if (isCustomComponentChild) draftState.customComponentsProps = props
-  else draftState.propsById[propsId] = props
+  else draftState.props = props
 }
 
 /**
@@ -179,16 +176,13 @@ export const removeSpanComponent = (
  * @param {ComponentsState} draftState workspace state
  */
 export const clearFormatting = (draftState: ComponentsState) => {
-  const {
-    components,
-    isCustomComponentChild,
-    propsId,
-    selectedId: id,
-  } = loadRequired(draftState)
+  const { components, isCustomComponentChild, selectedId: id } = loadRequired(
+    draftState,
+  )
 
   let props = isCustomComponentChild
     ? draftState.customComponentsProps
-    : draftState.propsById[propsId]
+    : draftState.props
 
   const childrenPropId =
     props.byComponentId[id].find(
@@ -220,5 +214,5 @@ export const clearFormatting = (draftState: ComponentsState) => {
   props.byId[childrenPropId].value = [newValue]
 
   if (isCustomComponentChild) draftState.customComponentsProps = { ...props }
-  else draftState.propsById[propsId] = { ...props }
+  else draftState.props = { ...props }
 }

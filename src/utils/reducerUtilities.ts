@@ -143,19 +143,14 @@ export const splitsValueToArray = (payload: {
 }
 
 export const updateInAllInstances = (
-  pages: IPages,
-  componentsById: IComponentsById,
+  components: IComponents,
   customComponents: IComponents,
   typeToFilter: string,
   updateCallBack: any,
 ) => {
-  Object.values(pages).forEach(page =>
-    Object.values(componentsById[page.componentsId])
-      .filter(component => component.type === typeToFilter)
-      .forEach(component =>
-        updateCallBack(component, false, page.propsId, page.componentsId),
-      ),
-  )
+  Object.values(components)
+    .filter(component => component.type === typeToFilter)
+    .forEach(component => updateCallBack(component, true))
 
   Object.values(customComponents)
     .filter(component => component.type === typeToFilter)
@@ -251,24 +246,18 @@ export const deleteCustomPropUtility = (
 }
 
 export const loadRequired = (state: ComponentsState, componentId?: string) => {
-  const componentsId = state.pages[state.selectedPage].componentsId
-  const propsId = state.pages[state.selectedPage].propsId
   const selectedId = state.selectedId
   const isCustomComponentChild = checkIsChildOfCustomComponent(
     componentId || selectedId,
     state.customComponents,
   )
   return {
-    componentsId,
-    propsId,
     selectedId,
     isCustomComponentChild,
     components: isCustomComponentChild
       ? state.customComponents
-      : state.componentsById[componentsId],
-    props: isCustomComponentChild
-      ? state.customComponentsProps
-      : state.propsById[propsId],
+      : state.components,
+    props: isCustomComponentChild ? state.customComponentsProps : state.props,
   }
 }
 
@@ -290,17 +279,13 @@ export const addCustomPropsInAllComponentInstances = (payload: {
   exposedPropComponentType: string
   component: IComponent
   updateInCustomComponent: Boolean
-  propsId: string
-  componentsId: string
   draftState: ComponentsState
   boxId?: string
 }) => {
   const {
     exposedProp,
     exposedPropComponentType,
-    componentsId,
     component,
-    propsId,
     draftState,
     updateInCustomComponent,
     boxId,
@@ -348,13 +333,13 @@ export const addCustomPropsInAllComponentInstances = (payload: {
       draftState.customComponentsProps.byId[heightProp.id] = { ...heightProp }
     }
   } else {
-    draftState.propsById[propsId].byComponentId[component.id]?.push(propId)
-    draftState.propsById[propsId].byId[propId] = { ...prop }
+    draftState.props.byComponentId[component.id]?.push(propId)
+    draftState.props.byId[propId] = { ...prop }
 
     if (isBoxChildrenExposed) {
-      draftState.componentsById[componentsId][newBoxId] = boxComponent
-      draftState.propsById[propsId].byComponentId[newBoxId]?.push(heightProp.id)
-      draftState.propsById[propsId].byId[heightProp.id] = { ...heightProp }
+      draftState.components[newBoxId] = boxComponent
+      draftState.props.byComponentId[newBoxId]?.push(heightProp.id)
+      draftState.props.byId[heightProp.id] = { ...heightProp }
     }
   }
 }

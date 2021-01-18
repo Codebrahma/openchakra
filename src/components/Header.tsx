@@ -4,13 +4,11 @@ import { AiOutlineFullscreen } from 'react-icons/ai'
 import { useSelector } from 'react-redux'
 import { IoMdBuild, IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { RiCodeLine } from 'react-icons/ri'
-import { MdCreateNewFolder } from 'react-icons/md'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 
 import { buildParameters } from '../utils/codesandbox'
 import useDispatch from '../hooks/useDispatch'
-import { getShowCustomComponentPage } from '../core/selectors/components'
 import {
   getShowLayout,
   getShowCode,
@@ -22,6 +20,7 @@ import EditThemeModal from './EditThemeModal'
 import ActionButton from './actionButtons/ActionButton'
 import composerIcon from '../composer-icon.png'
 import { getCode } from '../core/selectors/code'
+import SwitchPageActionButton from './actionButtons/SwitchPageActionButton'
 
 const CodeSandboxButton = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -55,7 +54,6 @@ const CodeSandboxButton = () => {
 const Header = () => {
   const showLayout = useSelector(getShowLayout)
   const showCode = useSelector(getShowCode)
-  const showCustomPage = useSelector(getShowCustomComponentPage)
   const dispatch = useDispatch()
   const { isOpen, onClose, onOpen } = useDisclosure()
 
@@ -97,18 +95,7 @@ const Header = () => {
       <Flex>
         <Flex border="1px solid #9FB3C8" mr={4} alignItems="center">
           <Box borderRight="1px solid #9FB3C8">
-            <ActionButton
-              label="Create components"
-              icon={<MdCreateNewFolder />}
-              onClick={() => {
-                dispatch.components.unselect()
-                if (showCustomPage) dispatch.components.switchPage('app')
-                else dispatch.components.switchPage('customPage')
-              }}
-              bg={showCustomPage ? 'primary.100' : 'white'}
-              color={showCustomPage ? 'primary.900' : 'black'}
-              size="sm"
-            />
+            <SwitchPageActionButton />
           </Box>
           <Box borderRight="1px solid #9FB3C8">
             <ActionButton

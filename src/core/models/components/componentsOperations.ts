@@ -85,10 +85,7 @@ export const addMetaComponent = (
   payload: { components: IComponents; root: string; parentId: string },
 ) => {
   const { components: metaComponents, root, parentId } = payload
-  const { isCustomComponentChild, componentsId, props } = loadRequired(
-    draftState,
-    parentId,
-  )
+  const { isCustomComponentChild, props } = loadRequired(draftState, parentId)
 
   //Add the default props for the meta components
   Object.values(metaComponents).forEach(component => {
@@ -117,12 +114,12 @@ export const addMetaComponent = (
     draftState.customComponents[root].parent = parentId
     draftState.customComponents[parentId].children.push(root)
   } else {
-    draftState.componentsById[componentsId] = {
-      ...draftState.componentsById[componentsId],
+    draftState.components = {
+      ...draftState.components,
       ...metaComponents,
     }
-    draftState.componentsById[componentsId][root].parent = parentId
-    draftState.componentsById[componentsId][parentId].children.push(root)
+    draftState.components[root].parent = parentId
+    draftState.components[parentId].children.push(root)
   }
 }
 
@@ -146,13 +143,7 @@ export const deleteComponent = (
     parentId: string
   },
 ) => {
-  const {
-    isCustomComponentChild,
-    componentsId,
-    components,
-    props,
-    propsId,
-  } = loadRequired(draftState)
+  const { isCustomComponentChild, components, props } = loadRequired(draftState)
   const { componentId, parentId } = payload
 
   // Deletes the components and its children components along with its respective props
@@ -196,26 +187,25 @@ export const deleteComponent = (
         .forEach(customPropId => {
           const {
             updatedCustomComponentProps,
-            updatedPropsById,
-            updatedComponentsById,
+            updatedProps,
+            updatedComponents,
             updatedCustomComponents,
           } = deleteCustomPropInRootComponent(
             deletedProps.byId[customPropId],
-            draftState.pages,
-            draftState.componentsById,
+            draftState.components,
             draftState.customComponents,
-            draftState.propsById,
+            draftState.props,
             draftState.customComponentsProps,
           )
-          draftState.propsById = { ...updatedPropsById }
+          draftState.props = { ...updatedProps }
           draftState.customComponentsProps = { ...updatedCustomComponentProps }
-          draftState.componentsById = { ...updatedComponentsById }
+          draftState.components = { ...updatedComponents }
           draftState.customComponents = { ...updatedCustomComponents }
         })
     })
   } else {
-    draftState.propsById[propsId] = { ...updatedProps }
-    draftState.componentsById[componentsId] = { ...updatedComponents }
+    draftState.props = { ...updatedProps }
+    draftState.components = { ...updatedComponents }
   }
 }
 
@@ -231,12 +221,7 @@ export const duplicateComponent = (
   selectedComponent: IComponent,
   componentIds: string[],
 ) => {
-  const {
-    isCustomComponentChild,
-    componentsId,
-    components,
-    props,
-  } = loadRequired(draftState)
+  const { isCustomComponentChild, components, props } = loadRequired(draftState)
 
   // This function will duplicate the component and also its children
   // And gives a copy of components and respective props
@@ -266,7 +251,7 @@ export const duplicateComponent = (
     }
     mergeProps(props, clonedProps)
   } else {
-    draftState.componentsById[componentsId] = {
+    draftState.components = {
       ...components,
       ...clonedComponents,
     }

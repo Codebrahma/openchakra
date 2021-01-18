@@ -97,16 +97,10 @@ export const exposeProp = (
     //Add props for all the instances of the custom components only when there is no similar prop present or there is change in prop-name
     if (!isCustomPropPresent || samePropName === 'no')
       updateInAllInstances(
-        draftState.pages,
-        draftState.componentsById,
+        draftState.components,
         draftState.customComponents,
         draftState.customComponents[rootCustomParent].type,
-        (
-          component: IComponent,
-          updateInCustomComponent: Boolean,
-          propsId: string,
-          componentsId: string,
-        ) => {
+        (component: IComponent, updateInCustomComponent: Boolean) => {
           addCustomPropsInAllComponentInstances({
             exposedProp: {
               name: targetedProp,
@@ -116,8 +110,6 @@ export const exposeProp = (
             exposedPropComponentType:
               draftState.customComponents[componentId].type,
             component,
-            propsId,
-            componentsId,
             updateInCustomComponent,
             draftState,
             boxId,
@@ -165,21 +157,20 @@ export const unExposeProp = (
   if (isCustomComponentChild && exposedProp) {
     const {
       updatedCustomComponentProps,
-      updatedPropsById,
+      updatedProps,
       updatedCustomComponents,
-      updatedComponentsById,
+      updatedComponents,
     } = deleteCustomPropInRootComponent(
       exposedProp,
-      draftState.pages,
-      draftState.componentsById,
+      draftState.components,
       draftState.customComponents,
-      draftState.propsById,
+      draftState.props,
       props,
     )
 
     draftState.customComponentsProps = updatedCustomComponentProps
-    draftState.propsById = updatedPropsById
-    draftState.componentsById = { ...updatedComponentsById }
+    draftState.props = updatedProps
+    draftState.components = { ...updatedComponents }
     draftState.customComponents = { ...updatedCustomComponents }
   }
 }

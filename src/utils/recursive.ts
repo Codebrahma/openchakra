@@ -300,16 +300,15 @@ export const findControl = (
 
 export const deleteCustomPropInRootComponent = (
   exposedProp: IProp,
-  pages: IPages,
-  componentsById: IComponentsById,
+  components: IComponents,
   customComponents: IComponents,
-  propsById: IPropsByPageId,
+  props: IProps,
   customComponentsProps: IProps,
 ) => {
-  let updatedPropsById = { ...propsById }
+  let updatedProps = { ...props }
   let updatedCustomComponentProps = { ...customComponentsProps }
   let updatedCustomComponents = { ...customComponents }
-  let updatedComponentsById = { ...componentsById }
+  let updatedComponents = { ...components }
 
   const deleteCustomPropRecursive = (prop: IProp) => {
     const customComponentType = prop.derivedFromComponentType
@@ -336,22 +335,16 @@ export const deleteCustomPropInRootComponent = (
     )
     if (!checkExposedPropInstance && customComponentType) {
       updateInAllInstances(
-        pages,
-        componentsById,
+        components,
         customComponents,
         customComponentType,
-        (
-          component: IComponent,
-          updateInCustomComponent: Boolean,
-          propsId: string,
-          componentsId: string,
-        ) => {
+        (component: IComponent, updateInCustomComponent: Boolean) => {
           const components = updateInCustomComponent
             ? updatedCustomComponents
-            : updatedComponentsById[componentsId]
+            : updatedComponents
           const props = updateInCustomComponent
             ? updatedCustomComponentProps
-            : updatedPropsById[propsId]
+            : updatedProps
 
           const propId =
             props.byComponentId[component.id]?.find(
@@ -365,17 +358,16 @@ export const deleteCustomPropInRootComponent = (
 
           //Delete the component if the prop is custom children prop(derived prop of exposed children)
           if (components[customProp.value]) {
-            const { updatedComponents, updatedProps } = deleteComp(
-              components[customProp.value],
-              components,
-              props,
-            )
+            const {
+              updatedComponents: modifiedComponents,
+              updatedProps: modifiedProps,
+            } = deleteComp(components[customProp.value], components, props)
             if (updateInCustomComponent) {
-              updatedCustomComponentProps = updatedProps
-              updatedCustomComponents = { ...updatedComponents }
+              updatedCustomComponentProps = modifiedProps
+              updatedCustomComponents = { ...modifiedComponents }
             } else {
-              updatedPropsById[propsId] = updatedProps
-              updatedComponentsById[componentsId] = { ...updatedComponents }
+              updatedProps = modifiedProps
+              updatedComponents = { ...modifiedComponents }
             }
           }
 
@@ -389,9 +381,9 @@ export const deleteCustomPropInRootComponent = (
   }
   deleteCustomPropRecursive(exposedProp)
   return {
-    updatedPropsById,
+    updatedProps,
     updatedCustomComponentProps,
     updatedCustomComponents,
-    updatedComponentsById,
+    updatedComponents,
   }
 }

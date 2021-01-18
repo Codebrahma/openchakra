@@ -13,7 +13,7 @@ import StylesPanel from './panels/StylesPanel'
 import {
   getSelectedComponent,
   getCustomComponentsList,
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   isChildrenOfCustomComponent,
   getChildrenBy,
   getComponents,
@@ -49,7 +49,7 @@ const Inspector = () => {
   const isCustomComponent =
     customComponentsList && customComponentsList.indexOf(type) !== -1
 
-  const isCustomComponentsPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const isCustomComponentChild = useSelector(isChildrenOfCustomComponent(id))
   const code = useSelector(getCode)
   const componentsCode = useSelector(getAllComponentsCode)
@@ -72,7 +72,7 @@ const Inspector = () => {
   }
 
   const enableSaveIcon = () => {
-    if (!isCustomComponentsPage) return false
+    if (!isCustomPage) return false
 
     if (isCustomComponentChild) return false
 
@@ -169,7 +169,7 @@ const Inspector = () => {
                 icon={<MdFormatClear />}
               />
             )}
-            {!isCustomComponentsPage ? (
+            {!isCustomPage ? (
               <ExportToCustomPageButton componentId={component.id} />
             ) : null}
 

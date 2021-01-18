@@ -138,16 +138,10 @@ export const deleteCustomProp = (
   // delete the prop in all the instances of custom components
 
   updateInAllInstances(
-    draftState.pages,
-    draftState.componentsById,
+    draftState.components,
     draftState.customComponents,
     componentType,
-    (
-      component: IComponent,
-      updateInCustomComponent: Boolean,
-      propsId: string,
-      componentsId: string,
-    ) => {
+    (component: IComponent, updateInCustomComponent: Boolean) => {
       if (updateInCustomComponent) {
         const { props, components } = deleteCustomPropUtility(
           component,
@@ -161,11 +155,11 @@ export const deleteCustomProp = (
         const { props, components } = deleteCustomPropUtility(
           component,
           propName,
-          draftState.componentsById[componentsId],
-          draftState.propsById[propsId],
+          draftState.components,
+          draftState.props,
         )
-        draftState.componentsById[componentsId] = { ...components }
-        draftState.propsById[propsId] = { ...props }
+        draftState.components = { ...components }
+        draftState.props = { ...props }
       }
     },
   )

@@ -7,10 +7,7 @@ export const getSelectedComponentId = (state: RootState): string =>
   state.components.present.selectedId
 
 export const getSelectedPageComponents = (state: RootState): IComponents => {
-  const componentsId =
-    state.components.present.pages[state.components.present.selectedPage]
-      .componentsId
-  return state.components.present.componentsById[componentsId]
+  return state.components.present.components
 }
 
 export const getCustomComponents = (state: RootState): IComponents =>
@@ -50,10 +47,7 @@ export const getSelectedComponent = createSelector(
 )
 
 export const getSelectedPageProps = (state: RootState): IProps => {
-  const propsId =
-    state.components.present.pages[state.components.present.selectedPage]
-      .propsId
-  return state.components.present.propsById[propsId]
+  return state.components.present.props
 }
 
 export const getCustomComponentsProps = (state: RootState): IProps =>
@@ -109,7 +103,7 @@ export const getChildrenPropOfSelectedComp = createSelector(
   },
 )
 
-export const getIsSelectedComponent = (componentId: IComponent['id']) => (
+export const checkIsComponentSelected = (componentId: IComponent['id']) => (
   state: RootState,
 ): boolean => state.components.present.selectedId === componentId
 
@@ -154,8 +148,8 @@ export const isChildrenOfCustomComponent = (id: string | IComponent['id']) => (
   else return true
 }
 
-// Check whether the page is custom components page or not.
-export const getShowCustomComponentPage = (state: RootState): boolean =>
+// Check whether the page is custom page or not.
+export const checkIsCustomPage = (state: RootState): boolean =>
   state.components.present.selectedPage === 'customPage' ? true : false
 
 // Checks whether the component is a instance of custom component
@@ -167,10 +161,6 @@ export const isInstanceOfCustomComponent = (id: string) => (
 
   return state.components.present.customComponents[componentType] ? true : false
 }
-
-// Gets all the components on all pages.
-export const getAllTheComponents = (state: RootState): IComponentsById =>
-  state.components.present.componentsById
 
 export const getState = (state: RootState) => state.components.present
 

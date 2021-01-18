@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useInteractive } from '../../hooks/useInteractive'
 import {
   getChildrenBy,
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   isChildrenOfCustomComponent,
 } from '../../core/selectors/components'
 import { useDropComponent } from '../../hooks/useDropComponent'
@@ -45,7 +45,7 @@ const WithChildrenPreviewContainer: React.FC<{
 
   const childrenProp = componentProps.find(prop => prop.name === 'children')
   let componentChildren = useSelector(getChildrenBy(component.id))
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
   )
@@ -53,7 +53,7 @@ const WithChildrenPreviewContainer: React.FC<{
   const isChildrenExposed = childrenProp !== undefined
 
   const enableInteractive =
-    !isChildrenExposed && (isCustomComponentPage || !isCustomComponentChild)
+    !isChildrenExposed && (isCustomPage || !isCustomComponentChild)
 
   if (rootComponentChildren && isChildrenExposed)
     componentChildren = [...componentChildren, ...rootComponentChildren]

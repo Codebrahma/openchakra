@@ -10,7 +10,7 @@ import {
 
 import PopOverControl from './PopOverControl'
 import {
-  getShowCustomComponentPage,
+  checkIsCustomPage,
   isInstanceOfCustomComponent,
   getSelectedComponentId,
   getPropsOfSelectedComp,
@@ -31,7 +31,7 @@ const FormControl: React.FC<FormControlPropType> = ({
   children,
   hasColumn,
 }) => {
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const selectedId = useSelector(getSelectedComponentId)
   const isCustomComponentInstance = useSelector(
     isInstanceOfCustomComponent(selectedId),
@@ -50,7 +50,7 @@ const FormControl: React.FC<FormControlPropType> = ({
       alignItems="center"
       justifyItems="center"
     >
-      {isCustomComponentPage && !isPropExposed ? (
+      {isCustomPage && !isPropExposed ? (
         <PopOverControl label={label} htmlFor={htmlFor} hasColumn={hasColumn} />
       ) : (
         <FormLabel
@@ -88,7 +88,7 @@ const FormControl: React.FC<FormControlPropType> = ({
           {children}
         </Box>
       )}
-      {isCustomComponentPage && isCustomComponentInstance && !isPropExposed ? (
+      {isCustomPage && isCustomComponentInstance && !isPropExposed ? (
         <CustomPropDeletionButton customPropName={htmlFor || ''} />
       ) : null}
     </ChakraFormControl>

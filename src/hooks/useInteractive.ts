@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux'
 import useDispatch from './useDispatch'
 import { useDrag } from 'react-dnd'
 import {
-  getIsSelectedComponent,
-  getShowCustomComponentPage,
+  checkIsComponentSelected,
+  checkIsCustomPage,
   isChildrenOfCustomComponent,
   getPropsBy,
   isImmediateChildOfCustomComponent,
@@ -23,9 +23,11 @@ export const useInteractive = (
 ) => {
   const dispatch = useDispatch()
   const showLayout = useSelector(getShowLayout)
-  const isComponentSelected = useSelector(getIsSelectedComponent(component.id))
+  const isComponentSelected = useSelector(
+    checkIsComponentSelected(component.id),
+  )
   const isElementOnInspectorHovered = useSelector(getIsHovered(component.id))
-  const isCustomComponentPage = useSelector(getShowCustomComponentPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(component.id),
   )
@@ -36,7 +38,7 @@ export const useInteractive = (
 
   const fetchedProps = useSelector(getPropsBy(component.id))
   const enableInteractive =
-    (isCustomComponentPage || !isCustomComponentChild) && !disableInteraction
+    (isCustomPage || !isCustomComponentChild) && !disableInteraction
 
   const componentProps = isInstanceOfCustomComponent ? [] : [...fetchedProps]
   const theme = useCustomTheme()

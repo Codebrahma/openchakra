@@ -6,7 +6,7 @@ import { Text, Box, Flex, useToast } from '@chakra-ui/core'
 import ActionButton from '../actionButtons/ActionButton'
 import useDispatch from '../../hooks/useDispatch'
 import {
-  getAllTheComponents,
+  getSelectedPageComponents,
   getCustomComponents,
 } from '../../core/selectors/components'
 
@@ -30,7 +30,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
   })
   const dispatch = useDispatch()
   const toast = useToast()
-  const allComponents = useSelector(getAllTheComponents)
+  const components = useSelector(getSelectedPageComponents)
   const customComponents = useSelector(getCustomComponents)
 
   let boxProps: any = {
@@ -57,16 +57,16 @@ const DragItem: React.FC<ComponentItemProps> = ({
 
   //Check if there is a instance of the custom component in all the pages.
   const isInstancePresent = () => {
-    let instanceFound = false
-    Object.values(allComponents).forEach(components => {
-      if (
-        Object.values(components).findIndex(
-          component => component.type === type,
-        ) !== -1
-      ) {
-        instanceFound = true
-      }
-    })
+    let instanceFound: boolean = false
+
+    if (
+      Object.values(components).findIndex(
+        component => component.type === type,
+      ) !== -1
+    ) {
+      instanceFound = true
+    }
+
     if (
       Object.values(customComponents).findIndex(
         component => component.type === type && component.id !== type,
@@ -74,6 +74,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
     ) {
       instanceFound = true
     }
+
     return instanceFound
   }
 

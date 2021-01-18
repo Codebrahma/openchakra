@@ -105,7 +105,6 @@ export const saveComponent = (
     componentInstanceId: string
   },
 ) => {
-  const { propsId, componentsId } = loadRequired(draftState)
   const { name, componentId, parentId } = payload
   const newId = payload.componentInstanceId
 
@@ -115,25 +114,17 @@ export const saveComponent = (
     updatedSourceProps: updatedProps,
     movedComponents,
     movedProps,
-  } = moveComp(
-    componentId,
-    draftState.componentsById[componentsId],
-    draftState.propsById[propsId],
-  )
+  } = moveComp(componentId, draftState.components, draftState.props)
 
   //delete the moved component from the children
-  const index = draftState.componentsById[componentsId][
-    parentId
-  ].children.findIndex(child => child === componentId)
-
-  draftState.componentsById[componentsId][parentId].children.splice(
-    index,
-    1,
-    newId,
+  const index = draftState.components[parentId].children.findIndex(
+    child => child === componentId,
   )
 
+  draftState.components[parentId].children.splice(index, 1, newId)
+
   //Add the outer container in both components(instance) and custom components(original)
-  draftState.componentsById[componentsId] = {
+  draftState.components = {
     ...updatedComponents,
     [newId]: {
       id: newId,
@@ -156,7 +147,7 @@ export const saveComponent = (
 
   mergeProps(draftState.customComponentsProps, movedProps)
 
-  draftState.propsById[propsId].byComponentId[newId] = []
+  draftState.props.byComponentId[newId] = []
   draftState.customComponentsProps.byComponentId[name] = []
 
   //change the parent of the child
@@ -196,7 +187,7 @@ export const saveComponent = (
   Object.values(duplicatedProps).forEach(prop => {
     if (prop.value === 'RootCbComposer') {
       const id = generateComponentId()
-      draftState.componentsById[componentsId][id] = {
+      draftState.components[id] = {
         id,
         type: 'Box',
         parent: 'Prop',
@@ -204,7 +195,7 @@ export const saveComponent = (
       }
       duplicatedProps[prop.id].value = id
     }
-    draftState.propsById[propsId].byComponentId[newId].push(prop.id)
+    draftState.props.byComponentId[newId].push(prop.id)
   })
 
   draftState.customComponentsProps = {
@@ -215,7 +206,7 @@ export const saveComponent = (
     byComponentId: { ...customProps.byComponentId },
   }
 
-  draftState.propsById[propsId] = {
+  draftState.props = {
     byId: {
       ...updatedProps.byId,
       ...duplicatedProps,

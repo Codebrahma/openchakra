@@ -33,7 +33,6 @@ const ExportToCustomPageButton: React.FC<{ componentId: string }> = ({
       isCustomComponentChild ? customComponents : components,
     )
 
-    dispatch.components.exportSelectedComponentToCustomPage([...componentIds])
     const updatedCode = babelQueries.exportToCustomComponentsPage(
       code,
       customPageCode,
