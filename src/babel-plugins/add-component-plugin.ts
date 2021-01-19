@@ -1,7 +1,7 @@
 import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
 import template from '@babel/template'
 import * as t from '@babel/types'
-import componentsStructure from '../utils/defaultComponentStructure'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
 
 const addComponentPlugin = (
   _: any,

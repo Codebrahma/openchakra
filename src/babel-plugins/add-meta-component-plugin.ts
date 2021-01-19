@@ -3,7 +3,7 @@ import template from '@babel/template'
 import * as t from '@babel/types'
 
 import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
-import componentsStructure from '../utils/defaultComponentStructure'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
 
 export interface IComponentIds {
   [type: string]: string
