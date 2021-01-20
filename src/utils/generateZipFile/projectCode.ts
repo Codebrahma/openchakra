@@ -72,15 +72,18 @@ export const generateIndexFile = (customTheme: any) => {
     customTheme,
   )}
   })`
+  const isCustomThemeUsed = customTheme && Object.keys(customTheme).length > 0
 
   const code = `
 import React from "react";
 import ReactDOM from "react-dom";
-import { ChakraProvider, extendTheme} from '@chakra-ui/core';
+import { ChakraProvider, ${
+    isCustomThemeUsed ? 'extendTheme' : 'theme'
+  }} from '@chakra-ui/core';
 
 import App from "./App";
 
-${customTheme && Object.keys(customTheme) ? customThemeCode : ''}
+${isCustomThemeUsed ? customThemeCode : ''}
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <ChakraProvider resetCSS theme={theme}>
