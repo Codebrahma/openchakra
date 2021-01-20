@@ -417,8 +417,20 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         const { components, props } = payload
 
-        draftState.components = components
-        draftState.props = props
+        draftState.components = {
+          ...draftState.components,
+          ...components,
+        }
+        draftState.props = {
+          byId: {
+            ...draftState.props.byId,
+            ...props.byId,
+          },
+          byComponentId: {
+            ...draftState.props.byComponentId,
+            ...props.byComponentId,
+          },
+        }
       })
     },
     updateCustomComponentsState(
