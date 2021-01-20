@@ -1,7 +1,7 @@
 import { RootState } from '../store'
 
 export const getCode = (state: RootState) => {
-  const selectedPage = state.components.present.selectedPage
+  const selectedPage = state.page.selectedPage
   return state.code.present.pagesCode[selectedPage]
 }
 
