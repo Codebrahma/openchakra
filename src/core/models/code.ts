@@ -7,13 +7,11 @@ export type CodeState = {
 
 const DEFAULT_CODE = `
 import React from 'react'
-import { ChakraProvider, theme } from '@chakra-ui/core'
+import { Box} from '@chakra-ui/core'
 
 const App = () => {
   return (
-    <ChakraProvider resetCSS theme={theme}>
     <Box id='root' compId='root'></Box>
-    </ChakraProvider>
   )
 }
 
