@@ -52,7 +52,7 @@ class saveComponentPlugin {
               const customCompInstanceNode = getJSXElement(customCompInstance)
 
               // The component that is made as custom component is replaced with the custom component instance
-              path.insertAfter(customCompInstanceNode.expression)
+              path.insertAfter(customCompInstanceNode)
               path.remove()
 
               // As The element is found, so we can stop all other traversing
