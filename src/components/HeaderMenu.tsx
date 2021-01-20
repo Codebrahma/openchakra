@@ -66,10 +66,11 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
       'Are you sure to clear your workspace',
     )
     if (confirmClearing) {
+      dispatch.code.resetCode()
+      dispatch.page.switchPage('app')
       dispatch.components.resetAll()
       dispatch.app.resetCustomTheme()
       dispatch.app.removeAllFonts()
-      dispatch.code.resetCode()
     }
   }
 

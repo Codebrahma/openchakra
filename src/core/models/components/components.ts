@@ -62,7 +62,10 @@ const components = createModel({
       })
     },
     resetAll(state: ComponentsState): ComponentsState {
-      return INITIAL_STATE
+      return {
+        ...state,
+        ...INITIAL_STATE,
+      }
     },
     loadDemo(state: ComponentsState): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {})
