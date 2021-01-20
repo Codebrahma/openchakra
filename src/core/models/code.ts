@@ -23,11 +23,13 @@ export const INITIAL_CODE = {
   customPage: DEFAULT_CODE,
 }
 
+export const INITIAL_CODE_STATE = {
+  pagesCode: INITIAL_CODE,
+  componentsCode: {},
+}
+
 const code = createModel({
-  state: {
-    pagesCode: INITIAL_CODE,
-    componentsCode: {},
-  } as CodeState,
+  state: INITIAL_CODE_STATE as CodeState,
   reducers: {
     setPageCode(
       state: CodeState,
@@ -55,10 +57,13 @@ const code = createModel({
         },
       }
     },
-    resetCode(state: CodeState, codeState?: ICode): CodeState {
+    resetCodeState(state: CodeState, codeState: CodeState): CodeState {
+      return codeState
+    },
+    resetCode(state: CodeState, pagesCode?: ICode): CodeState {
       return {
         ...state,
-        pagesCode: codeState || INITIAL_CODE,
+        pagesCode: pagesCode || INITIAL_CODE,
         componentsCode: {},
       }
     },

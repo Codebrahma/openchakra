@@ -22,6 +22,7 @@
     "@types/react-json-tree": "^0.6.11",
     "@types/webfontloader": "^1.6.32",
     "better-docs": "^2.3.2",
+    "browser-nativefs": "^0.7.1",
     "codesandbox": "^2.1.11",
     "coloreact": "^0.3.1",
     "copy-to-clipboard": "^3.2.1",
