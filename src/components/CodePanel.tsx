@@ -162,7 +162,7 @@ const CodePanel = () => {
             <MonacoEditor
               value={formatCode(pagesCode['app'])}
               onChange={(_, value) => {
-                pagesCode['pp'] = value || ''
+                pagesCode['app'] = value || ''
               }}
             />
             <SaveButton
