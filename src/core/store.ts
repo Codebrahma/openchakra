@@ -47,6 +47,14 @@ const persistCodeConfig = {
   throttle: 500,
 }
 
+const persistPageConfig = {
+  key: `composer_page_v${version}`,
+  storage,
+  whitelist: ['selectedPage', 'pages'],
+  version,
+  throttle: 500,
+}
+
 const persistPlugin = {
   onStoreCreated(store: any) {
     persistStore(store)
@@ -75,7 +83,7 @@ export const storeConfig = {
             filter: codeFilterActions,
           }),
         ),
-        page: reducers.page,
+        page: persistReducer(persistPageConfig, reducers.page),
       })
     },
   },
