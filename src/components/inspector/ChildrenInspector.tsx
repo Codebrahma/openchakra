@@ -26,30 +26,33 @@ const ChildrenInspector = () => {
   const componentsCode = useSelector(getAllComponentsCode)
 
   const moveChildren = (fromIndex: number, toIndex: number) => {
-    const rootCustomParent = isCustomComponentUpdate
-      ? searchRootCustomComponent(
-          customComponents[componentId],
-          customComponents,
-        )
-      : ''
-    const updatedCode = babelQueries.reorderComponentChildren(
-      isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
-      {
-        componentId,
-        fromIndex,
-        toIndex,
-      },
-    )
-    if (updatedCode !== code) {
-      const componentsState = babelQueries.getComponentsState(updatedCode)
+    dispatch.components.moveSelectedComponentChildren({
+      componentId,
+      fromIndex,
+      toIndex,
+    })
+
+    setTimeout(() => {
+      const rootCustomParent = isCustomComponentUpdate
+        ? searchRootCustomComponent(
+            customComponents[componentId],
+            customComponents,
+          )
+        : ''
+      const updatedCode = babelQueries.reorderComponentChildren(
+        isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
+        {
+          componentId,
+          fromIndex,
+          toIndex,
+        },
+      )
       if (isCustomComponentUpdate) {
         dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-        dispatch.components.updateCustomComponentsState(componentsState)
       } else {
-        dispatch.components.updateComponentsState(componentsState)
         dispatch.code.setPageCode(updatedCode, selectedPage)
       }
-    }
+    }, 200)
   }
 
   const onSelectChild = (id: IComponent['id']) => {
