@@ -8,7 +8,7 @@ const normalComponents = {
   AvatarGroup: `<AvatarGroup spacing={-3} max={3} size="md"></AvatarGroup>`,
   Checkbox: `<Checkbox>Label checkbox</Checkbox>`,
   Flex: `<Flex></Flex>`,
-  AspectRatio: `AspectRatio`,
+  AspectRatio: `  <AspectRatio></AspectRatio>`,
   Grid: `<Grid templateColumns="repeat(5, 1fr)" gap={6} ></Grid>`,
   Icon: `<Icon as={CopyIcon} />`,
   IconButton: `<IconButton aria-label="icon" icon={<CopyIcon />}/>`,
@@ -28,7 +28,7 @@ const normalComponents = {
   Stack: `<Stack></Stack>`,
   Switch: `<Switch />`,
   Tag: `<Tag>Tag name</Tag>`,
-  TextArea: `<Textarea />`,
+  Textarea: `<Textarea />`,
 }
 
 export default normalComponents
