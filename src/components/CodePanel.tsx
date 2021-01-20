@@ -152,7 +152,7 @@ const CodePanel = () => {
     >
       <Tabs variant="enclosed">
         <TabList>
-          <Tab>App.js</Tab>
+          <Tab>{selectedPage}.js</Tab>
           {Object.keys(componentsCode).map(componentName => (
             <Tab key={componentName}>{componentName + '.js'}</Tab>
           ))}
@@ -166,9 +166,9 @@ const CodePanel = () => {
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
             <MonacoEditor
-              value={formatCode(pagesCode['app'])}
+              value={formatCode(pagesCode[selectedPage])}
               onChange={(_, value) => {
-                pagesCode['app'] = value || ''
+                pagesCode[selectedPage] = value || ''
               }}
             />
             <SaveButton
