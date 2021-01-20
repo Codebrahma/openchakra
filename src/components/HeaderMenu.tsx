@@ -15,13 +15,12 @@ import {
 } from '@chakra-ui/core'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import useDispatch from '../hooks/useDispatch'
-import { saveAsZip } from '../utils/import'
-import { useSelector } from 'react-redux'
-import { FaSave, FaEdit } from 'react-icons/fa'
+import { FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { MdDeleteForever } from 'react-icons/md'
-import { getPageCode, getAllComponentsCode } from '../core/selectors/code'
-import { getLoadedFonts, getCustomTheme } from '../core/selectors/app'
+import ImportWorkspaceMenuItem from './HeaderMenuItems/ImportWorkspaceMenuItem'
+import ExportWorkspaceMenuItem from './HeaderMenuItems/ExportWorkspaceMenuItem'
+import SaveWorkspaceMenuItem from './HeaderMenuItems/SaveWorkspaceMenuItem'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -41,22 +40,6 @@ const CustomMenuButton: React.FC<
   // @ts-ignore
   return <MenuButton as={Button} {...props} />
 })
-
-const ExportMenuItem = () => {
-  const appCode = useSelector(getPageCode('app'))
-  const componentsCode = useSelector(getAllComponentsCode)
-  const fonts = useSelector(getLoadedFonts)
-  const customTheme = useSelector(getCustomTheme)
-
-  return (
-    <MenuItem
-      onClick={() => saveAsZip({ appCode, componentsCode, fonts, customTheme })}
-    >
-      <Box mr={2} as={FaSave} />
-      Save workspace
-    </MenuItem>
-  )
-}
 
 const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
@@ -86,7 +69,9 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
       </CustomMenuButton>
       <LightMode>
         <MenuList zIndex={5000}>
-          <ExportMenuItem />
+          <ImportWorkspaceMenuItem />
+          <ExportWorkspaceMenuItem />
+          <SaveWorkspaceMenuItem />
           <MenuItem onClick={clearWorkSpaceHandler}>
             <Box mr={2} as={MdDeleteForever} />
             Clear workspace

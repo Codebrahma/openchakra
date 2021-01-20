@@ -61,10 +61,20 @@ const components = createModel({
         draftState.selectedId = DEFAULT_ID
       })
     },
-    resetAll(state: ComponentsState): ComponentsState {
-      return {
-        ...state,
-        ...INITIAL_STATE,
+    resetAll(
+      state: ComponentsState,
+      componentsState?: ComponentsState,
+    ): ComponentsState {
+      if (componentsState) {
+        return {
+          ...state,
+          ...componentsState,
+        }
+      } else {
+        return {
+          ...state,
+          ...INITIAL_STATE,
+        }
       }
     },
     loadDemo(state: ComponentsState): ComponentsState {
