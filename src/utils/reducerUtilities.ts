@@ -150,7 +150,7 @@ export const updateInAllInstances = (
 ) => {
   Object.values(components)
     .filter(component => component.type === typeToFilter)
-    .forEach(component => updateCallBack(component, true))
+    .forEach(component => updateCallBack(component, false))
 
   Object.values(customComponents)
     .filter(component => component.type === typeToFilter)

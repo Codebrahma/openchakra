@@ -116,16 +116,22 @@ const CodePanel = () => {
     const componentId = generateComponentId()
 
     if (customComponentName.length > 1) {
+      // First letter should be caps.
+      let properComponentName = customComponentName.split(' ').join('')
+      properComponentName =
+        properComponentName.charAt(0).toUpperCase() +
+        properComponentName.slice(1)
+
       const customComponentCode = `
     import React from 'react';
     import {Box} from '@chakra-ui/core'
 
-    const ${customComponentName} =()=>{
+    const ${properComponentName} =()=>{
       return (
         <Box compId='${componentId}'></Box>
       )
     }
-    export default ${customComponentName}
+    export default ${properComponentName}
     `
       dispatch.code.setComponentsCode(customComponentCode, customComponentName)
       const componentsState = babelQueries.getComponentsState(
