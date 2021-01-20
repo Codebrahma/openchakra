@@ -19,12 +19,14 @@ const SwitchPageActionButton = () => {
       const componentsState = babelQueries.getComponentsState(
         allPagesCode['app'],
       )
+
       dispatch.components.updateComponentsState(componentsState)
     } else {
       dispatch.page.switchPage('customPage')
       const componentsState = babelQueries.getComponentsState(
         allPagesCode['customPage'],
       )
+
       dispatch.components.updateComponentsState(componentsState)
     }
   }

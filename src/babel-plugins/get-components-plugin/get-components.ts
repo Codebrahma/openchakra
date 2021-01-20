@@ -96,7 +96,7 @@ class getComponentsPlugin {
               parent: isCustomComponent ? functionName : 'root',
             }
 
-            if (parentId) {
+            if (parentId && componentId !== 'root') {
               // This is to set the root element of the custom component
               if (parentId === 'root' && isCustomComponent) {
                 components[functionName].children.push(componentId)
