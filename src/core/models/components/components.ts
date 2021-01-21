@@ -420,7 +420,7 @@ const components = createModel({
         )
       })
     },
-    updateComponentsState(
+    resetComponentsState(
       state: ComponentsState,
       payload: {
         components: IComponents
@@ -431,16 +431,13 @@ const components = createModel({
         const { components, props } = payload
 
         draftState.components = {
-          ...draftState.components,
           ...components,
         }
         draftState.props = {
           byId: {
-            ...draftState.props.byId,
             ...props.byId,
           },
           byComponentId: {
-            ...draftState.props.byComponentId,
             ...props.byComponentId,
           },
         }
