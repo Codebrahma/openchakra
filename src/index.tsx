@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { DndProvider } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend'
 import App from './App'
 import { ChakraProvider, theme } from '@chakra-ui/core'
 import { Provider } from 'react-redux'
@@ -39,13 +41,15 @@ const customTheme = {
 
 ReactDOM.render(
   // <BugsnagErrorBoundary>
-  <ChakraProvider resetCSS theme={customTheme}>
-    <AppErrorBoundary>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </AppErrorBoundary>
-  </ChakraProvider>,
+  <DndProvider backend={Backend}>
+    <ChakraProvider resetCSS theme={customTheme}>
+      <AppErrorBoundary>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </AppErrorBoundary>
+    </ChakraProvider>
+  </DndProvider>,
   // </BugsnagErrorBoundary>,
 
   document.getElementById('root'),

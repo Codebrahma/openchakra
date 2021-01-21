@@ -1,7 +1,5 @@
 import React from 'react'
 import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
-import { DndProvider } from 'react-dnd'
-import Backend from 'react-dnd-html5-backend'
 import { useSelector } from 'react-redux'
 import Editor from './components/editor/Editor'
 import Header from './components/Header'
@@ -49,27 +47,26 @@ const App = () => {
           />
         </Box>
       ) : null}
-      <DndProvider backend={Backend}>
-        <Flex width="100%">
-          <Box flex={1}>
-            {!showFullScreen ? <Header /> : null}
 
-            <ThemeProvider theme={theme}>
-              {/* <EditorErrorBoundary> */}
+      <Flex width="100%">
+        <Box flex={1}>
+          {!showFullScreen ? <Header /> : null}
 
-              <Box
-                bg="white"
-                height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
-              >
-                {showCode ? <CodePanel /> : <Editor />}
-              </Box>
-              {/* </EditorErrorBoundary> */}
-            </ThemeProvider>
-          </Box>
+          <ThemeProvider theme={theme}>
+            {/* <EditorErrorBoundary> */}
 
-          {!showFullScreen ? <Sidebar /> : null}
-        </Flex>
-      </DndProvider>
+            <Box
+              bg="white"
+              height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
+            >
+              {showCode ? <CodePanel /> : <Editor />}
+            </Box>
+            {/* </EditorErrorBoundary> */}
+          </ThemeProvider>
+        </Box>
+
+        {!showFullScreen ? <Sidebar /> : null}
+      </Flex>
     </Box>
   )
 }
