@@ -18,6 +18,7 @@ import useDispatch from '../hooks/useDispatch'
 import { getChakraCompUsedInSelectedPage } from '../core/selectors/components'
 import { generateComponentId } from '../utils/generateId'
 import { getSelectedPage } from '../core/selectors/page'
+import formatCode from '../utils//codeGeneration/formatCode'
 
 const SaveButton = ({
   children,
@@ -82,7 +83,7 @@ const CodePanel = () => {
 
   const { componentsCode, pagesCode } = codeState
 
-  const formatCode = (code: string) => {
+  const generateProperCode = (code: string) => {
     const codeWithOutComponentId = babelQueries.removeComponentId(code)
     const codeWithImports = babelQueries.addComponentImports(
       codeWithOutComponentId,
@@ -90,7 +91,7 @@ const CodePanel = () => {
         components: allComponents,
       },
     )
-    return codeWithImports
+    return formatCode(codeWithImports)
   }
 
   const savePageCodeHandler = (pageName: string, codeValue: string) => {
@@ -166,7 +167,7 @@ const CodePanel = () => {
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
             <MonacoEditor
-              value={formatCode(pagesCode[selectedPage])}
+              value={generateProperCode(pagesCode[selectedPage])}
               onChange={(_, value) => {
                 pagesCode[selectedPage] = value || ''
               }}
@@ -183,7 +184,7 @@ const CodePanel = () => {
             return (
               <TabPanel height="100%" p={0} key={componentName}>
                 <MonacoEditor
-                  value={formatCode(componentsCode[componentName])}
+                  value={generateProperCode(componentsCode[componentName])}
                   onChange={(_, value) => {
                     componentsCode[componentName] = value || ''
                   }}
