@@ -97,7 +97,7 @@ const CodePanel = () => {
     const transformedCode = babelQueries.setIdToComponents(codeValue)
     const componentsState = babelQueries.getComponentsState(transformedCode)
     dispatch.code.setPageCode(transformedCode, pageName)
-    dispatch.components.updateComponentsState(componentsState)
+    dispatch.components.resetComponentsState(componentsState)
   }
 
   const saveComponentsCodeHandler = (
