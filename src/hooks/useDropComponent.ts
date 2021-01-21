@@ -18,6 +18,7 @@ import useMoveComponent from './useMoveComponent'
 import checkIsComponentId from '../utils/checkIsComponentId'
 import checkIsContainerComponent from '../utils/checkIsContainerComponent'
 import { checkIsCustomPage, getSelectedPage } from '../core/selectors/page'
+import { useQueue } from './useQueue'
 
 export const useDropComponent = (
   parentId: string,
@@ -42,6 +43,7 @@ export const useDropComponent = (
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
   const onComponentMoved = useMoveComponent(parentId)
+  const queue = useQueue()
 
   if (isCustomComponentChild) {
     rootParentOfParentElement = searchRootCustomComponent(
@@ -119,7 +121,8 @@ export const useDropComponent = (
           fromIndex,
           toIndex,
         })
-        setTimeout(() => {
+
+        queue.enqueue(async () => {
           const updatedCode = babelQueries.reorderComponentChildren(
             isCustomComponentUpdate
               ? componentsCode[rootParentOfParentElement]
@@ -130,8 +133,8 @@ export const useDropComponent = (
               toIndex,
             },
           )
-          updateCode(updatedCode)
-        }, 200)
+          return updateCode(updatedCode)
+        })
       }
     },
     canDrop: () => canDrop,
