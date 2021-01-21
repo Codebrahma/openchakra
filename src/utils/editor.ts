@@ -1,11 +1,11 @@
-const ALERT_COMPONENTS: (ComponentType | MetaComponentType)[] = [
+const ALERT_COMPONENTS: ComponentType[] = [
   'Alert',
   'AlertDescription',
   'AlertIcon',
   'AlertTitle',
 ]
 
-const MENU_COMPONENTS: (ComponentType | MetaComponentType)[] = [
+const MENU_COMPONENTS: ComponentType[] = [
   'Menu',
   'MenuList',
   'MenuButton',
@@ -16,7 +16,7 @@ const MENU_COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'MenuItemOption',
 ]
 
-const NUMBER_INPUT_COMPONENTS: (ComponentType | MetaComponentType)[] = [
+const NUMBER_INPUT_COMPONENTS: ComponentType[] = [
   'NumberInput',
   'NumberInputField',
   'NumberInputStepper',
@@ -24,7 +24,7 @@ const NUMBER_INPUT_COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'NumberDecrementStepper',
 ]
 
-export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
+export const COMPONENTS: ComponentType[] = [
   ...ALERT_COMPONENTS,
   'Avatar',
   'AvatarBadge',
@@ -92,34 +92,62 @@ export const COMPONENTS: (ComponentType | MetaComponentType)[] = [
   'Custom',
 ]
 
-export const AccordionWhitelist: (
-  | ComponentType
-  | MetaComponentType
-)[] = COMPONENTS.filter(name => !ALERT_COMPONENTS.includes(name))
+export const AccordionWhitelist: ComponentType[] = COMPONENTS.filter(
+  name => !ALERT_COMPONENTS.includes(name),
+)
 
-export const MenuWhitelist: (
-  | ComponentType
-  | MetaComponentType
-)[] = COMPONENTS.filter(name => !ALERT_COMPONENTS.includes(name))
+export const MenuWhitelist: ComponentType[] = COMPONENTS.filter(
+  name => !ALERT_COMPONENTS.includes(name),
+)
+
+const componentsUsedInMeta = [
+  'AlertIcon',
+  'AlertDescription',
+  'AlertTitle',
+  'AvatarBadge',
+  'AccordionButton',
+  'AccordionPanel',
+  'AccordionIcon',
+  'MenuButton',
+  'MenuItem',
+  'MenuGroup',
+  'MenuDivider',
+  'MenuOptionGroup',
+  'MenuItemOption',
+  'MenuList',
+  'AccordionItem',
+  'BreadcrumbItem',
+  'BreadcrumbLink',
+  'FormLabel',
+  'FormHelperText',
+  'FormErrorMessage',
+  'InputLeftAddon',
+  'InputRightAddon',
+  'Input RightElement',
+  'InputLeftElement',
+  'ListItem',
+  'NumberInputField',
+  'NumberInputStepper',
+  'NumberIncrementStepper',
+  'NumberDecrementStepper',
+]
 
 export const rootComponents = COMPONENTS
   // Remove specific components
-  .filter(
-    name =>
-      ![
-        'AlertIcon',
-        'AlertDescription',
-        'AlertTitle',
-        'AvatarBadge',
-        'AccordionButton',
-        'AccordionPanel',
-        'AccordionIcon',
-        'MenuButton',
-        'MenuItem',
-        'MenuGroup',
-        'MenuDivider',
-        'MenuOptionGroup',
-        'MenuItemOption',
-        'MenuList',
-      ].includes(name),
-  )
+  .filter(name => !componentsUsedInMeta.includes(name))
+
+export const acceptTypes: {
+  [componentType: string]: ComponentType[]
+} = {
+  Alert: ['AlertDescription', 'AlertIcon', 'AlertTitle', ...rootComponents],
+  BreadcrumbItem: ['BreadcrumbLink', ...rootComponents],
+  List: ['ListItem', 'ListIcon'],
+  FormControl: ['FormHelperText', 'FormErrorMessage', 'FormLabel'],
+  InputGroup: [
+    'InputLeftAddon',
+    'InputRightAddon',
+    'InputRightElement',
+    'InputLeftElement',
+  ],
+  Breadcrumb: ['BreadcrumbItem', 'BreadcrumbLink'],
+}

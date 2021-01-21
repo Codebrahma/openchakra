@@ -1,5 +1,4 @@
 import React from 'react'
-import * as Chakra from '@chakra-ui/core'
 
 import {
   BadgeProps,
@@ -114,6 +113,7 @@ type PreviewDefaultProps = {
   MenuOptionGroup?: any
   MenuItemOption?: any
 
+  NumberInputMeta?: NumberInputProps
   NumberInput?: NumberInputProps
   NumberInputField?: NumberInputFieldProps
   NumberInputStepper?: NumberInputStepperProps
@@ -304,7 +304,7 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
       </>
     ),
   },
-  List: { styleType: 'none' },
+  List: { styleType: 'disc' },
   Stack: { direction: 'row', spacing: 2 },
   Flex: { display: 'flex' },
   Breadcrumb: {
@@ -318,9 +318,5 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
 }
 
 export const getDefaultFormProps = (type: string) => {
-  const chakraDefaultProps = Chakra[type as ComponentType]
-    ? Chakra[type as ComponentType].defaultProps
-    : null
-
-  return { ...chakraDefaultProps, ...DEFAULT_FORM_PROPS[type as ComponentType] }
+  return { ...DEFAULT_FORM_PROPS[type as ComponentType] }
 }

@@ -16,6 +16,7 @@ import { useDropComponent } from '../../../hooks/useDropComponent'
 import { isPropRelatedToIcon } from '../PreviewContainer'
 import stringToIconConvertor from '../../../utils/stringToIconConvertor'
 import { useForm } from '../../../hooks/useForm'
+import { acceptTypes, rootComponents } from '../../../utils/editor'
 
 const EditablePreviewContainer: React.FC<{
   component: IComponent
@@ -35,9 +36,18 @@ const EditablePreviewContainer: React.FC<{
     component,
     enableVisualHelper,
   )
+
+  // If it is a functional-component or class component,we are taking its diplayName
+  //@ts-ignore
+  const componentType: string = type.displayName || type
+
+  const acceptedTypes: ComponentType[] = acceptTypes[componentType]
+    ? acceptTypes[componentType]
+    : rootComponents
+
   const { drop } = useDropComponent(
     component.id,
-    undefined,
+    acceptedTypes,
     false,
     boundingPosition,
   )

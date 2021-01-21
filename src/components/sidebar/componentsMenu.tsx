@@ -29,7 +29,6 @@ type MenuItems = Partial<
 export const menuItems: MenuItems = {
   Accordion: {
     children: {
-      Accordion: {},
       AccordionItem: {},
       AccordionButton: {},
       AccordionPanel: {},
@@ -38,7 +37,6 @@ export const menuItems: MenuItems = {
   },
   Alert: {
     children: {
-      Alert: {},
       AlertDescription: {},
       AlertIcon: {},
       AlertTitle: {},
@@ -69,10 +67,8 @@ export const menuItems: MenuItems = {
   Flex: {},
   FormControl: {
     children: {
-      FormControl: {},
       FormLabel: {},
       FormHelperText: {},
-      FormErrorMessage: {},
     },
   },
   Grid: {},
@@ -84,7 +80,6 @@ export const menuItems: MenuItems = {
   InputGroup: {
     rootParentType: 'Input',
     children: {
-      InputGroup: {},
       Input: {},
       InputLeftAddon: {},
       InputRightAddon: {},
@@ -95,13 +90,11 @@ export const menuItems: MenuItems = {
   Link: {},
   List: {
     children: {
-      List: {},
       ListItem: {},
     },
   },
   Menu: {
     children: {
-      Menu: {},
       MenuList: {},
       MenuButton: {},
       MenuItem: {},
@@ -113,7 +106,6 @@ export const menuItems: MenuItems = {
   },
   NumberInput: {
     children: {
-      NumberInputField: {},
       NumberInputStepper: {},
       NumberIncrementStepper: {},
       NumberDecrementStepper: {},

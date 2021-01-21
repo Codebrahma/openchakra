@@ -19,13 +19,19 @@ export const NumberInputPreview: React.FC<{
   component: IComponent
   customProps: any
 }> = ({ component, customProps }) => {
+  const acceptedTypes = [
+    'NumberInputField',
+    'NumberInputStepper',
+    'NumberIncrementStepper',
+    'NumberDecrementStepper',
+  ] as ComponentType[]
   const { props: componentProps, ref, boundingPosition } = useInteractive(
     component,
     true,
   )
   const { drop } = useDropComponent(
     component.id,
-    undefined,
+    acceptedTypes,
     false,
     boundingPosition,
   )

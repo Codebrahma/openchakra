@@ -24,6 +24,9 @@ const AccordionComponent = {
   <Box />
 </AccordionPanel>
 </AccordionItem>`,
+  AccordionPanel: `<AccordionPanel>
+<Box />
+</AccordionPanel>`,
 }
 
 export default AccordionComponent

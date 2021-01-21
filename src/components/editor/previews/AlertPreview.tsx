@@ -9,11 +9,11 @@ import { generatePropId } from '../../../utils/generateId'
 import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
 
 const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
-  const acceptedTypes = [
+  const acceptedTypes: ComponentType[] = [
     'AlertIcon',
     'AlertTitle',
     'AlertDescription',
-  ] as ComponentType[]
+  ]
   const { props: componentProps, ref, boundingPosition } = useInteractive(
     component,
     false,

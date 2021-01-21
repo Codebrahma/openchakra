@@ -22,7 +22,7 @@ import { useQueue } from './useQueue'
 
 export const useDropComponent = (
   parentId: string,
-  accept: (ComponentType | MetaComponentType)[] = [...rootComponents],
+  accept: ComponentType[] = [...rootComponents],
   canDrop: boolean = true,
   boundingPosition?: {
     top: number
@@ -134,7 +134,7 @@ export const useDropComponent = (
             },
           )
           updateCode(updatedCode)
-          return;
+          return
         })
       }
     },

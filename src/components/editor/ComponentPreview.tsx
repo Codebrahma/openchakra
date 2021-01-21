@@ -79,72 +79,6 @@ const ComponentPreview: React.FC<{
           customProps={customProps}
         />
       )
-    case 'NumberInput':
-      return (
-        <NumberInputPreview
-          component={component}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-    case 'NumberInputField':
-      return (
-        <NumberInputFieldPreview
-          component={component}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-    case 'NumberInputStepper':
-      return (
-        <NumberInputStepperPreview
-          component={component}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-    case 'NumberIncrementStepper':
-      return (
-        <NumberIncrementStepperPreview
-          component={component}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-    case 'NumberDecrementStepper':
-      return (
-        <NumberDecrementStepperPreview
-          component={component}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-
-    case 'Badge':
-    case 'Button':
-    case 'AlertDescription':
-    case 'AlertTitle':
-    case 'FormHelperText':
-    case 'FormErrorMessage':
-    case 'ListItem':
-      return (
-        <EditablePreviewContainer
-          component={component}
-          type={Chakra[type]}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
-    case 'Text':
-    case 'Heading':
-      return (
-        <TextPreview
-          component={component}
-          type={type === 'Text' ? Chakra['Box'] : Chakra['Heading']}
-          {...forwardedProps}
-          customProps={customProps}
-        />
-      )
     // Wrapped functional components (forward ref issue)
     case 'AlertIcon':
     case 'Progress':
@@ -168,6 +102,23 @@ const ComponentPreview: React.FC<{
           customProps={customProps}
         />
       )
+
+    case 'Badge':
+    case 'Button':
+    case 'AlertDescription':
+    case 'AlertTitle':
+    case 'FormHelperText':
+    case 'FormErrorMessage':
+    case 'ListItem':
+      return (
+        <EditablePreviewContainer
+          component={component}
+          type={Chakra[type]}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+
     // Components with childrens
     case 'Box':
     case 'SimpleGrid':
@@ -256,6 +207,16 @@ const ComponentPreview: React.FC<{
           customProps={customProps}
         />
       )
+    case 'Text':
+    case 'Heading':
+      return (
+        <TextPreview
+          component={component}
+          type={type === 'Text' ? Chakra['Box'] : Chakra['Heading']}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
     case 'AspectRatio':
       return (
         <AspectRatioPreview component={component} customProps={customProps} />
@@ -274,6 +235,47 @@ const ComponentPreview: React.FC<{
       return (
         <MenuGroupPreview component={component} customProps={customProps} />
       )
+    case 'NumberInput':
+      return (
+        <NumberInputPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberInputField':
+      return (
+        <NumberInputFieldPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberInputStepper':
+      return (
+        <NumberInputStepperPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberIncrementStepper':
+      return (
+        <NumberIncrementStepperPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+    case 'NumberDecrementStepper':
+      return (
+        <NumberDecrementStepperPreview
+          component={component}
+          {...forwardedProps}
+          customProps={customProps}
+        />
+      )
+
     default:
       return (
         <CustomComponentPreview

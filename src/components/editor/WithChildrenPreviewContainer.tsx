@@ -10,6 +10,7 @@ import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
 import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
 import { checkIsCustomPage } from '../../core/selectors/page'
+import { acceptTypes, rootComponents } from '../../utils/editor'
 
 const WithChildrenPreviewContainer: React.FC<{
   component: IComponent
@@ -36,9 +37,18 @@ const WithChildrenPreviewContainer: React.FC<{
     enableVisualHelper,
     disableSelection,
   )
+
+  // If it is a functional-component or class component,we are taking its display name
+  //@ts-ignore
+  const componentType: string = type.displayName || type
+
+  const acceptedTypes: ComponentType[] = acceptTypes[componentType]
+    ? acceptTypes[componentType]
+    : rootComponents
+
   const { drop, isOver } = useDropComponent(
     component.id,
-    undefined,
+    acceptedTypes,
     undefined,
     boundingPosition,
   )
