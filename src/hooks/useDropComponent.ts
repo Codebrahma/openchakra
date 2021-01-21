@@ -133,7 +133,8 @@ export const useDropComponent = (
               toIndex,
             },
           )
-          return updateCode(updatedCode)
+          updateCode(updatedCode)
+          return;
         })
       }
     },

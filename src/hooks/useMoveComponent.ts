@@ -114,7 +114,7 @@ const useMoveComponent = (parentId: string) => {
         : components[componentId].parent
 
     // Only if the parent changes, the component should be moved or else the component should just be reordered.
-    if (oldParentId !== parentId) {
+    if (oldParentId !== parentId && parentId !== componentId) {
       dispatch.components.moveComponent({
         componentId,
         parentId,
