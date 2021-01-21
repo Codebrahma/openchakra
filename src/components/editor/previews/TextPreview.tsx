@@ -140,6 +140,7 @@ const TextPreview: React.FC<{
             key={key}
             componentName={key}
             disableSelection={inputTextFocused ? true : false}
+            customProps={customProps}
           />
         )
       else return key
