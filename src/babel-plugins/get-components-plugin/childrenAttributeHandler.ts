@@ -22,9 +22,10 @@ const childrenAttributeHandler = (
   payload: {
     componentId: string
     componentType: string
+    functionName: string
   },
 ) => {
-  const { componentId, componentType } = payload
+  const { componentId, componentType, functionName } = payload
   if (checkIsComponentSupportSpan(componentType, path.node.children)) {
     const childrenArray: string[] = []
 
@@ -77,10 +78,30 @@ const childrenAttributeHandler = (
             derivedFromPropName: null,
             derivedFromComponentType: null,
           }
-          props.byId[propId].value = expressionContainerValueHandler(
-            path,
-            child.expression,
-          )
+          const {
+            value: propValue,
+            derivedFromPropName,
+          } = expressionContainerValueHandler(path, child.expression)
+
+          props.byId[propId].value = propValue
+
+          if (derivedFromPropName) {
+            props.byId[propId].derivedFromPropName = derivedFromPropName
+            props.byId[propId].derivedFromComponentType = functionName
+
+            // Add the custom prop to the root of the component.
+            const newPropId = generatePropId()
+
+            props.byComponentId[functionName].push(newPropId)
+
+            props.byId[newPropId] = {
+              id: newPropId,
+              name: derivedFromPropName,
+              value: '',
+              derivedFromComponentType: null,
+              derivedFromPropName: null,
+            }
+          }
         }
       })
   }

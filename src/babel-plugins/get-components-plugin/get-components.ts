@@ -81,6 +81,8 @@ class getComponentsPlugin {
             const isCustomComponent = functionName !== 'App'
             const parentId = getParentComponentId(path)
 
+            if (path.parentPath.type === 'JSXExpressionContainer') return
+
             if (openingElement.name.name === 'ChakraProvider') return
 
             const components = this.state.components
@@ -116,12 +118,14 @@ class getComponentsPlugin {
               props,
               openingElement,
               componentId,
+              functionName,
             })
 
             // The children prop will be handled in this function
             childrenAttributeHandler(path, props, {
               componentId,
               componentType,
+              functionName,
             })
           },
         },
