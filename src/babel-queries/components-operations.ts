@@ -23,7 +23,10 @@ export const getComponentsUsed = (code: string) => {
   return plugin.componentsUsed
 }
 
-const getComponent = (code: string, options: { componentId: string }) => {
+export const getComponent = (
+  code: string,
+  options: { componentId: string },
+) => {
   const plugin = new BabelGetComponent(options)
 
   transform(code, {

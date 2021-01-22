@@ -1,8 +1,11 @@
 import { declare } from '@babel/helper-plugin-utils'
 import traverse from '@babel/traverse'
+import * as t from '@babel/types'
 
 import { getComponentId, getJSXElement } from './utils/babel-plugin-utils'
 import componentsStructure from '../utils/componentsStructure/componentsStructure'
+import removeSpecifiedImports from './utils/removeSpecifiedImports'
+import { IComponentsUsed } from './get-used-components'
 
 class saveComponentPlugin {
   functionalComponentCode: string
@@ -12,12 +15,14 @@ class saveComponentPlugin {
     customComponentName: string
     exposedProps: IProp[]
     componentInstanceId: string
+    componentsUsed: IComponentsUsed
   }) {
     const {
       componentId,
       customComponentName,
       exposedProps,
       componentInstanceId,
+      componentsUsed,
     } = options
 
     const generateCustomCompImports = (customComponentsList: string[]) => {
@@ -32,6 +37,21 @@ class saveComponentPlugin {
     this.plugin = declare(() => {
       return {
         visitor: {
+          ImportDeclaration(path: any) {
+            // Remove the components that are saved
+            removeSpecifiedImports(path, componentsUsed)
+
+            // Add the new custom component
+
+            if (path.node.source.value === '@chakra-ui/core') {
+              const importDeclaration = t.importDeclaration(
+                [t.importDefaultSpecifier(t.identifier(customComponentName))],
+                t.stringLiteral(`./components/${customComponentName}.js`),
+              )
+
+              path.insertAfter(importDeclaration)
+            }
+          },
           JSXElement: (path: any) => {
             const element = path.node
             const visitedComponentId = getComponentId(element.openingElement)

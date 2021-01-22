@@ -1,16 +1,31 @@
 import { declare } from '@babel/helper-plugin-utils'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
+
+export type IComponentsUsed = {
+  chakraComponents: string[]
+  customComponents: string[]
+}
 
 class getUsedComponents {
-  componentsUsed: string[]
+  componentsUsed: IComponentsUsed
   plugin: any
   constructor() {
-    this.componentsUsed = []
+    this.componentsUsed = {
+      chakraComponents: [],
+      customComponents: [],
+    }
 
     this.plugin = declare(() => {
       return {
         visitor: {
           JSXOpeningElement: (path: any) => {
-            this.componentsUsed.push(path.node.name.name)
+            const componentName: string = path.node.name.name
+
+            if (componentsStructure[componentName]) {
+              this.componentsUsed.chakraComponents.push(componentName)
+            } else {
+              this.componentsUsed.customComponents.push(componentName)
+            }
           },
         },
       }
