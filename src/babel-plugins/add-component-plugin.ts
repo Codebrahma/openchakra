@@ -15,6 +15,19 @@ const addComponentPlugin = (
 
   return {
     visitor: {
+      ImportDeclaration(path: any) {
+        if (path.node.source.value !== '@chakra-ui/core') return
+
+        const importedComponents = path.node.specifiers.map(
+          (specifier: any) => specifier.local.name,
+        )
+
+        if (importedComponents.includes(type)) return
+
+        path.node.specifiers.push(
+          t.importSpecifier(t.identifier(type), t.identifier(type)),
+        )
+      },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
 

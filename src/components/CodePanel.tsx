@@ -15,7 +15,6 @@ import { getCodeState } from '../core/selectors/code'
 import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
-import { getChakraCompUsedInSelectedPage } from '../core/selectors/components'
 import { generateComponentId } from '../utils/generateId'
 import { getSelectedPage } from '../core/selectors/page'
 import formatCode from '../utils//codeGeneration/formatCode'
@@ -76,8 +75,6 @@ const MonacoEditor = ({
 const CodePanel = () => {
   const dispatch = useDispatch()
 
-  // This includes code with compId prop added to every component.
-  const allComponents = useSelector(getChakraCompUsedInSelectedPage)
   const selectedPage = useSelector(getSelectedPage)
   const codeState = useSelector(getCodeState)
 
@@ -85,13 +82,8 @@ const CodePanel = () => {
 
   const generateProperCode = (code: string) => {
     const codeWithOutComponentId = babelQueries.removeComponentId(code)
-    const codeWithImports = babelQueries.addComponentImports(
-      codeWithOutComponentId,
-      {
-        components: allComponents,
-      },
-    )
-    return formatCode(codeWithImports)
+
+    return formatCode(codeWithOutComponentId)
   }
 
   const savePageCodeHandler = (pageName: string, codeValue: string) => {

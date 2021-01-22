@@ -36,8 +36,33 @@ const addCustomComponentPlugin = (
       .join(' ')
   }
 
+  const buildImportDeclaration = (name: string) =>
+    t.importDeclaration(
+      [t.importDefaultSpecifier(t.identifier(name))],
+      t.stringLiteral(`./components/${name}.js`),
+    )
+
   return {
     visitor: {
+      Program(path: any) {
+        const importDeclarations = path.node.body.filter(
+          (declaration: any) => declaration.type === 'ImportDeclaration',
+        )
+
+        const isComponentImported =
+          importDeclarations.findIndex(
+            (declaration: any) =>
+              declaration.source.value === `./components/${type}.js`,
+          ) !== -1
+
+        if (isComponentImported) return
+
+        path.node.body.splice(
+          importDeclarations.length,
+          0,
+          buildImportDeclaration(type),
+        )
+      },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
 

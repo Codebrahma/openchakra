@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect'
-import uniq from 'lodash/uniq'
 import { RootState } from '../store'
 import { searchRootCustomComponent } from '../../utils/recursive'
 
@@ -257,18 +256,4 @@ export const checkIsContainerComponent = (id: string) => (state: RootState) => {
   )
     return true
   else return false
-}
-
-export const getChakraCompUsedInSelectedPage = (state: RootState): string[] => {
-  const chakraComponents: string[] = []
-
-  const components = getSelectedPageComponents(state)
-  const customComponentList = getCustomComponentsList(state)
-
-  Object.values(components).forEach(component => {
-    if (!customComponentList.includes(component.type))
-      chakraComponents.push(component.type)
-  })
-
-  return uniq(chakraComponents)
 }

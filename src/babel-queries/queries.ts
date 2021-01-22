@@ -2,7 +2,6 @@ import { transform } from '@babel/standalone'
 import babelPluginSyntaxJsx from '@babel/plugin-syntax-jsx'
 
 import BabelPluginGetComponents from '../babel-plugins/get-components-plugin/get-components'
-import BabelAddComponentImports from '../babel-plugins/add-imports-plugin'
 import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 import BabelReassignComponentId from '../babel-plugins/reassign-componentId'
@@ -19,15 +18,6 @@ const getComponentsState = (code: string) => {
   })
 
   return plugin.state
-}
-
-const addComponentImports = (
-  code: string,
-  options: { components: string[] },
-) => {
-  return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelAddComponentImports, options]],
-  }).code
 }
 
 const exportToCustomComponentsPage = (
@@ -71,7 +61,6 @@ const exportToCustomComponentsPage = (
 
 export default {
   getComponentsState,
-  addComponentImports,
   exportToCustomComponentsPage,
   ...componentsOperations,
   ...propsOperations,

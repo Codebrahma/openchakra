@@ -8,13 +8,49 @@ import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
+import BabelGetUsedComponents from '../babel-plugins/get-used-components'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
+import BabelGetComponent from '../babel-plugins/get-component-plugin'
+
+// Gets the components used in the code.
+export const getComponentsUsed = (code: string) => {
+  const plugin = new BabelGetUsedComponents()
+
+  transform(code, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  return plugin.componentsUsed
+}
+
+const getComponent = (code: string, options: { componentId: string }) => {
+  const plugin = new BabelGetComponent(options)
+
+  transform(code, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  return plugin.component
+}
 
 export const deleteComponent = (
   code: string,
   options: { componentId: string },
 ) => {
+  // First the code of the component that is to be deleted is fetched.
+  // Next the components used in the component code is obtained.
+  // Those components are removed from the imports.
+
+  const componentCode = getComponent(code, options)
+  const componentsUsed = getComponentsUsed(componentCode)
   return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelDeleteComponent, options]],
+    plugins: [
+      babelPluginSyntaxJsx,
+      [
+        BabelDeleteComponent,
+        { ...options, componentsToRemove: componentsUsed },
+      ],
+    ],
   }).code
 }
 
@@ -40,8 +76,17 @@ export const addMetaComponent = (
   code: string,
   options: { componentIds: string[]; parentId: string; type: string },
 ) => {
+  // Obtain the name of the components used for adding meta component.
+  const usedComponents = getComponentsUsed(componentsStructure[options.type])
+
   return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelAddMetaComponent, options]],
+    plugins: [
+      babelPluginSyntaxJsx,
+      [
+        BabelAddMetaComponent,
+        { ...options, componentsToImport: usedComponents },
+      ],
+    ],
   }).code
 }
 
