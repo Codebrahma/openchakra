@@ -1,4 +1,5 @@
 import * as t from '@babel/types'
+import { toJsxAttribute } from './utils/babel-plugin-utils'
 
 // This will convert the normal components instances to container components.
 // For example : <Card /> will be converted to <Card></Card>
@@ -17,10 +18,14 @@ const convertInstancesToContainerComponent = (
         const visitedComponentName = openingElement.name.name
 
         if (visitedComponentName === componentName) {
+          const attribute = toJsxAttribute('isContainerComponent', 'true')
+
+          openingElement.attributes.push(attribute)
+
           path.node.closingElement = t.jsxClosingElement(
             t.jsxIdentifier(componentName),
           )
-          path.node.openingElement.selfClosing = false
+          openingElement.selfClosing = false
         } else return
       },
     },

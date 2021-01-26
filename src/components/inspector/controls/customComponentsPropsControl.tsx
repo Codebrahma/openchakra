@@ -57,6 +57,7 @@ const CustomComponentsPropControl: React.FC<{ propName: string }> = ({
   })
 
   if (selectedProp && selectedCustomComponentProp) {
+    if (selectedProp.name === 'isContainerComponent') return null
     const { controlProp, controlPropComponentId } = findControl(
       selectedComponent.type,
       selectedCustomComponentProp,

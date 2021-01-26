@@ -17,6 +17,12 @@ const convertInstancesToNormalComponent = (
         if (visitedComponentName === componentName) {
           path.node.closingElement = null
           path.node.openingElement.selfClosing = true
+
+          const index = openingElement.attributes.findIndex(
+            (attribute: any) => attribute.name.name === 'isCustomComponent',
+          )
+
+          openingElement.attributes.splice(index, 1)
         } else return
       },
     },

@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import {
   getSelectedComponent,
-  checkIsChildrenOfWrapperComponent,
+  checkIsChildrenOfContainerComponent,
 } from '../../../../core/selectors/components'
 import DisplayFlexPanel from './DisplayFlexPanel'
 import ChildrenPropAccessControl from '../../controls/ChildrenPropAccessControl'
@@ -16,7 +16,7 @@ const FlexPanel = () => {
   const isCustomPage = useSelector(checkIsCustomPage)
   const isComponentDerivedFromProps = component.parent === 'Prop'
   const isChildrenOfWrapperComponent = useSelector(
-    checkIsChildrenOfWrapperComponent(component.id),
+    checkIsChildrenOfContainerComponent(component.id),
   )
 
   return (

@@ -382,10 +382,10 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         const { customComponentType } = payload
 
-        const childrenProp = {
+        const isContainerComponentProp = {
           id: '',
-          name: 'children',
-          value: '',
+          name: 'isContainerComponent',
+          value: 'true',
           componentId: customComponentType,
           derivedFromPropName: null,
           derivedFromComponentType: null,
@@ -405,14 +405,14 @@ const components = createModel({
                 component.id
               ]?.push(id)
               draftState.customComponentsProps.byId[id] = {
-                ...childrenProp,
+                ...isContainerComponentProp,
                 id: generatePropId(),
               }
             } else {
               const id = generatePropId()
               draftState.props.byComponentId[component.id]?.push(id)
               draftState.props.byId[id] = {
-                ...childrenProp,
+                ...isContainerComponentProp,
                 id: generatePropId(),
               }
             }
