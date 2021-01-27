@@ -7,6 +7,10 @@ import {
   getJSXElement,
 } from './utils/babel-plugin-utils'
 
+export const checkIsIconProp = (propName: string, componentName: string) =>
+  ['leftIcon', 'rightIcon', 'icon'].includes(propName) ||
+  (componentName === 'Icon' && propName === 'as')
+
 const setPropPlugin = (
   _: any,
   options: {
@@ -16,10 +20,6 @@ const setPropPlugin = (
   },
 ) => {
   const { componentId, propName, value } = options
-
-  const checkIsIconProp = (propName: string, componentName: string) =>
-    ['leftIcon', 'rightIcon', 'icon'].includes(propName) ||
-    (componentName === 'Icon' && propName === 'as')
 
   const buildIconProp = (name: string, value: string) => {
     // For this icon prop, <Icon as={copyIcon} /> is the correct format
