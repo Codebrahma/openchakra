@@ -34,6 +34,7 @@ import {
   NumberInputStepperPreview,
 } from './previews/NumberInputPreview'
 import EditablePreviewContainer from './previews/EditablePreviewContainer'
+import ImagePreview from './previews/ImagePreview'
 
 const ComponentPreview: React.FC<{
   componentName: string
@@ -57,7 +58,6 @@ const ComponentPreview: React.FC<{
   switch (type) {
     // Simple components
     case 'IconButton':
-    case 'Image':
     case 'Link':
     case 'Spinner':
     case 'Textarea':
@@ -158,6 +158,9 @@ const ComponentPreview: React.FC<{
           isBoxWrapped
         />
       )
+
+    case 'Image':
+      return <ImagePreview component={component} customProps={customProps} />
     // More complex components
     case 'InputRightElement':
       return (
