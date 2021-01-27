@@ -70,9 +70,13 @@ class saveComponentPlugin {
                 {
                   JSXOpeningElement(path: any) {
                     const componentName = path.node.name.name
-                    if (componentsStructure[componentName])
-                      chakraComponentsUsed.push(componentName)
-                    else customComponentsUsed.push(componentName)
+                    if (componentsStructure[componentName]) {
+                      if (!chakraComponentsUsed.includes(componentName))
+                        chakraComponentsUsed.push(componentName)
+                    } else {
+                      if (!customComponentsUsed.includes(componentName))
+                        customComponentsUsed.push(componentName)
+                    }
                   },
                 },
                 path.scope,

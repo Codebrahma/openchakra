@@ -74,7 +74,6 @@ export const addPropInAllInstances = (
   const updatedPagesCode = { ...pagesCode }
 
   if (options.componentName.length > 0) {
-    // Remove the custom prop from all the instances of the component.
     Object.keys(updatedPagesCode).forEach(pageName => {
       const code = updatedPagesCode[pageName]
       updatedPagesCode[pageName] = transform(code, {
