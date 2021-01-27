@@ -9,6 +9,7 @@ import BabelAddPropInAllInstances from '../babel-plugins/add-prop-in-all-instanc
 import BabelUnExposeProp from '../babel-plugins/unexpose-prop-plugin'
 import BabelDeleteInAllInstances from '../babel-plugins/delete-prop-in-all-instances'
 import BabelDeleteCustomProp from '../babel-plugins/delete-custom-prop-plugin'
+import { getComponentsUsed, getComponent } from './components-operations'
 
 export const saveComponent = (
   code: string,
@@ -19,7 +20,10 @@ export const saveComponent = (
     componentInstanceId: string
   },
 ) => {
-  const plugin = new BabelSaveComponent(options)
+  const componentCode = getComponent(code, options)
+  const componentsUsed = getComponentsUsed(componentCode)
+
+  const plugin = new BabelSaveComponent({ ...options, componentsUsed })
 
   const transformed = transform(code, {
     plugins: [babelPluginSyntaxJsx, plugin.plugin],
@@ -70,7 +74,6 @@ export const addPropInAllInstances = (
   const updatedPagesCode = { ...pagesCode }
 
   if (options.componentName.length > 0) {
-    // Remove the custom prop from all the instances of the component.
     Object.keys(updatedPagesCode).forEach(pageName => {
       const code = updatedPagesCode[pageName]
       updatedPagesCode[pageName] = transform(code, {

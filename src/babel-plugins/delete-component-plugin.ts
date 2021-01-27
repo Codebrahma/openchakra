@@ -1,19 +1,26 @@
 import { getComponentId } from './utils/babel-plugin-utils'
+import removeSpecifiedImports from './utils/removeSpecifiedImports'
+import { IComponentsUsed } from './get-used-components'
 
 const deleteComponentPlugin = (
   _: any,
   options: {
     componentId: string
+    componentsToRemove: IComponentsUsed
   },
 ) => {
-  const { componentId } = options
+  const { componentId, componentsToRemove } = options
 
   return {
     visitor: {
-      JSXOpeningElement(path: any) {
-        const visitedComponentId = getComponentId(path.node)
-        if (visitedComponentId && visitedComponentId === componentId) {
-          path.parentPath.remove()
+      ImportDeclaration(path: any) {
+        removeSpecifiedImports(path, componentsToRemove)
+      },
+      JSXElement(path: any) {
+        const openingElement = path.node.openingElement
+        const visitedComponentId = getComponentId(openingElement)
+        if (visitedComponentId === componentId) {
+          path.remove()
         } else return
       },
     },

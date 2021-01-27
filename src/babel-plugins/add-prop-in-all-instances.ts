@@ -24,11 +24,11 @@ const addPropInAllInstances = (
           if (boxId) {
             const boxComponent = `<Box compId="${boxId}"></Box>`
 
-            const expressionStatement = getJSXElement(boxComponent)
+            const element = getJSXElement(boxComponent)
 
             const jsxAttribute = t.jsxAttribute(
               t.jsxIdentifier(propName),
-              t.jsxExpressionContainer(expressionStatement.expression),
+              t.jsxExpressionContainer(element),
             )
             path.node.attributes.push(jsxAttribute)
           } else {
