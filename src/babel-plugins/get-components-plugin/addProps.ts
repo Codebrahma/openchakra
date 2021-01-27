@@ -1,6 +1,7 @@
 import * as t from '@babel/types'
 import { generatePropId } from '../../utils/generateId'
 import traverse from '@babel/traverse'
+import { getComponentId } from '../utils/babel-plugin-utils'
 
 export const expressionContainerValueHandler = (path: any, expression: any) => {
   switch (expression.type) {
@@ -52,9 +53,16 @@ export const expressionContainerValueHandler = (path: any, expression: any) => {
     }
 
     case 'JSXElement': {
+      const componentId = getComponentId(expression.openingElement)
+      expression.id = componentId
       return {
-        value: expression.openingElement.name.name,
-        derivedFromPropName: null,
+        component: {
+          id: componentId,
+          type: 'Box',
+          parent: 'prop',
+          children: [],
+        },
+        value: componentId,
       }
     }
 
@@ -67,13 +75,21 @@ export const expressionContainerValueHandler = (path: any, expression: any) => {
 type IAddProps = {
   path: any
   props: IProps
+  components: IComponents
   openingElement: any
   componentId: string
   functionName: string
 }
 
 const addProps = (payload: IAddProps) => {
-  const { path, props, openingElement, componentId, functionName } = payload
+  const {
+    path,
+    props,
+    components,
+    openingElement,
+    componentId,
+    functionName,
+  } = payload
   // Get the props of each component by attributes property
   openingElement.attributes.forEach((attr: any) => {
     const propName = attr.name.name
@@ -96,6 +112,7 @@ const addProps = (payload: IAddProps) => {
       const {
         value: propValue,
         derivedFromPropName,
+        component,
       } = expressionContainerValueHandler(path, value.expression)
 
       props.byId[propId].value = propValue
@@ -117,6 +134,9 @@ const addProps = (payload: IAddProps) => {
           derivedFromComponentType: null,
           derivedFromPropName: null,
         }
+      }
+      if (component) {
+        components[component.id] = { ...component }
       }
     } else {
       // If the value is null, it can be boolean prop.

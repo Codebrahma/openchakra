@@ -10,6 +10,7 @@ export const getComponentId = (node: any) => {
 
 export const getParentComponentId = (path: any) => {
   const parentPath = path.parentPath
+
   if (parentPath.node.type === 'JSXElement') {
     const openingElement = parentPath.node.openingElement
     return getComponentId(openingElement)

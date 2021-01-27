@@ -81,32 +81,35 @@ class getComponentsPlugin {
             const isCustomComponent = functionName !== 'App'
             const parentId = getParentComponentId(path)
 
-            if (path.parentPath.type === 'JSXExpressionContainer') return
-
             if (openingElement.name.name === 'ChakraProvider') return
 
             const components = this.state.components
             const props = this.state.props
             const componentType = openingElement.name.name
 
-            // Store the component-id in each node
-            path.node.id = componentId
-            components[componentId] = {
-              id: componentId,
-              type: componentType,
-              children: [],
-              parent: isCustomComponent ? functionName : 'root',
-            }
+            // The root element of the expression container elements are already stored by the component that uses this component.
+            // For example : <Layout drop={<Box></Box>}/>
+            // Layout component will store the id for the Box component.
 
-            if (parentId && componentId !== 'root') {
-              // This is to set the root element of the custom component
-              if (parentId === 'root' && isCustomComponent) {
-                components[functionName].children.push(componentId)
+            if (path.parentPath.type !== 'JSXExpressionContainer') {
+              // Store the component-id in each node
+              path.node.id = componentId
+
+              components[componentId] = {
+                id: componentId,
+                type: componentType,
+                children: [],
+                parent: isCustomComponent ? functionName : 'root',
               }
-              // This is for setting children and parent for all the components
-              if (components[parentId]) {
-                components[parentId].children.push(componentId)
-                components[componentId].parent = parentId
+              if (parentId && componentId !== 'root') {
+                // This is to set the root element of the custom component
+                if (parentId === 'root' && isCustomComponent) {
+                  components[functionName].children.push(componentId)
+                }
+                // This is for setting children and parent for all the components
+                if (components[parentId]) {
+                  components[parentId].children.push(componentId)
+                }
               }
             }
 
@@ -116,6 +119,7 @@ class getComponentsPlugin {
             addProps({
               path,
               props,
+              components,
               openingElement,
               componentId,
               functionName,
