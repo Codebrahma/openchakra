@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { Box } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 import {
   getInputTextFocused,
   getInnerHTMLText,
@@ -52,7 +52,10 @@ const EditablePreviewContainer: React.FC<{
     boundingPosition,
   )
   const dispatch = useDispatch()
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
   const inputTextFocused = useSelector(getInputTextFocused)
 
   const innerHTMLText = useSelector(getInnerHTMLText)

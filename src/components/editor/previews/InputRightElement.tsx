@@ -6,7 +6,7 @@ import { InputRightElement } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 export const InputRightElementPreview: React.FC<{
   component: IComponent
@@ -34,7 +34,10 @@ export const InputRightElementPreview: React.FC<{
       derivedFromPropName: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <InputRightElement right="10px" {...propsKeyValue} ref={drop(ref)}>

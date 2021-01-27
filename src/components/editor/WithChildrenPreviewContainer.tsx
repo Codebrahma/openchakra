@@ -8,7 +8,7 @@ import {
 import { useDropComponent } from '../../hooks/useDropComponent'
 import ComponentPreview from './ComponentPreview'
 import { Box } from '@chakra-ui/core'
-import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
 import { checkIsCustomPage } from '../../core/selectors/page'
 import { acceptTypes, rootComponents } from '../../utils/editor'
 
@@ -83,7 +83,10 @@ const WithChildrenPreviewContainer: React.FC<{
     componentChildren = [propValue]
   }
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   const propsElement = { ...forwardedProps, ...propsKeyValue }
 

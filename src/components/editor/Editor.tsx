@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
 import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout } from '../../core/selectors/app'
-import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
 import { checkIsCustomPage } from '../../core/selectors/page'
 
 export const gridStyles = {
@@ -37,7 +37,7 @@ const Editor: React.FC = () => {
 
   editorBackgroundProps = {
     ...editorBackgroundProps,
-    ...generatePropsKeyValue(rootProps),
+    ...findAndReplaceExposedPropValue(rootProps),
   }
 
   return (

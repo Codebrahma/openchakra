@@ -8,7 +8,7 @@ import {
   getPropsBy,
   checkIsContainerComponent,
 } from '../../../core/selectors/components'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 import { generatePropId } from '../../../utils/generateId'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 
@@ -63,8 +63,11 @@ const CustomComponentPreview: React.FC<{
 
   const width = widthProp ? widthProp.value : '100%'
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
-  const interactionProps = generatePropsKeyValue(
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
+  const interactionProps = findAndReplaceExposedPropValue(
     [...visualInteractionProps, ...boxProps],
     customProps,
   )

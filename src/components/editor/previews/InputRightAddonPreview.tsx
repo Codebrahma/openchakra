@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, InputRightAddon } from '@chakra-ui/core'
 import { useInteractive } from '../../../hooks/useInteractive'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const InputRightAddonPreview: React.FC<{
   component: IComponent
@@ -10,7 +10,10 @@ const InputRightAddonPreview: React.FC<{
   const { props: componentProps, ref } = useInteractive(component)
   const boxProps: any = {}
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box {...boxProps} ref={ref}>

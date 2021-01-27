@@ -161,6 +161,10 @@ interface IProps {
   byComponentId: IPropsByComponentId
 }
 
+interface IPropByName {
+  [propName: string]: string
+}
+
 interface IPropsByPageId {
   [id: string]: IProps
 }

@@ -6,7 +6,7 @@ import { Alert, Box } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
   const acceptedTypes: ComponentType[] = [
@@ -37,7 +37,10 @@ const AlertPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   let boxProps: any = {}
 

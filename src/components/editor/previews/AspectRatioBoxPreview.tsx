@@ -6,7 +6,7 @@ import ComponentPreview from '../ComponentPreview'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const AspectRatioPreview: React.FC<IPreviewProps> = ({
   component,
@@ -35,7 +35,10 @@ const AspectRatioPreview: React.FC<IPreviewProps> = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   const boxProps: any = {}
 

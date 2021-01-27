@@ -13,7 +13,7 @@ import ComponentPreview from '../ComponentPreview'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { useDropComponent } from '../../../hooks/useDropComponent'
 import { useInteractive } from '../../../hooks/useInteractive'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 export const NumberInputPreview: React.FC<{
   component: IComponent
@@ -37,7 +37,10 @@ export const NumberInputPreview: React.FC<{
   )
   let boxProps: any = {}
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   return (
@@ -61,7 +64,10 @@ export const NumberInputFieldPreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { props: componentProps } = useInteractive(component, true)
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return <NumberInputField {...propsKeyValue} />
 }
@@ -72,7 +78,10 @@ export const NumberInputStepperPreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { props: componentProps } = useInteractive(component, false)
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
   const componentChildren = useSelector(getChildrenBy(component.id))
 
   return (
@@ -94,7 +103,10 @@ export const NumberIncrementStepperPreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { props: componentProps } = useInteractive(component, true)
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return <NumberIncrementStepper {...propsKeyValue} />
 }
@@ -105,7 +117,10 @@ export const NumberDecrementStepperPreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { props: componentProps } = useInteractive(component, true)
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return <NumberDecrementStepper {...propsKeyValue} />
 }

@@ -15,7 +15,7 @@ import {
   getChildrenBy,
 } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const AvatarPreview: React.FC<IPreviewProps & {
   spacing?: BoxProps['marginLeft']
@@ -48,7 +48,10 @@ const AvatarPreview: React.FC<IPreviewProps & {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
@@ -83,7 +86,10 @@ export const AvatarGroupPreview = ({
       derivedFromPropName: null,
       derivedFromComponentType: null,
     })
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   let boxProps: any = { display: 'inline' }
 
@@ -109,7 +115,10 @@ export const AvatarBadgePreview = ({
   customProps,
 }: IPreviewProps) => {
   const { props: componentProps, ref } = useInteractive(component)
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   let boxProps: any = {}
 

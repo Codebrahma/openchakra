@@ -5,7 +5,7 @@ import ComponentPreview from '../ComponentPreview'
 import { InputLeftElement } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 import { generatePropId } from '../../../utils/generateId'
 
 export const InputLeftElementPreview: React.FC<{
@@ -35,7 +35,10 @@ export const InputLeftElementPreview: React.FC<{
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <InputLeftElement right="10px" {...propsKeyValue} ref={drop(ref)}>

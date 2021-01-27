@@ -14,7 +14,7 @@ import { MenuWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const acceptedTypes = ['MenuButton', 'MenuList'] as ComponentType[]
 
@@ -43,7 +43,10 @@ const MenuPreview: React.FC<IPreviewProps> = ({ component, customProps }) => {
     })
   let boxProps: any = {}
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
@@ -84,7 +87,10 @@ export const MenuListPreview = ({ component, customProps }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   let boxProps: any = {}
 
@@ -130,7 +136,10 @@ export const MenuButtonPreview = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <MenuButton ref={drop(ref)} {...propsKeyValue}>
@@ -171,7 +180,10 @@ export const MenuItemPreview = ({ component, customProps }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
@@ -214,7 +226,10 @@ export const MenuGroupPreview = ({ component, customProps }: IPreviewProps) => {
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>

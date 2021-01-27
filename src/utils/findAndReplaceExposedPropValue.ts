@@ -1,4 +1,8 @@
-const generatePropsKeyValue = (componentProps: IProp[], customProps?: any) => {
+// This will look for the exposed prop and replace the value with the value in the custom props
+const findAndReplaceExposedPropValue = (
+  componentProps: IProp[],
+  customProps?: any,
+) => {
   const propsObject: any = {}
   componentProps &&
     componentProps.forEach(compProp => {
@@ -12,4 +16,4 @@ const generatePropsKeyValue = (componentProps: IProp[], customProps?: any) => {
     })
   return propsObject
 }
-export default generatePropsKeyValue
+export default findAndReplaceExposedPropValue

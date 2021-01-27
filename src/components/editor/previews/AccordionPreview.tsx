@@ -12,7 +12,7 @@ import ComponentPreview from '../ComponentPreview'
 import { AccordionWhitelist } from '../../../utils/editor'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 import { generatePropId } from '../../../utils/generateId'
 
 const acceptedTypes: ComponentType[] = ['AccordionItem']
@@ -43,7 +43,10 @@ const AccordionPreview: React.FC<IPreviewProps> = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
   let boxProps: any = {}
 
   return (
@@ -88,7 +91,10 @@ export const AccordionButtonPreview = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <AccordionButton ref={drop(ref)} {...propsKeyValue}>
@@ -132,7 +138,10 @@ export const AccordionItemPreview = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>
@@ -178,7 +187,10 @@ export const AccordionPanelPreview = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...boxProps}>

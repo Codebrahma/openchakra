@@ -6,7 +6,7 @@ import { useInteractive } from '../../../hooks/useInteractive'
 import { useSelector } from 'react-redux'
 import { getChildrenBy } from '../../../core/selectors/components'
 import { generatePropId } from '../../../utils/generateId'
-import generatePropsKeyValue from '../../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 
 const BoxPreview: React.FC<{ component: IComponent; customProps: any }> = ({
   component,
@@ -35,7 +35,10 @@ const BoxPreview: React.FC<{ component: IComponent; customProps: any }> = ({
       derivedFromComponentType: null,
     })
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   return (
     <Box ref={drop(ref)} {...propsKeyValue}>

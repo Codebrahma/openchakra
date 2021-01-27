@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ComponentClass } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
-import generatePropsKeyValue from '../../utils/generatePropsKeyValue'
+import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
 import stringToIconConvertor from '../../utils/stringToIconConvertor'
 import { useDropComponent } from '../../hooks/useDropComponent'
 
@@ -43,7 +43,10 @@ const PreviewContainer: React.FC<{
     boundingPosition,
   )
 
-  const propsKeyValue = generatePropsKeyValue(componentProps, customProps)
+  const propsKeyValue = findAndReplaceExposedPropValue(
+    componentProps,
+    customProps,
+  )
 
   //Converting the icon in string to reactElement
   Object.keys(propsKeyValue).forEach((key: string) => {
