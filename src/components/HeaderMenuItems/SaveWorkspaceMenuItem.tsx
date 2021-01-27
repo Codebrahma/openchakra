@@ -18,7 +18,7 @@ const SaveWorkspaceMenuItem = () => {
       onClick={() => saveAsZip({ appCode, componentsCode, fonts, customTheme })}
     >
       <Box mr={2} as={FaSave} />
-      Save workspace
+      Save as project
     </MenuItem>
   )
 }

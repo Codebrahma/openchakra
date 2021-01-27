@@ -71,7 +71,6 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
         <MenuList zIndex={5000}>
           <ImportWorkspaceMenuItem />
           <ExportWorkspaceMenuItem />
-          <SaveWorkspaceMenuItem />
           <MenuItem onClick={clearWorkSpaceHandler}>
             <Box mr={2} as={MdDeleteForever} />
             Clear workspace
@@ -83,6 +82,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
           </MenuItem>
 
           <MenuDivider />
+          <SaveWorkspaceMenuItem />
 
           <MenuItemLink href="https://chakra-ui.com/getting-started">
             <Box mr={2} as={GoRepo} />
