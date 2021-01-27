@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import {
   getPropsOfSelectedComp,
   getSelectedComponent,
-  checkIsChildrenOfWrapperComponent,
+  checkIsChildrenOfContainerComponent,
 } from '../../../../core/selectors/components'
 import ExposeChildrenControl from '../../controls/ExposeChildrenControl'
 import ChildrenPropAccessControl from '../../controls/ChildrenPropAccessControl'
@@ -22,7 +22,7 @@ const BoxPanel = () => {
   if (asProp && asProp.value === 'span') isSpanElement = true
 
   const isChildrenOfWrapperComponent = useSelector(
-    checkIsChildrenOfWrapperComponent(component.id),
+    checkIsChildrenOfContainerComponent(component.id),
   )
 
   const enableWayToExposeChildren =

@@ -9,6 +9,7 @@ import BabelSetChildrenProp, {
 } from '../babel-plugins/set-children-prop-plugin'
 import BabelAddProps from '../babel-plugins/add-props-plugin'
 import BabelDeleteProp from '../babel-plugins/delete-prop-plugin'
+import BabelRemovePropInAllElements from '../babel-plugins/removePropInAllElement'
 
 export const setProp = (
   code: string,
@@ -60,5 +61,14 @@ export const setChildrenProp = (
 ) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, [BabelSetChildrenProp, options]],
+  }).code
+}
+
+export const removePropInAllComponents = (
+  code: string,
+  options: { propName: string },
+) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, [BabelRemovePropInAllElements, options]],
   }).code
 }

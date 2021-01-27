@@ -218,7 +218,7 @@ export const checkIsKeyForComponent = (prop: IProp, componentId: string) =>
     return components[prop.value] ? true : false
   })
 
-export const checkIsChildrenOfWrapperComponent = (id: string) => (
+export const checkIsChildrenOfContainerComponent = (id: string) => (
   state: RootState,
 ) => {
   if (state.components.present.customComponents[id]) {
@@ -232,28 +232,28 @@ export const checkIsChildrenOfWrapperComponent = (id: string) => (
     ]?.find(
       propId =>
         state.components.present.customComponentsProps.byId[propId].name ===
-        'children',
+        'isContainerComponent',
     )
 
     return propId ? true : false
   } else return false
 }
 
-// If the custom component has the children prop, then it is a container component.
+// The container component will have the true value for the isContainerComponent
 export const checkIsContainerComponent = (id: string) => (state: RootState) => {
   const components = getComponents(id)(state)
   const componentProps = getPropsBy(id)(state)
 
-  const isChildrenPropPresent =
-    componentProps &&
-    componentProps.findIndex(prop => prop.name === 'children') !== -1
-
   const component = components[id]
 
-  if (
-    state.components.present.customComponents[component.type] !== undefined &&
-    isChildrenPropPresent
+  if (state.components.present.customComponents[component.type] === undefined)
+    return false
+
+  const isContainerComponentProp = componentProps.find(
+    prop => prop.name === 'isContainerComponent',
   )
+
+  if (isContainerComponentProp && isContainerComponentProp.value === 'true')
     return true
   else return false
 }

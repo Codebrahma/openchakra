@@ -83,7 +83,15 @@ const CodePanel = () => {
   const generateProperCode = (code: string) => {
     const codeWithOutComponentId = babelQueries.removeComponentId(code)
 
-    return formatCode(codeWithOutComponentId)
+    // Remove the isContainerComponent prop if it is added for any custom component.
+    const properCode = babelQueries.removePropInAllComponents(
+      codeWithOutComponentId,
+      {
+        propName: 'isContainerComponent',
+      },
+    )
+
+    return formatCode(properCode)
   }
 
   const savePageCodeHandler = (pageName: string, codeValue: string) => {

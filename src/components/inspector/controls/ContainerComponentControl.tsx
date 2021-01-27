@@ -3,8 +3,8 @@ import { Flex, Text, Switch } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
 
 import {
-  getPropByName,
   getSelectedComponent,
+  checkIsContainerComponent,
 } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import {
@@ -20,8 +20,9 @@ const ContainerComponentControl = () => {
   const { type } = component
   const pagesCode = useSelector(getAllPagesCode)
   const componentsCode = useSelector(getAllComponentsCode)
-  const isChildrenPropFound =
-    useSelector(getPropByName('children')) !== undefined
+  const isContainerComponent = useSelector(
+    checkIsContainerComponent(component.id),
+  )
 
   const switchChangeHandler = (e: any) => {
     if (e.target.checked) {
@@ -36,7 +37,7 @@ const ContainerComponentControl = () => {
         dispatch.code.resetAllPagesCode(updatedPagesCode)
       }, 300)
     } else {
-      dispatch.components.deleteCustomProp('children')
+      dispatch.components.deleteCustomProp('isContainerComponent')
 
       setTimeout(() => {
         const updatedPagesCode = babelQueries.convertInstancesToNormalComp(
@@ -63,7 +64,7 @@ const ContainerComponentControl = () => {
         Container component
       </Text>
       <Switch
-        isChecked={isChildrenPropFound}
+        isChecked={isContainerComponent}
         size="sm"
         onChange={switchChangeHandler}
       />
