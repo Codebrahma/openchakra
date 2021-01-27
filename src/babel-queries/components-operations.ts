@@ -81,6 +81,7 @@ export const addMetaComponent = (
 ) => {
   // Obtain the name of the components used for adding meta component.
   const usedComponents = getComponentsUsed(componentsStructure[options.type])
+    .chakraComponents
 
   return transform(code, {
     plugins: [
