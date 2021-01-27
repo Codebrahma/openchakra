@@ -2,12 +2,21 @@ import * as t from '@babel/types'
 import { generatePropId } from '../../utils/generateId'
 import traverse from '@babel/traverse'
 import { getComponentId } from '../utils/babel-plugin-utils'
+import { checkIsIconProp } from '../set-prop-plugin'
 
-export const expressionContainerValueHandler = (path: any, expression: any) => {
+export const expressionContainerValueHandler = (
+  path: any,
+  propName: string,
+  expression: any,
+) => {
+  const componentName = path.node.openingElement.name.name
   switch (expression.type) {
     case 'Identifier': {
       const functionPath = path.getFunctionParent()
       const identifierName = expression.name
+
+      if (componentName === 'Icon' && propName === 'as')
+        return { value: identifierName, derivedFromPropName: null }
 
       // As of now, identifer values can be string or number.
       let identifierValue: string | number = ``
@@ -53,16 +62,23 @@ export const expressionContainerValueHandler = (path: any, expression: any) => {
     }
 
     case 'JSXElement': {
-      const componentId = getComponentId(expression.openingElement)
-      expression.id = componentId
-      return {
-        component: {
-          id: componentId,
-          type: 'Box',
-          parent: 'prop',
-          children: [],
-        },
-        value: componentId,
+      if (checkIsIconProp(propName, path.node.openingElement.name.name)) {
+        return {
+          value: expression.openingElement.name.name,
+          derivedFromPropName: null,
+        }
+      } else {
+        const componentId = getComponentId(expression.openingElement)
+        expression.id = componentId
+        return {
+          component: {
+            id: componentId,
+            type: 'Box',
+            parent: 'prop',
+            children: [],
+          },
+          value: componentId,
+        }
       }
     }
 
@@ -113,7 +129,7 @@ const addProps = (payload: IAddProps) => {
         value: propValue,
         derivedFromPropName,
         component,
-      } = expressionContainerValueHandler(path, value.expression)
+      } = expressionContainerValueHandler(path, propName, value.expression)
 
       props.byId[propId].value = propValue
 

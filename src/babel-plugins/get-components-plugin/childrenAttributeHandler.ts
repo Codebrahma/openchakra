@@ -81,7 +81,11 @@ const childrenAttributeHandler = (
           const {
             value: propValue,
             derivedFromPropName,
-          } = expressionContainerValueHandler(path, child.expression)
+          } = expressionContainerValueHandler(
+            path,
+            'children',
+            child.expression,
+          )
 
           props.byId[propId].value = propValue
 
