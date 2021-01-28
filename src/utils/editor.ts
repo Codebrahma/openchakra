@@ -87,6 +87,7 @@ export const COMPONENTS: ComponentType[] = [
   'NumberInput',
   'Menu',
   'Card',
+  'Blog1',
   // Handlers all the custom components
   'Custom',
 ]

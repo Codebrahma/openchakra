@@ -136,6 +136,9 @@ export const menuItems: MenuItems = {
   Card: {
     isMeta: true,
   },
+  Blog1: {
+    isMeta: true,
+  },
   /*"Tabs",
   "TabList",
   "TabPanel",

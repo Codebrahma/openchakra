@@ -6,6 +6,7 @@ import inputGroupComponent from './InputGroup'
 import listComponent from './listComponent'
 import menuComponent from './menuComponent'
 import numberInputComponent from './numberInputComponent'
+import Blog1 from './BlogComponent1'
 
 const metaComponents = {
   ...accordionComponent,
@@ -16,6 +17,7 @@ const metaComponents = {
   ...listComponent,
   ...menuComponent,
   ...numberInputComponent,
+  Blog1,
 }
 
 export default metaComponents
