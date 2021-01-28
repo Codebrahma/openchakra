@@ -134,6 +134,8 @@ type PreviewDefaultProps = {
   BreadcrumbMeta?: any
   MenuMeta?: any
   Custom?: any
+  CardMeta?: any
+  Card?: any
 }
 
 /**
@@ -315,6 +317,8 @@ export const DEFAULT_FORM_PROPS: PreviewDefaultProps = {
   BreadcrumbLink: {
     ...BreadcrumbLink.defaultProps,
   },
+  CardMeta: {},
+  Card: {},
 }
 
 export const getDefaultFormProps = (type: string) => {

@@ -18,6 +18,7 @@ import {
 type MenuItem = {
   children?: MenuItems
   rootParentType?: ComponentType
+  isMeta?: boolean
 }
 
 type MenuItems = Partial<
@@ -34,6 +35,7 @@ export const menuItems: MenuItems = {
       AccordionPanel: {},
       AccordionIcon: {},
     },
+    isMeta: true,
   },
   Alert: {
     children: {
@@ -41,6 +43,7 @@ export const menuItems: MenuItems = {
       AlertIcon: {},
       AlertTitle: {},
     },
+    isMeta: true,
   },
   AspectRatio: {},
   AvatarGroup: {
@@ -57,6 +60,7 @@ export const menuItems: MenuItems = {
       BreadcrumbItem: {},
       BreadcrumbLink: {},
     },
+    isMeta: true,
   },
   Button: {},
   Checkbox: {},
@@ -70,6 +74,7 @@ export const menuItems: MenuItems = {
       FormLabel: {},
       FormHelperText: {},
     },
+    isMeta: true,
   },
   Grid: {},
   Heading: {},
@@ -86,6 +91,8 @@ export const menuItems: MenuItems = {
       InputRightElement: {},
       InputLeftElement: {},
     },
+
+    isMeta: true,
   },
   Link: {},
   List: {
@@ -103,6 +110,7 @@ export const menuItems: MenuItems = {
       // MenuOptionGroup: {},
       // MenuItemOption: {},
     },
+    isMeta: true,
   },
   NumberInput: {
     children: {
@@ -110,6 +118,7 @@ export const menuItems: MenuItems = {
       NumberIncrementStepper: {},
       NumberDecrementStepper: {},
     },
+    isMeta: true,
   },
   Progress: {},
   Radio: {},
@@ -124,6 +133,9 @@ export const menuItems: MenuItems = {
   Tag: {},
   Text: {},
   Textarea: {},
+  Card: {
+    isMeta: true,
+  },
   /*"Tabs",
   "TabList",
   "TabPanel",
@@ -170,21 +182,23 @@ const Menu = () => {
         {(Object.keys(menuItems) as ComponentType[])
           .filter(c => c.toLowerCase().includes(searchTerm.toLowerCase()))
           .map(name => {
-            const { children } = menuItems[name] as MenuItem
+            const { isMeta, children } = menuItems[name] as MenuItem
 
-            if (children) {
-              const elements = Object.keys(children).map(childName => (
-                <DragItem
-                  isChild
-                  key={childName}
-                  label={childName}
-                  type={childName as any}
-                  id={childName as any}
-                  rootParentType={menuItems[name]?.rootParentType || name}
-                >
-                  {childName}
-                </DragItem>
-              ))
+            if (isMeta) {
+              const elements = children
+                ? Object.keys(children).map(childName => (
+                    <DragItem
+                      isChild
+                      key={childName}
+                      label={childName}
+                      type={childName as any}
+                      id={childName as any}
+                      rootParentType={menuItems[name]?.rootParentType || name}
+                    >
+                      {childName}
+                    </DragItem>
+                  ))
+                : []
 
               return [
                 <DragItem

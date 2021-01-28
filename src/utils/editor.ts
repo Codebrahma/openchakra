@@ -90,6 +90,7 @@ export const COMPONENTS: ComponentType[] = [
   'NumberInputMeta',
   'MenuMeta',
   'Custom',
+  'CardMeta',
 ]
 
 export const AccordionWhitelist: ComponentType[] = COMPONENTS.filter(
