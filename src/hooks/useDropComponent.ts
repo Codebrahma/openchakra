@@ -1,5 +1,6 @@
 import { useDrop, DropTargetMonitor } from 'react-dnd'
 import { useSelector } from 'react-redux'
+
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
 import {
@@ -12,13 +13,12 @@ import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
 import { generateComponentId } from '../utils/generateId'
-
-import builder from '../core/models/composer/builder'
 import useMoveComponent from './useMoveComponent'
 import checkIsComponentId from '../utils/checkIsComponentId'
 import checkIsContainerComponent from '../utils/checkIsContainerComponent'
 import { checkIsCustomPage, getSelectedPage } from '../core/selectors/page'
 import { useQueue } from './useQueue'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
 
 // Get the props of the given custom component
 export const getPropsOfCustomComponent = (
@@ -188,15 +188,23 @@ export const useDropComponent = (
             updateCode(updatedCode)
           }, 200)
         } else if (item.isMeta) {
-          const metaBuilderObject = builder[item.type](parentId)
+          const componentCode = componentsStructure[item.type]
+          const componentWithCompId = babelQueries.setComponentIdToAllComponents(
+            componentCode,
+          )
 
-          dispatch.components.addMetaComponent(metaBuilderObject)
+          // The state includes components, props & root-component-id
+          const state = babelQueries.getComponentsAndProps(
+            componentWithCompId,
+            { parentId },
+          )
+
+          dispatch.components.addMetaComponent({ ...state, parentId })
 
           setTimeout(() => {
             updatedCode = babelQueries.addMetaComponent(code, {
-              componentIds: metaBuilderObject.componentIds,
+              metaComponentCode: componentWithCompId,
               parentId,
-              type: item.type,
             })
             updateCode(updatedCode)
           }, 200)

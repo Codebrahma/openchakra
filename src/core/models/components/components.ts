@@ -245,11 +245,15 @@ const components = createModel({
     },
     addMetaComponent(
       state: ComponentsState,
-      payload: { components: IComponents; root: string; parent: string },
+      payload: {
+        components: IComponents
+        props: IProps
+        rootComponentId: string
+        parentId: string
+      },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const { components, root, parent } = payload
-        addMetaComponent(draftState, { components, root, parentId: parent })
+        addMetaComponent(draftState, payload)
       })
     },
     select(

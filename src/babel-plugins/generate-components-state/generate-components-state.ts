@@ -8,7 +8,7 @@ import {
 } from '../utils/babel-plugin-utils'
 import childrenAttributeHandler from './childrenAttributeHandler'
 
-class getComponentsPlugin {
+class generateComponentsState {
   state: {
     components: IComponents
     props: IProps
@@ -139,4 +139,4 @@ class getComponentsPlugin {
   }
 }
 
-export default getComponentsPlugin
+export default generateComponentsState

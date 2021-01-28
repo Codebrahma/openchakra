@@ -36,7 +36,7 @@ const UserComponentsPreview: React.FC = () => {
       export default ${properComponentName}
       `
       dispatch.code.setComponentsCode(customComponentCode, customComponentName)
-      const componentsState = babelQueries.getComponentsState(
+      const componentsState = babelQueries.generateComponentsState(
         customComponentCode,
       )
       dispatch.components.updateCustomComponentsState(componentsState)

@@ -1,14 +1,25 @@
 import { transform } from '@babel/standalone'
 import babelPluginSyntaxJsx from '@babel/plugin-syntax-jsx'
 
-import BabelPluginGetComponents from '../babel-plugins/get-components-plugin/get-components'
+import BabelGenerateComponentsState from '../babel-plugins/generate-components-state/generate-components-state'
+import BabelGetComponentsAndProps from '../babel-plugins/get-components-and-props'
 import * as componentsOperations from './components-operations'
 import * as propsOperations from './props-operations'
 import * as customComponentsOperations from './custom-components-operations'
 import * as containerComponentsOperations from './container-components-operations'
 
-const getComponentsState = (code: string) => {
-  const plugin = new BabelPluginGetComponents()
+const generateComponentsState = (code: string) => {
+  const plugin = new BabelGenerateComponentsState()
+
+  transform(code, {
+    plugins: [babelPluginSyntaxJsx, plugin.plugin],
+  })
+
+  return plugin.state
+}
+
+const getComponentsAndProps = (code: string, options: { parentId: string }) => {
+  const plugin = new BabelGetComponentsAndProps(options)
 
   transform(code, {
     plugins: [babelPluginSyntaxJsx, plugin.plugin],
@@ -18,7 +29,8 @@ const getComponentsState = (code: string) => {
 }
 
 export default {
-  getComponentsState,
+  generateComponentsState,
+  getComponentsAndProps,
   ...componentsOperations,
   ...propsOperations,
   ...customComponentsOperations,

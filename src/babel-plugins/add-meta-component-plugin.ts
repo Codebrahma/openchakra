@@ -1,10 +1,8 @@
-import traverse from '@babel/traverse'
 import template from '@babel/template'
 import * as t from '@babel/types'
 import union from 'lodash/union'
 
-import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
-import componentsStructure from '../utils/componentsStructure/componentsStructure'
+import { getComponentId } from './utils/babel-plugin-utils'
 
 export interface IComponentIds {
   [type: string]: string
@@ -13,13 +11,12 @@ export interface IComponentIds {
 const addMetaComponentPlugin = (
   _: any,
   options: {
-    componentIds: string[]
     parentId: string
-    type: string
     componentsToImport: string[]
+    metaComponentCode: string
   },
 ) => {
-  const { componentIds, parentId, type, componentsToImport } = options
+  const { metaComponentCode, parentId, componentsToImport } = options
 
   return {
     visitor: {
@@ -42,25 +39,9 @@ const addMetaComponentPlugin = (
         const visitedComponentId = getComponentId(openingElement)
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const node = template.ast(componentsStructure[type], {
+          const node = template.ast(metaComponentCode, {
             plugins: ['jsx'],
           }).expression
-
-          // Traverse into the node and assign component-id prop to every element
-          traverse(
-            node,
-            {
-              JSXOpeningElement(path: any) {
-                const componentId = componentIds.shift()
-                if (componentId) {
-                  const compIdAttribute = toJsxAttribute('compId', componentId)
-                  path.node.attributes.push(compIdAttribute)
-                }
-              },
-            },
-            path.scope,
-            path,
-          )
 
           const newLineText = t.jsxText('\n')
 

@@ -80,46 +80,48 @@ export const addComponent = (
  * @param {AddMetaComponentPayload} payload
  */
 
+const updatePropsState = (props: IProps, newProps: IProps) => {
+  return {
+    byId: {
+      ...props.byId,
+      ...newProps.byId,
+    },
+    byComponentId: {
+      ...props.byComponentId,
+      ...newProps.byComponentId,
+    },
+  }
+}
+
 export const addMetaComponent = (
   draftState: ComponentsState,
-  payload: { components: IComponents; root: string; parentId: string },
+  payload: {
+    components: IComponents
+    props: IProps
+    rootComponentId: string
+    parentId: string
+  },
 ) => {
-  const { components: metaComponents, root, parentId } = payload
-  const { isCustomComponentChild, props } = loadRequired(draftState, parentId)
-
-  //Add the default props for the meta components
-  Object.values(metaComponents).forEach(component => {
-    props.byComponentId[component.id] = []
-    DEFAULT_PROPS[component.type as ComponentType] &&
-      Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
-        (propName: string) => {
-          const propId = generatePropId()
-          props.byComponentId[component.id].push(propId)
-          props.byId[propId] = {
-            id: propId,
-            name: propName,
-            value: DEFAULT_PROPS[component.type as ComponentType][propName],
-            derivedFromPropName: null,
-            derivedFromComponentType: null,
-          }
-        },
-      )
-  })
+  const { components, props, rootComponentId, parentId } = payload
+  const { isCustomComponentChild } = loadRequired(draftState, parentId)
 
   if (isCustomComponentChild) {
     draftState.customComponents = {
       ...draftState.customComponents,
-      ...metaComponents,
+      ...components,
     }
-    draftState.customComponents[root].parent = parentId
-    draftState.customComponents[parentId].children.push(root)
+    draftState.customComponentsProps = updatePropsState(
+      draftState.customComponentsProps,
+      props,
+    )
+    draftState.customComponents[parentId].children.push(rootComponentId)
   } else {
     draftState.components = {
       ...draftState.components,
-      ...metaComponents,
+      ...components,
     }
-    draftState.components[root].parent = parentId
-    draftState.components[parentId].children.push(root)
+    draftState.props = updatePropsState(draftState.props, props)
+    draftState.components[parentId].children.push(rootComponentId)
   }
 }
 

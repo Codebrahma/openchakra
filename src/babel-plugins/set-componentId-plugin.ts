@@ -1,9 +1,15 @@
 import { generateComponentId } from '../utils/generateId'
-import {
-  toJsxAttribute,
-  getComponentId,
-  getAttribute,
-} from './utils/babel-plugin-utils'
+import { toJsxAttribute, getComponentId } from './utils/babel-plugin-utils'
+
+const checkIsRootComponent = (node: any) => {
+  const attribute = node.attributes?.find(
+    (attr: any) => attr && attr.name && attr.name.name === 'id',
+  )
+  if (attribute === undefined) return false
+
+  if (attribute.value.value === 'root') return true
+  else return false
+}
 
 const setComponentIdPlugin = () => {
   return {
@@ -13,17 +19,15 @@ const setComponentIdPlugin = () => {
 
         if (visitedComponentId) return
 
-        const componentId = generateComponentId()
-        const idAttribute = getAttribute('id', path.node)
-
-        // Convert to jsx attribute with compId as name.
-        const jsxAttribute = toJsxAttribute(
-          'compId',
-          idAttribute && idAttribute.value.value === 'root'
-            ? 'root'
-            : componentId,
-        )
-        path.node.attributes.push(jsxAttribute)
+        if (checkIsRootComponent(path.node)) {
+          const jsxAttribute = toJsxAttribute('compId', 'root')
+          path.node.attributes.push(jsxAttribute)
+        } else {
+          const componentId = generateComponentId()
+          // Convert to jsx attribute with compId as name.
+          const jsxAttribute = toJsxAttribute('compId', componentId)
+          path.node.attributes.push(jsxAttribute)
+        }
       },
     },
   }
