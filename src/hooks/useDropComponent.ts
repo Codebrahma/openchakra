@@ -199,8 +199,6 @@ export const useDropComponent = (
             { parentId },
           )
 
-          console.log(state)
-
           dispatch.components.addMetaComponent({ ...state, parentId })
 
           setTimeout(() => {
