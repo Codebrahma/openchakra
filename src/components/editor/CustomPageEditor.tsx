@@ -1,12 +1,13 @@
 import React, { memo } from 'react'
-import { Box, Text } from '@chakra-ui/core'
+import { Box } from '@chakra-ui/core'
 import ComponentPreview from './ComponentPreview'
-import { useDropComponent } from '../../hooks/useDropComponent'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
-import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout } from '../../core/selectors/app'
-import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
+import { getCustomComponentsProps } from '../../core/selectors/components'
+import { getPropsOfCustomComponent } from '../../hooks/useDropComponent'
+import { generateComponentId } from '../../utils/generateId'
+import { useLocation } from 'react-router-dom'
 
 export const gridStyles = {
   backgroundImage:
@@ -14,14 +15,28 @@ export const gridStyles = {
   backgroundSize: '8px 8px',
 }
 
-const Editor: React.FC = () => {
+const CustomPageEditor: React.FC = () => {
   const showLayout = useSelector(getShowLayout)
   const dispatch = useDispatch()
+  const url = new URLSearchParams(useLocation().search)
 
-  const { drop } = useDropComponent('root')
-  const children = useSelector(getChildrenBy('root'))
-  const isEmpty = !children.length
-  const rootProps = useSelector(getPropsBy('root'))
+  const componentType: string = url.get('name') || ''
+
+  const customComponentsProps = useSelector(getCustomComponentsProps)
+
+  const defaultProps = getPropsOfCustomComponent(
+    componentType,
+    customComponentsProps,
+  )
+
+  const componentId = generateComponentId()
+
+  dispatch.components.addCustomComponent({
+    componentId,
+    parentId: 'root',
+    type: componentType,
+    defaultProps,
+  })
 
   let editorBackgroundProps = {}
 
@@ -33,11 +48,6 @@ const Editor: React.FC = () => {
     editorBackgroundProps = gridStyles
   }
 
-  editorBackgroundProps = {
-    ...editorBackgroundProps,
-    ...findAndReplaceExposedPropValue(rootProps),
-  }
-
   return (
     <Box
       bg="white"
@@ -45,26 +55,16 @@ const Editor: React.FC = () => {
       height="100%"
       minWidth="10rem"
       width="100%"
-      display={isEmpty ? 'flex' : 'block'}
       justifyContent="center"
       alignItems="center"
       overflow="auto"
-      ref={drop}
       position="relative"
       flexDirection="column"
       onClick={onSelectBackground}
     >
-      {isEmpty && (
-        <Text maxWidth="md" color="gray.400" fontSize="xl" textAlign="center">
-          Drag and drop components to start building websites with zero coding.
-        </Text>
-      )}
-
-      {children.map((name: string) => (
-        <ComponentPreview key={name} componentName={name} />
-      ))}
+      <ComponentPreview key={componentId} componentName={componentId} />
     </Box>
   )
 }
 
-export default memo(Editor)
+export default memo(CustomPageEditor)

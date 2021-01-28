@@ -1,7 +1,6 @@
 import React from 'react'
 import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
-import Editor from './components/editor/Editor'
 import Header from './components/Header'
 import { Global } from '@emotion/core'
 import { ArrowBackIcon } from '@chakra-ui/icons'
@@ -17,6 +16,7 @@ import useCustomTheme from './hooks/useCustomTheme'
 import CodePanel from './components/CodePanel'
 import Sidebar from './components/sidebar/Sidebar'
 import useShortCutKeys from './hooks/useShortcutKeys'
+import EditorRouting from './components/editor/EditorRouting'
 
 const App = () => {
   const showFullScreen = useSelector(getShowFullScreen)
@@ -59,7 +59,7 @@ const App = () => {
               bg="white"
               height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
             >
-              {showCode ? <CodePanel /> : <Editor />}
+              {showCode ? <CodePanel /> : <EditorRouting />}
             </Box>
             {/* </EditorErrorBoundary> */}
           </ThemeProvider>

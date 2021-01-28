@@ -5,6 +5,7 @@ import Backend from 'react-dnd-html5-backend'
 import App from './App'
 import { ChakraProvider, theme } from '@chakra-ui/core'
 import { Provider } from 'react-redux'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import { store } from './core/store'
 // import { ErrorBoundary as BugsnagErrorBoundary } from './utils/bugsnag'
@@ -42,13 +43,15 @@ const customTheme = {
 ReactDOM.render(
   // <BugsnagErrorBoundary>
   <DndProvider backend={Backend}>
-    <ChakraProvider resetCSS theme={customTheme}>
-      <AppErrorBoundary>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </AppErrorBoundary>
-    </ChakraProvider>
+    <Router>
+      <ChakraProvider resetCSS theme={customTheme}>
+        <AppErrorBoundary>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </AppErrorBoundary>
+      </ChakraProvider>
+    </Router>
   </DndProvider>,
   // </BugsnagErrorBoundary>,
 

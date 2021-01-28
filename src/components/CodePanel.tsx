@@ -16,7 +16,6 @@ import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import { generateComponentId } from '../utils/generateId'
-import { getSelectedPage } from '../core/selectors/page'
 import formatCode from '../utils//codeGeneration/formatCode'
 
 const SaveButton = ({
@@ -75,7 +74,6 @@ const MonacoEditor = ({
 const CodePanel = () => {
   const dispatch = useDispatch()
 
-  const selectedPage = useSelector(getSelectedPage)
   const codeState = useSelector(getCodeState)
 
   const { componentsCode, pagesCode } = codeState
@@ -94,10 +92,10 @@ const CodePanel = () => {
     return formatCode(properCode)
   }
 
-  const savePageCodeHandler = (pageName: string, codeValue: string) => {
+  const savePageCodeHandler = (codeValue: string) => {
     const transformedCode = babelQueries.setIdToComponents(codeValue)
     const componentsState = babelQueries.getComponentsState(transformedCode)
-    dispatch.code.setPageCode(transformedCode, pageName)
+    dispatch.code.setPageCode(transformedCode, 'app')
     dispatch.components.resetComponentsState(componentsState)
   }
 
@@ -153,7 +151,7 @@ const CodePanel = () => {
     >
       <Tabs variant="enclosed">
         <TabList>
-          <Tab>{selectedPage}.js</Tab>
+          <Tab>App.js</Tab>
           {Object.keys(componentsCode).map(componentName => (
             <Tab key={componentName}>{componentName + '.js'}</Tab>
           ))}
@@ -167,16 +165,12 @@ const CodePanel = () => {
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
             <MonacoEditor
-              value={generateProperCode(pagesCode[selectedPage])}
+              value={generateProperCode(pagesCode['app'])}
               onChange={(_, value) => {
-                pagesCode[selectedPage] = value || ''
+                pagesCode['app'] = value || ''
               }}
             />
-            <SaveButton
-              onClick={() =>
-                savePageCodeHandler(selectedPage, pagesCode[selectedPage])
-              }
-            >
+            <SaveButton onClick={() => savePageCodeHandler(pagesCode['app'])}>
               Save Code
             </SaveButton>
           </TabPanel>

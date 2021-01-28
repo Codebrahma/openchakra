@@ -26,7 +26,6 @@ import babelQueries from '../../babel-queries/queries'
 import { getCode, getAllComponentsCode } from '../../core/selectors/code'
 import { searchRootCustomComponent } from '../../utils/recursive'
 import buildComponentIds from '../../utils/componentIdsBuilder'
-import ExportToCustomPageButton from '../actionButtons/ExportToCustomPageButton'
 import SaveComponentButton from '../actionButtons/SaveComponentButton'
 import CodeActionButton from '../actionButtons/CodeActionButton'
 import SpanActionButton from '../actionButtons/SpanActionButton'
@@ -71,7 +70,7 @@ const Inspector = () => {
   }
 
   const enableSaveIcon = () => {
-    if (!isCustomPage) return false
+    if (isCustomPage) return false
 
     if (isCustomComponentChild) return false
 
@@ -168,9 +167,6 @@ const Inspector = () => {
                 icon={<MdFormatClear />}
               />
             )}
-            {!isCustomPage ? (
-              <ExportToCustomPageButton componentId={component.id} />
-            ) : null}
 
             <ActionButton
               label="Duplicate"

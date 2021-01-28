@@ -20,6 +20,26 @@ import checkIsContainerComponent from '../utils/checkIsContainerComponent'
 import { checkIsCustomPage, getSelectedPage } from '../core/selectors/page'
 import { useQueue } from './useQueue'
 
+// Get the props of the given custom component
+export const getPropsOfCustomComponent = (
+  componentId: string,
+  customComponentsProps: IProps,
+): IProp[] => {
+  return customComponentsProps.byComponentId[componentId].map(propId => {
+    const prop = customComponentsProps.byId[propId]
+
+    // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
+    // New-id is generated for the box component in the exposed children prop.
+    if (checkIsComponentId(prop.value)) {
+      const newComponentId = generateComponentId()
+      prop.value = newComponentId
+      return prop
+    } else {
+      return prop
+    }
+  })
+}
+
 export const useDropComponent = (
   parentId: string,
   accept: ComponentType[] = [...rootComponents],
@@ -59,23 +79,6 @@ export const useDropComponent = (
         ? dispatch.code.setComponentsCode(code, rootParentOfParentElement)
         : dispatch.code.setPageCode(code, selectedPage)
     }
-  }
-
-  // Get the props of the given custom component
-  const getPropsOfCustomComponent = (componentId: string): IProp[] => {
-    return customComponentsProps.byComponentId[componentId].map(propId => {
-      const prop = customComponentsProps.byId[propId]
-
-      // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
-      // New-id is generated for the box component in the exposed children prop.
-      if (checkIsComponentId(prop.value)) {
-        const newComponentId = generateComponentId()
-        prop.value = newComponentId
-        return prop
-      } else {
-        return prop
-      }
-    })
   }
 
   const [{ isOver }, drop] = useDrop({
@@ -154,7 +157,10 @@ export const useDropComponent = (
         // TODO : Yet to be refactored. Everything should go into a private function
         if (item.custom) {
           // Get the default props for the required custom component type.
-          const defaultProps = getPropsOfCustomComponent(item.id)
+          const defaultProps = getPropsOfCustomComponent(
+            item.id,
+            customComponentsProps,
+          )
 
           dispatch.components.addCustomComponent({
             componentId: newComponentId,
