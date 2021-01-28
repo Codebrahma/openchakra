@@ -9,7 +9,6 @@ import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
 import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
 import BabelGetUsedComponents from '../babel-plugins/get-used-components'
-import componentsStructure from '../utils/componentsStructure/componentsStructure'
 import BabelGetComponent from '../babel-plugins/get-component-plugin'
 
 // Gets the components used in the code.
