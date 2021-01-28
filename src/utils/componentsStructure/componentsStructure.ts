@@ -1,7 +1,7 @@
 import metaComponents from './metaComponents/metaComponentsStructure'
 import normalComponents from './normalComponents'
 
-const CardMeta = `<Box>
+const Card = `<Box>
 <Text fontSize="4xl" fontStyle="italic">
   This is newer form of text
 </Text>
@@ -9,7 +9,7 @@ const CardMeta = `<Box>
 </Box>`
 
 const componentsStructure: { [compName: string]: string } = {
-  CardMeta,
+  Card,
   ...normalComponents,
   ...metaComponents,
 }

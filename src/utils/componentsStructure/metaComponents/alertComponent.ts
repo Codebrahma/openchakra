@@ -1,5 +1,5 @@
 const AlertComponent = {
-  AlertMeta: `<Alert>
+  Alert: `<Alert>
     <AlertIcon height={8} />
     <AlertTitle mr={1}>Alert title</AlertTitle>
     <AlertDescription>Alert description</AlertDescription>

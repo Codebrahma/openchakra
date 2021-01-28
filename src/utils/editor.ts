@@ -1,12 +1,10 @@
 const ALERT_COMPONENTS: ComponentType[] = [
-  'Alert',
   'AlertDescription',
   'AlertIcon',
   'AlertTitle',
 ]
 
 const MENU_COMPONENTS: ComponentType[] = [
-  'Menu',
   'MenuList',
   'MenuButton',
   'MenuItem',
@@ -17,7 +15,6 @@ const MENU_COMPONENTS: ComponentType[] = [
 ]
 
 const NUMBER_INPUT_COMPONENTS: ComponentType[] = [
-  'NumberInput',
   'NumberInputField',
   'NumberInputStepper',
   'NumberIncrementStepper',
@@ -81,16 +78,17 @@ export const COMPONENTS: ComponentType[] = [
   'InputRightElement',
   'InputLeftElement',
   // Allow meta components
-  'AlertMeta',
-  'FormControlMeta',
-  'AccordionMeta',
-  'ListMeta',
-  'InputGroupMeta',
-  'BreadcrumbMeta',
-  'NumberInputMeta',
-  'MenuMeta',
+  'Alert',
+  'FormControl',
+  'Accordion',
+  'List',
+  'InputGroup',
+  'Breadcrumb',
+  'NumberInput',
+  'Menu',
+  'Card',
+  // Handlers all the custom components
   'Custom',
-  'CardMeta',
 ]
 
 export const AccordionWhitelist: ComponentType[] = COMPONENTS.filter(

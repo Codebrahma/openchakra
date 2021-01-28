@@ -1,5 +1,5 @@
 const ListComponent = {
-  ListMeta: ` <List>
+  List: ` <List>
     <ListItem>list</ListItem>
     </List>`,
   ListItem: ` <ListItem>list</ListItem>`,

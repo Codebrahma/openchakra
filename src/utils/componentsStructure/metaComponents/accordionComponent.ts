@@ -1,5 +1,5 @@
 const AccordionComponent = {
-  AccordionMeta: `<Accordion>
+  Accordion: `<Accordion>
     <AccordionItem>
       <AccordionButton>
         <Text>Text value</Text>

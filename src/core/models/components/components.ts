@@ -84,7 +84,7 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         const { components, props } = loadRequired(draftState)
         const defaultProps =
-          DEFAULT_PROPS[components[componentId].type as ComponentType]
+          DEFAULT_PROPS[components[componentId].type as ComponentType] || []
         const PropIdsToRetain: IProp['id'][] = []
 
         // If the component has a default value for a prop, retain that prop and substitute the prop with default value.

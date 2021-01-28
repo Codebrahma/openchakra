@@ -1,5 +1,5 @@
 const MenuComponent = {
-  MenuMeta: `<Menu isOpen>
+  Menu: `<Menu isOpen>
     <MenuButton>
       <Button>Button text</Button>
     </MenuButton>

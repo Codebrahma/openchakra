@@ -203,10 +203,10 @@ const Menu = () => {
               return [
                 <DragItem
                   isMeta
-                  key={`${name}Meta`}
+                  key={`${name}`}
                   label={name}
-                  type={`${name}Meta` as any}
-                  id={`${name}Meta` as any}
+                  type={`${name}` as any}
+                  id={`${name}` as any}
                   rootParentType={menuItems[name]?.rootParentType || name}
                 >
                   {name}
