@@ -57,6 +57,7 @@ const Sidebar = () => {
 
         <TabPanels>
           <TabPanel p={0}>
+            <ComponentsMenu />
             <ReadyMadeComponents />
           </TabPanel>
           <TabPanel p={0}>

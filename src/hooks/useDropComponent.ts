@@ -168,7 +168,8 @@ export const useDropComponent = (
             type: item.id,
             defaultProps,
           })
-          setTimeout(() => {
+
+          queue.enqueue(async () => {
             const isContainerComponent = checkIsContainerComponent(
               item.id,
               customComponentsProps,
@@ -186,7 +187,7 @@ export const useDropComponent = (
               },
             )
             updateCode(updatedCode)
-          }, 200)
+          })
         } else if (item.isMeta) {
           const componentCode = componentsStructure[item.type]
           const componentWithCompId = babelQueries.setComponentIdToAllComponents(

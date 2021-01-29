@@ -34,6 +34,7 @@ const DragImage: React.FC<{ type: string; children: React.ReactNode }> = ({
       alignItems="center"
       {...boxProps}
       width="100%"
+      mb={5}
     >
       {children}
     </Box>

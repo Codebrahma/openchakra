@@ -2,11 +2,15 @@ import React from 'react'
 import { Box, Text, Image, Flex } from '@chakra-ui/core'
 
 import blog1Image from '../../images/components-image/blog1.png'
+import blog2Image from '../../images/components-image/blog2.png'
 import DragImage from './DragImage'
 
 const ReadyMadeComponents = () => {
   const components = {
-    blogs: [{ name: 'Blog1', image: blog1Image }],
+    blogs: [
+      { name: 'Blog1', image: blog1Image },
+      { name: 'Blog2', image: blog2Image },
+    ],
   }
   return (
     <Box p={2}>
