@@ -109,6 +109,7 @@ class getComponentsPlugin {
                 // This is for setting children and parent for all the components
                 if (components[parentId]) {
                   components[parentId].children.push(componentId)
+                  components[componentId].parent = parentId
                 }
               }
             }
