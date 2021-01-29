@@ -80,7 +80,6 @@ type ComponentType =
   | 'AlertIcon'
   | 'AlertTitle'
   | 'AlertDescription'
-  | 'Card'
   | 'Blog1'
   | 'Blog2'
 

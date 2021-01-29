@@ -86,7 +86,6 @@ export const COMPONENTS: ComponentType[] = [
   'Breadcrumb',
   'NumberInput',
   'Menu',
-  'Card',
   'Blog1',
   'Blog2',
   // Handlers all the custom components
