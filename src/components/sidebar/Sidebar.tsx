@@ -8,6 +8,7 @@ import { AiOutlineAppstore } from 'react-icons/ai'
 import { FaPaintBrush } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
 import { getSelectedComponentId } from '../../core/selectors/components'
+import ReadyMadeComponents from './ReadyMadeComponents'
 
 const Sidebar = () => {
   const selectedId = useSelector(getSelectedComponentId)
@@ -56,7 +57,7 @@ const Sidebar = () => {
 
         <TabPanels>
           <TabPanel p={0}>
-            <ComponentsMenu />
+            <ReadyMadeComponents />
           </TabPanel>
           <TabPanel p={0}>
             <InspectorProvider>
