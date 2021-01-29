@@ -133,12 +133,6 @@ export const menuItems: MenuItems = {
   Tag: {},
   Text: {},
   Textarea: {},
-  Card: {
-    isMeta: true,
-  },
-  Blog1: {
-    isMeta: true,
-  },
   /*"Tabs",
   "TabList",
   "TabPanel",
