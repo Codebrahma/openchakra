@@ -92,10 +92,7 @@ const TextPreview: React.FC<{
               value: value || '',
             })
         })
-        // As of now span elements are not handled by the AST tree
-        if (childrenDetails[0]?.type === '#text') {
-          setValue('', 'children', childrenDetails[0].value)
-        }
+
         dispatch.components.updateTextChildrenProp({
           id: component.id,
           value: childrenDetails,
