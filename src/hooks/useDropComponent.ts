@@ -41,7 +41,7 @@ export const getPropsOfCustomComponent = (
 }
 
 export const useDropComponent = (
-  parentId: string,
+  targetComponentId: string,
   accept: ComponentType[] = [...rootComponents],
   canDrop: boolean = true,
   boundingPosition?: {
@@ -54,7 +54,7 @@ export const useDropComponent = (
 
   const components = useSelector(getComponents())
   const isCustomComponentChild = useSelector(
-    isChildrenOfCustomComponent(parentId),
+    isChildrenOfCustomComponent(targetComponentId),
   )
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
@@ -62,12 +62,12 @@ export const useDropComponent = (
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
-  const onComponentMoved = useMoveComponent(parentId)
+  const onComponentMoved = useMoveComponent(targetComponentId)
   const queue = useQueue()
 
   if (isCustomComponentChild) {
     rootParentOfParentElement = searchRootCustomComponent(
-      customComponents[parentId],
+      customComponents[targetComponentId],
       customComponents,
     )
   }
@@ -88,10 +88,15 @@ export const useDropComponent = (
     }),
     hover: (item: ComponentItemProps, monitor: DropTargetMonitor) => {
       if (item.isMoved && boundingPosition) {
-        if (parentId === item.id) return
+        if (targetComponentId === item.id) return
         if (components[item.id] === undefined) return
 
         const selectedComponent = components[item.id]
+        const targetComponentParent = components[targetComponentId].parent
+
+        // Only reorder if the selected component and the targeted component are in the same parent.
+        if (targetComponentParent !== selectedComponent.parent) return
+
         if (selectedComponent.parent === 'Prop') return
 
         const { top, bottom } = boundingPosition
@@ -101,7 +106,7 @@ export const useDropComponent = (
           item.id,
         )
         const toIndex = components[selectedComponent.parent].children.indexOf(
-          parentId,
+          targetComponentId,
         )
         const hoverClientY = clientOffset && clientOffset.y - top
 
@@ -164,7 +169,7 @@ export const useDropComponent = (
 
           dispatch.components.addCustomComponent({
             componentId: newComponentId,
-            parentId,
+            parentId: targetComponentId,
             type: item.id,
             defaultProps,
           })
@@ -180,7 +185,7 @@ export const useDropComponent = (
                 : code,
               {
                 componentId: newComponentId,
-                parentId,
+                parentId: targetComponentId,
                 type: item.id,
                 defaultProps,
                 isContainerComponent,
@@ -197,22 +202,25 @@ export const useDropComponent = (
           // The state includes components, props & root-component-id
           const state = babelQueries.getComponentsAndProps(
             componentWithCompId,
-            { parentId },
+            { parentId: targetComponentId },
           )
 
-          dispatch.components.addMetaComponent({ ...state, parentId })
+          dispatch.components.addMetaComponent({
+            ...state,
+            parentId: targetComponentId,
+          })
 
           setTimeout(() => {
             updatedCode = babelQueries.addMetaComponent(code, {
               metaComponentCode: componentWithCompId,
-              parentId,
+              parentId: targetComponentId,
             })
             updateCode(updatedCode)
           }, 200)
         } else {
           dispatch.components.addComponent({
             componentId: newComponentId,
-            parentId,
+            parentId: targetComponentId,
             type: item.type,
           })
           setTimeout(() => {
@@ -222,7 +230,7 @@ export const useDropComponent = (
                 : code,
               {
                 componentId: newComponentId,
-                parentId,
+                parentId: targetComponentId,
                 type: item.type,
               },
             )
