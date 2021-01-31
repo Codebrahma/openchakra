@@ -92,6 +92,11 @@ export const useDropComponent = (
         if (components[item.id] === undefined) return
 
         const selectedComponent = components[item.id]
+        const targetComponentParent = components[targetComponentId].parent
+
+        // Only reorder if the selected component and the targeted component are in the same parent.
+        if (targetComponentParent !== selectedComponent.parent) return
+
         if (selectedComponent.parent === 'Prop') return
 
         const { top, bottom } = boundingPosition
