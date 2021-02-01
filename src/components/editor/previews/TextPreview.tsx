@@ -14,7 +14,6 @@ import {
 import ComponentPreview from '../ComponentPreview'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { useForm } from '../../../hooks/useForm'
 
 const TextPreview: React.FC<{
   component: IComponent
@@ -49,8 +48,6 @@ const TextPreview: React.FC<{
   const selectedComponents = useSelector(getComponents(component.id))
   const textValue = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
-  const { setValue } = useForm()
-
   const componentChildren =
     propsKeyValue.children && Array.isArray(propsKeyValue.children)
       ? propsKeyValue.children
