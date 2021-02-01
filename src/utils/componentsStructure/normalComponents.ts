@@ -18,7 +18,7 @@ const normalComponents = {
   Divider: `<Divider borderColor="blackAlpha.500" />`,
   Link: `<Link>Link text</Link>`,
   Input: `<Input />`,
-  Image: `<Image height="100px" width="100px" />`,
+  Image: `<Image src='https://dummyimage.com/100x100' height="100px" width="100px" />`,
   Progress: `<Progress value={50} />`,
   Radio: `<Radio>Radio</Radio>`,
   RadioGroup: `<RadioGroup></RadioGroup>`,
