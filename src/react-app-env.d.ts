@@ -83,6 +83,7 @@ type ComponentType =
   | 'Blog1'
   | 'Blog2'
   | 'ECommerce1'
+  | 'ECommerce2'
 
 interface PropRef {
   customPropName: string
