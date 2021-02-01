@@ -24,6 +24,7 @@ const DragImage: React.FC<{
   const boxProps = {
     ref: drag,
     cursor: 'move',
+    boxShadow: '0 0px 4px 1px #e2e8f0',
     _hover: {
       boxShadow: '#0C008C 0px 0px 0px 2px',
     },

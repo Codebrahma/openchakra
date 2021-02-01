@@ -1,4 +1,4 @@
-const ECommerce2 = `<Flex m="5" width="85%" height="450px">
+const ECommerce2 = ` <Flex m="5" width="85%" height="450px">
 <Box width="40%" height="100%">
   <Image
     src="https://dummyimage.com/500x500/f0f3f6/000000"
@@ -57,9 +57,26 @@ const ECommerce2 = `<Flex m="5" width="85%" height="450px">
       </Flex><Text color="gray.500" fontWeight="700">4 Reviews</Text>
     </Flex>
     <Flex alignItems="center" pl="4">
-      <Icon as={FaTwitter} fontSize="lg" color="gray.500" mr="2" />
-      <Icon as={FaFacebookF} fontSize="lg" mr="2" color="gray.500" />
-      <Icon as={FaComment} fontSize="lg" color="gray.500" />
+      <Icon
+        as={FaTwitter}
+        fontSize="lg"
+        color="gray.500"
+        mr="2"
+        cursor="pointer"
+      />
+      <Icon
+        as={FaFacebookF}
+        fontSize="lg"
+        mr="2"
+        color="gray.500"
+        cursor="pointer"
+      />
+      <Icon
+        as={FaComment}
+        fontSize="lg"
+        color="gray.500"
+        cursor="pointer"
+      />
     </Flex>
   </Flex>
   <Box mb="5">
@@ -79,15 +96,18 @@ const ECommerce2 = `<Flex m="5" width="85%" height="450px">
           borderColor="#e2e8f0"
           backgroundColor="white"
           mr="2"
+          cursor="pointer"
         />
         <Box
-        width="6"
-        height="6"
-        borderRadius="full"
-        border="1px"
-        borderColor="#e2e8f0"
-        backgroundColor="gray.500"
-        mr="2"
+          width="6"
+          height="6"
+          borderRadius="full"
+          border="1px"
+          borderColor="#e2e8f0"
+          backgroundColor="gray.500"
+          mr="2"
+          cursor="pointer"
+        />
         <Box
           width="6"
           height="6"
@@ -95,8 +115,9 @@ const ECommerce2 = `<Flex m="5" width="85%" height="450px">
           border="1px"
           borderColor="#e2e8f0"
           backgroundColor="primary.500"
+          cursor="pointer"
         />
-       
+
       </Flex>
     </Flex>
     <Flex alignItems="center">
