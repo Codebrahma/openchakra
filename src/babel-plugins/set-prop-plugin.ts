@@ -32,7 +32,9 @@ const setPropPlugin = (
       // Other icon props, <IconButton icon={<SearchIcon />} /> is the correct format
       return t.jsxAttribute(
         t.jsxIdentifier(name),
-        t.jsxExpressionContainer(getJSXElement(`<${value} />`)),
+        t.jsxExpressionContainer(
+          getJSXElement(value.length > 0 ? `<${value} />` : `<></>`),
+        ),
       )
     }
   }
