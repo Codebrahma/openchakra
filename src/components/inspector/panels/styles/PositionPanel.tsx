@@ -73,7 +73,7 @@ const PositionPanel = () => {
             type="text"
             name="left"
             id={leftId}
-            value={leftValue || ''}
+            value={leftValue}
             onChange={e => setValue(leftId, 'left', e.target.value)}
             autoComplete="off"
           />
@@ -88,7 +88,7 @@ const PositionPanel = () => {
             size="sm"
             type="text"
             id={rightId}
-            value={rightValue || ''}
+            value={rightValue}
             name="right"
             onChange={e => setValue(rightId, 'right', e.target.value)}
             autoComplete="off"
@@ -104,7 +104,7 @@ const PositionPanel = () => {
             size="sm"
             type="text"
             id={topId}
-            value={topValue || ''}
+            value={topValue}
             name="top"
             onChange={e => setValue(topId, 'top', e.target.value)}
             autoComplete="off"
@@ -120,7 +120,7 @@ const PositionPanel = () => {
             size="sm"
             type="text"
             id={bottomId}
-            value={bottomValue || ''}
+            value={bottomValue}
             name="bottom"
             onChange={e => setValue(bottomId, 'bottom', e.target.value)}
             autoComplete="off"
