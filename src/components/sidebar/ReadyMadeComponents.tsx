@@ -22,7 +22,7 @@ const ReadyMadeComponents = () => {
   }
   return (
     <Box p={2}>
-      <Text color="neutrals.500" mb={2} mt={5} fontSize="sm">
+      <Text color="neutrals.500" mb={4} mt={5} fontSize="sm">
         Ready components
       </Text>
       <Flex flexDirection="column" alignItems="center">
