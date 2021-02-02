@@ -15,6 +15,7 @@ import babelQueries from '../../babel-queries/queries'
 import { getCode } from '../../core/selectors/code'
 import { useToast } from '@chakra-ui/core'
 import { getSelectedPage } from '../../core/selectors/page'
+import isContainsOnlyAlphaNumeric from '../../utils/isContainsOnlyAlphaNumeric'
 
 const SaveComponentButton: React.FC<{ componentId: string }> = ({
   componentId,
@@ -43,12 +44,6 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
     )
     dispatch.code.setPageCode(updatedCode, selectedPage)
     dispatch.code.setComponentsCode(customComponentCode, customComponentName)
-  }
-
-  const isContainsOnlyAlphaNumeric = (name: string) => {
-    const pattern = /^[a-z0-9]+$/i
-
-    return pattern.test(name)
   }
 
   const saveComponentHandler = () => {

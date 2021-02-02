@@ -1,14 +1,7 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { useDrag } from 'react-dnd'
-import { DeleteIcon, DragHandleIcon } from '@chakra-ui/icons'
-import { Text, Box, Flex, useToast } from '@chakra-ui/core'
-import ActionButton from '../actionButtons/ActionButton'
-import useDispatch from '../../hooks/useDispatch'
-import {
-  getSelectedPageComponents,
-  getCustomComponents,
-} from '../../core/selectors/components'
+import { DragHandleIcon } from '@chakra-ui/icons'
+import { Text, Box, Flex } from '@chakra-ui/core'
 
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
@@ -29,10 +22,6 @@ const DragItem: React.FC<ComponentItemProps> = ({
       onDrag(monitor.isDragging())
     },
   })
-  const dispatch = useDispatch()
-  const toast = useToast()
-  const components = useSelector(getSelectedPageComponents)
-  const customComponents = useSelector(getCustomComponents)
 
   let boxProps: any = {
     cursor: 'no-drop',
@@ -122,14 +111,6 @@ const DragItem: React.FC<ComponentItemProps> = ({
           {label}
         </Text>
       </Box>
-
-      {custom && (
-        <ActionButton
-          label="Delete component"
-          icon={<DeleteIcon />}
-          onClick={() => deleteComponentHandler(type)}
-        />
-      )}
     </Flex>
   )
 }
