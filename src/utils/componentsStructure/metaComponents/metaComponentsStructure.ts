@@ -11,6 +11,7 @@ import Blog2 from './BlogComponent2'
 import ECommerce1 from './EcommerceComponent1'
 import ECommerce2 from './ECommerceComponent2'
 import Pricing1 from './PricingComponent1'
+import Team1 from './TeamComponent1'
 
 const metaComponents = {
   ...accordionComponent,
@@ -26,6 +27,7 @@ const metaComponents = {
   ECommerce1,
   ECommerce2,
   Pricing1,
+  Team1,
 }
 
 export default metaComponents

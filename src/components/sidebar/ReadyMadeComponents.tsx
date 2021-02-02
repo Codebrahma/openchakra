@@ -6,6 +6,7 @@ import blog2Image from '../../images/components-image/blog2.png'
 import ECommerce1Image from '../../images/components-image/ECommerce1.png'
 import ECommerce2Image from '../../images/components-image/ECommerce2.png'
 import Pricing1Image from '../../images/components-image/Pricing1.png'
+import Team1Image from '../../images/components-image/team1.png'
 import DragImage from './DragImage'
 
 const ReadyMadeComponents = () => {
@@ -16,6 +17,7 @@ const ReadyMadeComponents = () => {
       { name: 'ECommerce1', image: ECommerce1Image },
       { name: 'ECommerce2', image: ECommerce2Image },
       { name: 'Pricing1', image: Pricing1Image },
+      { name: 'Team1', image: Team1Image },
     ],
   }
   return (
