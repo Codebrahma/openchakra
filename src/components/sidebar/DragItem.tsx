@@ -87,6 +87,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
       })
     else {
       dispatch.components.deleteCustomComponent(componentType)
+      dispatch.code.removeComponentCode(componentType)
       toast({
         title: 'Success.',
         description: 'Component had been deleted Successfully.',
