@@ -63,7 +63,7 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
       const formattedName = name.charAt(0).toUpperCase() + name.slice(1)
 
       //check if the name already exist
-      if (customComponentsList.indexOf(editedName) !== -1)
+      if (customComponentsList.indexOf(formattedName) !== -1)
         toast({
           title: 'Duplicate type',
           description: 'A component already exists with the same name.',
