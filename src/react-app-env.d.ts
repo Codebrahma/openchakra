@@ -82,6 +82,10 @@ type ComponentType =
   | 'AlertDescription'
   | 'Blog1'
   | 'Blog2'
+  | 'ECommerce1'
+  | 'ECommerce2'
+  | 'Pricing1'
+  | 'Team1'
 
 interface PropRef {
   customPropName: string

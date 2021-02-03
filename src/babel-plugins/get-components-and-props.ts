@@ -30,6 +30,8 @@ class generateComponentsState {
       return {
         visitor: {
           JSXElement: (path: any) => {
+            // This handles the icon component(<Button leftIcon={<ArrowDown />}>Click</Button>)
+            if (path.parentPath.type === 'JSXExpressionContainer') return
             const openingElement = path.node.openingElement
 
             const id = getComponentId(openingElement)
