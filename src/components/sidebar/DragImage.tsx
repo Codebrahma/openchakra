@@ -2,18 +2,22 @@ import React from 'react'
 import { useDrag } from 'react-dnd'
 import { Box } from '@chakra-ui/core'
 
-const DragImage: React.FC<{ type: string; children: React.ReactNode }> = ({
-  type,
-  children,
-}) => {
+const DragImage: React.FC<{
+  type: string
+  children: React.ReactNode
+  onDrag: Function
+  isMeta?: boolean
+}> = ({ type, children, isMeta, onDrag }) => {
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
     item: {
       id: type,
       type: type,
-      isMeta: true,
-      rootParentType: '',
+      isMeta,
       custom: false,
+    },
+    collect: monitor => {
+      onDrag(monitor.isDragging())
     },
   })
 
@@ -21,7 +25,7 @@ const DragImage: React.FC<{ type: string; children: React.ReactNode }> = ({
     ref: drag,
     cursor: 'move',
     _hover: {
-      boxShadow: '0 0px 4px 1px #5d55fa',
+      boxShadow: '#0C008C 0px 0px 0px 2px',
     },
   }
 
@@ -29,12 +33,12 @@ const DragImage: React.FC<{ type: string; children: React.ReactNode }> = ({
     <Box
       boxSizing="border-box"
       transition="margin 200ms"
-      rounded="md"
+      borderRadius="md"
       display="flex"
       alignItems="center"
       {...boxProps}
-      width="100%"
-      mb={5}
+      width="300px"
+      m={5}
     >
       {children}
     </Box>

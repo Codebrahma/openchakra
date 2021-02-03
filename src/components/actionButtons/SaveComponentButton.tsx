@@ -5,7 +5,6 @@ import { AddIcon } from '@chakra-ui/icons'
 import { generateComponentId } from '../../utils/generateId'
 import useDispatch from '../../hooks/useDispatch'
 import { getExposedProps } from '../../utils/getExposedProps'
-import { menuItems } from '../sidebar/componentsMenu'
 import { useSelector } from 'react-redux'
 import {
   getComponents,
@@ -52,10 +51,7 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
       editedName = editedName.charAt(0).toUpperCase() + editedName.slice(1)
 
       //check if the name already exist
-      if (
-        customComponentsList.indexOf(editedName) !== -1 ||
-        Object.keys(menuItems).indexOf(editedName) !== -1
-      )
+      if (customComponentsList.indexOf(editedName) !== -1)
         toast({
           title: 'Duplicate type',
           description: 'A component already exists with the same name.',

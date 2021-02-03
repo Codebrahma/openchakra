@@ -14,9 +14,8 @@ const DragItem: React.FC<ComponentItemProps> = ({
   type,
   label,
   isMeta,
-  isChild,
-  rootParentType,
   custom,
+  onDrag,
 }) => {
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
@@ -24,8 +23,10 @@ const DragItem: React.FC<ComponentItemProps> = ({
       id: type,
       type: custom ? 'Custom' : type,
       isMeta,
-      rootParentType,
       custom,
+    },
+    collect: monitor => {
+      onDrag(monitor.isDragging())
     },
   })
   const dispatch = useDispatch()
@@ -49,10 +50,6 @@ const DragItem: React.FC<ComponentItemProps> = ({
       shadow: 'sm',
       color: 'primary.800',
     },
-  }
-
-  if (isChild) {
-    boxProps = { ...boxProps, ml: 4 }
   }
 
   //Check if there is a instance of the custom component in all the pages.
@@ -111,7 +108,7 @@ const DragItem: React.FC<ComponentItemProps> = ({
         alignItems="center"
         {...boxProps}
         width="95%"
-        p={1}
+        p={4}
       >
         <DragHandleIcon fontSize="xs" mr={2} color="neutrals.900" />
 

@@ -48,7 +48,7 @@ const App = () => {
         </Box>
       ) : null}
 
-      <Flex width="100%">
+      <Flex width="100%" overflowX="hidden">
         <Box flex={1}>
           {!showFullScreen ? <Header /> : null}
 
@@ -58,6 +58,7 @@ const App = () => {
             <Box
               bg="white"
               height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
+              width={!showFullScreen ? 'calc(100vw - 15rem)' : '100vw'}
             >
               {showCode ? <CodePanel /> : <EditorRouting />}
             </Box>

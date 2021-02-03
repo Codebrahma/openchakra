@@ -118,11 +118,9 @@ interface ComponentItemProps {
   id: string
   label: string
   type: ComponentType
+  onDrag: Function
   isMoved?: boolean
-  isChild?: boolean
   isMeta?: boolean
-  soon?: boolean
-  rootParentType?: ComponentType
   custom?: boolean
 }
 
