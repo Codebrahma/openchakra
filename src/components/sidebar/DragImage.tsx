@@ -38,7 +38,6 @@ const DragImage: React.FC<{
       display="flex"
       alignItems="center"
       {...boxProps}
-      width="300px"
       m={5}
     >
       {children}

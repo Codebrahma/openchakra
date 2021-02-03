@@ -59,7 +59,7 @@ const Sidebar = () => {
         overflowY="scroll"
         height="100vh"
         borderLeft="1px solid #cad5de"
-        zIndex={100}
+        zIndex={3}
         position="absolute"
       >
         <Tabs isFitted index={tabIndex} onChange={handleTabsChange}>
@@ -97,14 +97,15 @@ const Sidebar = () => {
                   fontWeight={700}
                   mb={3}
                   mt={5}
-                  pl={2}
+                  pl="1.5rem"
                 >
-                  NORMAL COMPONENTS
+                  COMPONENTS
                 </Text>
                 {Object.keys(menuItems).map(itemName => {
                   return (
                     <Box
                       p={2}
+                      pl="1.5rem"
                       mb={2}
                       key={itemName}
                       cursor="pointer"
@@ -141,7 +142,12 @@ const Sidebar = () => {
           {menuItems[selectedMenuItem]?.components.map(component => {
             if (component.image) {
               return (
-                <DragImage type={component.name} onDrag={onDrag}>
+                <DragImage
+                  key={component.name}
+                  type={component.name}
+                  onDrag={onDrag}
+                  isMeta={component.isMeta ? true : false}
+                >
                   <Image src={component.image} borderRadius="md" />
                 </DragImage>
               )

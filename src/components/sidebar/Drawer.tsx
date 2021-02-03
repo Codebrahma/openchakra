@@ -10,13 +10,13 @@ const Drawer: React.FC<{
       flexDirection="column"
       alignItems="center"
       position="absolute"
-      width="350px"
+      width="470px"
       height="100vh"
       right={isOpen ? '15rem' : '-15rem'}
       transition="right 0.4s ease-in-out"
       top="0"
       backgroundColor="#f8f9fa"
-      zIndex={50}
+      zIndex={2}
     >
       {children}
     </Flex>
