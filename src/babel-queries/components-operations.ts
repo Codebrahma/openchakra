@@ -3,11 +3,10 @@ import babelPluginSyntaxJsx from '@babel/plugin-syntax-jsx'
 
 import BabelDeleteComponent from '../babel-plugins/delete-component-plugin'
 import BabelDuplicateComponent from '../babel-plugins/duplicate-component-plugin'
-import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelReorderChildren from '../babel-plugins/reorder-children-plugin'
 import BabelRemoveMovedComponentFromSource from '../babel-plugins/move-component-plugin/remove-component'
 import BabelInsertMovedComponentToDest from '../babel-plugins/move-component-plugin/insert-moved-component-plugin'
-import BabelAddMetaComponent from '../babel-plugins/add-meta-component-plugin'
+import BabelAddComponent from '../babel-plugins/add-component-plugin'
 import BabelGetUsedComponents from '../babel-plugins/get-used-components'
 import BabelGetComponent from '../babel-plugins/get-component-plugin'
 
@@ -67,28 +66,16 @@ export const duplicateComponent = (
 
 export const addComponent = (
   code: string,
-  options: { componentId: string; parentId: string; type: string },
-) => {
-  return transform(code, {
-    plugins: [babelPluginSyntaxJsx, [BabelAddComponent, options]],
-  }).code
-}
-
-export const addMetaComponent = (
-  code: string,
-  options: { metaComponentCode: string; parentId: string },
+  options: { componentCode: string; parentId: string },
 ) => {
   // Obtain the name of the components used for adding meta component.
-  const usedComponents = getComponentsUsed(options.metaComponentCode)
+  const usedComponents = getComponentsUsed(options.componentCode)
     .chakraComponents
 
   return transform(code, {
     plugins: [
       babelPluginSyntaxJsx,
-      [
-        BabelAddMetaComponent,
-        { ...options, componentsToImport: usedComponents },
-      ],
+      [BabelAddComponent, { ...options, componentsToImport: usedComponents }],
     ],
   }).code
 }

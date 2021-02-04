@@ -124,7 +124,6 @@ interface ComponentItemProps {
   type: ComponentType
   onDrag: Function
   isMoved?: boolean
-  isMeta?: boolean
   custom?: boolean
 }
 

@@ -193,7 +193,7 @@ export const useDropComponent = (
             )
             updateCode(updatedCode)
           })
-        } else if (item.isMeta) {
+        } else {
           const componentCode = componentsStructure[item.type]
           const componentWithCompId = babelQueries.setComponentIdToAllComponents(
             componentCode,
@@ -205,35 +205,16 @@ export const useDropComponent = (
             { parentId: targetComponentId },
           )
 
-          dispatch.components.addMetaComponent({
+          dispatch.components.addComponent({
             ...state,
             parentId: targetComponentId,
           })
 
           setTimeout(() => {
-            updatedCode = babelQueries.addMetaComponent(code, {
-              metaComponentCode: componentWithCompId,
+            updatedCode = babelQueries.addComponent(code, {
+              componentCode: componentWithCompId,
               parentId: targetComponentId,
             })
-            updateCode(updatedCode)
-          }, 200)
-        } else {
-          dispatch.components.addComponent({
-            componentId: newComponentId,
-            parentId: targetComponentId,
-            type: item.type,
-          })
-          setTimeout(() => {
-            updatedCode = updatedCode = babelQueries.addComponent(
-              isCustomComponentChild
-                ? componentsCode[rootParentOfParentElement]
-                : code,
-              {
-                componentId: newComponentId,
-                parentId: targetComponentId,
-                type: item.type,
-              },
-            )
             updateCode(updatedCode)
           }, 200)
         }

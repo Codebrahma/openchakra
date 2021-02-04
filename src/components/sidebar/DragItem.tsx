@@ -13,7 +13,6 @@ import {
 const DragItem: React.FC<ComponentItemProps> = ({
   type,
   label,
-  isMeta,
   custom,
   onDrag,
 }) => {
@@ -22,7 +21,6 @@ const DragItem: React.FC<ComponentItemProps> = ({
     item: {
       id: type,
       type: custom ? 'Custom' : type,
-      isMeta,
       custom,
     },
     collect: monitor => {

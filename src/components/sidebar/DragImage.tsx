@@ -6,14 +6,12 @@ const DragImage: React.FC<{
   type: string
   children: React.ReactNode
   onDrag: Function
-  isMeta?: boolean
-}> = ({ type, children, isMeta, onDrag }) => {
+}> = ({ type, children, onDrag }) => {
   //every custom component type is changed to custom type because only that type will be accepted in the drop.
   const [, drag] = useDrag({
     item: {
       id: type,
       type: type,
-      isMeta,
       custom: false,
     },
     collect: monitor => {

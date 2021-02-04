@@ -146,25 +146,21 @@ const Sidebar = () => {
                   key={component.name}
                   type={component.name}
                   onDrag={onDrag}
-                  isMeta={component.isMeta ? true : false}
                 >
                   <Image src={component.image} borderRadius="md" />
                 </DragImage>
               )
             }
             return (
-              <Box>
-                <DragItem
-                  isMeta={component.isMeta ? true : false}
-                  key={component.name}
-                  label={component.name}
-                  type={component.name as any}
-                  id={component.name as any}
-                  onDrag={onDrag}
-                >
-                  {component.name}
-                </DragItem>
-              </Box>
+              <DragItem
+                key={component.name}
+                label={component.name}
+                type={component.name as any}
+                id={component.name as any}
+                onDrag={onDrag}
+              >
+                {component.name}
+              </DragItem>
             )
           })}
         </Drawer>

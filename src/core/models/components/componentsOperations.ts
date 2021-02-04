@@ -1,6 +1,4 @@
 import { DEFAULT_ID } from './components-types'
-import { generatePropId } from '../../../utils/generateId'
-import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
   joinAdjacentTextValues,
@@ -12,73 +10,6 @@ import {
   duplicateComp,
 } from '../../../utils/recursive'
 import { ComponentsState } from './components'
-
-/**
- * @typedef {Object} AddComponentPayload
- * @property {string} componentId - Id of the component
- * @property {string} parentId - Id of the parent component where the component is added.
- * @property {ComponentType} type - Type of the added component.
- */
-
-/**
- * @method
- * @name addComponent
- * @description This function will add the component and its respective props.
- * @param {ComponentsState} draftState workspace state
- * @param {AddComponentPayload} payload
- */
-export const addComponent = (
-  draftState: ComponentsState,
-  payload: { componentId: string; parentId: string; type: ComponentType },
-) => {
-  const { componentId: id, parentId, type } = payload
-  const { components, props } = loadRequired(draftState, parentId)
-  const defaultProps: IPropsById = {}
-  const defaultPropsIds: string[] = []
-
-  //Add the default props for the component.
-  DEFAULT_PROPS[type] &&
-    Object.keys(DEFAULT_PROPS[type]).forEach((propName: string) => {
-      const propId = generatePropId()
-      defaultProps[propId] = {
-        id: propId,
-        name: propName,
-        value: DEFAULT_PROPS[type][propName],
-        derivedFromPropName: null,
-        derivedFromComponentType: null,
-      }
-      defaultPropsIds.push(propId)
-    })
-  components[id] = {
-    id,
-    type: type,
-    parent: parentId,
-    children: [],
-  }
-  props.byComponentId[id] = []
-  props.byId = {
-    ...props.byId,
-    ...defaultProps,
-  }
-  props.byComponentId[id] = [...props.byComponentId[id], ...defaultPropsIds]
-
-  components[parentId].children.push(id)
-}
-
-/**
- * @typedef {Object} AddMetaComponentPayload
- * @property {IComponents} components - Id of the parent component where the component is added.
- * @property {string} root - Root Parent component id of the meta components.
- * @property {string} parentId - Id of the parent component where the meta component is added.
- */
-
-/**
- * @method
- * @name addMetaComponent
- * @description This function will add the meta components and its respective props.
- * @param {ComponentsState} draftState workspace state
- * @param {AddMetaComponentPayload} payload
- */
 
 const updatePropsState = (props: IProps, newProps: IProps) => {
   return {
@@ -93,7 +24,7 @@ const updatePropsState = (props: IProps, newProps: IProps) => {
   }
 }
 
-export const addMetaComponent = (
+export const addComponent = (
   draftState: ComponentsState,
   payload: {
     components: IComponents

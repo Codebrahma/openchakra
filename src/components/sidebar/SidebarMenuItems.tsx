@@ -17,7 +17,6 @@ import InputGroupImage from '../../images/components-images/inputGroup.png'
 
 type IMenuComponent = {
   name: string
-  isMeta?: boolean
   image?: string
 }
 
@@ -87,12 +86,10 @@ const menuItems: IMenuItems = {
       },
       {
         name: 'FormControl',
-        isMeta: true,
         image: FormControlImage,
       },
       {
         name: 'InputGroup',
-        isMeta: true,
         image: InputGroupImage,
       },
     ],
@@ -103,12 +100,10 @@ const menuItems: IMenuItems = {
       {
         name: 'Blog1',
         image: blogImage1,
-        isMeta: true,
       },
       {
         name: 'Blog2',
         image: blogImage2,
-        isMeta: true,
       },
     ],
   },
@@ -118,7 +113,6 @@ const menuItems: IMenuItems = {
       {
         name: 'Pricing1',
         image: pricingImage1,
-        isMeta: true,
       },
     ],
   },
@@ -128,12 +122,10 @@ const menuItems: IMenuItems = {
       {
         name: 'ECommerce1',
         image: eCommerceImage1,
-        isMeta: true,
       },
       {
         name: 'ECommerce2',
         image: eCommerceImage2,
-        isMeta: true,
       },
     ],
   },
@@ -143,7 +135,6 @@ const menuItems: IMenuItems = {
       {
         name: 'Team1',
         image: TeamImage1,
-        isMeta: true,
       },
     ],
   },

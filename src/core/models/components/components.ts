@@ -8,7 +8,6 @@ import {
 } from '../../../utils/reducerUtilities'
 import {
   addComponent,
-  addMetaComponent,
   deleteComponent,
   duplicateComponent,
 } from './componentsOperations'
@@ -205,18 +204,6 @@ const components = createModel({
         )
       })
     },
-    addComponent(
-      state: ComponentsState,
-      payload: {
-        componentId: string
-        parentId: string
-        type: ComponentType
-      },
-    ): ComponentsState {
-      return produce(state, (draftState: ComponentsState) => {
-        addComponent(draftState, payload)
-      })
-    },
     addCustomComponent(
       state: ComponentsState,
       payload: {
@@ -243,7 +230,7 @@ const components = createModel({
         addCustomComponent(draftState, { ...payload })
       })
     },
-    addMetaComponent(
+    addComponent(
       state: ComponentsState,
       payload: {
         components: IComponents
@@ -253,7 +240,7 @@ const components = createModel({
       },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        addMetaComponent(draftState, payload)
+        addComponent(draftState, payload)
       })
     },
     select(
