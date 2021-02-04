@@ -17,6 +17,7 @@ const Drawer: React.FC<{
       top="0"
       backgroundColor="#f8f9fa"
       zIndex={2}
+      overflowY="scroll"
     >
       {children}
     </Flex>

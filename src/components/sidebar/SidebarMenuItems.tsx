@@ -21,6 +21,12 @@ import headingImage4 from '../../images/components-images/heading4.png'
 import headingImage5 from '../../images/components-images/heading5.png'
 import headingImage6 from '../../images/components-images/heading6.png'
 import textImage from '../../images/components-images/text.png'
+import boxImage from '../../images/components-images/box.png'
+import flexImage from '../../images/components-images/flex.png'
+import gridImage from '../../images/components-images/grid.png'
+import avatarGroupImage from '../../images/components-images/avatarGroup.png'
+import radioGroupImage from '../../images/components-images/radioGroup.png'
+import aspectRatioImage from '../../images/components-images/aspectRatio.png'
 
 type IMenuComponent = {
   name: string
@@ -42,12 +48,27 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Box',
+        image: boxImage,
       },
       {
         name: 'Flex',
+        image: flexImage,
       },
       {
         name: 'Grid',
+        image: gridImage,
+      },
+      {
+        name: 'AvatarGroup',
+        image: avatarGroupImage,
+      },
+      {
+        name: 'RadioGroup',
+        image: radioGroupImage,
+      },
+      {
+        name: 'AspectRatio',
+        image: aspectRatioImage,
       },
     ],
   },
