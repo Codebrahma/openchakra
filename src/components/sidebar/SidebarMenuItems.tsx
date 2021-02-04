@@ -14,6 +14,13 @@ import eCommerceImage2 from '../../images/components-images/eCommerce2.png'
 import TeamImage1 from '../../images/components-images/team1.png'
 import FormControlImage from '../../images/components-images/formControl.png'
 import InputGroupImage from '../../images/components-images/inputGroup.png'
+import headingImage1 from '../../images/components-images/heading1.png'
+import headingImage2 from '../../images/components-images/heading2.png'
+import headingImage3 from '../../images/components-images/heading3.png'
+import headingImage4 from '../../images/components-images/heading4.png'
+import headingImage5 from '../../images/components-images/heading5.png'
+import headingImage6 from '../../images/components-images/heading6.png'
+import textImage from '../../images/components-images/text.png'
 
 type IMenuComponent = {
   name: string
@@ -62,6 +69,39 @@ const menuItems: IMenuItems = {
       {
         name: 'Image',
         image: Image,
+      },
+    ],
+  },
+  Typography: {
+    name: 'Typography',
+    components: [
+      {
+        name: 'Heading1',
+        image: headingImage1,
+      },
+      {
+        name: 'Heading2',
+        image: headingImage2,
+      },
+      {
+        name: 'Heading3',
+        image: headingImage3,
+      },
+      {
+        name: 'Heading4',
+        image: headingImage4,
+      },
+      {
+        name: 'Heading5',
+        image: headingImage5,
+      },
+      {
+        name: 'Heading6',
+        image: headingImage6,
+      },
+      {
+        name: 'Text',
+        image: textImage,
       },
     ],
   },

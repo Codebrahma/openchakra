@@ -6,7 +6,7 @@ const Backdrop: React.FC<{ showBackdrop: boolean }> = ({ showBackdrop }) => {
     <Box
       bg="#000"
       opacity={showBackdrop ? '0.6' : '0'}
-      transition="all 0.2s ease-in-out"
+      transition="opacity 0.2s ease-in-out"
       position="fixed"
       top={0}
       left={0}
