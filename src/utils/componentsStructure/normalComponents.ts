@@ -22,7 +22,7 @@ const normalComponents = {
   CloseButton: `<CloseButton />`,
   Code: `<Code>Code value</Code>`,
   Divider: `<Divider borderColor="blackAlpha.500" />`,
-  Link: `<Link>Link text</Link>`,
+  Link: `<Link color="linkedin.500">Simple link</Link>`,
   Input: `<Input />`,
   Image: `<Image src='https://dummyimage.com/100x100' height="100px" width="100px" />`,
   Progress: `<Progress value={50} />`,

@@ -27,6 +27,15 @@ import gridImage from '../../images/components-images/grid.png'
 import avatarGroupImage from '../../images/components-images/avatarGroup.png'
 import radioGroupImage from '../../images/components-images/radioGroup.png'
 import aspectRatioImage from '../../images/components-images/aspectRatio.png'
+import progressImage from '../../images/components-images/progress.png'
+import circularProgressImage from '../../images/components-images/circularProgress.png'
+import selectImage from '../../images/components-images/select.png'
+import tagNameImage from '../../images/components-images/tagName.png'
+import numberInputImage from '../../images/components-images/numberInput.png'
+import alertImage from '../../images/components-images/alert.png'
+import switchImage from '../../images/components-images/switch.png'
+import spinnerImage from '../../images/components-images/spinner.png'
+import contactImage1 from '../../images/components-images/contact1.png'
 
 type IMenuComponent = {
   name: string
@@ -91,6 +100,30 @@ const menuItems: IMenuItems = {
         name: 'Image',
         image: Image,
       },
+      {
+        name: 'Alert',
+        image: alertImage,
+      },
+      {
+        name: 'Progress',
+        image: progressImage,
+      },
+      {
+        name: 'CircularProgress',
+        image: circularProgressImage,
+      },
+      {
+        name: 'Switch',
+        image: switchImage,
+      },
+      {
+        name: 'TagName',
+        image: tagNameImage,
+      },
+      {
+        name: 'Spinner',
+        image: spinnerImage,
+      },
     ],
   },
   Typography: {
@@ -153,6 +186,14 @@ const menuItems: IMenuItems = {
         name: 'InputGroup',
         image: InputGroupImage,
       },
+      {
+        name: 'NumberInput',
+        image: numberInputImage,
+      },
+      {
+        name: 'Select',
+        image: selectImage,
+      },
     ],
   },
   Blog: {
@@ -196,6 +237,15 @@ const menuItems: IMenuItems = {
       {
         name: 'Team1',
         image: TeamImage1,
+      },
+    ],
+  },
+  Contact: {
+    name: 'Contact',
+    components: [
+      {
+        name: 'Contact1',
+        image: contactImage1,
       },
     ],
   },

@@ -26,7 +26,7 @@ export const DEFAULT_PROPS: IDefaultProps = {
     src: 'https://dummyimage.com/100x100',
   },
   Text: { children: 'Text value' },
-  Link: { children: 'Link text' },
+  Link: { children: 'Simple Link', color: 'linkedin.500' },
   Code: {
     children: 'Code value',
   },

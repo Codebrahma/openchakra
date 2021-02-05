@@ -98,6 +98,7 @@ export const COMPONENTS: ComponentType[] = [
   'ECommerce2',
   'Pricing1',
   'Team1',
+  'Contact1',
   // Handlers all the custom components
   'Custom',
 ]
