@@ -6,12 +6,11 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Image,
-  Text,
   Input,
   InputGroup,
   InputRightElement,
-  Spinner,
+  Text,
+  Flex,
 } from '@chakra-ui/core'
 import { SearchIcon, CloseIcon } from '@chakra-ui/icons'
 import { AiOutlineAppstore } from 'react-icons/ai'
@@ -20,51 +19,44 @@ import { useSelector } from 'react-redux'
 
 import Inspector from '../inspector/Inspector'
 import { InspectorProvider } from '../../contexts/inspector-context'
-import { getSelectedComponentId } from '../../core/selectors/components'
-import menuItems, { IMenuItem, IMenuComponent } from './SidebarMenuItems'
+import {
+  getSelectedComponentId,
+  getCustomComponentsList,
+} from '../../core/selectors/components'
+import componentMenuItems, {
+  IMenuItem,
+  IMenuComponent,
+  IMenuItems,
+} from './SidebarMenuItems'
 import Backdrop from './Backdrop'
-import DragImage from './DragImage'
 import Drawer from './Drawer'
-import DragItem from './DragItem'
-
-const DraggableMenuItem: React.FC<{
-  component: IMenuComponent
-  onDrag: Function
-}> = ({ component, onDrag }) => {
-  const { image, name, label } = component
-  if (image) {
-    return (
-      <DragImage key={name} type={name} onDrag={onDrag}>
-        <Image
-          src={image}
-          borderRadius="md"
-          alt={label}
-          fallback={<Spinner />}
-        />
-      </DragImage>
-    )
-  } else {
-    return (
-      <DragItem
-        key={name}
-        label={label}
-        type={name as any}
-        id={name as any}
-        onDrag={onDrag}
-      >
-        {label}
-      </DragItem>
-    )
-  }
-}
+import MenuItemComponents from './MenuItemComponents'
 
 const Sidebar = () => {
-  const selectedId = useSelector(getSelectedComponentId)
-
   const [tabIndex, setTabIndex] = useState(0)
   const [selectedMenuItem, setSelectedMenuItem] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [isOpen, setIsOpen] = useState(false)
+
+  const selectedId = useSelector(getSelectedComponentId)
+  const customComponentsList = useSelector(getCustomComponentsList)
+
+  const userComponentsMenuItem: IMenuItem = {
+    name: 'User Components',
+    components: customComponentsList.map(
+      (customComponentName): IMenuComponent => {
+        return {
+          name: customComponentName,
+          label: customComponentName,
+          custom: true,
+        }
+      },
+    ),
+  }
+  const menuItems: IMenuItems = {
+    ...componentMenuItems,
+    UserComponents: userComponentsMenuItem,
+  }
 
   const onHover = (menuItem: string) => {
     setIsOpen(true)
@@ -73,7 +65,6 @@ const Sidebar = () => {
 
   const closeDrawerHandler = () => {
     if (isOpen) setIsOpen(false)
-    setSelectedMenuItem('')
   }
 
   const onDrag = (isDragging: boolean) => {
@@ -109,8 +100,10 @@ const Sidebar = () => {
     if (componentIndex !== -1) {
       if (matchedMenuItem !== selectedMenuItem) {
         setSelectedMenuItem(matchedMenuItem)
-        setIsOpen(true)
       }
+
+      if (!isOpen) setIsOpen(true)
+
       return {
         name: matchedMenuItem,
         components: [
@@ -190,7 +183,6 @@ const Sidebar = () => {
                   return (
                     <Box
                       p={2}
-                      pl="1.5rem"
                       mb={2}
                       key={key}
                       cursor="pointer"
@@ -224,46 +216,18 @@ const Sidebar = () => {
         onMouseLeave={closeDrawerHandler}
       >
         <Drawer isOpen={isOpen}>
-          {menuItemToRender?.components.map(component => {
-            if (component.children) {
-              return (
-                <Box
-                  borderRadius="md"
-                  boxShadow="0 0px 4px 1px #e2e8f0"
-                  bg="white"
-                  width="90%"
-                  m={5}
-                >
-                  <Text
-                    fontSize="xs"
-                    color="gray.500"
-                    mt={5}
-                    fontWeight="700"
-                    textAlign="center"
-                  >
-                    {component.label.toUpperCase()}
-                  </Text>
-                  {component.children.map(child => {
-                    return (
-                      <DraggableMenuItem
-                        key={child.name}
-                        component={child}
-                        onDrag={onDrag}
-                      />
-                    )
-                  })}
-                </Box>
-              )
-            } else {
-              return (
-                <DraggableMenuItem
-                  key={component.name}
-                  component={component}
-                  onDrag={onDrag}
-                />
-              )
-            }
-          })}
+          {menuItemToRender && menuItemToRender.components.length > 0 ? (
+            <MenuItemComponents
+              components={menuItemToRender.components}
+              onDrag={onDrag}
+            />
+          ) : (
+            <Flex height="100%" alignItems="center" justifyContent="center">
+              <Text color="gray.500" fontWeight="700">
+                Sorry. No components found here
+              </Text>
+            </Flex>
+          )}
         </Drawer>
       </Box>
       <Backdrop showBackdrop={isOpen} />

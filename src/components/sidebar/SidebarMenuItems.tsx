@@ -49,6 +49,7 @@ export type IMenuComponent = {
   label: string
   image?: string
   children?: IMenuComponent[]
+  custom?: boolean
 }
 
 export type IMenuItem = {
@@ -181,6 +182,46 @@ const menuItems: IMenuItems = {
       },
     ],
   },
+  Typography: {
+    name: 'Typography',
+    components: [
+      {
+        name: 'Heading1',
+        label: 'Heading-1',
+        image: headingImage1,
+      },
+      {
+        name: 'Heading2',
+        label: 'Heading-2',
+        image: headingImage2,
+      },
+      {
+        name: 'Heading3',
+        label: 'Heading-3',
+        image: headingImage3,
+      },
+      {
+        name: 'Heading4',
+        label: 'Heading-4',
+        image: headingImage4,
+      },
+      {
+        name: 'Heading5',
+        label: 'heading-5',
+        image: headingImage5,
+      },
+      {
+        name: 'Heading6',
+        label: 'Heading-6',
+        image: headingImage6,
+      },
+      {
+        name: 'Text',
+        label: 'Text',
+        image: textImage,
+      },
+    ],
+  },
   MetaElements: {
     name: 'Meta Elements',
     components: [
@@ -271,48 +312,9 @@ const menuItems: IMenuItems = {
       },
     ],
   },
-  Typography: {
-    name: 'Typography',
-    components: [
-      {
-        name: 'Heading1',
-        label: 'Heading-1',
-        image: headingImage1,
-      },
-      {
-        name: 'Heading2',
-        label: 'Heading-2',
-        image: headingImage2,
-      },
-      {
-        name: 'Heading3',
-        label: 'Heading-3',
-        image: headingImage3,
-      },
-      {
-        name: 'Heading4',
-        label: 'Heading-4',
-        image: headingImage4,
-      },
-      {
-        name: 'Heading5',
-        label: 'heading-5',
-        image: headingImage5,
-      },
-      {
-        name: 'Heading6',
-        label: 'Heading-6',
-        image: headingImage6,
-      },
-      {
-        name: 'Text',
-        label: 'Text',
-        image: textImage,
-      },
-    ],
-  },
-  Form: {
-    name: 'Form',
+
+  FormElements: {
+    name: 'Form Elements',
     components: [
       {
         name: 'Checkbox',

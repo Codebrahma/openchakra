@@ -35,6 +35,7 @@ const DragImage: React.FC<{
       borderRadius="md"
       display="flex"
       alignItems="center"
+      justifyContent="center"
       {...boxProps}
       m={5}
     >

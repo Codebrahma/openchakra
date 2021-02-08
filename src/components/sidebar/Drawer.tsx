@@ -1,14 +1,12 @@
 import React from 'react'
-import { Flex } from '@chakra-ui/core'
+import { Box } from '@chakra-ui/core'
 
 const Drawer: React.FC<{
   children: React.ReactNode
   isOpen: boolean
 }> = ({ children, isOpen }) => {
   return (
-    <Flex
-      flexDirection="column"
-      alignItems="center"
+    <Box
       position="absolute"
       width="470px"
       height="100vh"
@@ -20,7 +18,7 @@ const Drawer: React.FC<{
       overflowY="scroll"
     >
       {children}
-    </Flex>
+    </Box>
   )
 }
 

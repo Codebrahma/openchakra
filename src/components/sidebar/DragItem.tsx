@@ -37,6 +37,8 @@ const DragItem: React.FC<ComponentItemProps> = ({
   return (
     <Box
       rounded="md"
+      width="90%"
+      bg="white"
       {...boxProps}
       p={3}
       textAlign="center"
