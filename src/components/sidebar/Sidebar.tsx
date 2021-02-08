@@ -11,6 +11,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
 } from '@chakra-ui/core'
 import { SearchIcon, CloseIcon } from '@chakra-ui/icons'
 import { AiOutlineAppstore } from 'react-icons/ai'
@@ -20,11 +21,42 @@ import { useSelector } from 'react-redux'
 import Inspector from '../inspector/Inspector'
 import { InspectorProvider } from '../../contexts/inspector-context'
 import { getSelectedComponentId } from '../../core/selectors/components'
-import menuItems, { IMenuItem } from './SidebarMenuItems'
+import menuItems, { IMenuItem, IMenuComponent } from './SidebarMenuItems'
 import Backdrop from './Backdrop'
 import DragImage from './DragImage'
 import Drawer from './Drawer'
 import DragItem from './DragItem'
+
+const DraggableMenuItem: React.FC<{
+  component: IMenuComponent
+  onDrag: Function
+}> = ({ component, onDrag }) => {
+  const { image, name, label } = component
+  if (image) {
+    return (
+      <DragImage key={name} type={name} onDrag={onDrag}>
+        <Image
+          src={image}
+          borderRadius="md"
+          alt={label}
+          fallback={<Spinner />}
+        />
+      </DragImage>
+    )
+  } else {
+    return (
+      <DragItem
+        key={name}
+        label={label}
+        type={name as any}
+        id={name as any}
+        onDrag={onDrag}
+      >
+        {label}
+      </DragItem>
+    )
+  }
+}
 
 const Sidebar = () => {
   const selectedId = useSelector(getSelectedComponentId)
@@ -153,36 +185,27 @@ const Sidebar = () => {
                     }
                   />
                 </InputGroup>
-                <Text
-                  fontSize="xs"
-                  color="gray.500"
-                  fontWeight={700}
-                  mb={3}
-                  mt={5}
-                  pl="1.5rem"
-                >
-                  COMPONENTS
-                </Text>
-                {Object.keys(menuItems).map(itemName => {
+                {Object.keys(menuItems).map(key => {
+                  const { name } = menuItems[key]
                   return (
                     <Box
                       p={2}
                       pl="1.5rem"
                       mb={2}
-                      key={itemName}
+                      key={key}
                       cursor="pointer"
                       _hover={{
                         bg: 'gray.100',
                         shadow: 'sm',
                       }}
                       bg={
-                        selectedMenuItem === itemName && isOpen
+                        selectedMenuItem === key && isOpen
                           ? 'gray.100'
                           : 'white'
                       }
-                      onMouseEnter={() => onHover(itemName)}
+                      onMouseEnter={() => onHover(key)}
                     >
-                      {itemName}
+                      {name}
                     </Box>
                   )
                 })}
@@ -202,28 +225,44 @@ const Sidebar = () => {
       >
         <Drawer isOpen={isOpen}>
           {menuItemToRender?.components.map(component => {
-            if (component.image) {
+            if (component.children) {
               return (
-                <DragImage
-                  key={component.name}
-                  type={component.name}
-                  onDrag={onDrag}
+                <Box
+                  borderRadius="md"
+                  boxShadow="0 0px 4px 1px #e2e8f0"
+                  bg="white"
+                  width="90%"
+                  m={5}
                 >
-                  <Image src={component.image} borderRadius="md" />
-                </DragImage>
+                  <Text
+                    fontSize="xs"
+                    color="gray.500"
+                    mt={5}
+                    fontWeight="700"
+                    textAlign="center"
+                  >
+                    {component.label.toUpperCase()}
+                  </Text>
+                  {component.children.map(child => {
+                    return (
+                      <DraggableMenuItem
+                        key={child.name}
+                        component={child}
+                        onDrag={onDrag}
+                      />
+                    )
+                  })}
+                </Box>
+              )
+            } else {
+              return (
+                <DraggableMenuItem
+                  key={component.name}
+                  component={component}
+                  onDrag={onDrag}
+                />
               )
             }
-            return (
-              <DragItem
-                key={component.name}
-                label={component.name}
-                type={component.name as any}
-                id={component.name as any}
-                onDrag={onDrag}
-              >
-                {component.name}
-              </DragItem>
-            )
           })}
         </Drawer>
       </Box>

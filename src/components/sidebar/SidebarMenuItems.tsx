@@ -36,10 +36,15 @@ import alertImage from '../../images/components-images/alert.png'
 import switchImage from '../../images/components-images/switch.png'
 import spinnerImage from '../../images/components-images/spinner.png'
 import contactImage1 from '../../images/components-images/contact1.png'
+import breadcrumbImage from '../../images/components-images/breadcrumb.png'
+import listImage from '../../images/components-images/list.png'
+import accordionImage from '../../images/components-images/accordion.png'
 
-type IMenuComponent = {
+export type IMenuComponent = {
   name: string
+  label: string
   image?: string
+  children?: IMenuComponent[]
 }
 
 export type IMenuItem = {
@@ -57,26 +62,32 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Box',
+        label: 'Box',
         image: boxImage,
       },
       {
         name: 'Flex',
+        label: 'Flex',
         image: flexImage,
       },
       {
         name: 'Grid',
+        label: 'Grid',
         image: gridImage,
       },
       {
         name: 'AvatarGroup',
+        label: 'Avatar Group',
         image: avatarGroupImage,
       },
       {
         name: 'RadioGroup',
+        label: 'Radio Group',
         image: radioGroupImage,
       },
       {
         name: 'AspectRatio',
+        label: 'Aspect Ratio',
         image: aspectRatioImage,
       },
     ],
@@ -86,43 +97,139 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Button',
+        label: 'Button',
         image: buttonImage,
       },
       {
         name: 'Avatar',
+        label: 'Avatar',
         image: avatarImage,
       },
       {
         name: 'Badge',
+        label: 'Badge',
         image: badgeImage,
       },
       {
         name: 'Image',
+        label: 'Image',
         image: Image,
       },
-      {
-        name: 'Alert',
-        image: alertImage,
-      },
+
       {
         name: 'Progress',
+        label: 'Progress',
         image: progressImage,
       },
       {
         name: 'CircularProgress',
+        label: 'Circular Progress',
         image: circularProgressImage,
       },
       {
         name: 'Switch',
+        label: 'Switch',
         image: switchImage,
       },
       {
         name: 'TagName',
+        label: 'Tag Name',
         image: tagNameImage,
       },
       {
         name: 'Spinner',
+        label: 'Spinner',
         image: spinnerImage,
+      },
+    ],
+  },
+  MetaElements: {
+    name: 'Meta Elements',
+    components: [
+      {
+        name: 'Alert',
+        label: 'Alert',
+        children: [
+          {
+            name: 'Alert',
+            label: 'Alert',
+            image: alertImage,
+          },
+          {
+            name: 'AlertIcon',
+            label: 'Alert Icon',
+          },
+          {
+            name: 'AlertTitle',
+            label: 'Alert Title',
+          },
+          {
+            name: 'AlertDescription',
+            label: 'Alert Description',
+          },
+        ],
+      },
+      {
+        name: 'Breadcrumb',
+        label: 'Breadcrumb',
+        children: [
+          {
+            name: 'Breadcrumb',
+            label: 'Breadcrumb',
+            image: breadcrumbImage,
+          },
+          {
+            name: 'BreadcrumbItem',
+            label: 'Breadcrumb Item',
+          },
+          {
+            name: 'BreadcrumbLink',
+            label: 'Breadcrumb Link',
+          },
+        ],
+      },
+
+      {
+        name: 'List',
+        label: 'List',
+        children: [
+          {
+            name: 'List',
+            label: 'List',
+            image: listImage,
+          },
+          {
+            name: 'ListItem',
+            label: 'List Item',
+          },
+        ],
+      },
+      {
+        name: 'Accordion',
+        label: 'Accordion',
+        children: [
+          {
+            name: 'Accordion',
+            label: 'Accordion',
+            image: accordionImage,
+          },
+          {
+            name: 'AccordionIcon',
+            label: 'Accordion Icon',
+          },
+          {
+            name: 'AccordionItem',
+            label: 'Accordion Item',
+          },
+          {
+            name: 'AccordionButton',
+            label: 'Accordion Button',
+          },
+          {
+            name: 'AccordionPanel',
+            label: 'Accordion Panel',
+          },
+        ],
       },
     ],
   },
@@ -131,30 +238,37 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Heading1',
+        label: 'Heading-1',
         image: headingImage1,
       },
       {
         name: 'Heading2',
+        label: 'Heading-2',
         image: headingImage2,
       },
       {
         name: 'Heading3',
+        label: 'Heading-3',
         image: headingImage3,
       },
       {
         name: 'Heading4',
+        label: 'Heading-4',
         image: headingImage4,
       },
       {
         name: 'Heading5',
+        label: 'heading-5',
         image: headingImage5,
       },
       {
         name: 'Heading6',
+        label: 'Heading-6',
         image: headingImage6,
       },
       {
         name: 'Text',
+        label: 'Text',
         image: textImage,
       },
     ],
@@ -163,36 +277,80 @@ const menuItems: IMenuItems = {
     name: 'Form',
     components: [
       {
-        name: 'Input',
-        image: inputImage,
-      },
-      {
-        name: 'Textarea',
-        image: textAreaImage,
-      },
-      {
         name: 'Checkbox',
+        label: 'Check Box',
         image: checkboxImage,
       },
       {
         name: 'Radio',
+        label: 'Radio Button',
         image: radioButtonImage,
       },
       {
-        name: 'FormControl',
-        image: FormControlImage,
+        name: 'Input',
+        label: 'Input',
+        image: inputImage,
       },
       {
-        name: 'InputGroup',
-        image: InputGroupImage,
-      },
-      {
-        name: 'NumberInput',
-        image: numberInputImage,
+        name: 'Textarea',
+        label: 'Text Area',
+        image: textAreaImage,
       },
       {
         name: 'Select',
+        label: 'Select',
         image: selectImage,
+      },
+      {
+        name: 'NumberInput',
+        label: 'Number Input',
+        image: numberInputImage,
+      },
+      {
+        name: 'FormControl',
+        label: 'Form Control',
+        children: [
+          {
+            name: 'FormControl',
+            label: 'Form Control',
+            image: FormControlImage,
+          },
+          {
+            name: 'FormLabel',
+            label: 'Form Label',
+          },
+          {
+            name: 'FormHelperText',
+            label: 'Form Helper Text',
+          },
+        ],
+      },
+      {
+        name: 'InputGroup',
+        label: 'Input Group',
+        children: [
+          {
+            name: 'InputGroup',
+            label: 'Input Group',
+            image: InputGroupImage,
+          },
+          {
+            name: 'InputLeftAddon',
+            label: 'Input Left Addon',
+          },
+          {
+            name: 'InputRightAddon',
+            label: 'Input Right Addon',
+          },
+          {
+            name: 'InputLeftElement',
+            label: 'Input Left Element',
+          },
+          {
+            name: 'InputRightElement',
+            label: 'Input Right Element',
+          },
+        ],
       },
     ],
   },
@@ -201,10 +359,12 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Blog1',
+        label: 'Blog 1',
         image: blogImage1,
       },
       {
         name: 'Blog2',
+        label: 'Blog 2',
         image: blogImage2,
       },
     ],
@@ -214,6 +374,7 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Pricing1',
+        label: 'Pricing 1',
         image: pricingImage1,
       },
     ],
@@ -223,10 +384,12 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'ECommerce1',
+        label: 'ECommerce 1',
         image: eCommerceImage1,
       },
       {
         name: 'ECommerce2',
+        label: 'ECommerce 2',
         image: eCommerceImage2,
       },
     ],
@@ -236,6 +399,7 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Team1',
+        label: 'Team 1',
         image: TeamImage1,
       },
     ],
@@ -245,6 +409,7 @@ const menuItems: IMenuItems = {
     components: [
       {
         name: 'Contact1',
+        label: 'Team 2',
         image: contactImage1,
       },
     ],

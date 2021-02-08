@@ -1,8 +1,9 @@
 const ListComponent = {
-  List: ` <List>
-    <ListItem>list</ListItem>
-    </List>`,
-  ListItem: ` <ListItem>list</ListItem>`,
+  List: `<List styleType="disc">
+  <ListItem>Lorem ipsum dolor sit amet</ListItem>
+  <ListItem>consectetur adipiscing elit</ListItem>
+</List>`,
+  ListItem: `<ListItem>Lorem ipsum dolor sit amet</ListItem>`,
 }
 
 export default ListComponent
