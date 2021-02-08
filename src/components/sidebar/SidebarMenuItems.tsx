@@ -42,12 +42,12 @@ type IMenuComponent = {
   image?: string
 }
 
-type IMenuItem = {
+export type IMenuItem = {
   name: string
   components: IMenuComponent[]
 }
 
-type IMenuItems = {
+export type IMenuItems = {
   [itemName: string]: IMenuItem
 }
 

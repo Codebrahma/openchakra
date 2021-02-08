@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, ChangeEvent } from 'react'
 import {
   Box,
   Tabs,
@@ -8,25 +8,30 @@ import {
   TabPanel,
   Image,
   Text,
+  Input,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/core'
-import Drawer from './Drawer'
-import DragItem from './DragItem'
-
-import Inspector from '../inspector/Inspector'
-import { InspectorProvider } from '../../contexts/inspector-context'
+import { SearchIcon, CloseIcon } from '@chakra-ui/icons'
 import { AiOutlineAppstore } from 'react-icons/ai'
 import { FaPaintBrush } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
+
+import Inspector from '../inspector/Inspector'
+import { InspectorProvider } from '../../contexts/inspector-context'
 import { getSelectedComponentId } from '../../core/selectors/components'
-import menuItems from './SidebarMenuItems'
+import menuItems, { IMenuItem } from './SidebarMenuItems'
 import Backdrop from './Backdrop'
 import DragImage from './DragImage'
+import Drawer from './Drawer'
+import DragItem from './DragItem'
 
 const Sidebar = () => {
   const selectedId = useSelector(getSelectedComponentId)
 
-  const [tabIndex, setTabIndex] = React.useState(0)
+  const [tabIndex, setTabIndex] = useState(0)
   const [selectedMenuItem, setSelectedMenuItem] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
   const onHover = (menuItem: string) => {
@@ -41,6 +46,7 @@ const Sidebar = () => {
 
   const onDrag = (isDragging: boolean) => {
     if (isDragging) {
+      setSearchTerm('')
       closeDrawerHandler()
     }
   }
@@ -50,6 +56,42 @@ const Sidebar = () => {
   useEffect(() => {
     setTabIndex(1)
   }, [selectedId])
+
+  const getFilteredMenuItem = () => {
+    let matchedMenuItem: string = ''
+    let componentIndex: number = -1
+
+    // Find wether the searched components matches any other items in the list
+    Object.keys(menuItems).forEach(menuItemName => {
+      const itemIndex = menuItems[menuItemName].components.findIndex(
+        component => component.name.toLowerCase() === searchTerm.toLowerCase(),
+      )
+
+      if (itemIndex !== -1) {
+        matchedMenuItem = menuItemName
+        componentIndex = itemIndex
+      }
+    })
+
+    // If the component is found, return the filtered component or else return all the components of the menu-item
+    if (componentIndex !== -1) {
+      if (matchedMenuItem !== selectedMenuItem) {
+        setSelectedMenuItem(matchedMenuItem)
+        setIsOpen(true)
+      }
+      return {
+        name: matchedMenuItem,
+        components: [
+          { ...menuItems[matchedMenuItem].components[componentIndex] },
+        ],
+      }
+    } else {
+      return menuItems[selectedMenuItem]
+    }
+  }
+
+  const menuItemToRender: IMenuItem =
+    searchTerm.length > 0 ? getFilteredMenuItem() : menuItems[selectedMenuItem]
 
   return (
     <Box position="relative" width="15rem">
@@ -91,6 +133,26 @@ const Sidebar = () => {
           <TabPanels>
             <TabPanel p={0}>
               <Box onMouseLeave={() => setIsOpen(false)}>
+                <InputGroup size="sm" m={4} width="90%">
+                  <InputRightElement>
+                    {searchTerm ? (
+                      <CloseIcon
+                        color="neutrals.300"
+                        cursor="pointer"
+                        onClick={() => setSearchTerm('')}
+                      />
+                    ) : (
+                      <SearchIcon color="neutrals.300" />
+                    )}
+                  </InputRightElement>
+                  <Input
+                    value={searchTerm}
+                    placeholder="Search component…"
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setSearchTerm(event.target.value)
+                    }
+                  />
+                </InputGroup>
                 <Text
                   fontSize="xs"
                   color="gray.500"
@@ -139,7 +201,7 @@ const Sidebar = () => {
         onMouseLeave={closeDrawerHandler}
       >
         <Drawer isOpen={isOpen}>
-          {menuItems[selectedMenuItem]?.components.map(component => {
+          {menuItemToRender?.components.map(component => {
             if (component.image) {
               return (
                 <DragImage
