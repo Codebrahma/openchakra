@@ -39,6 +39,10 @@ import contactImage1 from '../../images/components-images/contact1.png'
 import breadcrumbImage from '../../images/components-images/breadcrumb.png'
 import listImage from '../../images/components-images/list.png'
 import accordionImage from '../../images/components-images/accordion.png'
+import iconImage from '../../images/components-images/icon.png'
+import iconButtonImage from '../../images/components-images/iconButton.png'
+import closeButtonImage from '../../images/components-images/closeButton.png'
+import linkImage from '../../images/components-images/link.png'
 
 export type IMenuComponent = {
   name: string
@@ -103,7 +107,17 @@ const menuItems: IMenuItems = {
       {
         name: 'Avatar',
         label: 'Avatar',
-        image: avatarImage,
+        children: [
+          {
+            name: 'Avatar',
+            label: 'Avatar',
+            image: avatarImage,
+          },
+          {
+            name: 'AvatarBadge',
+            label: 'Avatar Badge',
+          },
+        ],
       },
       {
         name: 'Badge',
@@ -137,9 +151,33 @@ const menuItems: IMenuItems = {
         image: tagNameImage,
       },
       {
+        name: 'Link',
+        label: 'Link',
+        image: linkImage,
+      },
+      {
         name: 'Spinner',
         label: 'Spinner',
         image: spinnerImage,
+      },
+      {
+        name: 'Icon',
+        label: 'Icon',
+        image: iconImage,
+      },
+      {
+        name: 'IconButton',
+        label: 'Icon Button',
+        image: iconButtonImage,
+      },
+      {
+        name: 'CloseButton',
+        label: 'Close Button',
+        image: closeButtonImage,
+      },
+      {
+        name: 'Divider',
+        label: 'Divider',
       },
     ],
   },

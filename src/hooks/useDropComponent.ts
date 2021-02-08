@@ -205,6 +205,13 @@ export const useDropComponent = (
             { parentId: targetComponentId },
           )
 
+          // An avatar can only have one avatar badge.
+          if (
+            item.type === 'AvatarBadge' &&
+            components[targetComponentId].children.length > 0
+          )
+            return
+
           dispatch.components.addComponent({
             ...state,
             parentId: targetComponentId,
