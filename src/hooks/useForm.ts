@@ -29,7 +29,14 @@ export const useForm = () => {
     )
   }
 
-  const setValue = (id: string, name: string, value: any) => {
+  // Code will be updated only when the option is selected.
+  // Code will not be updated when the option is just hovered in the combo-box.
+  const setValue = (
+    id: string,
+    name: string,
+    value: any,
+    canUpdateCode: boolean = true,
+  ) => {
     if (id.length > 0)
       dispatch.components.updateProp({
         componentId,
@@ -38,20 +45,22 @@ export const useForm = () => {
         value,
       })
 
-    setTimeout(() => {
-      const updatedCode = babelQueries.setProp(
-        isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
-        {
-          componentId,
-          propName: name,
-          value: value.toString(),
-        },
-      )
-      // update the code
-      isCustomComponentUpdate
-        ? dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
-        : dispatch.code.setPageCode(updatedCode, selectedPage)
-    }, 200)
+    if (canUpdateCode) {
+      setTimeout(() => {
+        const updatedCode = babelQueries.setProp(
+          isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
+          {
+            componentId,
+            propName: name,
+            value: value.toString(),
+          },
+        )
+        // update the code
+        isCustomComponentUpdate
+          ? dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
+          : dispatch.code.setPageCode(updatedCode, selectedPage)
+      }, 200)
+    }
   }
 
   return { setValue }
