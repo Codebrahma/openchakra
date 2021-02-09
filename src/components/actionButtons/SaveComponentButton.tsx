@@ -16,12 +16,15 @@ import { getCode } from '../../core/selectors/code'
 import { useToast } from '@chakra-ui/core'
 import { getSelectedPage } from '../../core/selectors/page'
 import isContainsOnlyAlphaNumeric from '../../utils/isContainsOnlyAlphaNumeric'
+import { useQueue } from '../../hooks/useQueue'
 
 const SaveComponentButton: React.FC<{ componentId: string }> = ({
   componentId,
 }) => {
   const dispatch = useDispatch()
   const toast = useToast()
+  const queue = useQueue()
+
   const components = useSelector(getComponents())
   const props = useSelector(getProps())
   const code = useSelector(getCode)
@@ -76,15 +79,16 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
         const newComponentId = generateComponentId()
 
         dispatch.components.saveComponent(formattedName, newComponentId)
-        setTimeout(() => {
-          babelSaveQueryHandler(formattedName, newComponentId)
-        }, 200)
         toast({
           title: 'Component is saved successfully.',
           status: 'success',
           duration: 1000,
           isClosable: true,
           position: 'top',
+        })
+
+        queue.enqueue(async () => {
+          babelSaveQueryHandler(formattedName, newComponentId)
         })
       }
     }

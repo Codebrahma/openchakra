@@ -12,10 +12,13 @@ import { getCode, getAllComponentsCode } from '../../core/selectors/code'
 import babelQueries from '../../babel-queries/queries'
 import { searchRootCustomComponent } from '../../utils/recursive'
 import { getSelectedPage } from '../../core/selectors/page'
+import { useQueue } from '../../hooks/useQueue'
 
 const ChildrenInspector = () => {
-  const childrenComponent = useSelector(getSelectedComponentChildren)
   const dispatch = useDispatch()
+  const queue = useQueue()
+
+  const childrenComponent = useSelector(getSelectedComponentChildren)
   const componentId = useSelector(getSelectedComponentId)
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
@@ -32,7 +35,7 @@ const ChildrenInspector = () => {
       toIndex,
     })
 
-    setTimeout(() => {
+    queue.enqueue(async () => {
       const rootCustomParent = isCustomComponentUpdate
         ? searchRootCustomComponent(
             customComponents[componentId],
@@ -52,7 +55,7 @@ const ChildrenInspector = () => {
       } else {
         dispatch.code.setPageCode(updatedCode, selectedPage)
       }
-    }, 200)
+    })
   }
 
   const onSelectChild = (id: IComponent['id']) => {

@@ -15,11 +15,13 @@ import {
 } from '../../core/selectors/components'
 import babelQueries from '../../babel-queries/queries'
 import { getSelectedPage } from '../../core/selectors/page'
+import { useQueue } from '../../hooks/useQueue'
 
 const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
   propToUnExpose,
 }) => {
   const dispatch = useDispatch()
+  const queue = useQueue()
   const componentsCode = useSelector(getAllComponentsCode)
   const selectedComponentId = useSelector(getSelectedComponentId)
   const customComponents = useSelector(getCustomComponents)
@@ -72,9 +74,9 @@ const UnExposePropButton: React.FC<{ propToUnExpose: IProp }> = ({
 
   const unExposePropHandler = () => {
     dispatch.components.unexpose(name)
-    setTimeout(() => {
+    queue.enqueue(async () => {
       unExposeBabelQueryHandler()
-    }, 200)
+    })
   }
 
   return (

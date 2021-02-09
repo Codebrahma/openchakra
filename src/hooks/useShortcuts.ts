@@ -1,10 +1,18 @@
 import useDispatch from './useDispatch'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
-import babelQueries from '../babel-queries/queries'
-import { useSelector } from 'react-redux'
-import { getCode } from '../core/selectors/code'
-import { getSelectedComponentId } from '../core/selectors/components'
-import { getSelectedPage } from '../core/selectors/page'
+// import babelQueries from '../babel-queries/queries'
+// import { useSelector } from 'react-redux'
+// import { getCode, getAllComponentsCode } from '../core/selectors/code'
+// import {
+//   getSelectedComponentId,
+//   isChildrenOfCustomComponent,
+//   getCustomComponents,
+//   getComponents,
+// } from '../core/selectors/components'
+// import { getSelectedPage } from '../core/selectors/page'
+// import { searchRootCustomComponent } from '../utils/recursive'
+// import { useQueue } from './useQueue'
+// import buildComponentIds from '../utils/componentIdsBuilder'
 
 /**
  * @member
@@ -31,19 +39,50 @@ const hasNoSpecialKeyPressed = (event: KeyboardEvent | undefined) =>
 
 const useShortcuts = () => {
   const dispatch = useDispatch()
-  const code = useSelector(getCode)
-  const selectedComponentId = useSelector(getSelectedComponentId)
-  const selectedPage = useSelector(getSelectedPage)
+  // const queue = useQueue()
+
+  // const componentsCode = useSelector(getAllComponentsCode)
+  // const selectedComponentId = useSelector(getSelectedComponentId)
+  // const selectedPage = useSelector(getSelectedPage)
+  // const code = useSelector(getCode)
+  // const isCustomComponentChild = useSelector(
+  //   isChildrenOfCustomComponent(selectedComponentId),
+  // )
+  // const customComponents = useSelector(getCustomComponents)
+  // const components = useSelector(getComponents())
+
+  // let rootCustomParent: string = ``
+
+  // if (isCustomComponentChild) {
+  //   rootCustomParent = searchRootCustomComponent(
+  //     customComponents[selectedComponentId],
+  //     customComponents,
+  //   )
+  // }
+
+  // const updateCode = (code: string) => {
+  //   if (code.length > 0) {
+  //     // update the code
+  //     isCustomComponentChild
+  //       ? dispatch.code.setComponentsCode(code, rootCustomParent)
+  //       : dispatch.code.setPageCode(code, selectedPage)
+  //   }
+  // }
 
   const deleteNode = (event: KeyboardEvent | undefined) => {
     if (event) {
       event.preventDefault()
     }
-    dispatch.components.deleteComponent()
-    const updatedCode = babelQueries.deleteComponent(code, {
-      componentId: selectedComponentId,
-    })
-    dispatch.code.setPageCode(updatedCode, selectedPage)
+    // dispatch.components.deleteComponent()
+    // queue.enqueue(async () => {
+    //   const updatedCode = babelQueries.deleteComponent(
+    //     isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+    //     {
+    //       componentId: selectedComponentId,
+    //     },
+    //   )
+    //   updateCode(updatedCode)
+    // })
   }
 
   const toggleBuilderMode = (event: KeyboardEvent | undefined) => {
@@ -85,7 +124,24 @@ const useShortcuts = () => {
       event.preventDefault()
     }
 
-    // dispatch.components.duplicate()
+    // const componentIds = buildComponentIds(
+    //   selectedComponentId,
+    //   isCustomComponentChild ? customComponents : components,
+    // )
+
+    // dispatch.components.duplicate([...componentIds])
+
+    // queue.enqueue(async () => {
+    //   const updatedCode = babelQueries.duplicateComponent(
+    //     isCustomComponentChild ? componentsCode[rootCustomParent] : code,
+    //     {
+    //       componentId: selectedComponentId,
+    //       componentIds: [...componentIds],
+    //     },
+    //   )
+
+    //   updateCode(updatedCode)
+    // })
   }
 
   const fullScreen = (event: KeyboardEvent | undefined) => {

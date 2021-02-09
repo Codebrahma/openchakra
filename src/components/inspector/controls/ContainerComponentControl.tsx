@@ -12,9 +12,11 @@ import {
   getAllComponentsCode,
 } from '../../../core/selectors/code'
 import babelQueries from '../../../babel-queries/queries'
+import { useQueue } from '../../../hooks/useQueue'
 
 const ContainerComponentControl = () => {
   const dispatch = useDispatch()
+  const queue = useQueue()
 
   const component = useSelector(getSelectedComponent)
   const { type } = component
@@ -29,17 +31,17 @@ const ContainerComponentControl = () => {
       dispatch.components.convertToContainerComponent({
         customComponentType: type,
       })
-      setTimeout(() => {
+      queue.enqueue(async () => {
         const updatedPagesCode = babelQueries.convertInstancesToContainerComp(
           pagesCode,
           { componentName: type },
         )
         dispatch.code.resetAllPagesCode(updatedPagesCode)
-      }, 300)
+      })
     } else {
       dispatch.components.deleteCustomProp('isContainerComponent')
 
-      setTimeout(() => {
+      queue.enqueue(async () => {
         const updatedPagesCode = babelQueries.convertInstancesToNormalComp(
           pagesCode,
           { componentName: type },
@@ -49,7 +51,7 @@ const ContainerComponentControl = () => {
         )
         dispatch.code.resetAllPagesCode(updatedPagesCode)
         dispatch.code.setComponentsCode(updatedComponentCode, type)
-      }, 300)
+      })
     }
   }
   return (

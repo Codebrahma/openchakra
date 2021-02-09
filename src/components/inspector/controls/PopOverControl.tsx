@@ -27,6 +27,7 @@ import {
 } from '../../../core/selectors/code'
 import { searchRootCustomComponent } from '../../../utils/recursive'
 import { getSelectedPage } from '../../../core/selectors/page'
+import { useQueue } from '../../../hooks/useQueue'
 
 type FormControlPropType = {
   label: ReactNode
@@ -40,6 +41,8 @@ const PopOverControl: React.FC<FormControlPropType> = ({
   hasColumn,
 }) => {
   const dispatch = useDispatch()
+  const queue = useQueue()
+
   const [isOpen, setIsOpen] = useState(false)
   const [propName, setPropName] = useState('')
   const toast = useToast()
@@ -107,9 +110,9 @@ const PopOverControl: React.FC<FormControlPropType> = ({
           name: propName,
           targetedProp: htmlFor || '',
         })
-        setTimeout(() => {
+        queue.enqueue(() => {
           babelExposePropHandler()
-        }, 200)
+        })
       }
     }
   }

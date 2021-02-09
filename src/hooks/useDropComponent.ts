@@ -50,8 +50,9 @@ export const useDropComponent = (
   },
 ) => {
   const dispatch = useDispatch()
-  const isCustomPage = useSelector(checkIsCustomPage)
+  const queue = useQueue()
 
+  const isCustomPage = useSelector(checkIsCustomPage)
   const components = useSelector(getComponents())
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(targetComponentId),
@@ -63,7 +64,6 @@ export const useDropComponent = (
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
   const onComponentMoved = useMoveComponent(targetComponentId)
-  const queue = useQueue()
 
   if (isCustomComponentChild) {
     rootParentOfParentElement = searchRootCustomComponent(
@@ -217,13 +217,13 @@ export const useDropComponent = (
             parentId: targetComponentId,
           })
 
-          setTimeout(() => {
+          queue.enqueue(async () => {
             updatedCode = babelQueries.addComponent(code, {
               componentCode: componentWithCompId,
               parentId: targetComponentId,
             })
             updateCode(updatedCode)
-          }, 200)
+          })
         }
       }
     },

@@ -30,14 +30,15 @@ import SaveComponentButton from '../actionButtons/SaveComponentButton'
 import CodeActionButton from '../actionButtons/CodeActionButton'
 import SpanActionButton from '../actionButtons/SpanActionButton'
 import { checkIsCustomPage, getSelectedPage } from '../../core/selectors/page'
+import { useQueue } from '../../hooks/useQueue'
 
 const Inspector = () => {
   const dispatch = useDispatch()
-  const component = useSelector(getSelectedComponent)
-  const selectedPage = useSelector(getSelectedPage)
-
+  const queue = useQueue()
   const { clearActiveProps } = useInspectorUpdate()
 
+  const component = useSelector(getSelectedComponent)
+  const selectedPage = useSelector(getSelectedPage)
   const { type, id } = component
   const children = useSelector(getChildrenBy(id))
   const customComponentsList = useSelector(getCustomComponentsList)
@@ -92,7 +93,7 @@ const Inspector = () => {
   const removeComponentHandler = () => {
     dispatch.components.deleteComponent(component.id)
 
-    setTimeout(() => {
+    queue.enqueue(async () => {
       const updatedCode = babelQueries.deleteComponent(
         isCustomComponentChild ? componentsCode[rootCustomParent] : code,
         {
@@ -100,7 +101,7 @@ const Inspector = () => {
         },
       )
       updateCode(updatedCode)
-    }, 200)
+    })
 
     dispatch.components.unselect()
   }
@@ -113,7 +114,7 @@ const Inspector = () => {
 
     dispatch.components.duplicate([...componentIds])
 
-    setTimeout(() => {
+    queue.enqueue(async () => {
       const updatedCode = babelQueries.duplicateComponent(
         isCustomComponentChild ? componentsCode[rootCustomParent] : code,
         {
@@ -123,7 +124,7 @@ const Inspector = () => {
       )
 
       updateCode(updatedCode)
-    }, 200)
+    })
   }
 
   return (

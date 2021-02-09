@@ -15,16 +15,19 @@ import {
   getAllPagesCode,
 } from '../../core/selectors/code'
 import useDispatch from '../../hooks/useDispatch'
+import { useQueue } from '../../hooks/useQueue'
 
 const CustomPropDeletionButton: React.FC<{ customPropName: string }> = ({
   customPropName,
 }) => {
+  const dispatch = useDispatch()
+  const queue = useQueue()
+
   const component = useSelector(getSelectedComponent)
   const customComponents = useSelector(getCustomComponents)
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const componentsCode = useSelector(getAllComponentsCode)
   const pagesCode = useSelector(getAllPagesCode)
-  const dispatch = useDispatch()
 
   const babelCustomPropDeletionQueryHandler = () => {
     const customComponentType = component.type
@@ -50,9 +53,9 @@ const CustomPropDeletionButton: React.FC<{ customPropName: string }> = ({
 
   const customPropDeletionHandler = () => {
     dispatch.components.deleteCustomProp(customPropName)
-    setTimeout(() => {
+    queue.enqueue(async () => {
       babelCustomPropDeletionQueryHandler()
-    }, 200)
+    })
   }
   return (
     <ActionButton

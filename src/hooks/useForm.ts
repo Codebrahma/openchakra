@@ -9,9 +9,12 @@ import babelQueries from '../babel-queries/queries'
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import { searchRootCustomComponent } from '../utils/recursive'
 import { getSelectedPage } from '../core/selectors/page'
+import { useQueue } from './useQueue'
 
 export const useForm = () => {
   const dispatch = useDispatch()
+  const queue = useQueue()
+
   const componentId = useSelector(getSelectedComponentId)
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
@@ -46,7 +49,7 @@ export const useForm = () => {
       })
 
     if (canUpdateCode) {
-      setTimeout(() => {
+      queue.enqueue(async () => {
         const updatedCode = babelQueries.setProp(
           isCustomComponentUpdate ? componentsCode[rootCustomParent] : code,
           {
@@ -59,7 +62,7 @@ export const useForm = () => {
         isCustomComponentUpdate
           ? dispatch.code.setComponentsCode(updatedCode, rootCustomParent)
           : dispatch.code.setPageCode(updatedCode, selectedPage)
-      }, 200)
+      })
     }
   }
 
