@@ -10,9 +10,12 @@ import {
 } from '../core/selectors/components'
 import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import { getSelectedPage } from '../core/selectors/page'
+import { useQueue } from './useQueue'
 
 const useMoveComponent = (parentId: string) => {
   const dispatch = useDispatch()
+  const queue = useQueue()
+
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(parentId),
   )
@@ -120,9 +123,9 @@ const useMoveComponent = (parentId: string) => {
         parentId,
       })
 
-      setTimeout(() => {
+      queue.enqueue(async () => {
         moveComponentBabelQueryHandler(componentId)
-      }, 200)
+      })
     }
   }
   return onComponentMove

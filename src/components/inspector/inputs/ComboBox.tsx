@@ -35,7 +35,7 @@ const ComboBoxComponent: React.FC<FormControlPropType> = ({
       renderOptions={renderOptions}
       placeholder={placeholder}
       onSelect={option => setValue(id, name, option)}
-      onOptionsChange={option => setValue(id, name, option)}
+      onOptionsChange={option => setValue(id, name, option, false)}
       style={{ height: '2rem', width: '100%', fontSize: '14px' }}
       onBlur={e => setValue(id, name, e?.target.value)}
       enableAutocomplete={enableAutoComplete}

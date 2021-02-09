@@ -36,12 +36,13 @@ const code = createModel({
       updatedCode: string,
       selectedPage: string,
     ): CodeState {
+      const newPagesCode = {
+        ...state.pagesCode,
+        [selectedPage]: updatedCode,
+      }
       return {
         ...state,
-        pagesCode: {
-          ...state.pagesCode,
-          [selectedPage]: updatedCode,
-        },
+        pagesCode: newPagesCode,
       }
     },
     setComponentsCode(
