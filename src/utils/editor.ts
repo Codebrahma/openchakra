@@ -1,12 +1,10 @@
 const ALERT_COMPONENTS: ComponentType[] = [
-  'Alert',
   'AlertDescription',
   'AlertIcon',
   'AlertTitle',
 ]
 
 const MENU_COMPONENTS: ComponentType[] = [
-  'Menu',
   'MenuList',
   'MenuButton',
   'MenuItem',
@@ -17,7 +15,6 @@ const MENU_COMPONENTS: ComponentType[] = [
 ]
 
 const NUMBER_INPUT_COMPONENTS: ComponentType[] = [
-  'NumberInput',
   'NumberInputField',
   'NumberInputStepper',
   'NumberIncrementStepper',
@@ -44,6 +41,12 @@ export const COMPONENTS: ComponentType[] = [
   'FormErrorMessage',
   'Grid',
   'Heading',
+  'Heading1',
+  'Heading2',
+  'Heading3',
+  'Heading4',
+  'Heading5',
+  'Heading6',
   'Icon',
   'IconButton',
   'Image',
@@ -81,14 +84,22 @@ export const COMPONENTS: ComponentType[] = [
   'InputRightElement',
   'InputLeftElement',
   // Allow meta components
-  'AlertMeta',
-  'FormControlMeta',
-  'AccordionMeta',
-  'ListMeta',
-  'InputGroupMeta',
-  'BreadcrumbMeta',
-  'NumberInputMeta',
-  'MenuMeta',
+  'Alert',
+  'FormControl',
+  'Accordion',
+  'List',
+  'InputGroup',
+  'Breadcrumb',
+  'NumberInput',
+  'Menu',
+  'Blog1',
+  'Blog2',
+  'ECommerce1',
+  'ECommerce2',
+  'Pricing1',
+  'Team1',
+  'Contact1',
+  // Handlers all the custom components
   'Custom',
 ]
 

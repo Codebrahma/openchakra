@@ -1,5 +1,5 @@
 const NumberInputComponent = {
-  NumberInputMeta: `<NumberInput>
+  NumberInput: `<NumberInput>
     <NumberInputField />
     <NumberInputStepper>
       <NumberIncrementStepper />

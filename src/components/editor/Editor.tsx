@@ -7,7 +7,6 @@ import useDispatch from '../../hooks/useDispatch'
 import { getChildrenBy, getPropsBy } from '../../core/selectors/components'
 import { getShowLayout } from '../../core/selectors/app'
 import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
-import { checkIsCustomPage } from '../../core/selectors/page'
 
 export const gridStyles = {
   backgroundImage:
@@ -23,7 +22,6 @@ const Editor: React.FC = () => {
   const children = useSelector(getChildrenBy('root'))
   const isEmpty = !children.length
   const rootProps = useSelector(getPropsBy('root'))
-  const isComponentsCreationPage = useSelector(checkIsCustomPage)
 
   let editorBackgroundProps = {}
 
@@ -47,6 +45,7 @@ const Editor: React.FC = () => {
       height="100%"
       minWidth="10rem"
       width="100%"
+      pb={10}
       display={isEmpty ? 'flex' : 'block'}
       justifyContent="center"
       alignItems="center"
@@ -58,9 +57,7 @@ const Editor: React.FC = () => {
     >
       {isEmpty && (
         <Text maxWidth="md" color="gray.400" fontSize="xl" textAlign="center">
-          {isComponentsCreationPage
-            ? 'This page allows you to create custom components.'
-            : 'Drag and drop components to start building websites with zero coding.'}
+          Drag and drop components to start building websites with zero coding.
         </Text>
       )}
 

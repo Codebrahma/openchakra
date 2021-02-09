@@ -8,7 +8,6 @@ import {
 } from '../../../utils/reducerUtilities'
 import {
   addComponent,
-  addMetaComponent,
   deleteComponent,
   duplicateComponent,
 } from './componentsOperations'
@@ -84,7 +83,7 @@ const components = createModel({
       return produce(state, (draftState: ComponentsState) => {
         const { components, props } = loadRequired(draftState)
         const defaultProps =
-          DEFAULT_PROPS[components[componentId].type as ComponentType]
+          DEFAULT_PROPS[components[componentId].type as ComponentType] || []
         const PropIdsToRetain: IProp['id'][] = []
 
         // If the component has a default value for a prop, retain that prop and substitute the prop with default value.
@@ -205,18 +204,6 @@ const components = createModel({
         )
       })
     },
-    addComponent(
-      state: ComponentsState,
-      payload: {
-        componentId: string
-        parentId: string
-        type: ComponentType
-      },
-    ): ComponentsState {
-      return produce(state, (draftState: ComponentsState) => {
-        addComponent(draftState, payload)
-      })
-    },
     addCustomComponent(
       state: ComponentsState,
       payload: {
@@ -243,13 +230,17 @@ const components = createModel({
         addCustomComponent(draftState, { ...payload })
       })
     },
-    addMetaComponent(
+    addComponent(
       state: ComponentsState,
-      payload: { components: IComponents; root: string; parent: string },
+      payload: {
+        components: IComponents
+        props: IProps
+        rootComponentId: string
+        parentId: string
+      },
     ): ComponentsState {
       return produce(state, (draftState: ComponentsState) => {
-        const { components, root, parent } = payload
-        addMetaComponent(draftState, { components, root, parentId: parent })
+        addComponent(draftState, payload)
       })
     },
     select(

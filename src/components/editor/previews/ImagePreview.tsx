@@ -1,11 +1,8 @@
 import React from 'react'
 import { useInteractive } from '../../../hooks/useInteractive'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { Image, Box } from '@chakra-ui/core'
+import { Image } from '@chakra-ui/core'
 import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
-import { generatePropId } from '../../../utils/generateId'
-import { getPropsBy } from '../../../core/selectors/components'
-import { useSelector } from 'react-redux'
 
 const ImagePreview: React.FC<{
   component: IComponent
@@ -13,44 +10,26 @@ const ImagePreview: React.FC<{
 }> = ({ component, customProps }) => {
   const { props: componentProps, ref, boundingPosition } = useInteractive(
     component,
-    true,
+    false,
   )
-  const imageProps = useSelector(getPropsBy(component.id))
-  const { drop, isOver } = useDropComponent(
+  const { drop } = useDropComponent(
     component.id,
     undefined,
     false,
     boundingPosition,
   )
 
-  if (isOver)
-    componentProps.push({
-      id: generatePropId(),
-      name: 'bg',
-      value: 'teal.50',
-      componentId: component.id,
-      derivedFromPropName: null,
-      derivedFromComponentType: null,
-    })
-
   const propsKeyValue = findAndReplaceExposedPropValue(
     componentProps,
     customProps,
   )
-  const imagePropsKeyValue = findAndReplaceExposedPropValue(
-    imageProps,
-    customProps,
-  )
 
   return (
-    <Box
+    <Image
       {...propsKeyValue}
-      height="fit-content"
-      width="fit-content"
+      src={propsKeyValue?.src || 'alt'}
       ref={drop(ref)}
-    >
-      <Image {...imagePropsKeyValue} />
-    </Box>
+    />
   )
 }
 

@@ -1,5 +1,5 @@
 const FormControlComponent = {
-  FormControlMeta: `<FormControl>
+  FormControl: `<FormControl>
     <FormLabel>Label</FormLabel>
     <Input />
     <FormHelperText>Helper message</FormHelperText>

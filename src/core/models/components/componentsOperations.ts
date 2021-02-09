@@ -1,6 +1,4 @@
 import { DEFAULT_ID } from './components-types'
-import { generatePropId } from '../../../utils/generateId'
-import { DEFAULT_PROPS } from '../../../utils/defaultProps'
 import {
   loadRequired,
   joinAdjacentTextValues,
@@ -13,113 +11,48 @@ import {
 } from '../../../utils/recursive'
 import { ComponentsState } from './components'
 
-/**
- * @typedef {Object} AddComponentPayload
- * @property {string} componentId - Id of the component
- * @property {string} parentId - Id of the parent component where the component is added.
- * @property {ComponentType} type - Type of the added component.
- */
-
-/**
- * @method
- * @name addComponent
- * @description This function will add the component and its respective props.
- * @param {ComponentsState} draftState workspace state
- * @param {AddComponentPayload} payload
- */
-export const addComponent = (
-  draftState: ComponentsState,
-  payload: { componentId: string; parentId: string; type: ComponentType },
-) => {
-  const { componentId: id, parentId, type } = payload
-  const { components, props } = loadRequired(draftState, parentId)
-  const defaultProps: IPropsById = {}
-  const defaultPropsIds: string[] = []
-
-  //Add the default props for the component.
-  DEFAULT_PROPS[type] &&
-    Object.keys(DEFAULT_PROPS[type]).forEach((propName: string) => {
-      const propId = generatePropId()
-      defaultProps[propId] = {
-        id: propId,
-        name: propName,
-        value: DEFAULT_PROPS[type][propName],
-        derivedFromPropName: null,
-        derivedFromComponentType: null,
-      }
-      defaultPropsIds.push(propId)
-    })
-  components[id] = {
-    id,
-    type: type,
-    parent: parentId,
-    children: [],
+const updatePropsState = (props: IProps, newProps: IProps) => {
+  return {
+    byId: {
+      ...props.byId,
+      ...newProps.byId,
+    },
+    byComponentId: {
+      ...props.byComponentId,
+      ...newProps.byComponentId,
+    },
   }
-  props.byComponentId[id] = []
-  props.byId = {
-    ...props.byId,
-    ...defaultProps,
-  }
-  props.byComponentId[id] = [...props.byComponentId[id], ...defaultPropsIds]
-
-  components[parentId].children.push(id)
 }
 
-/**
- * @typedef {Object} AddMetaComponentPayload
- * @property {IComponents} components - Id of the parent component where the component is added.
- * @property {string} root - Root Parent component id of the meta components.
- * @property {string} parentId - Id of the parent component where the meta component is added.
- */
-
-/**
- * @method
- * @name addMetaComponent
- * @description This function will add the meta components and its respective props.
- * @param {ComponentsState} draftState workspace state
- * @param {AddMetaComponentPayload} payload
- */
-
-export const addMetaComponent = (
+export const addComponent = (
   draftState: ComponentsState,
-  payload: { components: IComponents; root: string; parentId: string },
+  payload: {
+    components: IComponents
+    props: IProps
+    rootComponentId: string
+    parentId: string
+  },
 ) => {
-  const { components: metaComponents, root, parentId } = payload
-  const { isCustomComponentChild, props } = loadRequired(draftState, parentId)
-
-  //Add the default props for the meta components
-  Object.values(metaComponents).forEach(component => {
-    props.byComponentId[component.id] = []
-    DEFAULT_PROPS[component.type as ComponentType] &&
-      Object.keys(DEFAULT_PROPS[component.type as ComponentType]).forEach(
-        (propName: string) => {
-          const propId = generatePropId()
-          props.byComponentId[component.id].push(propId)
-          props.byId[propId] = {
-            id: propId,
-            name: propName,
-            value: DEFAULT_PROPS[component.type as ComponentType][propName],
-            derivedFromPropName: null,
-            derivedFromComponentType: null,
-          }
-        },
-      )
-  })
+  const { components, props, rootComponentId, parentId } = payload
+  const { isCustomComponentChild } = loadRequired(draftState, parentId)
 
   if (isCustomComponentChild) {
     draftState.customComponents = {
       ...draftState.customComponents,
-      ...metaComponents,
+      ...components,
     }
-    draftState.customComponents[root].parent = parentId
-    draftState.customComponents[parentId].children.push(root)
+    draftState.customComponentsProps = updatePropsState(
+      draftState.customComponentsProps,
+      props,
+    )
+    draftState.customComponents[parentId].children.push(rootComponentId)
   } else {
     draftState.components = {
       ...draftState.components,
-      ...metaComponents,
+      ...components,
     }
-    draftState.components[root].parent = parentId
-    draftState.components[parentId].children.push(root)
+    draftState.props = updatePropsState(draftState.props, props)
+    draftState.components[parentId].children.push(rootComponentId)
   }
 }
 

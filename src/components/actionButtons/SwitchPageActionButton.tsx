@@ -6,24 +6,25 @@ import { useSelector } from 'react-redux'
 import { getAllPagesCode } from '../../core/selectors/code'
 import babelQueries from '../../babel-queries/queries'
 import { checkIsCustomPage } from '../../core/selectors/page'
+import { Link } from 'react-router-dom'
 
 const SwitchPageActionButton = () => {
   const dispatch = useDispatch()
-  const showCustomPage = useSelector(checkIsCustomPage)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const allPagesCode = useSelector(getAllPagesCode)
 
   const clickHandler = () => {
     dispatch.components.unselect()
-    if (showCustomPage) {
+    if (isCustomPage) {
       dispatch.page.switchPage('app')
-      const componentsState = babelQueries.getComponentsState(
+      const componentsState = babelQueries.generateComponentsState(
         allPagesCode['app'],
       )
 
       dispatch.components.resetComponentsState(componentsState)
     } else {
       dispatch.page.switchPage('customPage')
-      const componentsState = babelQueries.getComponentsState(
+      const componentsState = babelQueries.generateComponentsState(
         allPagesCode['customPage'],
       )
 
@@ -31,14 +32,16 @@ const SwitchPageActionButton = () => {
     }
   }
   return (
-    <ActionButton
-      label="Create components"
-      icon={<MdCreateNewFolder />}
-      onClick={clickHandler}
-      bg={showCustomPage ? 'primary.100' : 'white'}
-      color={showCustomPage ? 'primary.900' : 'black'}
-      size="sm"
-    />
+    <Link to={isCustomPage ? '/app' : '/customPage'}>
+      <ActionButton
+        label="Create components"
+        icon={<MdCreateNewFolder />}
+        onClick={clickHandler}
+        bg={isCustomPage ? 'primary.100' : 'white'}
+        color={isCustomPage ? 'primary.900' : 'black'}
+        size="sm"
+      />
+    </Link>
   )
 }
 

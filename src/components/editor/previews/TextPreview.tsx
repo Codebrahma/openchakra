@@ -14,7 +14,6 @@ import {
 import ComponentPreview from '../ComponentPreview'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { useForm } from '../../../hooks/useForm'
 
 const TextPreview: React.FC<{
   component: IComponent
@@ -49,8 +48,6 @@ const TextPreview: React.FC<{
   const selectedComponents = useSelector(getComponents(component.id))
   const textValue = useSelector(getInnerHTMLText)
   const selectedId = useSelector(getSelectedComponentId)
-  const { setValue } = useForm()
-
   const componentChildren =
     propsKeyValue.children && Array.isArray(propsKeyValue.children)
       ? propsKeyValue.children
@@ -92,10 +89,7 @@ const TextPreview: React.FC<{
               value: value || '',
             })
         })
-        // As of now span elements are not handled by the AST tree
-        if (childrenDetails[0]?.type === '#text') {
-          setValue('', 'children', childrenDetails[0].value)
-        }
+
         dispatch.components.updateTextChildrenProp({
           id: component.id,
           value: childrenDetails,

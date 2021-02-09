@@ -1,5 +1,5 @@
 const InputGroupComponent = {
-  InputGroupMeta: `<InputGroup>
+  InputGroup: `<InputGroup>
     <InputLeftAddon>left</InputLeftAddon>
     <Input />
     <InputRightElement>

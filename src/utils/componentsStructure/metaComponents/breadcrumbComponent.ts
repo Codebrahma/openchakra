@@ -1,5 +1,5 @@
 const BreadcrumbComponent = {
-  BreadcrumbMeta: `<Breadcrumb>
+  Breadcrumb: `<Breadcrumb>
   <BreadcrumbItem>
     <BreadcrumbLink>Lorem Ipsum</BreadcrumbLink>
   </BreadcrumbItem>

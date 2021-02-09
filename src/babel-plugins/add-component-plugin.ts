@@ -1,17 +1,22 @@
-import { getComponentId, toJsxAttribute } from './utils/babel-plugin-utils'
 import template from '@babel/template'
 import * as t from '@babel/types'
-import componentsStructure from '../utils/componentsStructure/componentsStructure'
+import union from 'lodash/union'
+
+import { getComponentId } from './utils/babel-plugin-utils'
+
+export interface IComponentIds {
+  [type: string]: string
+}
 
 const addComponentPlugin = (
   _: any,
   options: {
-    componentId: string
     parentId: string
-    type: string
+    componentsToImport: string[]
+    componentCode: string
   },
 ) => {
-  const { componentId, parentId, type } = options
+  const { componentCode, parentId, componentsToImport } = options
 
   return {
     visitor: {
@@ -22,27 +27,21 @@ const addComponentPlugin = (
           (specifier: any) => specifier.local.name,
         )
 
-        if (importedComponents.includes(type)) return
+        const components = union(importedComponents, componentsToImport)
 
-        path.node.specifiers.push(
-          t.importSpecifier(t.identifier(type), t.identifier(type)),
+        path.node.specifiers = components.map(component =>
+          t.importSpecifier(t.identifier(component), t.identifier(component)),
         )
       },
       JSXElement(path: any) {
         const openingElement = path.node.openingElement
 
         const visitedComponentId = getComponentId(openingElement)
-
         if (visitedComponentId && visitedComponentId === parentId) {
           // Change the JSX element in the string to node template
-          const node = template.ast(componentsStructure[type], {
+          const node = template.ast(componentCode, {
             plugins: ['jsx'],
           }).expression
-
-          // Convert to jsx attribute with compId as name.
-          const jsxAttribute = toJsxAttribute('compId', componentId)
-
-          node.openingElement.attributes.push(jsxAttribute)
 
           const newLineText = t.jsxText('\n')
 

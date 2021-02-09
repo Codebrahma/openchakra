@@ -21,7 +21,7 @@ import ActionButton from './actionButtons/ActionButton'
 import composerIcon from '../composer-icon.png'
 import { getCode } from '../core/selectors/code'
 import SwitchPageActionButton from './actionButtons/SwitchPageActionButton'
-import { getSelectedPage } from '../core/selectors/page'
+import { getSelectedPage, checkIsCustomPage } from '../core/selectors/page'
 
 const CodeSandboxButton = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -55,6 +55,7 @@ const CodeSandboxButton = () => {
 const Header = () => {
   const showLayout = useSelector(getShowLayout)
   const showCode = useSelector(getShowCode)
+  const isCustomPage = useSelector(checkIsCustomPage)
   const selectedPage = useSelector(getSelectedPage)
   const dispatch = useDispatch()
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -156,14 +157,16 @@ const Header = () => {
           </Box>
 
           <Box>
-            <ClearOptionPopover
-              name="Clear Page"
-              message="Do you really want to remove all components on the page?"
-              onClick={() => {
-                dispatch.components.resetComponents()
-                dispatch.code.resetPageCode(selectedPage)
-              }}
-            />
+            {!isCustomPage ? (
+              <ClearOptionPopover
+                name="Clear Page"
+                message="Do you really want to remove all components on the page?"
+                onClick={() => {
+                  dispatch.components.resetComponents()
+                  dispatch.code.resetPageCode(selectedPage)
+                }}
+              />
+            ) : null}
           </Box>
         </Flex>
       </Flex>

@@ -21,6 +21,7 @@ import { MdDeleteForever } from 'react-icons/md'
 import ImportWorkspaceMenuItem from './HeaderMenuItems/ImportWorkspaceMenuItem'
 import ExportWorkspaceMenuItem from './HeaderMenuItems/ExportWorkspaceMenuItem'
 import SaveWorkspaceMenuItem from './HeaderMenuItems/SaveWorkspaceMenuItem'
+import { useHistory } from 'react-router-dom'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
 
@@ -43,6 +44,7 @@ const CustomMenuButton: React.FC<
 
 const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const clearWorkSpaceHandler = () => {
     const confirmClearing = window.confirm(
@@ -51,6 +53,7 @@ const HeaderMenu: FunctionComponent<{ onOpen: any }> = ({ onOpen }) => {
     if (confirmClearing) {
       dispatch.code.resetCode()
       dispatch.page.switchPage('app')
+      history.push('/app')
       dispatch.components.resetAll()
       dispatch.app.resetCustomTheme()
       dispatch.app.removeAllFonts()

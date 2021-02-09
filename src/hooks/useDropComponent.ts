@@ -1,5 +1,6 @@
 import { useDrop, DropTargetMonitor } from 'react-dnd'
 import { useSelector } from 'react-redux'
+
 import { rootComponents } from '../utils/editor'
 import useDispatch from './useDispatch'
 import {
@@ -12,16 +13,35 @@ import { getCode, getAllComponentsCode } from '../core/selectors/code'
 import babelQueries from '../babel-queries/queries'
 import { searchRootCustomComponent } from '../utils/recursive'
 import { generateComponentId } from '../utils/generateId'
-
-import builder from '../core/models/composer/builder'
 import useMoveComponent from './useMoveComponent'
 import checkIsComponentId from '../utils/checkIsComponentId'
 import checkIsContainerComponent from '../utils/checkIsContainerComponent'
 import { checkIsCustomPage, getSelectedPage } from '../core/selectors/page'
 import { useQueue } from './useQueue'
+import componentsStructure from '../utils/componentsStructure/componentsStructure'
+
+// Get the props of the given custom component
+export const getPropsOfCustomComponent = (
+  componentId: string,
+  customComponentsProps: IProps,
+): IProp[] => {
+  return customComponentsProps.byComponentId[componentId].map(propId => {
+    const prop = customComponentsProps.byId[propId]
+
+    // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
+    // New-id is generated for the box component in the exposed children prop.
+    if (checkIsComponentId(prop.value)) {
+      const newComponentId = generateComponentId()
+      prop.value = newComponentId
+      return prop
+    } else {
+      return prop
+    }
+  })
+}
 
 export const useDropComponent = (
-  parentId: string,
+  targetComponentId: string,
   accept: ComponentType[] = [...rootComponents],
   canDrop: boolean = true,
   boundingPosition?: {
@@ -34,7 +54,7 @@ export const useDropComponent = (
 
   const components = useSelector(getComponents())
   const isCustomComponentChild = useSelector(
-    isChildrenOfCustomComponent(parentId),
+    isChildrenOfCustomComponent(targetComponentId),
   )
   const code = useSelector(getCode)
   const selectedPage = useSelector(getSelectedPage)
@@ -42,12 +62,12 @@ export const useDropComponent = (
   const customComponentsProps = useSelector(getCustomComponentsProps)
   const componentsCode = useSelector(getAllComponentsCode)
   let rootParentOfParentElement: string = ``
-  const onComponentMoved = useMoveComponent(parentId)
+  const onComponentMoved = useMoveComponent(targetComponentId)
   const queue = useQueue()
 
   if (isCustomComponentChild) {
     rootParentOfParentElement = searchRootCustomComponent(
-      customComponents[parentId],
+      customComponents[targetComponentId],
       customComponents,
     )
   }
@@ -61,23 +81,6 @@ export const useDropComponent = (
     }
   }
 
-  // Get the props of the given custom component
-  const getPropsOfCustomComponent = (componentId: string): IProp[] => {
-    return customComponentsProps.byComponentId[componentId].map(propId => {
-      const prop = customComponentsProps.byId[propId]
-
-      // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
-      // New-id is generated for the box component in the exposed children prop.
-      if (checkIsComponentId(prop.value)) {
-        const newComponentId = generateComponentId()
-        prop.value = newComponentId
-        return prop
-      } else {
-        return prop
-      }
-    })
-  }
-
   const [{ isOver }, drop] = useDrop({
     accept: accept,
     collect: monitor => ({
@@ -85,10 +88,15 @@ export const useDropComponent = (
     }),
     hover: (item: ComponentItemProps, monitor: DropTargetMonitor) => {
       if (item.isMoved && boundingPosition) {
-        if (parentId === item.id) return
+        if (targetComponentId === item.id) return
         if (components[item.id] === undefined) return
 
         const selectedComponent = components[item.id]
+        const targetComponentParent = components[targetComponentId].parent
+
+        // Only reorder if the selected component and the targeted component are in the same parent.
+        if (targetComponentParent !== selectedComponent.parent) return
+
         if (selectedComponent.parent === 'Prop') return
 
         const { top, bottom } = boundingPosition
@@ -98,7 +106,7 @@ export const useDropComponent = (
           item.id,
         )
         const toIndex = components[selectedComponent.parent].children.indexOf(
-          parentId,
+          targetComponentId,
         )
         const hoverClientY = clientOffset && clientOffset.y - top
 
@@ -154,15 +162,19 @@ export const useDropComponent = (
         // TODO : Yet to be refactored. Everything should go into a private function
         if (item.custom) {
           // Get the default props for the required custom component type.
-          const defaultProps = getPropsOfCustomComponent(item.id)
+          const defaultProps = getPropsOfCustomComponent(
+            item.id,
+            customComponentsProps,
+          )
 
           dispatch.components.addCustomComponent({
             componentId: newComponentId,
-            parentId,
+            parentId: targetComponentId,
             type: item.id,
             defaultProps,
           })
-          setTimeout(() => {
+
+          queue.enqueue(async () => {
             const isContainerComponent = checkIsContainerComponent(
               item.id,
               customComponentsProps,
@@ -173,44 +185,43 @@ export const useDropComponent = (
                 : code,
               {
                 componentId: newComponentId,
-                parentId,
+                parentId: targetComponentId,
                 type: item.id,
                 defaultProps,
                 isContainerComponent,
               },
             )
             updateCode(updatedCode)
-          }, 200)
-        } else if (item.isMeta) {
-          const metaBuilderObject = builder[item.type](parentId)
-
-          dispatch.components.addMetaComponent(metaBuilderObject)
-
-          setTimeout(() => {
-            updatedCode = babelQueries.addMetaComponent(code, {
-              componentIds: metaBuilderObject.componentIds,
-              parentId,
-              type: item.type,
-            })
-            updateCode(updatedCode)
-          }, 200)
-        } else {
-          dispatch.components.addComponent({
-            componentId: newComponentId,
-            parentId,
-            type: item.type,
           })
+        } else {
+          const componentCode = componentsStructure[item.type]
+          const componentWithCompId = babelQueries.setComponentIdToAllComponents(
+            componentCode,
+          )
+
+          // The state includes components, props & root-component-id
+          const state = babelQueries.getComponentsAndProps(
+            componentWithCompId,
+            { parentId: targetComponentId },
+          )
+
+          // An avatar can only have one avatar badge.
+          if (
+            item.type === 'AvatarBadge' &&
+            components[targetComponentId].children.length > 0
+          )
+            return
+
+          dispatch.components.addComponent({
+            ...state,
+            parentId: targetComponentId,
+          })
+
           setTimeout(() => {
-            updatedCode = updatedCode = babelQueries.addComponent(
-              isCustomComponentChild
-                ? componentsCode[rootParentOfParentElement]
-                : code,
-              {
-                componentId: newComponentId,
-                parentId,
-                type: item.type,
-              },
-            )
+            updatedCode = babelQueries.addComponent(code, {
+              componentCode: componentWithCompId,
+              parentId: targetComponentId,
+            })
             updateCode(updatedCode)
           }, 200)
         }

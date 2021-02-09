@@ -27,6 +27,12 @@ export const setIdToComponents = (code: string) => {
   return transformed.code
 }
 
+export const setComponentIdToAllComponents = (code: string) => {
+  return transform(code, {
+    plugins: [babelPluginSyntaxJsx, BabelSetComponentId],
+  }).code
+}
+
 export const removeComponentId = (code: string) => {
   return transform(code, {
     plugins: [babelPluginSyntaxJsx, BabelRemoveComponentId],
