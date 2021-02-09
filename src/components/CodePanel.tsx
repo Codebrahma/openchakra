@@ -94,7 +94,9 @@ const CodePanel = () => {
 
   const savePageCodeHandler = (codeValue: string) => {
     const transformedCode = babelQueries.setIdToComponents(codeValue)
-    const componentsState = babelQueries.getComponentsState(transformedCode)
+    const componentsState = babelQueries.generateComponentsState(
+      transformedCode,
+    )
     dispatch.code.setPageCode(transformedCode, 'app')
     dispatch.components.resetComponentsState(componentsState)
   }
@@ -103,8 +105,12 @@ const CodePanel = () => {
     componentName: string,
     codeValue: string,
   ) => {
+    // Delete the old components of the custom component and update with the new components.
+    dispatch.components.deleteCustomComponent(componentName)
     const transformedCode = babelQueries.setIdToComponents(codeValue)
-    const componentsState = babelQueries.getComponentsState(transformedCode)
+    const componentsState = babelQueries.generateComponentsState(
+      transformedCode,
+    )
     dispatch.code.setComponentsCode(transformedCode, componentName)
     dispatch.components.updateCustomComponentsState(componentsState)
   }
@@ -133,7 +139,7 @@ const CodePanel = () => {
     export default ${properComponentName}
     `
       dispatch.code.setComponentsCode(customComponentCode, customComponentName)
-      const componentsState = babelQueries.getComponentsState(
+      const componentsState = babelQueries.generateComponentsState(
         customComponentCode,
       )
       dispatch.components.updateCustomComponentsState(componentsState)

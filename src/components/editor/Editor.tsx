@@ -45,6 +45,7 @@ const Editor: React.FC = () => {
       height="100%"
       minWidth="10rem"
       width="100%"
+      pb={10}
       display={isEmpty ? 'flex' : 'block'}
       justifyContent="center"
       alignItems="center"

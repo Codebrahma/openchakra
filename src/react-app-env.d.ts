@@ -8,7 +8,6 @@ type ComponentType =
   | 'Badge'
   | 'Box'
   | 'Button'
-  | 'Breadcrumb'
   | 'Icon'
   | 'IconButton'
   | 'Image'
@@ -25,6 +24,12 @@ type ComponentType =
   | 'Textarea'
   | 'CircularProgress'
   | 'Heading'
+  | 'Heading1'
+  | 'Heading2'
+  | 'Heading3'
+  | 'Heading4'
+  | 'Heading5'
+  | 'Heading6'
   | 'Tag'
   | 'Switch'
   | 'SimpleGrid'
@@ -32,19 +37,13 @@ type ComponentType =
   | 'Stack'
   | 'Code'
   | 'Editable'
-  | 'NumberInput'
   | 'Radio'
   | 'RadioGroup'
   | 'Select'
   | 'Grid'
-  | 'FormControlMeta'
-  | 'AccordionMeta'
-  | 'ListMeta'
-  | 'AlertMeta'
-  | 'InputGroupMeta'
-  | 'BreadcrumbMeta'
-  | 'MenuMeta'
-  | 'NumberInputMeta'
+  | 'FormControl'
+  | 'Breadcrumb'
+  | 'NumberInput'
   | 'BreadcrumbItem'
   | 'BreadcrumbLink'
   | 'Menu'
@@ -87,6 +86,13 @@ type ComponentType =
   | 'AlertIcon'
   | 'AlertTitle'
   | 'AlertDescription'
+  | 'Blog1'
+  | 'Blog2'
+  | 'ECommerce1'
+  | 'ECommerce2'
+  | 'Pricing1'
+  | 'Team1'
+  | 'Contact1'
 
 interface PropRef {
   customPropName: string
@@ -123,11 +129,8 @@ interface ComponentItemProps {
   id: string
   label: string
   type: ComponentType
+  onDrag: Function
   isMoved?: boolean
-  isChild?: boolean
-  isMeta?: boolean
-  soon?: boolean
-  rootParentType?: ComponentType
   custom?: boolean
 }
 
