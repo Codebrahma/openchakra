@@ -81,6 +81,16 @@ const code = createModel({
         pagesCode: pagesCode,
       }
     },
+    removeComponentCode(state: CodeState, componentName: string): CodeState {
+      const componentsCode = { ...state.componentsCode }
+
+      delete componentsCode[componentName]
+
+      return {
+        ...state,
+        componentsCode,
+      }
+    },
   },
 })
 

@@ -5,7 +5,6 @@ import { AddIcon } from '@chakra-ui/icons'
 import { generateComponentId } from '../../utils/generateId'
 import useDispatch from '../../hooks/useDispatch'
 import { getExposedProps } from '../../utils/getExposedProps'
-import { menuItems } from '../sidebar/componentsMenu'
 import { useSelector } from 'react-redux'
 import {
   getComponents,
@@ -16,6 +15,7 @@ import babelQueries from '../../babel-queries/queries'
 import { getCode } from '../../core/selectors/code'
 import { useToast } from '@chakra-ui/core'
 import { getSelectedPage } from '../../core/selectors/page'
+import isContainsOnlyAlphaNumeric from '../../utils/isContainsOnlyAlphaNumeric'
 
 const SaveComponentButton: React.FC<{ componentId: string }> = ({
   componentId,
@@ -45,17 +45,25 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
     dispatch.code.setPageCode(updatedCode, selectedPage)
     dispatch.code.setComponentsCode(customComponentCode, customComponentName)
   }
+
   const saveComponentHandler = () => {
-    const name = prompt('Enter the name for the Component')
-    if (name && name.length > 1) {
-      let editedName = name.split(' ').join('')
-      editedName = editedName.charAt(0).toUpperCase() + editedName.slice(1)
+    const name = prompt('Enter the name for the Component') || ''
+    if (name.length > 1) {
+      if (!isContainsOnlyAlphaNumeric(name)) {
+        toast({
+          title: 'Invalid name format',
+          description: 'The component name can have letters and numbers only.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+        return
+      }
+      const formattedName = name.charAt(0).toUpperCase() + name.slice(1)
 
       //check if the name already exist
-      if (
-        customComponentsList.indexOf(editedName) !== -1 ||
-        Object.keys(menuItems).indexOf(editedName) !== -1
-      )
+      if (customComponentsList.indexOf(formattedName) !== -1)
         toast({
           title: 'Duplicate type',
           description: 'A component already exists with the same name.',
@@ -67,9 +75,9 @@ const SaveComponentButton: React.FC<{ componentId: string }> = ({
       else {
         const newComponentId = generateComponentId()
 
-        dispatch.components.saveComponent(editedName, newComponentId)
+        dispatch.components.saveComponent(formattedName, newComponentId)
         setTimeout(() => {
-          babelSaveQueryHandler(editedName, newComponentId)
+          babelSaveQueryHandler(formattedName, newComponentId)
         }, 200)
         toast({
           title: 'Component is saved successfully.',

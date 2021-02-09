@@ -7,6 +7,12 @@ import listComponent from './listComponent'
 import menuComponent from './menuComponent'
 import numberInputComponent from './numberInputComponent'
 import Blog1 from './BlogComponent1'
+import Blog2 from './BlogComponent2'
+import ECommerce1 from './EcommerceComponent1'
+import ECommerce2 from './ECommerceComponent2'
+import Pricing1 from './PricingComponent1'
+import Team1 from './TeamComponent1'
+import Contact1 from './contactComponent1'
 
 const metaComponents = {
   ...accordionComponent,
@@ -18,6 +24,12 @@ const metaComponents = {
   ...menuComponent,
   ...numberInputComponent,
   Blog1,
+  Blog2,
+  ECommerce1,
+  ECommerce2,
+  Pricing1,
+  Team1,
+  Contact1,
 }
 
 export default metaComponents

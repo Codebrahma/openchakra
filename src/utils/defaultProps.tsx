@@ -23,9 +23,10 @@ export const DEFAULT_PROPS: IDefaultProps = {
   Image: {
     height: '100px',
     width: '100px',
+    src: 'https://dummyimage.com/100x100',
   },
   Text: { children: 'Text value' },
-  Link: { children: 'Link text' },
+  Link: { children: 'Simple Link', color: 'linkedin.500' },
   Code: {
     children: 'Code value',
   },

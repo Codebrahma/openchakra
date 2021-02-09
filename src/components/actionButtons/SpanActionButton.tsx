@@ -23,10 +23,12 @@ import babelQueries from '../../babel-queries/queries'
 import { ISpanComponentsValues } from '../../babel-plugins/set-children-prop-plugin'
 import { searchRootCustomComponent } from '../../utils/recursive'
 import { getSelectedPage } from '../../core/selectors/page'
+import { useQueue } from '../../hooks/useQueue'
 
 const SpanActionButton = () => {
   const toast = useToast()
   const dispatch = useDispatch()
+  const queue = useQueue()
   const containsOnlySpan = useSelector(getIsContainsOnlySpan)
   const selectedTextDetails = useSelector(getSelectedTextDetails)
   const selectedComponentId = useSelector(getSelectedComponentId)
@@ -51,7 +53,7 @@ const SpanActionButton = () => {
     if (childrenProp) {
       const { value } = childrenProp
       if (value.length > 0 && Array.isArray(value)) {
-        setTimeout(() => {
+        queue.enqueue(async () => {
           // span component-id will be the key and its children prop value will be the value
           const spanComponentsValues: ISpanComponentsValues = {}
           value.forEach((val: string) => {
@@ -77,19 +79,21 @@ const SpanActionButton = () => {
                 spanComponentsValues,
               },
             )
-            dispatch.code.setComponentsCode(
-              updatedCode,
-              rootCustomParentElement,
-            )
+            if (code !== componentsCode[rootCustomParentElement])
+              dispatch.code.setComponentsCode(
+                updatedCode,
+                rootCustomParentElement,
+              )
           } else {
             const updatedCode = babelQueries.setChildrenProp(code, {
               componentId: selectedComponentId,
               value,
               spanComponentsValues,
             })
-            dispatch.code.setPageCode(updatedCode, selectedPage)
+            if (code !== updatedCode)
+              dispatch.code.setPageCode(updatedCode, selectedPage)
           }
-        }, 500)
+        })
       }
     }
   }, [childrenProp])

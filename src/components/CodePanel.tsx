@@ -105,6 +105,8 @@ const CodePanel = () => {
     componentName: string,
     codeValue: string,
   ) => {
+    // Delete the old components of the custom component and update with the new components.
+    dispatch.components.deleteCustomComponent(componentName)
     const transformedCode = babelQueries.setIdToComponents(codeValue)
     const componentsState = babelQueries.generateComponentsState(
       transformedCode,

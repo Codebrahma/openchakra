@@ -24,6 +24,12 @@ type ComponentType =
   | 'Textarea'
   | 'CircularProgress'
   | 'Heading'
+  | 'Heading1'
+  | 'Heading2'
+  | 'Heading3'
+  | 'Heading4'
+  | 'Heading5'
+  | 'Heading6'
   | 'Tag'
   | 'Switch'
   | 'SimpleGrid'
@@ -80,8 +86,13 @@ type ComponentType =
   | 'AlertIcon'
   | 'AlertTitle'
   | 'AlertDescription'
-  | 'Card'
   | 'Blog1'
+  | 'Blog2'
+  | 'ECommerce1'
+  | 'ECommerce2'
+  | 'Pricing1'
+  | 'Team1'
+  | 'Contact1'
 
 interface PropRef {
   customPropName: string
@@ -118,11 +129,8 @@ interface ComponentItemProps {
   id: string
   label: string
   type: ComponentType
+  onDrag: Function
   isMoved?: boolean
-  isChild?: boolean
-  isMeta?: boolean
-  soon?: boolean
-  rootParentType?: ComponentType
   custom?: boolean
 }
 
