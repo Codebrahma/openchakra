@@ -178,29 +178,31 @@ const Sidebar = () => {
                     }
                   />
                 </InputGroup>
-                {Object.keys(menuItems).map(key => {
-                  const { name } = menuItems[key]
-                  return (
-                    <Box
-                      p={2}
-                      mb={2}
-                      key={key}
-                      cursor="pointer"
-                      _hover={{
-                        bg: 'gray.100',
-                        shadow: 'sm',
-                      }}
-                      bg={
-                        selectedMenuItem === key && isOpen
-                          ? 'gray.100'
-                          : 'white'
-                      }
-                      onMouseEnter={() => onHover(key)}
-                    >
-                      {name}
-                    </Box>
-                  )
-                })}
+                <Box ml={4}>
+                  {Object.keys(menuItems).map(key => {
+                    const { name } = menuItems[key]
+                    return (
+                      <Box
+                        p={2}
+                        mb={2}
+                        key={key}
+                        cursor="pointer"
+                        _hover={{
+                          bg: 'gray.100',
+                          shadow: 'sm',
+                        }}
+                        bg={
+                          selectedMenuItem === key && isOpen
+                            ? 'gray.100'
+                            : 'white'
+                        }
+                        onMouseEnter={() => onHover(key)}
+                      >
+                        {name}
+                      </Box>
+                    )
+                  })}
+                </Box>
               </Box>
             </TabPanel>
             <TabPanel p={0}>
