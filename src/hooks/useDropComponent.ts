@@ -25,19 +25,23 @@ export const getPropsOfCustomComponent = (
   componentId: string,
   customComponentsProps: IProps,
 ): IProp[] => {
-  return customComponentsProps.byComponentId[componentId].map(propId => {
-    const prop = customComponentsProps.byId[propId]
+  const propIds = customComponentsProps.byComponentId[componentId]
 
-    // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
-    // New-id is generated for the box component in the exposed children prop.
-    if (checkIsComponentId(prop.value)) {
-      const newComponentId = generateComponentId()
-      prop.value = newComponentId
-      return prop
-    } else {
-      return prop
-    }
-  })
+  if (propIds && propIds.length > 0) {
+    return customComponentsProps.byComponentId[componentId].map(propId => {
+      const prop = customComponentsProps.byId[propId]
+
+      // If the prop-value is a component-id, generate a new componentId. this includes the exposed children of Box or Flex
+      // New-id is generated for the box component in the exposed children prop.
+      if (checkIsComponentId(prop.value)) {
+        const newComponentId = generateComponentId()
+        prop.value = newComponentId
+        return prop
+      } else {
+        return prop
+      }
+    })
+  } else return []
 }
 
 export const useDropComponent = (
@@ -53,7 +57,7 @@ export const useDropComponent = (
   const queue = useQueue()
 
   const isCustomPage = useSelector(checkIsCustomPage)
-  const components = useSelector(getComponents())
+  const components = useSelector(getComponents(targetComponentId))
   const isCustomComponentChild = useSelector(
     isChildrenOfCustomComponent(targetComponentId),
   )
@@ -218,10 +222,15 @@ export const useDropComponent = (
           })
 
           queue.enqueue(async () => {
-            updatedCode = babelQueries.addComponent(code, {
-              componentCode: componentWithCompId,
-              parentId: targetComponentId,
-            })
+            updatedCode = babelQueries.addComponent(
+              isCustomComponentChild
+                ? componentsCode[rootParentOfParentElement]
+                : code,
+              {
+                componentCode: componentWithCompId,
+                parentId: targetComponentId,
+              },
+            )
             updateCode(updatedCode)
           })
         }

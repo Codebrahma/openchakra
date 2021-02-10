@@ -35,78 +35,24 @@ const useMoveComponent = (parentId: string) => {
   }
 
   const moveComponentBabelQueryHandler = (componentId: string) => {
-    const isCustomComponentUpdate = customComponents[componentId] ? true : false
-    const isParentCustomComponent = isCustomComponentChild
-
-    let rootParentOfComponent = ``
-    if (isCustomComponentUpdate) {
-      rootParentOfComponent = searchRootCustomComponent(
-        customComponents[componentId],
-        customComponents,
-      )
-    }
-
-    // If the component is dragged into the same custom component.
-    if (
-      rootParentOfComponent !== '' &&
-      rootParentOfComponent === rootParentOfParentElement
-    )
-      return
-
-    // Normal component moved from normal component to another normal component
-    if (!isCustomComponentUpdate && !isParentCustomComponent) {
-      const { updatedDestCode } = babelQueries.moveComponent(code, code, {
+    // component moved inside custom component
+    if (!isCustomComponentChild) {
+      const updatedCode = babelQueries.moveComponent(code, {
         componentId,
         destParentId: parentId,
       })
-      dispatch.code.setPageCode(updatedDestCode, selectedPage)
+      dispatch.code.setPageCode(updatedCode, selectedPage)
     }
-    // Normal Component moved from normal component to custom component
-    else if (!isCustomComponentUpdate && isParentCustomComponent) {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        code,
-        componentsCode[rootParentOfParentElement],
-        {
-          componentId,
-          destParentId: parentId,
-        },
-      )
-      dispatch.code.setPageCode(updatedSourceCode, selectedPage)
-
-      dispatch.code.setComponentsCode(
-        updatedDestCode,
-        rootParentOfParentElement,
-      )
-    }
-    // Custom component moved from custom component to normal component
-    else if (isCustomComponentUpdate && !isParentCustomComponent) {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        componentsCode[rootParentOfComponent],
-        code,
-        {
-          componentId,
-          destParentId: parentId,
-        },
-      )
-      dispatch.code.setComponentsCode(updatedSourceCode, rootParentOfComponent)
-
-      dispatch.code.setPageCode(updatedDestCode, selectedPage)
-    }
-    // custom component moved from custom component to another custom component
+    // component moved inside custom component
     else {
-      const { updatedSourceCode, updatedDestCode } = babelQueries.moveComponent(
-        componentsCode[rootParentOfComponent],
+      const updatedCode = babelQueries.moveComponent(
         componentsCode[rootParentOfParentElement],
         {
           componentId,
           destParentId: parentId,
         },
       )
-      dispatch.code.setComponentsCode(updatedSourceCode, rootParentOfComponent)
-      dispatch.code.setComponentsCode(
-        updatedDestCode,
-        rootParentOfParentElement,
-      )
+      dispatch.code.setComponentsCode(updatedCode, rootParentOfParentElement)
     }
   }
 

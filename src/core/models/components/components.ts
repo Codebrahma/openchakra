@@ -175,12 +175,11 @@ const components = createModel({
         //Can not move the immediate(outermost) children of custom component
         //Can not move the additional box provided when children of box/flex is exposed
 
+        if (asPropIndex !== -1) return state
+        if (oldParentId === 'Prop') return state
         if (
-          asPropIndex !== -1 ||
-          oldParentId === 'Prop' ||
-          newParentId === oldParentId ||
-          (isCustomComponentChild &&
-            components[oldParentId].parent.length === 0)
+          isCustomComponentChild &&
+          components[oldParentId].parent.length === 0
         )
           return state
 

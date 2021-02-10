@@ -97,38 +97,31 @@ export const reorderComponentChildren = (
 // One plugin is used to remove the specified component from its parent and it will return the removed component.
 // Another plugin is used to insert the removed component in its new component
 export const moveComponent = (
-  sourceCode: string,
-  destinationCode: string,
+  code: string,
   options: { componentId: string; destParentId: string },
 ) => {
   const plugin = new BabelRemoveMovedComponentFromSource({
     componentId: options.componentId,
   })
 
-  const transformedSource = transform(sourceCode, {
+  const transformedSource = transform(code, {
     plugins: [babelPluginSyntaxJsx, plugin.plugin],
   })
 
   // If the source and destination code is same, the transformed code from the source is used here.
   // Because we need to perform both remove component from old parent and insert component in new parent in same code
-  const transformedDest = transform(
-    sourceCode === destinationCode ? transformedSource.code : destinationCode,
-    {
-      plugins: [
-        babelPluginSyntaxJsx,
-        [
-          BabelInsertMovedComponentToDest,
-          {
-            parentId: options.destParentId,
-            componentToInsert: plugin.removedComponent,
-          },
-        ],
+  const transformed = transform(transformedSource.code, {
+    plugins: [
+      babelPluginSyntaxJsx,
+      [
+        BabelInsertMovedComponentToDest,
+        {
+          parentId: options.destParentId,
+          componentToInsert: plugin.removedComponent,
+        },
       ],
-    },
-  )
+    ],
+  })
 
-  return {
-    updatedSourceCode: transformedSource.code,
-    updatedDestCode: transformedDest.code,
-  }
+  return transformed.code
 }

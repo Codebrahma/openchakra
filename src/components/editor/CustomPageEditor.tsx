@@ -4,7 +4,10 @@ import ComponentPreview from './ComponentPreview'
 import { useSelector } from 'react-redux'
 import useDispatch from '../../hooks/useDispatch'
 import { getShowLayout } from '../../core/selectors/app'
-import { getCustomComponentsProps } from '../../core/selectors/components'
+import {
+  getCustomComponentsProps,
+  getChildrenBy,
+} from '../../core/selectors/components'
 import { getPropsOfCustomComponent } from '../../hooks/useDropComponent'
 import { generateComponentId } from '../../utils/generateId'
 import { useLocation } from 'react-router-dom'
@@ -19,24 +22,28 @@ const CustomPageEditor: React.FC = () => {
   const showLayout = useSelector(getShowLayout)
   const dispatch = useDispatch()
   const url = new URLSearchParams(useLocation().search)
-
   const componentType: string = url.get('name') || ''
-
   const customComponentsProps = useSelector(getCustomComponentsProps)
-
   const defaultProps = getPropsOfCustomComponent(
     componentType,
     customComponentsProps,
   )
+  const rootElementChildren = useSelector(getChildrenBy('root'))
 
-  const componentId = generateComponentId()
+  // Custom component will be edited with only one instance of it.
+  // No extra instance should be added.
+  const componentId =
+    rootElementChildren.length === 0
+      ? generateComponentId()
+      : rootElementChildren[0]
 
-  dispatch.components.addCustomComponent({
-    componentId,
-    parentId: 'root',
-    type: componentType,
-    defaultProps,
-  })
+  if (rootElementChildren.length === 0)
+    dispatch.components.addCustomComponent({
+      componentId,
+      parentId: 'root',
+      type: componentType,
+      defaultProps,
+    })
 
   let editorBackgroundProps = {}
 
