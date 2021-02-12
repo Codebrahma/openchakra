@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react'
+import React, { useState, FunctionComponent, lazy, Suspense } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -19,11 +19,12 @@ import {
   Text,
   Flex,
 } from '@chakra-ui/core'
-import JSONTree from 'react-json-tree'
 import useDispatch from '../hooks/useDispatch'
 import useCustomTheme from '../hooks/useCustomTheme'
 import { useSelector } from 'react-redux'
 import { getCustomTheme } from '../core/selectors/app'
+
+const JSONTree = lazy(() => import('react-json-tree'))
 
 export const jsonTheme = {
   scheme: 'google',
@@ -59,7 +60,7 @@ const EditThemeModal: FunctionComponent<{
   const handleChange = async (selectorFiles: any) => {
     selectorFiles.preventDefault()
     const reader = new FileReader()
-    reader.onload = async e => {
+    reader.onload = async (e) => {
       if (e.target!.result) {
         const text = e.target!.result
         // @ts-ignore
@@ -124,7 +125,9 @@ const EditThemeModal: FunctionComponent<{
                 <TabPanels>
                   <TabPanel>
                     <Box rounded={5}>
-                      <JSONTree data={theme} theme={jsonTheme} />
+                      <Suspense fallback={<Box />}>
+                        <JSONTree data={theme} theme={jsonTheme} />
+                      </Suspense>
                     </Box>
                   </TabPanel>
                   <TabPanel>

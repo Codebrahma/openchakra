@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent } from 'react'
+import React, { useEffect, useState, ChangeEvent, lazy, Suspense } from 'react'
 import {
   Box,
   Tabs,
@@ -17,7 +17,6 @@ import { AiOutlineAppstore } from 'react-icons/ai'
 import { FaPaintBrush } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
 
-import Inspector from '../inspector/Inspector'
 import { InspectorProvider } from '../../contexts/inspector-context'
 import {
   getSelectedComponentId,
@@ -31,6 +30,8 @@ import componentMenuItems, {
 import Backdrop from './Backdrop'
 import Drawer from './Drawer'
 import MenuItemComponents from './MenuItemComponents'
+
+const Inspector = lazy(() => import('../inspector/Inspector'))
 
 const Sidebar = () => {
   const [tabIndex, setTabIndex] = useState(0)
@@ -85,9 +86,10 @@ const Sidebar = () => {
     let componentIndex: number = -1
 
     // Find wether the searched components matches any other items in the list
-    Object.keys(menuItems).forEach(menuItemName => {
+    Object.keys(menuItems).forEach((menuItemName) => {
       const itemIndex = menuItems[menuItemName].components.findIndex(
-        component => component.name.toLowerCase() === searchTerm.toLowerCase(),
+        (component) =>
+          component.name.toLowerCase() === searchTerm.toLowerCase(),
       )
 
       if (itemIndex !== -1) {
@@ -179,7 +181,7 @@ const Sidebar = () => {
                   />
                 </InputGroup>
                 <Box ml={4}>
-                  {Object.keys(menuItems).map(key => {
+                  {Object.keys(menuItems).map((key) => {
                     const { name } = menuItems[key]
                     return (
                       <Box
@@ -206,9 +208,19 @@ const Sidebar = () => {
               </Box>
             </TabPanel>
             <TabPanel p={0}>
-              <InspectorProvider>
-                <Inspector />
-              </InspectorProvider>
+              <Suspense
+                fallback={
+                  <Box>
+                    <Text fontWeight="semibold" fontSize="md" py={2} px={2}>
+                      Document
+                    </Text>
+                  </Box>
+                }
+              >
+                <InspectorProvider>
+                  <Inspector />
+                </InspectorProvider>
+              </Suspense>
             </TabPanel>
           </TabPanels>
         </Tabs>
