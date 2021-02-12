@@ -1,9 +1,10 @@
-import React, { FunctionComponent, ComponentClass } from 'react'
+import React, { FunctionComponent, ComponentClass, Suspense } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
 import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
 import stringToIconConvertor from '../../utils/stringToIconConvertor'
 import { useDropComponent } from '../../hooks/useDropComponent'
+import { CopyIcon } from '@chakra-ui/icons'
 
 export const isPropRelatedToIcon = (type: string, propName: string) => {
   if (
@@ -51,8 +52,14 @@ const PreviewContainer: React.FC<{
   //Converting the icon in string to reactElement
   Object.keys(propsKeyValue).forEach((key: string) => {
     if (isPropRelatedToIcon(component.type, key))
-      propsKeyValue[key] = stringToIconConvertor(key, propsKeyValue[key])
+      propsKeyValue[key] = (
+        <Suspense fallback={<CopyIcon />}>
+          {stringToIconConvertor(key, propsKeyValue[key])}
+        </Suspense>
+      )
   })
+
+  console.log(propsKeyValue)
 
   const children = React.createElement(type, {
     ...propsKeyValue,

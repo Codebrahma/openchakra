@@ -14,13 +14,13 @@ import {
   ButtonProps,
 } from '@chakra-ui/core'
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import useDispatch from '../hooks/useDispatch'
+import useDispatch from '../../hooks/useDispatch'
 import { FaEdit } from 'react-icons/fa'
 import { GoRepo } from 'react-icons/go'
 import { MdDeleteForever } from 'react-icons/md'
-import ImportWorkspaceMenuItem from './HeaderMenuItems/ImportWorkspaceMenuItem'
-import ExportWorkspaceMenuItem from './HeaderMenuItems/ExportWorkspaceMenuItem'
-import SaveWorkspaceMenuItem from './HeaderMenuItems/SaveWorkspaceMenuItem'
+import ImportWorkspaceMenuItem from '../HeaderMenuItems/ImportWorkspaceMenuItem'
+import ExportWorkspaceMenuItem from '../HeaderMenuItems/ExportWorkspaceMenuItem'
+import SaveWorkspaceMenuItem from '../HeaderMenuItems/SaveWorkspaceMenuItem'
 import { useHistory } from 'react-router-dom'
 
 type MenuItemLinkProps = MenuItemProps | LinkProps
