@@ -37,21 +37,22 @@ const addComponentPlugin = (
         const openingElement = path.node.openingElement
 
         const visitedComponentId = getComponentId(openingElement)
-        if (visitedComponentId && visitedComponentId === parentId) {
-          // Change the JSX element in the string to node template
-          const node = template.ast(componentCode, {
-            plugins: ['jsx'],
-          }).expression
+        if (visitedComponentId && visitedComponentId !== parentId) {
+          return
+        }
+        // Change the JSX element in the string to node template
+        const node = template.ast(componentCode, {
+          plugins: ['jsx'],
+        }).expression
 
-          const newLineText = t.jsxText('\n')
+        const newLineText = t.jsxText('\n')
 
-          // Add to the children of the parent component
-          if (path.node.children.length > 0) {
-            path.node.children.push(node)
-            path.node.children.push(newLineText)
-          } else {
-            path.node.children = [newLineText, node, newLineText]
-          }
+        // Add to the children of the parent component
+        if (path.node.children.length > 0) {
+          path.node.children.push(node)
+          path.node.children.push(newLineText)
+        } else {
+          path.node.children = [newLineText, node, newLineText]
         }
       },
     },

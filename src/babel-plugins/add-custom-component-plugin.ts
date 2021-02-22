@@ -67,31 +67,33 @@ const addCustomComponentPlugin = (
         const openingElement = path.node.openingElement
 
         const visitedComponentId = getComponentId(openingElement)
-        if (visitedComponentId && visitedComponentId === parentId) {
-          let component: string = ``
+        if (visitedComponentId && visitedComponentId !== parentId) {
+          return
+        }
 
-          // If the component is container component, the element will be <Card></Card>
-          // If the component is not a container component, the element will be <Card />
+        let component: string = ``
 
-          if (isContainerComponent) {
-            component = `<${type} compId="${componentId}" ${defaultPropsProvider()}></${type}>`
-          } else {
-            component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
-          }
+        // If the component is container component, the element will be <Card></Card>
+        // If the component is not a container component, the element will be <Card />
 
-          // Change the JSX element in the string to node template
-          const node = template.ast(component, {
-            plugins: ['jsx'],
-          }).expression
-          const newLineText = t.jsxText('\n')
+        if (isContainerComponent) {
+          component = `<${type} compId="${componentId}" ${defaultPropsProvider()}></${type}>`
+        } else {
+          component = `<${type} compId="${componentId}" ${defaultPropsProvider()}/>`
+        }
 
-          // Add to the children of the parent component
-          if (path.node.children.length > 0) {
-            path.node.children.push(node)
-            path.node.children.push(newLineText)
-          } else {
-            path.node.children = [newLineText, node, newLineText]
-          }
+        // Change the JSX element in the string to node template
+        const node = template.ast(component, {
+          plugins: ['jsx'],
+        }).expression
+        const newLineText = t.jsxText('\n')
+
+        // Add to the children of the parent component
+        if (path.node.children.length > 0) {
+          path.node.children.push(node)
+          path.node.children.push(newLineText)
+        } else {
+          path.node.children = [newLineText, node, newLineText]
         }
       },
     },
