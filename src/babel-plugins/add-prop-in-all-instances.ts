@@ -19,23 +19,22 @@ const addPropInAllInstances = (
     visitor: {
       JSXOpeningElement(path: any) {
         const visitedComponentName = path.node.name.name
+        if (visitedComponentName !== componentName) return
 
-        if (visitedComponentName === componentName) {
-          if (boxId) {
-            const boxComponent = `<Box compId="${boxId}"></Box>`
+        if (boxId) {
+          const boxComponent = `<Box compId="${boxId}"></Box>`
 
-            const element = getJSXElement(boxComponent)
+          const element = getJSXElement(boxComponent)
 
-            const jsxAttribute = t.jsxAttribute(
-              t.jsxIdentifier(propName),
-              t.jsxExpressionContainer(element),
-            )
-            path.node.attributes.push(jsxAttribute)
-          } else {
-            const jsxAttribute = toJsxAttribute(propName, propValue)
-            path.node.attributes.push(jsxAttribute)
-          }
-        } else return
+          const jsxAttribute = t.jsxAttribute(
+            t.jsxIdentifier(propName),
+            t.jsxExpressionContainer(element),
+          )
+          path.node.attributes.push(jsxAttribute)
+        } else {
+          const jsxAttribute = toJsxAttribute(propName, propValue)
+          path.node.attributes.push(jsxAttribute)
+        }
       },
     },
   }

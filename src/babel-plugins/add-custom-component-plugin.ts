@@ -23,6 +23,8 @@ const addCustomComponentPlugin = (
 
   // If the value of the prop is a component-id, then the box component should be added.
   // or else its respective value will be added.
+  //TODO remove scope and pass as argument
+  //TODO break into two function, filter, then map
   const defaultPropsProvider = () => {
     return defaultProps
       .filter(prop => prop.name !== 'children')
