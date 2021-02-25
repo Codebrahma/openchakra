@@ -16,7 +16,7 @@ import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import { generateComponentId } from '../utils/generateId'
-import formatCode from '../utils//codeGeneration/formatCode'
+import formatCode from '../utils/formatCode'
 
 const SaveButton = ({
   children,

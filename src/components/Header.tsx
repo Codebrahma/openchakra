@@ -89,7 +89,13 @@ const Header = () => {
         justifyContent="center"
         ml="12%"
       >
-        <Image src={composerIcon} mr="0.5rem" w="30px" h="25px" />
+        <Image
+          src={composerIcon}
+          mr="0.5rem"
+          width="30px"
+          height="25px"
+          alt="Composer Icon"
+        />
         <Box fontWeight="bold" color="black">
           Composer
         </Box>
