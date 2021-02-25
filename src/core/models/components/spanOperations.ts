@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 
 import {
   loadRequired,
@@ -38,7 +38,7 @@ export const addSpanComponent = (
 
   const childrenPropId =
     props.byComponentId[id].find(
-      propId => props.byId[propId].name === 'children',
+      (propId) => props.byId[propId].name === 'children',
     ) || ''
 
   const newId = generateComponentId()
@@ -86,9 +86,7 @@ export const addSpanComponent = (
       spanId: newId,
     })
 
-    props.byId[childrenPropId].value = _.flatten(
-      props.byId[childrenPropId].value,
-    )
+    props.byId[childrenPropId].value = flatten(props.byId[childrenPropId].value)
 
     const spanChildrenId = generatePropId()
 
@@ -146,7 +144,7 @@ export const removeSpanComponent = (
 
   const childrenPropId =
     props.byComponentId[id].find(
-      propId => props.byId[propId].name === 'children',
+      (propId) => props.byId[propId].name === 'children',
     ) || ''
 
   props = removeSpanForSelection(childrenPropId, props, components, id, {
@@ -156,7 +154,7 @@ export const removeSpanComponent = (
     endNodePosition,
   })
 
-  props.byId[childrenPropId].value = _.flatten(props.byId[childrenPropId].value)
+  props.byId[childrenPropId].value = flatten(props.byId[childrenPropId].value)
 
   //join if there are adjacent text nodes.
   const propValue = joinAdjacentTextValues(
@@ -186,7 +184,7 @@ export const clearFormatting = (draftState: ComponentsState) => {
 
   const childrenPropId =
     props.byComponentId[id].find(
-      propId => props.byId[propId].name === 'children',
+      (propId) => props.byId[propId].name === 'children',
     ) || ''
 
   const childrenProp = props.byId[childrenPropId]
@@ -198,7 +196,7 @@ export const clearFormatting = (draftState: ComponentsState) => {
       if (components[val]) {
         const spanChildrenPropId =
           props.byComponentId[val].find(
-            propId => props.byId[propId].name === 'children',
+            (propId) => props.byId[propId].name === 'children',
           ) || ''
 
         newValue = newValue + props.byId[spanChildrenPropId].value

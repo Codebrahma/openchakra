@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { Flex, Box, ThemeProvider, IconButton } from '@chakra-ui/core'
 import { useSelector } from 'react-redux'
-import Header from './components/Header'
 import { Global } from '@emotion/core'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 // import EditorErrorBoundary from './components/errorBoundaries/EditorErrorBoundary'
@@ -13,10 +12,12 @@ import {
 import useDispatch from './hooks/useDispatch'
 import loadFonts from './utils/loadFonts'
 import useCustomTheme from './hooks/useCustomTheme'
-import CodePanel from './components/CodePanel'
-import Sidebar from './components/sidebar/Sidebar'
 import useShortCutKeys from './hooks/useShortcutKeys'
 import EditorRouting from './components/editor/EditorRouting'
+import Header from './components/Header/Header'
+import Sidebar from './components/sidebar/Sidebar'
+
+const CodePanel = lazy(() => import('./components/CodePanel'))
 
 const App = () => {
   const showFullScreen = useSelector(getShowFullScreen)
@@ -60,7 +61,13 @@ const App = () => {
               height={!showFullScreen ? 'calc(100vh - 3rem)' : '100vh'}
               width={!showFullScreen ? 'calc(100vw - 15rem)' : '100vw'}
             >
-              {showCode ? <CodePanel /> : <EditorRouting />}
+              {showCode ? (
+                <Suspense fallback={<Box />}>
+                  <CodePanel />{' '}
+                </Suspense>
+              ) : (
+                <EditorRouting />
+              )}
             </Box>
             {/* </EditorErrorBoundary> */}
           </ThemeProvider>

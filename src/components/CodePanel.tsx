@@ -12,11 +12,10 @@ import {
 import { AddIcon } from '@chakra-ui/icons'
 import { useSelector } from 'react-redux'
 import { getCodeState } from '../core/selectors/code'
-import { ControlledEditor } from '@monaco-editor/react'
 import babelQueries from '../babel-queries/queries'
 import useDispatch from '../hooks/useDispatch'
 import { generateComponentId } from '../utils/generateId'
-import formatCode from '../utils/formatCode'
+import MonacoEditor from './MonacoCodeEditor'
 
 const SaveButton = ({
   children,
@@ -45,52 +44,12 @@ const SaveButton = ({
   )
 }
 
-const MonacoEditor = ({
-  value,
-  onChange,
-}: {
-  value: string
-  onChange: (event: any, value: string | undefined) => void
-}) => {
-  return (
-    <ControlledEditor
-      height="100%"
-      language="javascript"
-      theme="dark"
-      options={{
-        minimap: {
-          enabled: false,
-        },
-        scrollbar: {
-          vertical: 'hidden',
-        },
-      }}
-      value={value}
-      onChange={onChange}
-    />
-  )
-}
-
 const CodePanel = () => {
   const dispatch = useDispatch()
 
   const codeState = useSelector(getCodeState)
 
   const { componentsCode, pagesCode } = codeState
-
-  const generateProperCode = (code: string) => {
-    const codeWithOutComponentId = babelQueries.removeComponentId(code)
-
-    // Remove the isContainerComponent prop if it is added for any custom component.
-    const properCode = babelQueries.removePropInAllComponents(
-      codeWithOutComponentId,
-      {
-        propName: 'isContainerComponent',
-      },
-    )
-
-    return formatCode(properCode)
-  }
 
   const savePageCodeHandler = (codeValue: string) => {
     const transformedCode = babelQueries.setIdToComponents(codeValue)
@@ -158,7 +117,7 @@ const CodePanel = () => {
       <Tabs variant="enclosed">
         <TabList>
           <Tab>App.js</Tab>
-          {Object.keys(componentsCode).map(componentName => (
+          {Object.keys(componentsCode).map((componentName) => (
             <Tab key={componentName}>{componentName + '.js'}</Tab>
           ))}
           <IconButton
@@ -171,7 +130,7 @@ const CodePanel = () => {
         <TabPanels height="90vh">
           <TabPanel height="100%" p={0}>
             <MonacoEditor
-              value={generateProperCode(pagesCode['app'])}
+              value={pagesCode['app']}
               onChange={(_, value) => {
                 pagesCode['app'] = value || ''
               }}
@@ -180,11 +139,11 @@ const CodePanel = () => {
               Save Code
             </SaveButton>
           </TabPanel>
-          {Object.keys(componentsCode).map(componentName => {
+          {Object.keys(componentsCode).map((componentName) => {
             return (
               <TabPanel height="100%" p={0} key={componentName}>
                 <MonacoEditor
-                  value={generateProperCode(componentsCode[componentName])}
+                  value={componentsCode[componentName]}
                   onChange={(_, value) => {
                     componentsCode[componentName] = value || ''
                   }}
