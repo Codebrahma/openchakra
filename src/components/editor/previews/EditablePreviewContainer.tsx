@@ -112,8 +112,6 @@ const EditablePreviewContainer: React.FC<{
     }
   })
 
-  console.log(propsKeyValue)
-
   const Element = React.createElement(type, {
     ...propsKeyValue,
     ...forwardedProps,
