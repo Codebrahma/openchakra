@@ -2,20 +2,12 @@ import React, { FunctionComponent, ComponentClass, Suspense } from 'react'
 import { useInteractive } from '../../hooks/useInteractive'
 import { Box } from '@chakra-ui/core'
 import findAndReplaceExposedPropValue from '../../utils/findAndReplaceExposedPropValue'
-import stringToIconConvertor from '../../utils/stringToIconConvertor'
+import reactIcon from '../../utils/stringToIconConvertor'
 import { useDropComponent } from '../../hooks/useDropComponent'
-import { CopyIcon } from '@chakra-ui/icons'
-
-export const isPropRelatedToIcon = (type: string, propName: string) => {
-  if (
-    (type === 'Icon' && propName === 'as') ||
-    propName === 'icon' ||
-    propName === 'leftIcon' ||
-    propName === 'rightIcon'
-  )
-    return true
-  return false
-}
+import {
+  isInlineIconComponent,
+  isInlineIconString,
+} from '../../utils/isInlineIcon'
 
 const PreviewContainer: React.FC<{
   component: IComponent
@@ -51,21 +43,26 @@ const PreviewContainer: React.FC<{
 
   //Converting the icon in string to reactElement
   Object.keys(propsKeyValue).forEach((key: string) => {
-    if (isPropRelatedToIcon(component.type, key))
-      propsKeyValue[key] = (
-        <Suspense fallback={<CopyIcon />}>
-          {stringToIconConvertor(key, propsKeyValue[key])}
-        </Suspense>
-      )
+    if (isInlineIconString(component.type, key)) {
+      propsKeyValue[key] = reactIcon(propsKeyValue[key])
+    }
+    if (isInlineIconComponent(key)) {
+      propsKeyValue[key] = React.createElement(reactIcon(propsKeyValue[key]))
+    }
   })
 
-  console.log(propsKeyValue)
-
-  const children = React.createElement(type, {
+  let props = {
     ...propsKeyValue,
     ...forwardedProps,
     ref: drop(ref),
-  })
+  }
+  if (component.type === 'Icon') {
+    delete props.ref
+  }
+
+  const children = (
+    <Suspense fallback={'.'}>{React.createElement(type, props)}</Suspense>
+  )
 
   if (isBoxWrapped) {
     let boxProps: any = {}

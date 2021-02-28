@@ -1,7 +1,5 @@
 import React, { FunctionComponent, ComponentClass, Suspense } from 'react'
 import { Box } from '@chakra-ui/core'
-import { CopyIcon } from '@chakra-ui/icons'
-
 import { useInteractive } from '../../../hooks/useInteractive'
 import findAndReplaceExposedPropValue from '../../../utils/findAndReplaceExposedPropValue'
 import {
@@ -15,10 +13,13 @@ import {
 } from '../../../core/selectors/components'
 import useDispatch from '../../../hooks/useDispatch'
 import { useDropComponent } from '../../../hooks/useDropComponent'
-import { isPropRelatedToIcon } from '../PreviewContainer'
-import stringToIconConvertor from '../../../utils/stringToIconConvertor'
+import reactIcon from '../../../utils/stringToIconConvertor'
 import { useForm } from '../../../hooks/useForm'
 import { acceptTypes, rootComponents } from '../../../utils/editor'
+import {
+  isInlineIconComponent,
+  isInlineIconString,
+} from '../../../utils/isInlineIcon'
 
 const EditablePreviewContainer: React.FC<{
   component: IComponent
@@ -99,17 +100,10 @@ const EditablePreviewContainer: React.FC<{
 
   //Converting the icon in string to reactElement
   Object.keys(propsKeyValue).forEach((key: string) => {
-    if (isPropRelatedToIcon(component.type, key)) {
-      const Icon = stringToIconConvertor(key, propsKeyValue[key])
-      console.log(Icon)
-      console.log(<CopyIcon />)
-
-      propsKeyValue[key] = (
-        <Suspense fallback={<CopyIcon />}>
-          {stringToIconConvertor(key, propsKeyValue[key])}
-        </Suspense>
-      )
-    }
+    if (isInlineIconString(component.type, key))
+      propsKeyValue[key] = reactIcon(propsKeyValue[key])
+    if (isInlineIconComponent(key))
+      propsKeyValue[key] = React.createElement(reactIcon(propsKeyValue[key]))
   })
 
   const Element = React.createElement(type, {
@@ -136,9 +130,11 @@ const EditablePreviewContainer: React.FC<{
     />,
   )
 
-  return inputTextFocused && component.id === selectedId
-    ? contentEditableElement
-    : Element
+  return inputTextFocused && component.id === selectedId ? (
+    contentEditableElement
+  ) : (
+    <Suspense fallback={'.'}>{Element}</Suspense>
+  )
 }
 
 export default EditablePreviewContainer
