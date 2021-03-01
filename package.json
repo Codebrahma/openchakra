@@ -49,7 +49,9 @@
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "test": "react-app-rewired test --env=jsdom",
     "analyze": "BUNDLE_VISUALIZE=1 react-app-rewired build",
-    "docs": "jsdoc -c jsdoc.conf.json"
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc -w"
   },
   "eslintConfig": {
     "extends": "react-app"

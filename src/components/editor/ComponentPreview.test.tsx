@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { render } from '@testing-library/react'
 import { init } from '@rematch/core'
@@ -87,7 +88,7 @@ const componentsToTest = [
   'MenuMeta',
 ]
 
-test.each(componentsToTest)('Component Preview for %s', componentName => {
+test.each(componentsToTest)('Component Preview for %s', (componentName) => {
   // const spy = jest.spyOn(global.console, 'error')
   // @ts-ignore
   const store = init(storeConfig)

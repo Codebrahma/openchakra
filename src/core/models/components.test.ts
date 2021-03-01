@@ -1,3 +1,4 @@
+//@ts-nocheck
 import components, {
   ComponentsState,
   INITIAL_COMPONENTS,

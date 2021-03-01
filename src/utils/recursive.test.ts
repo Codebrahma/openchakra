@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { generateId } from './generateId'
 import { duplicateComponent, deleteComponent } from './recursive'
 
@@ -67,10 +68,10 @@ describe('recursive functions', () => {
     }
 
     const avatars = Object.keys(finalTree).filter(
-      compKey => finalTree[compKey].type === 'Avatar',
+      (compKey) => finalTree[compKey].type === 'Avatar',
     )
     const boxes = Object.keys(finalTree).filter(
-      compKey => finalTree[compKey].type === 'Box',
+      (compKey) => finalTree[compKey].type === 'Box',
     )
 
     expect(avatars.length).toEqual(2)
