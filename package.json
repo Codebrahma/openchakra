@@ -49,6 +49,7 @@
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "test": "react-app-rewired test --env=jsdom",
     "analyze": "BUNDLE_VISUALIZE=1 react-app-rewired build",
+    "source-bloat": "source-map-explorer 'build/static/js/*.js'",
     "docs": "jsdoc -c jsdoc.conf.json",
     "typecheck": "tsc",
     "typecheck:watch": "tsc -w"
@@ -89,6 +90,7 @@
     "lint-staged": "^10.0.7",
     "pretty-quick": "^2.0.1",
     "react-app-rewired": "^2.1.5",
+    "source-map-explorer": "^2.5.2",
     "typedoc": "^0.16.9"
   },
   "husky": {
