@@ -51,18 +51,6 @@ const CustomComponentPreview: React.FC<{
 
   const componentChildren = useSelector(getChildrenBy(component.type))
 
-  //width of outer container will be the with of the child component
-  let widthProp = useSelector(getPropsBy(componentChildren[0])).find(
-    prop => prop.name === 'width',
-  )
-  if (widthProp?.derivedFromComponentType) {
-    widthProp = componentProps.find(
-      prop => prop.name === widthProp?.derivedFromPropName,
-    )
-  }
-
-  const width = widthProp ? widthProp.value : '100%'
-
   const propsKeyValue = findAndReplaceExposedPropValue(
     componentProps,
     customProps,
@@ -73,7 +61,7 @@ const CustomComponentPreview: React.FC<{
   )
 
   return (
-    <Box {...interactionProps} ref={drop(ref)} width={width}>
+    <Box {...interactionProps} ref={drop(ref)}>
       {componentChildren.map((key: string) => (
         <ComponentPreview
           key={key}
